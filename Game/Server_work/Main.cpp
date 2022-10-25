@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <windows.h>
 #include <string>
+#include <queue>
 
 #include "protocol.h"
 #include "Over_EXP.h"
@@ -20,9 +21,84 @@ using namespace std;
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 
-array<SESSION, MAX_USER> clients;
+array<SESSION, MAX_USER + NPC_NUM> clients;
 
 void disconnect(int c_id);
+
+enum EVENT_TYPE { EV_MOVE };
+
+struct TIMER_EVENT {
+	int object_id;
+	EVENT_TYPE ev;
+	chrono::system_clock::time_point act_time;
+	int target_id;
+
+	constexpr bool operator < (const TIMER_EVENT& _Left) const
+	{
+		return (act_time > _Left.act_time);
+	}
+
+};
+
+priority_queue<TIMER_EVENT> timer_queue;
+mutex timer_l;
+
+void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id)
+{
+	using namespace chrono;
+	TIMER_EVENT ev;
+	ev.act_time = system_clock::now() + milliseconds(act_time);
+	ev.object_id = obj_id;
+	ev.ev = e_type;
+	ev.target_id = target_id;
+
+	timer_l.lock();
+	timer_queue.push(ev);
+	timer_l.unlock();
+}
+
+void do_timer()
+{
+	while (true)
+	{
+		this_thread::sleep_for(1ms);
+		while (true) 
+		{
+			timer_l.lock();
+
+			if (timer_queue.empty() == true) 
+			{
+				timer_l.unlock();
+				break;
+			}
+
+			if (timer_queue.top().act_time > chrono::system_clock::now()) 
+			{
+				timer_l.unlock();
+				break;
+			}
+
+			TIMER_EVENT ev = timer_queue.top();
+			timer_queue.pop();
+			timer_l.unlock();
+
+			switch (ev.ev)
+			{
+				case EV_MOVE: 
+				{
+					auto ex_over = new OVER_EXP;
+					ex_over->_comp_type = OP_NPC_MOVE;
+					ex_over->target_id = ev.object_id;
+					PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+					add_timer(ev.object_id, 100, ev.ev, ev.target_id);
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+}
 
 int get_new_client_id()
 {
@@ -65,18 +141,19 @@ void process_packet(int c_id, char* packet)
 
 		for (int i = 0; i < MAX_USER; ++i) {
 			auto& pl = clients[i];
-			if (pl._id == c_id)
-				continue;
+			if (pl._id == c_id) continue;
 			pl._sl.lock();
 			if (ST_INGAME != pl._s_state) {
 				pl._sl.unlock();
 				continue;
 			}
-			//서버입장에서 클라추가시 로그인한 클라를 제외한 모든클라한테 로그인한 클라정보 전송 // c_id - 현재 접속한 클라아이디
 			pl.send_add_object(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id]._name);
-			//서버입장에서 클라추가시 현재 접속한 클라한테만 다른 클라들에 대한 정보 전송
 			clients[c_id].send_add_object(pl._id, pl.x, pl.y, pl.z, pl.degree, pl._name);
 			pl._sl.unlock();
+		}
+
+		for (int i = MAX_USER; i < MAX_USER + NPC_NUM; i++) {
+			clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
 		}
 
 		break;
@@ -129,6 +206,24 @@ void process_packet(int c_id, char* packet)
 		}
 		break;
 	}
+	}
+}
+
+void move_npc(int npc_id)
+{
+	float z = clients[npc_id].z;
+	
+	if (clients[npc_id].chn == true) z++;
+	else z--;
+
+	if (z >= 10) clients[npc_id].chn = false;
+	else if (z <= -10) clients[npc_id].chn = true;
+
+	clients[npc_id].z = z;
+
+	for (int i = 0; i < MAX_USER;++i) {
+		auto& pl = clients;
+		pl[i].send_move_packet(npc_id, clients[npc_id].x, clients[npc_id].y, clients[npc_id].z, clients[npc_id].degree);
 	}
 }
 
@@ -225,12 +320,35 @@ void do_worker()
 			if (0 == num_bytes) disconnect(client_id);
 			delete ex_over;
 			break;
+
+		case OP_NPC_MOVE:
+		{
+			move_npc(ex_over->target_id);
+			delete ex_over;
+			break;
 		}
+		}
+	}
+}
+
+void initialize_npc()
+{
+	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
+		clients[i]._s_state = ST_INGAME;
+		clients[i].x = (i - 10) * 1.5;
+		clients[i].y = 0;
+		clients[i].z = 0;
+		clients[i].degree = 0;
+		clients[i].chn = true;
+		clients[i]._name[0] = 0;
+		clients[i]._prev_remain = 0;
+		add_timer(i, 100, EV_MOVE, i);
 	}
 }
 
 int main()
 {
+	initialize_npc();
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	g_s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -256,6 +374,9 @@ int main()
 	vector <thread> worker_threads;
 	for (int i = 0; i < 6; ++i)
 		worker_threads.emplace_back(do_worker);
+
+	thread timer_thread{ do_timer };
+	timer_thread.join();
 
 	for (auto& th : worker_threads)
 		th.join();
