@@ -34,6 +34,9 @@
     <Filter Include="DxEngine\GameUtil">
       <UniqueIdentifier>{a5e3dbce-3169-428c-b07b-7ba45f9cdf95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DxEngine\Animation">
+      <UniqueIdentifier>{6edd6423-5574-4611-bb29-b8b060e2cf2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DxEngine.cpp">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="SFML.h">
       <Filter>DxEngine\NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>DxEngine\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
