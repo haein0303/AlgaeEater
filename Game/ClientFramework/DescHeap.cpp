@@ -17,18 +17,12 @@ void DescHeap::CreateDescTable(UINT count, shared_ptr<Device> devicePtr)
 	_groupSize = _handleSize * REGISTER_COUNT;
 }
 
-void DescHeap::SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, UINT reg, shared_ptr<Device> devicePtr)
+void DescHeap::CopyDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, UINT reg, shared_ptr<Device> devicePtr)
 {
-	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
+	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = _descHeap->GetCPUDescriptorHandleForHeapStart();
 
-	UINT destRange = 1;
-	UINT srcRange = 1;
-	devicePtr->_device->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-}
-
-void DescHeap::SetSRV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, UINT reg, shared_ptr<Device> devicePtr)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
+	destHandle.ptr += _currentGroupIndex * _groupSize;
+	destHandle.ptr += reg * _handleSize;
 
 	UINT destRange = 1;
 	UINT srcRange = 1;
@@ -42,12 +36,4 @@ void DescHeap::CommitTable(shared_ptr<CmdQueue> cmdQueuePtr)
 	cmdQueuePtr->_cmdList->SetGraphicsRootDescriptorTable(0, handle);
 
 	_currentGroupIndex++;
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE DescHeap::GetCPUHandle(UINT reg)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE handle = _descHeap->GetCPUDescriptorHandleForHeapStart();
-	handle.ptr += _currentGroupIndex * _groupSize;
-	handle.ptr += reg * _handleSize;
-	return handle;
 }

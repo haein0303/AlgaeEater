@@ -72,13 +72,6 @@ void DxEngine::Draw()
 
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[swapChainPtr->_backBufferIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	cmdQueuePtr->_cmdList->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
-	constantBufferPtr->_currentIndex = 0;
-	descHeapPtr->_currentGroupIndex = 0;
-
-	ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
-	cmdQueuePtr->_cmdList->SetDescriptorHeaps(1, &descHeap);
-
 	cmdQueuePtr->_cmdList->ResourceBarrier(1, &barrier);
 
 	cmdQueuePtr->_cmdList->RSSetViewports(1, &_viewport);
@@ -92,6 +85,13 @@ void DxEngine::Draw()
 	cmdQueuePtr->_cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	cmdQueuePtr->_cmdList->SetPipelineState(psoPtr->_pipelineState.Get());
+
+	cmdQueuePtr->_cmdList->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
+	constantBufferPtr->_currentIndex = 0;
+	descHeapPtr->_currentGroupIndex = 0;
+
+	ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
+	cmdQueuePtr->_cmdList->SetDescriptorHeaps(1, &descHeap);
 
 	//·»´õ
 	for (int i = 0; i < PLAYERMAX; i++)
@@ -110,10 +110,11 @@ void DxEngine::Draw()
 				cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
-					descHeapPtr->SetCBV(handle, 0, devicePtr);
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
-					descHeapPtr->SetCBV(handle2, 1, devicePtr);
-					descHeapPtr->SetSRV(texturePtr->_srvHandle, 5, devicePtr);
+					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
+					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 				}
 
 				descHeapPtr->CommitTable(cmdQueuePtr);
@@ -133,13 +134,14 @@ void DxEngine::Draw()
 				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 
 				//·»´õ
-				cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 				cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
 				cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
-					descHeapPtr->SetCBV(handle, 0, devicePtr);
-					descHeapPtr->SetSRV(texturePtr->_srvHandle, 5, devicePtr);
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 				}
 
 				descHeapPtr->CommitTable(cmdQueuePtr);

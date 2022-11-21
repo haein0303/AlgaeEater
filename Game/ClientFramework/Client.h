@@ -47,7 +47,8 @@ public:
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(vec2, dxEngine.devicePtr, 2);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(indexVec2, dxEngine.devicePtr, 2);
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
-		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\bricks.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\bricks.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
 		dxEngine.texturePtr->CreateSRV(dxEngine.devicePtr);
 
 		dxEngine.cmdQueuePtr->WaitSync();
