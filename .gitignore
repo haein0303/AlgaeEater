@@ -23,3 +23,6 @@ Game/ClientFramework/FbxLib/libfbxsdk-md.lib
 Game/ClientFramework/FbxLib/libfbxsdk.dll
 Game/ClientFramework/FbxLib/libfbxsdk.pdb
 Document/Gr_LEVEL/
+*.lib
+Code/ClientFramework/ClientFramework/FbxLib/libfbxsdk.dll
+Code/ClientFramework/ClientFramework/FbxLib/libfbxsdk.pdb
