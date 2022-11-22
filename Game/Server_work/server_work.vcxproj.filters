@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="헤더 파일\Lua">
+      <UniqueIdentifier>{8d606d17-76db-4c86-a77f-b8c5cb888e15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -35,5 +38,25 @@
     <ClInclude Include="Session.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\lauxlib.h">
+      <Filter>헤더 파일\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lua.h">
+      <Filter>헤더 파일\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lua.hpp">
+      <Filter>헤더 파일\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="include\luaconf.h">
+      <Filter>헤더 파일\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lualib.h">
+      <Filter>헤더 파일\Lua</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="hello.lua">
+      <Filter>소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

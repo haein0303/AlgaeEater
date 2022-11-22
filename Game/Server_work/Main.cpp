@@ -8,10 +8,22 @@
 #include <windows.h>
 #include <string>
 #include <queue>
+#include <locale.h>
+#include <math.h>
+#include <cstdlib>
+#include <ctime>
 
 #include "protocol.h"
 #include "Over_EXP.h"
 #include "Session.h"
+
+extern "C" {
+#include "include/lua.h"
+#include "include/lauxlib.h"
+#include "include/lualib.h"
+}
+
+#pragma comment (lib, "lua54.lib")
 
 #pragma comment(lib, "WS2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
@@ -25,7 +37,7 @@ array<SESSION, MAX_USER + NPC_NUM> clients;
 
 void disconnect(int c_id);
 
-enum EVENT_TYPE { EV_MOVE };
+enum EVENT_TYPE { EV_MOVE, EV_RUSH, EV_CK };
 
 struct TIMER_EVENT {
 	int object_id;
@@ -91,6 +103,29 @@ void do_timer()
 					ex_over->target_id = ev.object_id;
 					PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
 					add_timer(ev.object_id, 100, ev.ev, ev.target_id);
+					break;
+				}
+				case EV_RUSH:
+				{
+					auto ex_over = new OVER_EXP;
+					ex_over->_comp_type = OP_NPC_RUSH;
+					ex_over->target_id = ev.target_id;
+					PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+					break;
+				}
+				case EV_CK:
+				{
+					srand((unsigned int)time(NULL));
+					int rd_id = rand() % MAX_USER;
+
+					if (clients[rd_id]._s_state == ST_INGAME) {
+						lua_getglobal(clients[19].L, "event_rush");
+						lua_pushnumber(clients[19].L, rd_id);
+						lua_pcall(clients[19].L, 1, 0, 0);
+					}
+					else {
+						add_timer(19, 10, EV_CK, 0);
+					}
 					break;
 				}
 				default:
@@ -207,6 +242,38 @@ void process_packet(int c_id, char* packet)
 		break;
 	}
 	}
+}
+
+void rush_npc(int player_id) 
+{
+	float x = clients[19].x;
+	float z = clients[19].z;
+
+	Sleep(10);
+
+	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 3) {
+		add_timer(19, 5000, EV_RUSH, 0);
+		return;
+	}
+
+	if (x > clients[player_id].x) x--;
+	else if(x < clients[player_id].x) x++;
+
+	if (z > clients[player_id].z) z--;
+	else if (z < clients[player_id].z) z++;
+
+	if (abs(x - clients[player_id].x) < 1) x = clients[player_id].x;
+	if (abs(z - clients[player_id].z) < 1) z = clients[player_id].z;
+
+	clients[19].x = x;
+	clients[19].z = z;
+
+	for (int i = 0; i < MAX_USER; ++i) {
+		auto& pl = clients;
+		pl[i].send_move_packet(19, clients[19].x, clients[19].y, clients[19].z, clients[19].degree);
+	}
+
+	rush_npc(player_id);
 }
 
 void move_npc(int npc_id)
@@ -327,13 +394,62 @@ void do_worker()
 			delete ex_over;
 			break;
 		}
+		case OP_NPC_RUSH:
+		{
+			rush_npc(ex_over->target_id);
+			delete ex_over;
+			break;
+		}
 		}
 	}
 }
 
+int API_get_x(lua_State* L)
+{
+	int obj_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	float x = clients[obj_id].x;
+
+	lua_pushnumber(L, x);
+	return 1;
+}
+
+int API_get_z(lua_State* L)
+{
+	int obj_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	float z = clients[obj_id].z;
+
+	lua_pushnumber(L, z);
+	return 1;
+}
+
+int API_Rush(lua_State* L)
+{
+	int client_id = lua_tonumber(L, -2);
+	int npc_id = lua_tonumber(L, -1);
+	lua_pop(L, 3);
+
+	add_timer(npc_id, 5000, EV_RUSH, client_id);
+	return 0;
+}
+
+int API_get_state(lua_State* L)
+{
+	int obj_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	int state = clients[obj_id]._s_state;
+
+	lua_pushnumber(L, state);
+	return 1;
+}
+
 void initialize_npc()
 {
-	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
+	for (int i = MAX_USER; i < MAX_USER + NPC_NUM -1; ++i) {
 		clients[i]._s_state = ST_INGAME;
 		clients[i].x = (i - 10) * 1.5;
 		clients[i].y = 0;
@@ -344,6 +460,33 @@ void initialize_npc()
 		clients[i]._prev_remain = 0;
 		add_timer(i, 100, EV_MOVE, i);
 	}
+
+	clients[19]._s_state = ST_INGAME;
+	clients[19].x = (19 - 10) * 1.5;
+	clients[19].y = 0;
+	clients[19].z = 0;
+	clients[19].degree = 0;
+	clients[19].chn = true;
+	clients[19]._name[0] = 0;
+	clients[19]._prev_remain = 0;
+
+	lua_State* L = luaL_newstate();
+	clients[19].L = L;
+
+	luaL_openlibs(L);
+	luaL_loadfile(L, "hello.lua");
+	lua_pcall(L, 0, 0, 0);
+
+	lua_getglobal(L, "set_object_id");
+	lua_pushnumber(L, 19);
+	lua_pcall(L, 1, 0, 0);
+
+	lua_register(L, "API_get_x", API_get_x);
+	lua_register(L, "API_get_z", API_get_z);
+	lua_register(L, "API_Rush", API_Rush);
+	lua_register(L, "API_get_state", API_get_state);
+
+	add_timer(19, 10000, EV_CK, 0);
 }
 
 int main()

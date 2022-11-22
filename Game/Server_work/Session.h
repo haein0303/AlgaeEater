@@ -5,6 +5,14 @@
 #include "protocol.h"
 #include "Over_EXP.h"
 
+extern "C" {
+#include "include/lua.h"
+#include "include/lauxlib.h"
+#include "include/lualib.h"
+}
+
+#pragma comment (lib, "lua54.lib")
+
 enum SESSION_STATE { ST_FREE, ST_ACCEPTED, ST_INGAME };
 
 class SESSION {
@@ -21,6 +29,9 @@ public:
 	std::mutex	_sl;
 	// 과제용 임시 변수
 	bool chn;
+	// 루아 사용 변수
+	lua_State* L;
+	bool M_cooltime;
 public:
 	SESSION();
 	~SESSION();

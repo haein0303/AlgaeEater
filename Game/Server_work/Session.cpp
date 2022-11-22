@@ -12,6 +12,7 @@ SESSION::SESSION()
 	_s_state = ST_FREE;
 	_prev_remain = 0;
 	chn = true;
+	M_cooltime = true;
 }
 
 SESSION::~SESSION()
