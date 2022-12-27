@@ -10,8 +10,7 @@ void VertexBuffer::CreateVertexBuffer(const vector<Vertex>& buffer, shared_ptr<D
 	D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
 	
-
-	if (isPlayer == 1)
+	if (isPlayer == 0)
 	{
 		devicePtr->_device->CreateCommittedResource(&heapProperty, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&_vertexBuffer));
 
@@ -24,6 +23,20 @@ void VertexBuffer::CreateVertexBuffer(const vector<Vertex>& buffer, shared_ptr<D
 		_vertexBufferView.BufferLocation = _vertexBuffer->GetGPUVirtualAddress();
 		_vertexBufferView.StrideInBytes = sizeof(Vertex);
 		_vertexBufferView.SizeInBytes = bufferSize;
+	}
+	else if (isPlayer == 1)
+	{
+		devicePtr->_device->CreateCommittedResource(&heapProperty, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&_playerVertexBuffer));
+
+		void* vertexDataBuffer = nullptr;
+		CD3DX12_RANGE readRange(0, 0);
+		_playerVertexBuffer->Map(0, &readRange, &vertexDataBuffer);
+		memcpy(vertexDataBuffer, &buffer[0], bufferSize);
+		_playerVertexBuffer->Unmap(0, nullptr);
+
+		_playerVertexBufferView.BufferLocation = _playerVertexBuffer->GetGPUVirtualAddress();
+		_playerVertexBufferView.StrideInBytes = sizeof(Vertex);
+		_playerVertexBufferView.SizeInBytes = bufferSize;
 	}
 	else
 	{

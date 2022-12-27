@@ -36,16 +36,22 @@ public:
 		dxEngine.Init(windowInfo);
 
 		//오브젝트 데이터 생성
-		vector<Vertex> vec;
-		vector<UINT> indexVec;
-		dxEngine.fbxLoaderPtr->LoadFbxData(vec, indexVec, "../Resources/AnimeCharacter.fbx");
-		dxEngine.vertexBufferPtr->CreateVertexBuffer(vec, dxEngine.devicePtr, 1);
-		dxEngine.indexBufferPtr->CreateIndexBuffer(indexVec, dxEngine.devicePtr, 1);
-		vector<Vertex> vec2;
-		vector<UINT> indexVec2;
-		dxEngine.fbxLoaderPtr->LoadFbxData(vec2, indexVec2, "../Resources/Dragon.fbx");
-		dxEngine.vertexBufferPtr->CreateVertexBuffer(vec2, dxEngine.devicePtr, 2);
-		dxEngine.indexBufferPtr->CreateIndexBuffer(indexVec2, dxEngine.devicePtr, 2);
+		vector<Vertex> cubeVertexVec;
+		vector<UINT> cubeIndexVec;
+		dxEngine.fbxLoaderPtr->LoadFbxData(cubeVertexVec, cubeIndexVec, "../Resources/Cube.fbx");
+		dxEngine.vertexBufferPtr->CreateVertexBuffer(cubeVertexVec, dxEngine.devicePtr, 0);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(cubeIndexVec, dxEngine.devicePtr, 0);
+		vector<Vertex> playerVertexVec;
+		vector<UINT> playerIndexVec;
+		dxEngine.fbxLoaderPtr->LoadFbxData(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.fbx");
+		dxEngine.vertexBufferPtr->CreateVertexBuffer(playerVertexVec, dxEngine.devicePtr, 1);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(playerIndexVec, dxEngine.devicePtr, 1);
+		vector<Vertex> npcVertexVec;
+		vector<UINT> npcIndexVec;
+		dxEngine.fbxLoaderPtr->LoadFbxData(npcVertexVec, npcIndexVec, "../Resources/Dragon.fbx");
+		dxEngine.vertexBufferPtr->CreateVertexBuffer(npcVertexVec, dxEngine.devicePtr, 2);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(npcIndexVec, dxEngine.devicePtr, 2);
+
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\bricks.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
