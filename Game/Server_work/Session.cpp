@@ -11,7 +11,8 @@ SESSION::SESSION()
 	_name[0] = 0;
 	_s_state = ST_FREE;
 	_prev_remain = 0;
-	chn = true;
+	move_stack = 0;
+	move_degree = 0;
 	M_cooltime = true;
 }
 

@@ -7,7 +7,12 @@
 #include <unordered_set>
 #include <windows.h>
 #include <string>
+#include <queue>
 #include <locale.h>
+#include <math.h>
+#include <cstdlib>
+#include <ctime>
+#include <random>
 
 #include "protocol.h"
 #include "Over_EXP.h"
@@ -21,14 +26,6 @@ extern "C" {
 
 #pragma comment (lib, "lua54.lib")
 
-
-// 데베
-#include <sqlext.h>  
-#include <string>
-//
-
-void Load_Item();
-
 #pragma comment(lib, "WS2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
 
@@ -37,9 +34,117 @@ using namespace std;
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 
-array<SESSION, MAX_USER> clients;
+default_random_engine dre;
+uniform_int_distribution<> uid{ 0, 3 };
+
+array<SESSION, MAX_USER + NPC_NUM> clients;
+
+struct CUBE {
+public:
+	float x, y, z;
+};
+
+array<CUBE, 2> cubes;
 
 void disconnect(int c_id);
+
+enum EVENT_TYPE { EV_MOVE, EV_RUSH, EV_CK };
+
+struct TIMER_EVENT {
+	int object_id;
+	EVENT_TYPE ev;
+	chrono::system_clock::time_point act_time;
+	int target_id;
+
+	constexpr bool operator < (const TIMER_EVENT& _Left) const
+	{
+		return (act_time > _Left.act_time);
+	}
+
+};
+
+priority_queue<TIMER_EVENT> timer_queue;
+mutex timer_l;
+
+void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id)
+{
+	using namespace chrono;
+	TIMER_EVENT ev;
+	ev.act_time = system_clock::now() + milliseconds(act_time);
+	ev.object_id = obj_id;
+	ev.ev = e_type;
+	ev.target_id = target_id;
+
+	timer_l.lock();
+	timer_queue.push(ev);
+	timer_l.unlock();
+}
+
+void do_timer()
+{
+	while (true)
+	{
+		this_thread::sleep_for(1ms);
+		while (true) 
+		{
+			timer_l.lock();
+
+			if (timer_queue.empty() == true) 
+			{
+				timer_l.unlock();
+				break;
+			}
+
+			if (timer_queue.top().act_time > chrono::system_clock::now()) 
+			{
+				timer_l.unlock();
+				break;
+			}
+
+			TIMER_EVENT ev = timer_queue.top();
+			timer_queue.pop();
+			timer_l.unlock();
+
+			switch (ev.ev)
+			{
+				case EV_MOVE: 
+				{
+					auto ex_over = new OVER_EXP;
+					ex_over->_comp_type = OP_NPC_MOVE;
+					ex_over->target_id = ev.object_id;
+					PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+					add_timer(ev.object_id, 100, ev.ev, ev.target_id);
+					break;
+				}
+				case EV_RUSH:
+				{
+					auto ex_over = new OVER_EXP;
+					ex_over->_comp_type = OP_NPC_RUSH;
+					ex_over->target_id = ev.target_id;
+					PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+					break;
+				}
+				case EV_CK:
+				{
+					srand((unsigned int)time(NULL));
+					int rd_id = rand() % MAX_USER;
+
+					if (clients[rd_id]._s_state == ST_INGAME) {
+						lua_getglobal(clients[19].L, "event_rush");
+						lua_pushnumber(clients[19].L, rd_id);
+						lua_pcall(clients[19].L, 1, 0, 0);
+					}
+					else {
+						add_timer(19, 10, EV_CK, 0);
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+}
 
 int get_new_client_id()
 {
@@ -93,6 +198,10 @@ void process_packet(int c_id, char* packet)
 			pl._sl.unlock();
 		}
 
+		for (int i = MAX_USER; i < MAX_USER + NPC_NUM; i++) {
+			clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
+		}
+
 		break;
 	}
 	case CS_MOVE: {
@@ -143,6 +252,90 @@ void process_packet(int c_id, char* packet)
 		}
 		break;
 	}
+	}
+}
+
+void rush_npc(int player_id) 
+{
+	float x = clients[19].x;
+	float z = clients[19].z;
+
+	Sleep(10);
+
+	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 3) {
+		add_timer(19, 5000, EV_RUSH, 0);
+		return;
+	}
+
+	for (int i = 0; i < 2; i++) {
+		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 3) {
+			cout << "기둥 충돌" << endl;
+			add_timer(19, 10000, EV_RUSH, 0);
+			return;
+		}
+	}
+
+	if (x > clients[player_id].x) x--;
+	else if(x < clients[player_id].x) x++;
+
+	if (z > clients[player_id].z) z--;
+	else if (z < clients[player_id].z) z++;
+
+	if (abs(x - clients[player_id].x) < 1) x = clients[player_id].x;
+	if (abs(z - clients[player_id].z) < 1) z = clients[player_id].z;
+
+	clients[19].x = x;
+	clients[19].z = z;
+
+	for (int i = 0; i < MAX_USER; ++i) {
+		auto& pl = clients;
+		pl[i].send_move_packet(19, clients[19].x, clients[19].y, clients[19].z, clients[19].degree);
+	}
+
+	rush_npc(player_id);
+}
+
+void move_npc(int npc_id)
+{
+	float z = clients[npc_id].z;
+	float x = clients[npc_id].x;
+
+	if (clients[npc_id].move_stack == 10) {
+		clients[npc_id].move_stack = 0;
+		clients[npc_id].move_degree = 0;
+	}
+
+	if (clients[npc_id].move_degree == 0) {
+		clients[npc_id].move_degree = uid(dre);
+	}
+
+	if (clients[npc_id].move_stack != 10) {
+		switch (clients[npc_id].move_degree)
+		{
+		case 0:
+			x++;
+			break;
+		case 1:
+			x--;
+			break;
+		case 2:
+			z++;
+			break;
+		case 3:
+			z--;
+			break;
+		default:
+			break;
+		}
+		clients[npc_id].move_stack++;
+	}
+
+	clients[npc_id].z = z;
+	clients[npc_id].x = x;
+
+	for (int i = 0; i < MAX_USER;++i) {
+		auto& pl = clients;
+		pl[i].send_move_packet(npc_id, clients[npc_id].x, clients[npc_id].y, clients[npc_id].z, clients[npc_id].degree);
 	}
 }
 
@@ -239,14 +432,123 @@ void do_worker()
 			if (0 == num_bytes) disconnect(client_id);
 			delete ex_over;
 			break;
+
+		case OP_NPC_MOVE:
+		{
+			move_npc(ex_over->target_id);
+			delete ex_over;
+			break;
 		}
+		case OP_NPC_RUSH:
+		{
+			rush_npc(ex_over->target_id);
+			delete ex_over;
+			break;
+		}
+		}
+	}
+}
+
+int API_get_x(lua_State* L)
+{
+	int obj_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	float x = clients[obj_id].x;
+
+	lua_pushnumber(L, x);
+	return 1;
+}
+
+int API_get_z(lua_State* L)
+{
+	int obj_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	float z = clients[obj_id].z;
+
+	lua_pushnumber(L, z);
+	return 1;
+}
+
+int API_Rush(lua_State* L)
+{
+	int client_id = lua_tonumber(L, -2);
+	int npc_id = lua_tonumber(L, -1);
+	lua_pop(L, 3);
+
+	add_timer(npc_id, 5000, EV_RUSH, client_id);
+	return 0;
+}
+
+int API_get_state(lua_State* L)
+{
+	int obj_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	int state = clients[obj_id]._s_state;
+
+	lua_pushnumber(L, state);
+	return 1;
+}
+
+void initialize_npc()
+{
+	for (int i = MAX_USER; i < MAX_USER + NPC_NUM -1; ++i) {
+		clients[i]._s_state = ST_INGAME;
+		clients[i].x = (i - 10) * 1.5;
+		clients[i].y = 0;
+		clients[i].z = 0;
+		clients[i].degree = 0;
+		clients[i].move_stack = 0;
+		clients[i].move_degree = 0;
+		clients[i]._name[0] = 0;
+		clients[i]._prev_remain = 0;
+		add_timer(i, 100, EV_MOVE, i);
+	}
+
+	clients[19]._s_state = ST_INGAME;
+	clients[19].x = (19 - 10) * 1.5;
+	clients[19].y = 0;
+	clients[19].z = 0;
+	clients[19].degree = 0;
+	clients[19].move_stack = 0;
+	clients[19].move_degree = 0;
+	clients[19]._name[0] = 0;
+	clients[19]._prev_remain = 0;
+
+	lua_State* L = luaL_newstate();
+	clients[19].L = L;
+
+	luaL_openlibs(L);
+	luaL_loadfile(L, "hello.lua");
+	lua_pcall(L, 0, 0, 0);
+
+	lua_getglobal(L, "set_object_id");
+	lua_pushnumber(L, 19);
+	lua_pcall(L, 1, 0, 0);
+
+	lua_register(L, "API_get_x", API_get_x);
+	lua_register(L, "API_get_z", API_get_z);
+	lua_register(L, "API_Rush", API_Rush);
+	lua_register(L, "API_get_state", API_get_state);
+
+	add_timer(19, 10000, EV_CK, 0);
+}
+
+void initialize_cube() 
+{
+	for (int i = 0; i < 2; i++) {
+		cubes[i].x = -2.0f + i * 4.0f;
+		cubes[i].y = 2.0f;
+		cubes[i].z = -5.0f;
 	}
 }
 
 int main()
 {
-	Load_Item();
-
+	initialize_npc();
+	initialize_cube();
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	g_s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -273,197 +575,12 @@ int main()
 	for (int i = 0; i < 6; ++i)
 		worker_threads.emplace_back(do_worker);
 
+	thread timer_thread{ do_timer };
+	timer_thread.join();
+
 	for (auto& th : worker_threads)
 		th.join();
 
 	closesocket(g_s_socket);
 	WSACleanup();
-}
-
-
-
-
-///////// 데베 관련 임시 함수 ///////////////////////////
-
-class item {
-public:
-	int id;
-	int lv;
-	string name;
-};
-
-array<item, 3> items;
-
-void HandleDiagnosticRecord(SQLHANDLE hHandle, SQLSMALLINT hType, RETCODE RetCode)
-{
-	SQLSMALLINT iRec = 0;
-	SQLINTEGER iError;
-	WCHAR wszMessage[1000];
-	WCHAR wszState[SQL_SQLSTATE_SIZE + 1];
-	if (RetCode == SQL_INVALID_HANDLE) {
-		fwprintf(stderr, L"Invalid handle!\n");
-		return;
-	}
-	while (SQLGetDiagRec(hType, hHandle, ++iRec, wszState, &iError, wszMessage,
-		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(WCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS) {
-
-		if (wcsncmp(wszState, L"01004", 5)) {
-			fwprintf(stderr, L"[%5.5s] %s (%d)\n", wszState, wszMessage, iError);
-		}
-	}
-}
-
-void show_error() {
-	printf("error\n");
-}
-
-//void Save_DataBase(int id, int x, int y, int level, int exp, int hp, int hpmax)
-//{
-//	SQLHENV henv;
-//	SQLHDBC hdbc;
-//	SQLHSTMT hstmt = 0;
-//	SQLRETURN retcode;
-//
-//	string a = "EXEC Update_Point ";
-//	string b = to_string(x);
-//	string c = to_string(y);
-//	string e = to_string(level);
-//	string f = to_string(exp);
-//	string g = to_string(hp);
-//	string h = to_string(hpmax);
-//
-//	char* al = clients[id]._name;
-//	string d = al;
-//	string re = a + d + ", " + b + ", " + c + ", " + e + ", " + f + ", " + g + ", " + h;
-//	wstring tmp;
-//	tmp.assign(re.begin(), re.end());
-//	const wchar_t* abab;
-//	abab = tmp.c_str();
-//
-//	setlocale(LC_ALL, "korean");
-//
-//	// Allocate environment handle  
-//	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
-//
-//	// Set the ODBC version environment attribute  
-//	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-//		retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
-//
-//		// Allocate connection handle  
-//		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-//			retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
-//
-//			// Set login timeout to 5 seconds  
-//			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-//				SQLSetConnectAttr(hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
-//
-//				// Connect to data source  
-//				retcode = SQLConnect(hdbc, (SQLWCHAR*)L"game_db_odbc", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-//
-//				// Allocate statement handle  
-//				if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-//					//std::cout << "ODBC Connect OK!" << std::endl;
-//					retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-//
-//					retcode = SQLExecDirect(hstmt, (SQLWCHAR*)abab, SQL_NTS);
-//					if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-//					}
-//
-//					// Process data  
-//					if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-//						SQLCancel(hstmt);
-//						SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
-//					}
-//
-//					SQLDisconnect(hdbc);
-//				}
-//				else {
-//					HandleDiagnosticRecord(hdbc, SQL_HANDLE_DBC, retcode);
-//				}
-//
-//				SQLFreeHandle(SQL_HANDLE_DBC, hdbc);
-//			}
-//		}
-//		SQLFreeHandle(SQL_HANDLE_ENV, henv);
-//	}
-//}
-
-void Load_Item() {
-	SQLHENV henv;
-	SQLHDBC hdbc;
-	SQLHSTMT hstmt = 0;
-	SQLRETURN retcode;
-
-	SQLINTEGER ditem_id;
-	SQLINTEGER ditem_LV;
-	SQLVARCHAR ditem_name;
-	SQLLEN cbID = 0, cbLV = 0, cbNAME = 0;
-
-	setlocale(LC_ALL, "korean");
-
-
-	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
-
-
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-		retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
-
-
-		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-			retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
-
-
-			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-				SQLSetConnectAttr(hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
-
-
-				retcode = SQLConnect(hdbc, (SQLWCHAR*)L"game_db_odbc", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-
-
-				if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-
-					retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-
-					retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"EXEC load_item", SQL_NTS);
-					if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-
-						retcode = SQLBindCol(hstmt, 1, SQL_C_LONG, &ditem_id, 20, &cbID);
-						retcode = SQLBindCol(hstmt, 2, SQL_C_LONG, &ditem_LV, 20, &cbLV);
-						retcode = SQLBindCol(hstmt, 3, SQL_C_WCHAR, &ditem_name, 50, &cbNAME);
-
-
-						for (int i = 0; ; i++) {
-							retcode = SQLFetch(hstmt);
-							if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
-								show_error();
-							if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
-							{
-								items[i].id = ditem_id;
-								items[i].lv = ditem_LV;
-								items[i].name = reinterpret_cast<char*>(ditem_name);
-
-								cout << items[i].id << ", " << items[i].lv << ", " << items[i].name << endl;
-							}
-							else
-								break;
-						}
-					}
-
-
-					if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-						SQLCancel(hstmt);
-						SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
-					}
-
-					SQLDisconnect(hdbc);
-				}
-				else {
-					HandleDiagnosticRecord(hdbc, SQL_HANDLE_DBC, retcode);
-				}
-
-				SQLFreeHandle(SQL_HANDLE_DBC, hdbc);
-			}
-		}
-		SQLFreeHandle(SQL_HANDLE_ENV, henv);
-	}
 }

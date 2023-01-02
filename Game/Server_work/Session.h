@@ -28,7 +28,8 @@ public:
 	int		_prev_remain;
 	std::mutex	_sl;
 	// 과제용 임시 변수
-	bool chn;
+	int move_stack;
+	int move_degree;
 	// 루아 사용 변수
 	lua_State* L;
 	bool M_cooltime;
