@@ -3,10 +3,12 @@
 class IndexBuffer
 {
 public:
-	ComPtr<ID3D12Resource> _indexBuffer;
-	D3D12_INDEX_BUFFER_VIEW _indexBufferView;
+	ComPtr<ID3D12Resource> _playerIndexBuffer;
+	D3D12_INDEX_BUFFER_VIEW _playerIndexBufferView;
 	ComPtr<ID3D12Resource> _npcIndexBuffer;
 	D3D12_INDEX_BUFFER_VIEW _npcIndexBufferView;
+	ComPtr<ID3D12Resource> _indexBuffer;
+	D3D12_INDEX_BUFFER_VIEW _indexBufferView;
 	UINT _indexCount = 0;
 
 	//인덱스 버퍼 생성

@@ -106,8 +106,8 @@ void DxEngine::Draw()
 
 				//·»´õ
 				cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
-				cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+				cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
+				cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -148,6 +148,27 @@ void DxEngine::Draw()
 				cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
 			}
 		}
+	}
+	for(int i = 0 ;i < 2; i++)
+	{
+		//¿ùµå º¯È¯
+		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(-2.0f + i * 4.0f, 2.0f, -5.0f));
+		XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
+		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+
+		//·»´õ
+		cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
+		cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+			texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+			descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+		}
+
+		descHeapPtr->CommitTable(cmdQueuePtr);
+		cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
 	}
 	
 
