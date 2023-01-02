@@ -268,6 +268,63 @@
  * 클라이언트 구현 필요 : 4색기둥 소환기능, 기둥 파괴 (기둥을 부서진 기둥 모델로 젼환)
 
 
+2023-01-02
+-------------
+1. 종합설계기획 발표 통과
+ - 
+2. 진행상황
+ - 멀티쓰레드 렌더링
+  * 멀티쓰레드 프로그래밍에 대한 수업을 받은 적이 없기 때문에 헤매고 있다. => 멀티쓰레드 수업이 필요하다. (OS, 게임서버프로그래밍, 멀티코어프로그래밍) 
+ - 파티클
+  * PLAN_A와 PLAN_B의 성능차이를 보자  (파티클 개수가 1000개일때 10000개일때 100000, 1000000, 10000000, 100000000 일때 각각 비교)
+   PLAN_A : 폴리곤2개로 빌보드를 만들고, 렌더링  (POLYGON_LIST렌더링, 기존에 많이 쓰이던 방식)
+   PLAN_B : POINT를 렌더링하면, 기하 쉐이더에서 빌보드를 생성해주고 이후는 PLAN_A와 동일
+  * 컴퓨트 쉐이더를 사용해서 파티클과 Object 충돌, 중력 가속도와 공기저항 계산.
+    쉬운 것 : 중력가속도, 공기저항
+    어려운 것 : 충돌대상 객체를 컴퓨트 쉐이더에 넣는 방법
+    다른 사람들의 파티클 충돌구현을 가져와서 구현해 볼것
+               - https://www.gdcvault.com/play/1020002/Advanced-Visual-Effects-with-DirectX,   https://gpuopen.com/learn/gpuparticles11-directx-11-sdk-sample/   
+               - https://www.diva-portal.org/smash/get/diva2:1480568/FULLTEXT01.pdf
+ - 현재 구현상황
+  * 화면에 플레이어와 용이 나온다.
+  * 서버에서 멀티클라이언트 동기화가 된다.
+  * 용이 LUA Script로 돌진 한다.
 
+3. ToDo
+ - 로보트 10 마리 : 랜덤하게 이동
+ - 용 한마리 : 10초마다 가장 가까운 플레이어에게 돌진 (1초에 5미터 전진)
+ - 게임 UI 개선 : 방향전환 구현(마우스 이동),  플레이어/로보트/용 이동방향을 바라보도록 할 것
+ - 멀티쓰레드 렌더링 : 두개의 쓰레드에서 렌더링 (하나는 로직, 하나는 렌더링)
+  * C++11 쓰레드 사용 (STD THREAD)
+  * 두개의 쓰레드는 같은 메모리를 공유해야 한다.
+   - 모든 변수를 전역변수
+   - 하나의 렌더링 Object에서 두개의 쓰레드 실행
+       class RENDERING {
+             do_logic_thread() {
+                서버에서 받은 위치로 객체 이동
+                파티클 위치 업데이트
+                객체에 애니메이션 적용 (어떤 애니메이션인가, 몇 번째 프레임인가)
+             }
+             do_rendering_thread() {     // command list recoding과 execute를 분리하는 것은 다음에 하자
+                렌더링
+             }
+        }
+       
+        RENDERING g_render;
+        std::thread l_thread { &RENDERING::do_logic_thread, &g_render };
+        std::thread r_thread { &RENDERING::do_render_thread, &g_render};
+        // https://stackoverflow.com/questions/10673585/start-thread-with-member-function
+        주의 할 점 : Data Race주의 (필요하면 mutex)
+  
+ - 파티클 : 용이 플레이어와 부딪치면 파티클 생성 (별 100개가 1초동안 랜덤한 방향으로 이동) 
+ - 스크립트 : 용은 5초마다 자기 주위에 4개의 기둥을 소환  
+ - 스크립트 : Live Edit 구현, 서버를 재부팅하지 않고도 스크립트를 수정할 수 있는 기능
+   * GM 콘솔 또는 디버깅 콘솔기능 : Text 클라이언트, 서버에 접속해서 명령을 전달하는 클라이언트, 그래픽 X , 추가 프로토콜 필요.
+   * "Reload Dragon#2" => Object ID가 2인 드래곤의 스크립트를 리로드 (가상머신 close, 재 생성)
+
+ - 이제부터 1주일 단위로 작업일지 작성 (샘플참조)
+
+4. 다음 미팅
+ - 1월 16일 월요일 오전 10시 30분
 
 
