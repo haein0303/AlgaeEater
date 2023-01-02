@@ -202,6 +202,10 @@ void process_packet(int c_id, char* packet)
 			clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
 		}
 
+		/*for (int i = 0; i < 2; ++i) {
+			clients[c_id].send_add_object(i + MAX_USER + NPC_NUM, cubes[i].x, cubes[i].y, cubes[i].z, 0, 0);
+		}*/
+
 		break;
 	}
 	case CS_MOVE: {
@@ -263,7 +267,7 @@ void rush_npc(int player_id)
 	Sleep(10);
 
 	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 3) {
-		add_timer(19, 5000, EV_RUSH, 0);
+		add_timer(19, 10000, EV_RUSH, 0);
 		return;
 	}
 
