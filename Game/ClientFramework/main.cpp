@@ -1,5 +1,6 @@
 #include "Client.h"
 
+
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nCmdShow)
 {
 	Client client;
@@ -7,19 +8,33 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	client.Init(hInst, nCmdShow);
 	//매 프레임마다 업데이트
 	MSG msg = { 0 };
+
+
+	thread logical_thread{ &Client::Update,&client };
+	thread render_thread{ &Client::Draw,&client };
+
+
+
 	while (msg.message != WM_QUIT)
 	{
+		
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			cout << msg.message << endl;
 		}
 		else
 		{
-			//매 프레임마다 그리기
-			client.Update();
+			
 		}
 	}
+
+	logical_thread.join();
+	render_thread.join();
+
+
+	client.life_control(false);
 
 	return (int)msg.wParam;
 	

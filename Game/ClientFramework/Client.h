@@ -10,6 +10,8 @@ public:
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
 
+	atomic<bool> islive = true;
+
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
 		//윈도우 객체 초기화
@@ -62,8 +64,22 @@ public:
 
 	void Update()
 	{
-		dxEngine.Update(windowInfo, isActive);
-		dxEngine.Draw();
+		while (islive) {
+			dxEngine.Update(windowInfo, isActive);
+		}
+		return;
+	}
+
+	void Draw() {
+		while (islive) {
+			dxEngine.Draw();
+		}
+		return;
+	}
+
+	void life_control(bool input) {
+		cout << islive << endl;
+		islive = input;
 	}
 };
 

@@ -44,7 +44,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.z = playerArr[networkPtr->myClientId].transform.z;
 		networkPtr->send_packet(&p);
 	}
-	else if (_states['S'] == 1)
+	if (_states['S'] == 1)
 	{
 		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(XM_PI / 2.0f);
 		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(XM_PI / 2.0f);
@@ -58,7 +58,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.z = playerArr[networkPtr->myClientId].transform.z;
 		networkPtr->send_packet(&p);
 	}
-	else if (_states['A'] == 1)
+	if (_states['A'] == 1)
 	{
 		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(0.0f);
 		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(0.0f);
@@ -72,7 +72,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.z = playerArr[networkPtr->myClientId].transform.z;
 		networkPtr->send_packet(&p);
 	}
-	else if (_states['D'] == 1)
+	if (_states['D'] == 1)
 	{
 		playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(0.0f);
 		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(0.0f);

@@ -13,6 +13,8 @@
 #include "d3dx12.h"
 #include <DirectXColors.h>
 #include <vector>
+#include <thread>
+#include <mutex>
 
 #include <string>
 #include <filesystem>

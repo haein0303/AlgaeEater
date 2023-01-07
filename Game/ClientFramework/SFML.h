@@ -6,7 +6,7 @@ class SFML
 {
 public:
 	sf::TcpSocket socket;
-	int myClientId;
+	int myClientId = 0;
 
 	void ConnectServer() //서버에 접속시 보내주는 부분
 	{

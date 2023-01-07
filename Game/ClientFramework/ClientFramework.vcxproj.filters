@@ -37,6 +37,9 @@
     <Filter Include="DxEngine\Animation">
       <UniqueIdentifier>{6edd6423-5574-4611-bb29-b8b060e2cf2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{1f0034f6-10e6-4a3a-9ea3-99abd6e2beed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DxEngine.cpp">
