@@ -3,6 +3,7 @@
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 bool isActive = true;
+atomic<bool> g_isLive = true;
 
 class Client
 {
@@ -10,7 +11,7 @@ public:
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
 
-	atomic<bool> islive = true;
+	
 
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
@@ -64,22 +65,22 @@ public:
 
 	void Update()
 	{
-		while (islive) {
+		while (g_isLive) {
 			dxEngine.Update(windowInfo, isActive);
 		}
 		return;
 	}
 
 	void Draw() {
-		while (islive) {
+		while (g_isLive) {
 			dxEngine.Draw();
 		}
 		return;
 	}
 
 	void life_control(bool input) {
-		cout << islive << endl;
-		islive = input;
+		cout << g_isLive << endl;
+		g_isLive = input;
 	}
 };
 
@@ -98,6 +99,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		}
 		return 0;
 	case WM_DESTROY:
+		g_isLive = false;
 		PostQuitMessage(0);
 		break;
 	case WM_CLOSE:

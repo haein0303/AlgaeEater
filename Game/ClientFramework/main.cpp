@@ -28,13 +28,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 		{
 			
 		}
+		
 	}
 
 	logical_thread.join();
 	render_thread.join();
 
 
-	client.life_control(false);
+
 
 	return (int)msg.wParam;
 	
