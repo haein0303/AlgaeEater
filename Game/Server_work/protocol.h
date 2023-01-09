@@ -14,6 +14,7 @@ constexpr char SC_LOGIN_OK = 11;
 constexpr char SC_ADD_OBJECT = 12;
 constexpr char SC_REMOVE_OBJECT = 13;
 constexpr char SC_MOVE_OBJECT = 14;
+constexpr char SC_ADD_CUBE = 15;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET {
@@ -47,6 +48,14 @@ struct SC_ADD_OBJECT_PACKET {
 	float	x, y, z;
 	float	degree;
 	char	name[NAME_SIZE];
+};
+
+struct SC_ADD_CUBE_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+	float	x, y, z;
+	float	degree;
 };
 
 struct SC_REMOVE_OBJECT_PACKET {
