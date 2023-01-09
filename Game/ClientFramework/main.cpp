@@ -10,7 +10,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	MSG msg = { 0 };
 
 
-	thread logical_thread{ &Client::Update,&client };
+	//thread logical_thread{ &Client::Update,&client };
 	thread render_thread{ &Client::Draw,&client };
 
 
@@ -22,16 +22,16 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			cout << msg.message << endl;
+			//cout << msg.message << endl;
 		}
 		else
 		{
-			
+			client.Update();
 		}
 		
 	}
 
-	logical_thread.join();
+	//logical_thread.join();
 	render_thread.join();
 
 

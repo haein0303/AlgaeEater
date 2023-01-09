@@ -65,10 +65,7 @@ public:
 
 	void Update()
 	{
-		while (g_isLive) {
-			dxEngine.Update(windowInfo, isActive);
-		}
-		return;
+		dxEngine.Update(windowInfo, isActive);
 	}
 
 	void Draw() {
@@ -79,7 +76,7 @@ public:
 	}
 
 	void life_control(bool input) {
-		cout << g_isLive << endl;
+		//cout << g_isLive << endl;
 		g_isLive = input;
 	}
 };
