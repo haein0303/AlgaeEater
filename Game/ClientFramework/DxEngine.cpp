@@ -27,7 +27,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	SetWindowPos(windowInfo.hwnd, 0, 100, 100, windowInfo.ClientWidth, windowInfo.ClientHeight, 0);
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
 
-	inputPtr->Init(); //벡터 사이즈 초기화
+	inputPtr->Init(windowInfo); //벡터 사이즈 초기화
 	for (int i = 0; i < PLAYERMAX; i++)
 	{
 		playerArr[i].transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -47,10 +47,11 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 	if (isActive)
 	{
 		inputPtr->InputKey(timerPtr, playerArr, networkPtr);
+		inputPtr->inputMouse(angle);
 	}
 
 	//VP 변환
-	XMVECTOR pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x, 0.0f, playerArr[networkPtr->myClientId].transform.z - 10.0f, 1.0f);
+	XMVECTOR pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x + cosf(angle.x*XM_PI / 180.f)*7 , sinf(angle.y * XM_PI / 180.f) * 5, playerArr[networkPtr->myClientId].transform.z + sinf(angle.x * XM_PI / 180.f) *7, 1.0f);
 	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId].transform.x, playerArr[networkPtr->myClientId].transform.y, playerArr[networkPtr->myClientId].transform.z, playerArr[networkPtr->myClientId].transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up); //뷰 변환 행렬

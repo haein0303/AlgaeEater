@@ -58,4 +58,8 @@ private:
 	//화면 크기 관련
 	D3D12_VIEWPORT	_viewport;
 	D3D12_RECT		_scissorRect;
+	
+	//화면회전(이후에 캐릭터 요소로 옮길 예정)
+	POINT angle = { 0,0 };
+
 };
