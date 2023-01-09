@@ -151,8 +151,8 @@ struct Obj
 //윈도우와 관련된 정보
 struct WindowInfo {
 	HWND hwnd;
-	int ClientWidth = 600;
-	int ClientHeight = 600;
+	int ClientWidth = 1280;
+	int ClientHeight = 720;
 };
 
 //SFML

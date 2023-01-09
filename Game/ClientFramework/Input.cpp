@@ -9,9 +9,12 @@ void Input::Init()
 void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr)
 {
 	HWND hwnd = GetActiveWindow();
+	bool key_toggle = false;
 
 	for (UINT key = 0; key < 255; key++)
 	{
+		//key 정보
+		//
 		if (GetAsyncKeyState(key) & 0x8000)
 		{
 			if (_states[key] == 1 || _states[key] == 2)
@@ -29,54 +32,95 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 				_states[key] = 0;
 		}
 	}
+	/*
+	{
+		if (_states['W'] == 1)
+		{
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(XM_PI / 2.0f);
+
+			CS_MOVE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_MOVE;
+			//p.degree = playerArr[myClientId].rotate.y;
+			p.x = playerArr[networkPtr->myClientId].transform.x;
+			p.y = playerArr[networkPtr->myClientId].transform.y;
+			p.z = playerArr[networkPtr->myClientId].transform.z;
+			networkPtr->send_packet(&p);
+		}
+		if (_states['S'] == 1)
+		{
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(XM_PI / 2.0f);
+
+			CS_MOVE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_MOVE;
+			//p.degree = playerArr[myClientId].rotate.y;
+			p.x = playerArr[networkPtr->myClientId].transform.x;
+			p.y = playerArr[networkPtr->myClientId].transform.y;
+			p.z = playerArr[networkPtr->myClientId].transform.z;
+			networkPtr->send_packet(&p);
+		}
+		if (_states['A'] == 1)
+		{
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(0.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(0.0f);
+
+			CS_MOVE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_MOVE;
+			//p.degree = playerArr[myClientId].rotate.y;
+			p.x = playerArr[networkPtr->myClientId].transform.x;
+			p.y = playerArr[networkPtr->myClientId].transform.y;
+			p.z = playerArr[networkPtr->myClientId].transform.z;
+			networkPtr->send_packet(&p);
+		}
+		if (_states['D'] == 1)
+		{
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(0.0f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(0.0f);
+
+			CS_MOVE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_MOVE;
+			//p.degree = playerArr[myClientId].rotate.y;
+			p.x = playerArr[networkPtr->myClientId].transform.x;
+			p.y = playerArr[networkPtr->myClientId].transform.y;
+			p.z = playerArr[networkPtr->myClientId].transform.z;
+			networkPtr->send_packet(&p);
+		}
+	}
+	*/
+
 
 	if (_states['W'] == 1)
 	{
 		playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(XM_PI / 2.0f);
 		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(XM_PI / 2.0f);
-
-		CS_MOVE_PACKET p;
-		p.size = sizeof(p);
-		p.type = CS_MOVE;
-		//p.degree = playerArr[myClientId].rotate.y;
-		p.x = playerArr[networkPtr->myClientId].transform.x;
-		p.y = playerArr[networkPtr->myClientId].transform.y;
-		p.z = playerArr[networkPtr->myClientId].transform.z;
-		networkPtr->send_packet(&p);
+		key_toggle = true;
 	}
 	if (_states['S'] == 1)
 	{
 		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(XM_PI / 2.0f);
 		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(XM_PI / 2.0f);
-
-		CS_MOVE_PACKET p;
-		p.size = sizeof(p);
-		p.type = CS_MOVE;
-		//p.degree = playerArr[myClientId].rotate.y;
-		p.x = playerArr[networkPtr->myClientId].transform.x;
-		p.y = playerArr[networkPtr->myClientId].transform.y;
-		p.z = playerArr[networkPtr->myClientId].transform.z;
-		networkPtr->send_packet(&p);
+		key_toggle = true;
 	}
 	if (_states['A'] == 1)
 	{
 		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(0.0f);
 		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(0.0f);
-
-		CS_MOVE_PACKET p;
-		p.size = sizeof(p);
-		p.type = CS_MOVE;
-		//p.degree = playerArr[myClientId].rotate.y;
-		p.x = playerArr[networkPtr->myClientId].transform.x;
-		p.y = playerArr[networkPtr->myClientId].transform.y;
-		p.z = playerArr[networkPtr->myClientId].transform.z;
-		networkPtr->send_packet(&p);
+		key_toggle = true;
 	}
 	if (_states['D'] == 1)
 	{
 		playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(0.0f);
 		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(0.0f);
+		key_toggle = true;
+	}
 
+	// 키가 눌렸었다면 패킷 송신
+	if (key_toggle) {
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);
 		p.type = CS_MOVE;
@@ -86,4 +130,5 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.z = playerArr[networkPtr->myClientId].transform.z;
 		networkPtr->send_packet(&p);
 	}
+	
 }
