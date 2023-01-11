@@ -87,7 +87,6 @@ public:
 		{
 			SC_ADD_OBJECT_PACKET* my_packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(ptr);
 			int id = my_packet->id;
-			printf_s("%d\n", id);
 			if (id < PLAYERMAX) {
 				playerArr[id].on = true;
 				playerArr[id].transform.x = my_packet->x;
@@ -129,6 +128,21 @@ public:
 			SC_REMOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(ptr);
 			int id = my_packet->id;
 			playerArr[id].on = false;
+			break;
+		}
+		case SC_ADD_CUBE:
+		{
+			SC_ADD_CUBE_PACKET* my_packet = reinterpret_cast<SC_ADD_CUBE_PACKET*>(ptr);
+			int id = my_packet->id;
+			printf_s("%d\n", id);
+			if (id >= PLAYERMAX)
+			{
+				//npcArr[id - PLAYERMAX].on = true;
+				//npcArr[id - PLAYERMAX].transform.x = my_packet->x;
+				//npcArr[id - PLAYERMAX].transform.y = my_packet->y;
+				//npcArr[id - PLAYERMAX].transform.z = my_packet->z;
+			}
+
 			break;
 		}
 		default:
