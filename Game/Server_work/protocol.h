@@ -50,6 +50,14 @@ struct SC_ADD_OBJECT_PACKET {
 	char	name[NAME_SIZE];
 };
 
+struct SC_ADD_CUBE_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+	float	x, y, z;
+	float	degree;
+};
+
 struct SC_REMOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;
@@ -63,14 +71,6 @@ struct SC_MOVE_OBJECT_PACKET {
 	float	x, y, z;
 	float	degree;
 	unsigned int client_time;
-};
-
-struct SC_ADD_CUBE_PACKET {
-	unsigned char size;
-	char	type;
-	int		id;
-	float	x, y, z;
-	float	degree;
 };
 
 #pragma pack (pop)

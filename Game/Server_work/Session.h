@@ -42,4 +42,5 @@ public:
 	void send_move_packet(int c_id, float x, float y, float z, float degree);
 	void send_add_object(int c_id, float x, float y, float z, float degree, char* name);
 	void send_remove_object(int c_id);
+	void send_cube_add(int c_id, float x, float y, float z, float degree);
 };

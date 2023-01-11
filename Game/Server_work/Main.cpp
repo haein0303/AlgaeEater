@@ -42,13 +42,16 @@ array<SESSION, MAX_USER + NPC_NUM> clients;
 struct CUBE {
 public:
 	float x, y, z;
+	float degree;
 };
 
-array<CUBE, 2> cubes;
+array<CUBE, 4> cubes;
 
 void disconnect(int c_id);
 
-enum EVENT_TYPE { EV_MOVE, EV_RUSH, EV_CK };
+void initialize_cube(float x, float y, float z);
+
+enum EVENT_TYPE { EV_MOVE, EV_RUSH, EV_CK, EV_CB };
 
 struct TIMER_EVENT {
 	int object_id;
@@ -133,10 +136,16 @@ void do_timer()
 						lua_getglobal(clients[19].L, "event_rush");
 						lua_pushnumber(clients[19].L, rd_id);
 						lua_pcall(clients[19].L, 1, 0, 0);
+						add_timer(19, 5000, EV_CB, 0);
 					}
 					else {
 						add_timer(19, 10, EV_CK, 0);
 					}
+					break;
+				}
+				case EV_CB:
+				{
+					initialize_cube(clients[19].x, clients[19].y, clients[19].z);
 					break;
 				}
 				default:
@@ -144,6 +153,11 @@ void do_timer()
 			}
 		}
 	}
+}
+
+void reset_lua()
+{
+	cout << "¸í·É µé¾î¿È" << endl;
 }
 
 int get_new_client_id()
@@ -202,10 +216,6 @@ void process_packet(int c_id, char* packet)
 			clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
 		}
 
-		/*for (int i = 0; i < 2; ++i) {
-			clients[c_id].send_add_object(i + MAX_USER + NPC_NUM, cubes[i].x, cubes[i].y, cubes[i].z, 0, 0);
-		}*/
-
 		break;
 	}
 	case CS_MOVE: {
@@ -259,7 +269,7 @@ void process_packet(int c_id, char* packet)
 	}
 }
 
-void rush_npc(int player_id) 
+void rush_npc(int player_id)
 {
 	float x = clients[19].x;
 	float z = clients[19].z;
@@ -271,7 +281,7 @@ void rush_npc(int player_id)
 		return;
 	}
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 3) {
 			cout << "±âµÕ Ãæµ¹" << endl;
 			add_timer(19, 10000, EV_RUSH, 0);
@@ -512,7 +522,7 @@ void initialize_npc()
 	}
 
 	clients[19]._s_state = ST_INGAME;
-	clients[19].x = (19 - 10) * 1.5;
+	clients[19].x = 9 * 1.5;
 	clients[19].y = 0;
 	clients[19].z = 0;
 	clients[19].degree = 0;
@@ -540,19 +550,55 @@ void initialize_npc()
 	add_timer(19, 10000, EV_CK, 0);
 }
 
-void initialize_cube() 
+void initialize_cube(float x, float y, float z)
 {
-	for (int i = 0; i < 2; i++) {
-		cubes[i].x = -2.0f + i * 4.0f;
-		cubes[i].y = 2.0f;
-		cubes[i].z = -5.0f;
+	for (int i = 0; i < 4; i++) {
+		switch (i)
+		{
+		case 0:
+			cubes[i].x = x;
+			cubes[i].y = y;
+			cubes[i].z = z - 10.0f;
+			cubes[i].degree = 0;
+			break;
+		case 1:
+			cubes[i].x = x - 10.0f;
+			cubes[i].y = y;
+			cubes[i].z = z;
+			cubes[i].degree = 0;
+			break;
+		case 2:
+			cubes[i].x = x;
+			cubes[i].y = y;
+			cubes[i].z = z + 10.0f;
+			cubes[i].degree = 0;
+			break;
+		case 3:
+			cubes[i].x = x + 10.0f;
+			cubes[i].y = y;
+			cubes[i].z = z;
+			cubes[i].degree = 0;
+			break;
+		}
+
+		for (int j = 0; j < MAX_USER; ++j) {
+			auto& pl = clients[j];
+			pl._sl.lock();
+			if (ST_INGAME != pl._s_state) {
+				pl._sl.unlock();
+				continue;
+			}
+			pl.send_cube_add(i, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
+			pl._sl.unlock();
+		}
 	}
+
+	add_timer(19, 5000, EV_CB, 0);
 }
 
 int main()
 {
 	initialize_npc();
-	initialize_cube();
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	g_s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -581,7 +627,7 @@ int main()
 
 	thread timer_thread{ do_timer };
 	timer_thread.join();
-
+	
 	for (auto& th : worker_threads)
 		th.join();
 
