@@ -86,4 +86,13 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.z = playerArr[networkPtr->myClientId].transform.z;
 		networkPtr->send_packet(&p);
 	}
+
+	if (_states['1'] == 1)
+	{
+		CS_CONSOLE_PACKET p;
+		p.size = sizeof(p);
+		p.type = CS_CONSOLE;
+		p.console = 1;
+		networkPtr->send_packet(&p);
+	}
 }

@@ -165,6 +165,7 @@ constexpr int NPC_NUM = 10;
 // Packet ID
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
+constexpr char CS_CONSOLE = 2;
 
 constexpr char SC_LOGIN_OK = 11;
 constexpr char SC_ADD_OBJECT = 12;
@@ -187,6 +188,12 @@ struct CS_MOVE_PACKET {
 	float	y;
 	float	z;
 	unsigned  client_time;
+};
+
+struct CS_CONSOLE_PACKET {
+	unsigned char size;
+	char	type;
+	int console;
 };
 
 struct SC_LOGIN_OK_PACKET {
