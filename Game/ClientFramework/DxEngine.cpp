@@ -40,7 +40,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr);
+	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr);
 
 	timerPtr->TimerUpdate(); //타이머 업데이트
 	timerPtr->ShowFps(windowInfo); //fps출력
@@ -149,26 +149,29 @@ void DxEngine::Draw()
 			}
 		}
 	}
-	for(int i = 0 ;i < 2; i++)
+	for(int i = 0 ;i < CubeMax; i++)
 	{
-		//월드 변환
-		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(-2.0f + i * 4.0f, 2.0f, -5.0f));
-		XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
-
-		//렌더
-		cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
-		cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+		if (cubeArr[i].on == true)
 		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-			texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-			descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
-		}
+			//월드 변환
+			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.f, cubeArr[i].transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
+			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 
-		descHeapPtr->CommitTable(cmdQueuePtr);
-		cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
+			//렌더
+			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
+			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+				texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable(cmdQueuePtr);
+			cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
+		}
 	}
 	
 

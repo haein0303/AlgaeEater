@@ -26,7 +26,7 @@ public:
 		send_packet(&p);
 	}
 
-	void ReceiveServer(Obj* playerArr, Obj* npcArr) //서버에서 받는거, clientMain
+	void ReceiveServer(Obj* playerArr, Obj* npcArr, Obj* cubeArr) //서버에서 받는거, clientMain
 	{
 		char net_buf[BUF_SIZE];
 		size_t	received;
@@ -38,10 +38,10 @@ public:
 			while (true);
 		}
 		if (recv_result != sf::Socket::NotReady)
-			if (received > 0) process_data(net_buf, received, playerArr, npcArr);
+			if (received > 0) process_data(net_buf, received, playerArr, npcArr, cubeArr);
 	}
 
-	void process_data(char* net_buf, size_t io_byte, Obj* playerArr, Obj* npcArr)
+	void process_data(char* net_buf, size_t io_byte, Obj* playerArr, Obj* npcArr, Obj* cubeArr)
 	{
 		char* ptr = net_buf;
 		static size_t in_packet_size = 0;
@@ -52,7 +52,7 @@ public:
 			if (0 == in_packet_size) in_packet_size = ptr[0];
 			if (io_byte + saved_packet_size >= in_packet_size) {
 				memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
-				ProcessPacket(packet_buffer, playerArr, npcArr);
+				ProcessPacket(packet_buffer, playerArr, npcArr, cubeArr);
 				ptr += in_packet_size - saved_packet_size;
 				io_byte -= in_packet_size - saved_packet_size;
 				in_packet_size = 0;
@@ -67,7 +67,7 @@ public:
 	}
 
 	//서버에서 데이터 받을때(패킷종류별로 무슨 작업 할건지 ex: 이동 패킷, 로그인 패킷 how to 처리)
-	void ProcessPacket(char* ptr, Obj* playerArr, Obj* npcArr)
+	void ProcessPacket(char* ptr, Obj* playerArr, Obj* npcArr, Obj* cubeArr)
 	{
 		static bool first_time = true;
 		switch (ptr[1])
@@ -134,14 +134,10 @@ public:
 		{
 			SC_ADD_CUBE_PACKET* my_packet = reinterpret_cast<SC_ADD_CUBE_PACKET*>(ptr);
 			int id = my_packet->id;
-			printf_s("%d\n", id);
-			if (id >= PLAYERMAX)
-			{
-				//npcArr[id - PLAYERMAX].on = true;
-				//npcArr[id - PLAYERMAX].transform.x = my_packet->x;
-				//npcArr[id - PLAYERMAX].transform.y = my_packet->y;
-				//npcArr[id - PLAYERMAX].transform.z = my_packet->z;
-			}
+			cubeArr[id].on = true;
+			cubeArr[id].transform.x = my_packet->x;
+			cubeArr[id].transform.y = my_packet->y;
+			cubeArr[id].transform.z = my_packet->z;
 
 			break;
 		}

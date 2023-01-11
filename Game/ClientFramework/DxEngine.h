@@ -51,6 +51,7 @@ public:
 	//오브젝트 객체 생성
 	Obj playerArr[PLAYERMAX];
 	Obj npcArr[NPCMAX];
+	Obj cubeArr[CubeMax];
 
 private:
 	//화면 크기 관련
