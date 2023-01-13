@@ -34,6 +34,8 @@ using namespace std;
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 
+lua_State* L;
+
 default_random_engine dre;
 uniform_int_distribution<> uid{ 0, 3 };
 
@@ -48,6 +50,7 @@ public:
 array<CUBE, 4> cubes;
 
 void disconnect(int c_id);
+void reset_lua();
 
 void initialize_cube(float x, float y, float z);
 
@@ -155,11 +158,6 @@ void do_timer()
 	}
 }
 
-void reset_lua()
-{
-	cout << "¸í·É µé¾î¿È" << endl;
-}
-
 int get_new_client_id()
 {
 	for (int i = 0; i < MAX_USER; ++i) {
@@ -264,6 +262,10 @@ void process_packet(int c_id, char* packet)
 			pl.send_move_packet(c_id, x, y, z, degree);
 			pl._sl.unlock();
 		}
+		break;
+	}
+	case CS_CONSOLE: {
+		reset_lua();
 		break;
 	}
 	}
@@ -506,6 +508,27 @@ int API_get_state(lua_State* L)
 	return 1;
 }
 
+void reset_lua()
+{
+	lua_close(L);
+
+	L = luaL_newstate();
+	clients[19].L = L;
+
+	luaL_openlibs(L);
+	luaL_loadfile(L, "hello.lua");
+	lua_pcall(L, 0, 0, 0);
+
+	lua_getglobal(L, "set_object_id");
+	lua_pushnumber(L, 19);
+	lua_pcall(L, 1, 0, 0);
+
+	lua_register(L, "API_get_x", API_get_x);
+	lua_register(L, "API_get_z", API_get_z);
+	lua_register(L, "API_Rush", API_Rush);
+	lua_register(L, "API_get_state", API_get_state);
+}
+
 void initialize_npc()
 {
 	for (int i = MAX_USER; i < MAX_USER + NPC_NUM -1; ++i) {
@@ -531,7 +554,7 @@ void initialize_npc()
 	clients[19]._name[0] = 0;
 	clients[19]._prev_remain = 0;
 
-	lua_State* L = luaL_newstate();
+	L = luaL_newstate();
 	clients[19].L = L;
 
 	luaL_openlibs(L);
