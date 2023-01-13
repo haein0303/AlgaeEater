@@ -20,7 +20,10 @@ void DxEngine::Init(WindowInfo windowInfo)
 	constantBufferPtr->CreateConstantBuffer(sizeof(Constants), 256, devicePtr);
 	constantBufferPtr->CreateView(devicePtr);
 	descHeapPtr->CreateDescTable(256, devicePtr);
+	
 	timerPtr->InitTimer();
+	logicTimerPtr->InitTimer();
+
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
 	RECT rect = { 0, 0, windowInfo.ClientWidth, windowInfo.ClientHeight };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
@@ -38,15 +41,13 @@ void DxEngine::Init(WindowInfo windowInfo)
 	}
 }
 
-void DxEngine::Update(WindowInfo windowInfo, bool isActive)
+void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr);
-
-	timerPtr->TimerUpdate(); //타이머 업데이트
-	timerPtr->ShowFps(windowInfo); //fps출력
+	
 	if (isActive)
 	{
-		inputPtr->InputKey(timerPtr, playerArr, networkPtr);
+		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
 		inputPtr->inputMouse(angle);
 	}
 
@@ -65,8 +66,15 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 	vertexBufferPtr->_transform.lnghtInfo = lightInfo;
 }
 
-void DxEngine::Draw()
+void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 {
+
+
+}
+
+void DxEngine::Draw(WindowInfo windowInfo)
+{
+	
 	//렌더 시작
 	cmdQueuePtr->_cmdAlloc->Reset();
 	cmdQueuePtr->_cmdList->Reset(cmdQueuePtr->_cmdAlloc.Get(), nullptr);

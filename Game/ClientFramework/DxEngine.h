@@ -26,10 +26,12 @@ public:
 	void Init(WindowInfo windowInfo);
 	
 	//매 프레임마다 업데이트
+	void FixedUpdate(WindowInfo windowInfo, bool isActive);
 	void Update(WindowInfo windowInfo, bool isActive);
+	
 
 	//매 프레임마다 그리기
-	void Draw();
+	void Draw(WindowInfo windowInfo);
 
 	//요소별 객체 포인터
 	shared_ptr<Device> devicePtr = make_shared<Device>();
@@ -47,6 +49,7 @@ public:
 	shared_ptr<Camera> cameraPtr = make_shared<Camera>();
 	shared_ptr<FbxLoader> fbxLoaderPtr = make_shared<FbxLoader>();
 	shared_ptr<Timer> timerPtr = make_shared<Timer>();
+	shared_ptr<Timer> logicTimerPtr = make_shared<Timer>();
 	shared_ptr<Input> inputPtr = make_shared<Input>();
 	shared_ptr<SFML> networkPtr = make_shared<SFML>();
 

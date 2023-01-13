@@ -3,14 +3,14 @@
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nCmdShow)
 {
+	//cout << "WinMain INIT CALL" << endl;
 	Client client;
 	//클라이언트 초기화
 	client.Init(hInst, nCmdShow);
 	//매 프레임마다 업데이트
 	MSG msg = { 0 };
 
-
-	//thread logical_thread{ &Client::Update,&client };
+	thread logical_thread{ &Client::Logic,&client };
 	thread render_thread{ &Client::Draw,&client };
 
 
@@ -22,16 +22,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			//cout << msg.message << endl;
 		}
 		else
 		{
-			client.Update();
+			//client.Logic();
 		}
 		
 	}
 
-	//logical_thread.join();
+	logical_thread.join();
 	render_thread.join();
 
 

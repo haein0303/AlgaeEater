@@ -11,10 +11,11 @@ public:
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
 
-	
-
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
+
+		//cout << "Client INIT CALL" << endl;
+
 		//윈도우 객체 초기화
 		WNDCLASS WndClass;
 		WndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -34,6 +35,7 @@ public:
 		
 		AllocConsole();
 		freopen("CONOUT$", "wt", stdout);
+
 
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
@@ -63,16 +65,41 @@ public:
 		dxEngine.cmdQueuePtr->WaitSync();
 	}
 
-	void Update()
+	//fixed_update
+	void Logic()
 	{
-		dxEngine.Update(windowInfo, isActive);
+		while (g_isLive) {
+			dxEngine.logicTimerPtr->fixed_update_tic();
+
+			dxEngine.FixedUpdate(windowInfo, isActive);
+		}		
 	}
 
 	void Draw() {
+
+		//cout << "DRAW CALL" << endl;
+
 		while (g_isLive) {
-			dxEngine.Draw();
+			//cout << "UPDATE";
+			float fTimeElapsed = 0;
+			float fLockFPS =10.f;
+			dxEngine.timerPtr->TimerUpdate();
+			if (!isActive) { //액티브 상태가 아닐때				
+				while (fTimeElapsed < (1.f / fLockFPS)) {
+					dxEngine.timerPtr->TimerUpdate();
+					fTimeElapsed += dxEngine.timerPtr->_deltaTime;
+				}	
+				dxEngine.timerPtr->_fps = static_cast<int>(1.f / fTimeElapsed);
+				cout << "\rDRAW BACK GROUND";
+			}
+			else {
+				cout << "\rACTIVE";
+			}
+			dxEngine.timerPtr->ShowFps(windowInfo);
+
+			dxEngine.Update(windowInfo, isActive);
+			dxEngine.Draw(windowInfo);
 		}
-		return;
 	}
 
 	void life_control(bool input) {
