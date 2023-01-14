@@ -50,6 +50,7 @@
 #define CHARACTERINDEX 0
 #define PLAYERMAX 10
 #define NPCMAX 10
+#define CubeMax 4
 #pragma endregion
 
 #ifdef _DEBUG
@@ -166,11 +167,13 @@ constexpr int NPC_NUM = 10;
 // Packet ID
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
+constexpr char CS_CONSOLE = 2;
 
 constexpr char SC_LOGIN_OK = 11;
 constexpr char SC_ADD_OBJECT = 12;
 constexpr char SC_REMOVE_OBJECT = 13;
 constexpr char SC_MOVE_OBJECT = 14;
+constexpr char SC_ADD_CUBE = 15;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET {
@@ -187,6 +190,12 @@ struct CS_MOVE_PACKET {
 	float	y;
 	float	z;
 	unsigned  client_time;
+};
+
+struct CS_CONSOLE_PACKET {
+	unsigned char size;
+	char	type;
+	int console;
 };
 
 struct SC_LOGIN_OK_PACKET {
@@ -216,6 +225,14 @@ struct SC_MOVE_OBJECT_PACKET {
 	int	id;
 	float	x, y, z, degree;
 	unsigned int client_time;
+};
+
+struct SC_ADD_CUBE_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+	float	x, y, z;
+	float	degree;
 };
 
 #pragma pack (pop)

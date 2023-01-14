@@ -81,3 +81,15 @@ void SESSION::send_remove_object(int c_id)
 	p.type = SC_REMOVE_OBJECT;
 	do_send(&p);
 }
+
+void SESSION::send_cube_add(int c_id, float x, float y, float z, float degree)
+{
+	SC_ADD_CUBE_PACKET p;
+	p.id = c_id;
+	p.size = sizeof(SC_ADD_CUBE_PACKET);
+	p.type = SC_ADD_CUBE;
+	p.x = x;
+	p.y = y;
+	p.z = z;
+	do_send(&p);
+}

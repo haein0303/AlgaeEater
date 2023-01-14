@@ -62,6 +62,16 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(0.0f);
 		key_toggle = true;
 	}
+	
+	if (_states['1'] == 1)
+	{
+		CS_CONSOLE_PACKET p;
+		p.size = sizeof(p);
+		p.type = CS_CONSOLE;
+		p.console = 1;
+		networkPtr->send_packet(&p);
+	}
+}
 
 	// 키가 눌렸었다면 패킷 송신
 	if (key_toggle) {
@@ -115,3 +125,5 @@ void Input::inputMouse(POINT &angle)
 
 	//cout << angle.x << ":" << angle.y << endl;
 }
+
+
