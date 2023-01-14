@@ -146,6 +146,7 @@ struct Constants
 struct Obj
 {
 	bool on = false;
+	float	degree;
 	XMFLOAT4 transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 };
 
@@ -156,7 +157,7 @@ struct WindowInfo {
 	int ClientHeight = 720;
 };
 
-//SFML
+#pragma once
 constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
@@ -203,6 +204,7 @@ struct SC_LOGIN_OK_PACKET {
 	char	type;
 	int	id;
 	float	x, y, z;
+	float	degree;
 };
 
 struct SC_ADD_OBJECT_PACKET {
@@ -210,7 +212,16 @@ struct SC_ADD_OBJECT_PACKET {
 	char	type;
 	int		id;
 	float	x, y, z;
+	float	degree;
 	char	name[NAME_SIZE];
+};
+
+struct SC_ADD_CUBE_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+	float	x, y, z;
+	float	degree;
 };
 
 struct SC_REMOVE_OBJECT_PACKET {
@@ -223,16 +234,11 @@ struct SC_MOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;
 	int	id;
-	float	x, y, z, degree;
+	float	x, y, z;
+	float	degree;
 	unsigned int client_time;
 };
 
-struct SC_ADD_CUBE_PACKET {
-	unsigned char size;
-	char	type;
-	int		id;
-	float	x, y, z;
-	float	degree;
-};
+#pragma pack (pop)
 
 #pragma pack (pop)

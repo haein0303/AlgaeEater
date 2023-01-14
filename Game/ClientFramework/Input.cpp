@@ -71,7 +71,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.console = 1;
 		networkPtr->send_packet(&p);
 	}
-}
+
 
 	// 키가 눌렸었다면 패킷 송신
 	if (key_toggle) {
@@ -87,7 +87,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 	
 }
 
-void Input::inputMouse(POINT &angle)
+void Input::inputMouse(POINT &angle, Obj* playerArr, shared_ptr<SFML> networkPtr)
 {
 
 	HWND hwnd = GetActiveWindow();	
@@ -106,21 +106,19 @@ void Input::inputMouse(POINT &angle)
 		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
 		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
 		::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
-
 	}
 
 	if (cxDelta != 0.f) {
 		angle.x += cxDelta;
 		if (angle.x > 360.f) angle.x -= 360.f;
 		if (angle.x < 0.f) angle.x += 360.f;
+		playerArr[networkPtr->myClientId].degree = angle.x;
 	}
 
 	if (cyDelta != 0.f) {
 		angle.y += cyDelta;
 		if(angle.y > yMax) angle.y = yMax;
-		if(angle.y < yMin) angle.y = yMin;
-
-			
+		if(angle.y < yMin) angle.y = yMin;			
 	}
 
 	//cout << angle.x << ":" << angle.y << endl;

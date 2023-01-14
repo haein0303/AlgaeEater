@@ -43,12 +43,12 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr);
+	networkPtr->ReceiveServer(playerArr, npcArr,cubeArr);
 	
 	if (isActive)
 	{
 		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
-		inputPtr->inputMouse(angle);
+		inputPtr->inputMouse(angle, playerArr, networkPtr);
 	}
 
 	//VP 변환
@@ -109,7 +109,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 		{
 			{
 				//월드 변환
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
+				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree)*XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
 				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 

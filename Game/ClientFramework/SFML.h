@@ -80,6 +80,7 @@ public:
 			playerArr[myClientId].transform.x = packet->x;
 			playerArr[myClientId].transform.y = packet->y;
 			playerArr[myClientId].transform.z = packet->z;
+			playerArr[myClientId].degree = packet->degree;
 
 			break;
 		}
@@ -92,6 +93,7 @@ public:
 				playerArr[id].transform.x = my_packet->x;
 				playerArr[id].transform.y = my_packet->y;
 				playerArr[id].transform.z = my_packet->z;
+				playerArr[id].degree = my_packet->degree;
 			}
 			else if (id >= PLAYERMAX)
 			{
@@ -99,6 +101,7 @@ public:
 				npcArr[id - PLAYERMAX].transform.x = my_packet->x;
 				npcArr[id - PLAYERMAX].transform.y = my_packet->y;
 				npcArr[id - PLAYERMAX].transform.z = my_packet->z;
+				npcArr[id - PLAYERMAX].degree = my_packet->degree;
 			}
 
 			break;
@@ -112,6 +115,7 @@ public:
 				playerArr[id].transform.x = my_packet->x;
 				playerArr[id].transform.y = my_packet->y;
 				playerArr[id].transform.z = my_packet->z;
+				playerArr[id].degree = my_packet->degree;
 				//playerArr[id].rotate.y = my_packet->degree;
 			}
 			else if (id >= PLAYERMAX)
@@ -119,6 +123,7 @@ public:
 				npcArr[id - PLAYERMAX].transform.x = my_packet->x;
 				npcArr[id - PLAYERMAX].transform.y = my_packet->y;
 				npcArr[id - PLAYERMAX].transform.z = my_packet->z;
+				npcArr[id - PLAYERMAX].degree = my_packet->degree;
 			}
 			
 			break;
@@ -138,6 +143,7 @@ public:
 			cubeArr[id].transform.x = my_packet->x;
 			cubeArr[id].transform.y = my_packet->y;
 			cubeArr[id].transform.z = my_packet->z;
+			cubeArr[id].degree = my_packet->degree;
 
 			break;
 		}

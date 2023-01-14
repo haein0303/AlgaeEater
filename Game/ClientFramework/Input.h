@@ -12,7 +12,7 @@ public:
 
 	//е╟ ют╥б
 	void InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr);
-	void inputMouse(POINT &angle);
+	void inputMouse(POINT &angle, Obj* playerArr, shared_ptr<SFML> networkPtr);
 
 private:
 	POINT m_ptOldCursorPos;
