@@ -92,6 +92,9 @@ void Input::inputMouse(POINT &angle, Obj* playerArr, shared_ptr<SFML> networkPtr
 
 	HWND hwnd = GetActiveWindow();	
 
+
+	bool key_toggle = false;
+
 	//상하각도제한
 	float yMin = 20.f;
 	float yMax = 90.f;
@@ -121,6 +124,17 @@ void Input::inputMouse(POINT &angle, Obj* playerArr, shared_ptr<SFML> networkPtr
 		if(angle.y < yMin) angle.y = yMin;			
 	}
 
+
+	if (key_toggle) {
+		CS_MOVE_PACKET p;
+		p.size = sizeof(p);
+		p.type = CS_MOVE;
+		//p.degree = playerArr[myClientId].rotate.y;
+		p.x = playerArr[networkPtr->myClientId].transform.x;
+		p.y = playerArr[networkPtr->myClientId].transform.y;
+		p.z = playerArr[networkPtr->myClientId].transform.z;
+		networkPtr->send_packet(&p);
+	}
 	//cout << angle.x << ":" << angle.y << endl;
 }
 
