@@ -139,7 +139,10 @@ void do_timer()
 						lua_getglobal(clients[19].L, "event_rush");
 						lua_pushnumber(clients[19].L, rd_id);
 						lua_pcall(clients[19].L, 1, 0, 0);
-						add_timer(19, 5000, EV_CB, 0);
+
+						lua_getglobal(clients[19].L, "create_cube");
+						lua_pushnumber(clients[19].L, 19);
+						lua_pcall(clients[19].L, 1, 0, 0);
 					}
 					else {
 						add_timer(19, 10, EV_CK, 0);
@@ -148,7 +151,10 @@ void do_timer()
 				}
 				case EV_CB:
 				{
-					initialize_cube(clients[19].x, clients[19].y, clients[19].z);
+					auto ex_over = new OVER_EXP;
+					ex_over->_comp_type = OP_CREATE_CUBE;
+					ex_over->target_id = ev.target_id;
+					PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
 					break;
 				}
 				default:
@@ -461,6 +467,12 @@ void do_worker()
 			delete ex_over;
 			break;
 		}
+		case OP_CREATE_CUBE: 
+		{
+			initialize_cube(clients[19].x, clients[19].y, clients[19].z);
+			delete ex_over;
+			break;
+		}
 		}
 	}
 }
@@ -487,13 +499,22 @@ int API_get_z(lua_State* L)
 	return 1;
 }
 
+int API_Cube(lua_State* L) 
+{
+	int target_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	add_timer(0, 5000, EV_CB, target_id);
+	return 0;
+}
+
 int API_Rush(lua_State* L)
 {
 	int client_id = lua_tonumber(L, -2);
 	int npc_id = lua_tonumber(L, -1);
 	lua_pop(L, 3);
 
-	add_timer(npc_id, 5000, EV_RUSH, client_id);
+	add_timer(npc_id, 10000, EV_RUSH, client_id);
 	return 0;
 }
 
@@ -526,6 +547,7 @@ void reset_lua()
 	lua_register(L, "API_get_x", API_get_x);
 	lua_register(L, "API_get_z", API_get_z);
 	lua_register(L, "API_Rush", API_Rush);
+	lua_register(L, "API_Cube", API_Cube);
 	lua_register(L, "API_get_state", API_get_state);
 }
 
@@ -568,6 +590,7 @@ void initialize_npc()
 	lua_register(L, "API_get_x", API_get_x);
 	lua_register(L, "API_get_z", API_get_z);
 	lua_register(L, "API_Rush", API_Rush);
+	lua_register(L, "API_Cube", API_Cube);
 	lua_register(L, "API_get_state", API_get_state);
 
 	add_timer(19, 10000, EV_CK, 0);

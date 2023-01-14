@@ -11,3 +11,9 @@ function event_rush( player_id )
 		API_Rush(player_id, my_id)
    end
 end
+
+function create_cube( target_id )
+	if (target_id == 19) then
+		API_Cube(target_id)
+	end
+end
