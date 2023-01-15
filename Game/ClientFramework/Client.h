@@ -115,20 +115,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
-			ShowCursor(0);
+			ShowCursor(true);
 			ReleaseCapture();			
 			isActive = false;
 		}
 		else
 		{
-			ShowCursor(1);
+			ShowCursor(false);
 			SetCapture(hwnd);
 			isActive = true;
 		}
 		return 0;
-	case WM_DESTROY:
+	case WM_DESTROY: case WM_QUIT:
 		g_isLive = false;
-		PostQuitMessage(0);
+		PostQuitMessage(0);	
 		break;
 	case WM_CLOSE:
 		FreeConsole();
