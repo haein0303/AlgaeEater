@@ -327,4 +327,36 @@
 4. 다음 미팅
  - 1월 16일 월요일 오전 10시 30분
 
+2023-01-16
+------------
+1. 김경욱 결석
 
+2. 진행상황
+ - 컨텐츠 구현
+  * UI 개선 : 마우스로 방향 전환, ASWD로 이동
+  * 기둥 소환
+  * 플레이어 방향 전환 동기화
+  * 문제 : 용이 이동할 때 이동방향을 보지 않는다.
+ - 멀티쓰레드 렌더링
+  * 약간의 문제가 있었으나 해결
+ - 파티클
+ * 구현안됨
+ 
+3. ToDo
+ - 컨텐츠 구현
+  * 용을 보스 로봇으로 대체
+  * Animation 구현 : 보스 로봇에 적용 (걷기, 공격) [ 기존의 FBX로딩 방식을 Unity에서 변환된 파일을 로딩하는 방식으로 변경 예정 ]
+  * 실내 구현 ( 공장 컨셉, 리소스 배치 <= Unity를 통한 배치)
+  * UI 개선 : 종료 키, 클라이언트 윈도우를 마우스로 이동가능하게 수정
+ - 멀티쓰레드 렌더링
+  * 3개 쓰레드 구현 (Windows Message 처리 쓰레드, 로직 쓰레드, 렌더링 쓰레드)
+  * Busy Waiting을 막는 방법
+     원래 : while (system_clock::now() < target_time);
+     개선 : while (system_clock::now() < target_time) this_thread::yield();
+     개선 : while (system_clock::now() < target_time) internal_loop();   // 기다리는 시간이 아주 짧아야 할  경우.   메모리 버스를 건드리지 않는 Assembly Loop
+ - 파티클
+  * Compute Shader 구현이 시간이 많이 걸리니까, 일단 그냥 Particle을 구현한 후 Compute Shader를 연결할 것.
+
+4. 다음 미팅
+ - 1월 30일 오전 10시 30분
+ - 멀티쓰레드 렌더링
