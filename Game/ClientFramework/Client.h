@@ -90,10 +90,10 @@ public:
 					fTimeElapsed += dxEngine.timerPtr->_deltaTime;
 				}	
 				dxEngine.timerPtr->_fps = static_cast<int>(1.f / fTimeElapsed);
-				cout << "\rDRAW BACK GROUND";
+				//cout << "\rDRAW BACK GROUND\n";
 			}
 			else {
-				cout << "\rACTIVE";
+				//cout << "\rACTIVE\n";
 			}
 			dxEngine.timerPtr->ShowFps(windowInfo);
 

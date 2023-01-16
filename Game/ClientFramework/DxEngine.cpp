@@ -48,11 +48,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	if (isActive)
 	{
 		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
-		inputPtr->inputMouse(angle, playerArr, networkPtr);
+		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
 	//VP 변환
-	XMVECTOR pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x + cosf(angle.x*XM_PI / 180.f)*7 , sinf(angle.y * XM_PI / 180.f) * 5, playerArr[networkPtr->myClientId].transform.z + sinf(angle.x * XM_PI / 180.f) *7, 1.0f);
+	XMVECTOR pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x - 5 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.y + 2 + 5 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.z - 5 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
 	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId].transform.x, playerArr[networkPtr->myClientId].transform.y, playerArr[networkPtr->myClientId].transform.z, playerArr[networkPtr->myClientId].transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up); //뷰 변환 행렬
@@ -74,7 +74,6 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 
 void DxEngine::Draw(WindowInfo windowInfo)
 {
-	
 	//렌더 시작
 	cmdQueuePtr->_cmdAlloc->Reset();
 	cmdQueuePtr->_cmdList->Reset(cmdQueuePtr->_cmdAlloc.Get(), nullptr);
@@ -109,7 +108,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 		{
 			{
 				//월드 변환
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree)*XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
+				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
 				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 

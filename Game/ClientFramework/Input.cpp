@@ -40,26 +40,30 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 
 	if (_states['W'] == 1)
 	{
-		playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(XM_PI / 2.0f);
-		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(XM_PI / 2.0f);
+		playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
+		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
+		playerArr[networkPtr->myClientId].degree = -angle.x - 90.f;
 		key_toggle = true;
 	}
 	if (_states['S'] == 1)
 	{
-		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(XM_PI / 2.0f);
-		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(XM_PI / 2.0f);
+		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
+		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
+		playerArr[networkPtr->myClientId].degree = -angle.x - 270.f;
 		key_toggle = true;
 	}
 	if (_states['A'] == 1)
 	{
-		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(0.0f);
-		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(0.0f);
+		playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+		playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+		playerArr[networkPtr->myClientId].degree = -angle.x - 180.f;
 		key_toggle = true;
 	}
 	if (_states['D'] == 1)
 	{
-		playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(0.0f);
-		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(0.0f);
+		playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+		playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+		playerArr[networkPtr->myClientId].degree = -angle.x;
 		key_toggle = true;
 	}
 	
@@ -87,17 +91,15 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 	
 }
 
-void Input::inputMouse(POINT &angle, Obj* playerArr, shared_ptr<SFML> networkPtr)
+void Input::inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr)
 {
-
 	HWND hwnd = GetActiveWindow();	
-
 
 	bool key_toggle = false;
 
 	//상하각도제한
-	float yMin = 20.f;
-	float yMax = 90.f;
+	float yMin = -10.f;
+	float yMax = 40.f;
 
 	float cxDelta = 0.0f, cyDelta = yMin;
 
@@ -112,10 +114,9 @@ void Input::inputMouse(POINT &angle, Obj* playerArr, shared_ptr<SFML> networkPtr
 	}
 
 	if (cxDelta != 0.f) {
-		angle.x += cxDelta;
-		if (angle.x > 360.f) angle.x -= 360.f;
-		if (angle.x < 0.f) angle.x += 360.f;
-		playerArr[networkPtr->myClientId].degree = angle.x;
+		angle.x -= cxDelta;
+		if (angle.x > 360.f) angle.x = 0.f;
+		if (angle.x < 0.f) angle.x = 360.f;
 	}
 
 	if (cyDelta != 0.f) {
@@ -123,7 +124,6 @@ void Input::inputMouse(POINT &angle, Obj* playerArr, shared_ptr<SFML> networkPtr
 		if(angle.y > yMax) angle.y = yMax;
 		if(angle.y < yMin) angle.y = yMin;			
 	}
-
 
 	if (key_toggle) {
 		CS_MOVE_PACKET p;
