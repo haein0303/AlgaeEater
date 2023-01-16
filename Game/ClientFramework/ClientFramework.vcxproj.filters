@@ -40,6 +40,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{1f0034f6-10e6-4a3a-9ea3-99abd6e2beed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DxEngine\Particle">
+      <UniqueIdentifier>{ac826e0e-5640-4172-9167-7b6a460081c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DxEngine.cpp">
@@ -98,6 +101,9 @@
     </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>DxEngine\GameUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>DxEngine\Particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>DxEngine\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>DxEngine\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

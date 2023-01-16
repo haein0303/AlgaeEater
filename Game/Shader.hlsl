@@ -93,3 +93,22 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     return color;
 }
+
+struct PaticleData
+{
+    float3  worldPos;
+    float   curTime;
+    float3  worldDir;
+    float   lifeTime;
+    int     alive;
+    float3  padding;
+};
+
+RWStructuredBuffer<PaticleData> gOutput : register(u0);
+
+[numthreads(32, 1, 1)]
+void CS(int3 dispatchThreadID : SV_DispatchThreadID) {
+    gOutput[dispatchThreadID.x].worldPos.x = 3.0f;
+    gOutput[dispatchThreadID.x].worldPos.y = 3.0f;
+    gOutput[dispatchThreadID.x].worldPos.z = 3.0f;
+}

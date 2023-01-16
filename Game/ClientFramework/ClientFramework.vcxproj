@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CmdQueue.cpp" />
+    <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DSV.cpp" />
     <ClCompile Include="DxEngine.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DirectXTex.h" />

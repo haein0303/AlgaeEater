@@ -157,6 +157,16 @@ struct WindowInfo {
 	int ClientHeight = 720;
 };
 
+//ÆÄÆ¼Å¬
+struct ParticleData {
+	XMFLOAT3 worldPos;
+	float curTime;
+	XMFLOAT3 worldDir;
+	float lifeTime;
+	int	alive;
+	int	padding[3];
+};
+
 #pragma once
 constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
