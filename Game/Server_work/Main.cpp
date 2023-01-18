@@ -568,7 +568,7 @@ void initialize_npc()
 		clients[i].move_degree = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
-		add_timer(i, 100, EV_MOVE, i);
+		add_timer(i, 5000, EV_MOVE, i);
 	}
 
 	clients[19]._s_state = ST_INGAME;

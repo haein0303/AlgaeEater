@@ -102,6 +102,9 @@ public:
 				npcArr[id - PLAYERMAX].transform.y = my_packet->y;
 				npcArr[id - PLAYERMAX].transform.z = my_packet->z;
 				npcArr[id - PLAYERMAX].degree = my_packet->degree;
+				printf_s("start id %d : %f\n", id, my_packet->x);
+				printf_s("start id %d : %f\n", id, npcArr[id - PLAYERMAX].transform.x);
+				//printf_s("id %d : %f\n", id, npcArr[id - PLAYERMAX].degree);
 			}
 
 			break;
@@ -116,7 +119,7 @@ public:
 				playerArr[id].transform.y = my_packet->y;
 				playerArr[id].transform.z = my_packet->z;
 				playerArr[id].degree = my_packet->degree;
-				//playerArr[id].rotate.y = my_packet->degree;
+				//printf_s("id %d : %f\n", id, npcArr[id].degree);
 			}
 			else if (id >= PLAYERMAX)
 			{
@@ -124,6 +127,9 @@ public:
 				npcArr[id - PLAYERMAX].transform.y = my_packet->y;
 				npcArr[id - PLAYERMAX].transform.z = my_packet->z;
 				npcArr[id - PLAYERMAX].degree = my_packet->degree;
+				printf_s("id %d : %f\n", id, my_packet->x);
+				printf_s("id %d : %f\n", id, npcArr[id - PLAYERMAX].transform.x);
+				printf_s("id %d : %f\n", id, my_packet->degree);
 			}
 			
 			break;

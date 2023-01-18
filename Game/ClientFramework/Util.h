@@ -250,5 +250,3 @@ struct SC_MOVE_OBJECT_PACKET {
 };
 
 #pragma pack (pop)
-
-#pragma pack (pop)
