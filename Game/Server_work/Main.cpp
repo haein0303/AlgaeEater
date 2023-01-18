@@ -90,7 +90,6 @@ void do_timer()
 {
 	while (true)
 	{
-		this_thread::sleep_for(1ms);
 		while (true) 
 		{
 			timer_l.lock();
@@ -317,11 +316,12 @@ void rush_npc(int player_id)
 	rush_npc(player_id);
 }
 
+int de = 0;
+
 void move_npc(int npc_id)
 {
 	float z = clients[npc_id].z;
 	float x = clients[npc_id].x;
-	int de = 0;
 
 	if (clients[npc_id].move_stack == 10) {
 		clients[npc_id].move_stack = 0;
