@@ -90,7 +90,6 @@ void do_timer()
 {
 	while (true)
 	{
-		this_thread::sleep_for(1ms);
 		while (true) 
 		{
 			timer_l.lock();
@@ -317,11 +316,12 @@ void rush_npc(int player_id)
 	rush_npc(player_id);
 }
 
+int de = 0;
+
 void move_npc(int npc_id)
 {
 	float z = clients[npc_id].z;
 	float x = clients[npc_id].x;
-	int de = 0;
 
 	if (clients[npc_id].move_stack == 10) {
 		clients[npc_id].move_stack = 0;
@@ -568,7 +568,7 @@ void initialize_npc()
 		clients[i].move_degree = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
-		add_timer(i, 100, EV_MOVE, i);
+		add_timer(i, 5000, EV_MOVE, i);
 	}
 
 	clients[19]._s_state = ST_INGAME;
