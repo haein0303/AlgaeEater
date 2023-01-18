@@ -57,6 +57,7 @@ void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree
 	p.x = x;
 	p.y = y;
 	p.z = z;
+	p.degree = degree;
 	do_send(&p);
 }
 
@@ -69,6 +70,7 @@ void SESSION::send_add_object(int c_id, float x, float y, float z, float degree,
 	p.x = x;
 	p.y = y;
 	p.z = z;
+	p.degree = degree;
 	strcpy_s(p.name, name);
 	do_send(&p);
 }
@@ -91,5 +93,6 @@ void SESSION::send_cube_add(int c_id, float x, float y, float z, float degree)
 	p.x = x;
 	p.y = y;
 	p.z = z;
+	p.degree = degree;
 	do_send(&p);
 }
