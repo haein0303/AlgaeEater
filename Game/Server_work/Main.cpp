@@ -337,19 +337,19 @@ void move_npc(int npc_id)
 		{
 		case 0:
 			x++;
-			clients[npc_id].degree = 90;
+			clients[npc_id].degree = 270;
 			break;
 		case 1:
 			x--;
-			clients[npc_id].degree = 270;
+			clients[npc_id].degree = 90;
 			break;
 		case 2:
 			z++;
-			clients[npc_id].degree = 0;
+			clients[npc_id].degree = 180;
 			break;
 		case 3:
 			z--;
-			clients[npc_id].degree = 180;
+			clients[npc_id].degree = 0;
 			break;
 		default:
 			break;
