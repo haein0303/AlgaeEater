@@ -34,6 +34,8 @@ using namespace std;
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 
+float PI = 3.1415926535;
+
 lua_State* L;
 
 default_random_engine dre;
@@ -296,6 +298,10 @@ void rush_npc(int player_id)
 		}
 	}
 
+	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
+	de = de * 180 / PI;
+	clients[19].degree = de;
+
 	if (x > clients[player_id].x) x--;
 	else if(x < clients[player_id].x) x++;
 
@@ -316,8 +322,6 @@ void rush_npc(int player_id)
 	rush_npc(player_id);
 }
 
-int de = 0;
-
 void move_npc(int npc_id)
 {
 	float z = clients[npc_id].z;
@@ -325,15 +329,15 @@ void move_npc(int npc_id)
 
 	if (clients[npc_id].move_stack == 10) {
 		clients[npc_id].move_stack = 0;
-		de = -1;
+		clients[npc_id].move_degree = -1;
 	}
 
-	if (de == -1) {
-		de = uid(dre);
+	if (clients[npc_id].move_degree == -1) {
+		clients[npc_id].move_degree = uid(dre);
 	}
 
 	if (clients[npc_id].move_stack != 10) {
-		switch (de)
+		switch (clients[npc_id].move_degree)
 		{
 		case 0:
 			x++;
