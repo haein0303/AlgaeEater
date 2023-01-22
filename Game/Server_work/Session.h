@@ -2,6 +2,7 @@
 #include <mutex>
 #include <thread>
 #include <iostream>
+#include <array>
 #include "protocol.h"
 #include "Over_EXP.h"
 
