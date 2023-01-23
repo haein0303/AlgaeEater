@@ -17,6 +17,8 @@ constexpr char SC_REMOVE_OBJECT = 13;
 constexpr char SC_MOVE_OBJECT = 14;
 constexpr char SC_ADD_CUBE = 15;
 
+constexpr float PI = 3.1415926535;
+
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET {
 	unsigned char size;

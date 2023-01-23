@@ -144,15 +144,19 @@
     <ClCompile Include="Session.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Extern.h" />
     <ClInclude Include="include\lauxlib.h" />
     <ClInclude Include="include\lua.h" />
     <ClInclude Include="include\lua.hpp" />
     <ClInclude Include="include\luaconf.h" />
     <ClInclude Include="include\lualib.h" />
+    <ClInclude Include="Lua_API.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="NPC.h" />
     <ClInclude Include="Over_EXP.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="Session.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="hello.lua" />

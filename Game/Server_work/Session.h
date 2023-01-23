@@ -45,3 +45,9 @@ public:
 	void send_remove_object(int c_id);
 	void send_cube_add(int c_id, float x, float y, float z, float degree);
 };
+
+struct CUBE {
+public:
+	float x, y, z;
+	float degree;
+};
