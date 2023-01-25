@@ -144,6 +144,7 @@
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Over_EXP.cpp" />
     <ClCompile Include="Session.cpp" />
+    <ClCompile Include="Tic.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
@@ -155,12 +156,12 @@
     <ClInclude Include="include\luaconf.h" />
     <ClInclude Include="include\lualib.h" />
     <ClInclude Include="Lua_API.h" />
-    <ClInclude Include="Main.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Over_EXP.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Tic.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
