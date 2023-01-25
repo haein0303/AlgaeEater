@@ -1,4 +1,28 @@
-#include "Main.h"
+#include "stdafx.h"
+
+#include "util.h"
+
+#include "protocol.h"
+#include "Over_EXP.h"
+#include "Session.h"
+#include "Timer.h"
+#include "Lua_API.h"
+#include "NPC.h"
+
+array<SESSION, MAX_USER + NPC_NUM> clients;
+
+array<CUBE, 4> cubes;
+
+HANDLE g_h_iocp;
+SOCKET g_s_socket;
+
+lua_State* L;
+
+default_random_engine dre;
+uniform_int_distribution<> uid{ 0, 3 };
+
+priority_queue<TIMER_EVENT> timer_queue;
+mutex timer_l;
 
 int main()
 {
