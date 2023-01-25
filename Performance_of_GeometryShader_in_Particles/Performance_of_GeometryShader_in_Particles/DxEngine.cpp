@@ -18,6 +18,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	constantBufferPtr->CreateView(devicePtr);
 	descHeapPtr->CreateDescTable(256, devicePtr);
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
+	timerPtr->InitTimer(windowInfo);
 	RECT rect = { 0, 0, windowInfo.ClientWidth, windowInfo.ClientHeight };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 	SetWindowPos(windowInfo.hwnd, 0, 100, 100, windowInfo.ClientWidth, windowInfo.ClientHeight, 0);
@@ -28,6 +29,10 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::Draw()
 {
+	//타이머
+	timerPtr->TimerUpdate();
+	timerPtr->ShowFps();
+
 	//VP 변환
 	XMVECTOR pos = XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
@@ -35,6 +40,8 @@ void DxEngine::Draw()
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up); //뷰 변환 행렬
 	XMStoreFloat4x4(&cameraPtr->mView, view);
 	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //투영 변환 행렬
+	XMMATRIX ViewProj = view * proj;
+	XMStoreFloat4x4(&vertexBufferPtr->_transform.ViewProj, XMMatrixTranspose(ViewProj));
 
 	//렌더 시작
 	cmdQueuePtr->_cmdAlloc->Reset();
@@ -93,7 +100,7 @@ void DxEngine::Draw()
 		}
 
 		{
-			cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
 			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
 			{

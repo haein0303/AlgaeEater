@@ -63,6 +63,7 @@ static XMFLOAT4X4 Identity4x4()
 struct Constants
 {
 	XMFLOAT4X4 worldViewProj = Identity4x4();
+	XMFLOAT4X4 ViewProj = Identity4x4();
 };
 
 //윈도우와 관련된 정보
@@ -72,7 +73,7 @@ struct WindowInfo {
 	int ClientHeight = 600;
 };
 
-struct Particle
+struct ParticleData
 {
 	int alive = 0;
 	XMVECTOR dir;
@@ -80,4 +81,10 @@ struct Particle
 	XMVECTOR pos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 	float lifeTime = 0.f;
 	float curTime = 0.f;
+};
+
+struct GSPoint
+{
+	XMFLOAT3 pos;
+	XMFLOAT2 size;
 };

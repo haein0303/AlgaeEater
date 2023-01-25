@@ -10,5 +10,5 @@ public:
 	Constants _transform = {};
 
 	//버텍스 버퍼 생성
-	void CreateVertexBuffer(const vector<Vertex>& buffer, shared_ptr<Device> devicePtr);
+	void CreateVertexBuffer(const vector<GSPoint>& buffer, shared_ptr<Device> devicePtr);
 };

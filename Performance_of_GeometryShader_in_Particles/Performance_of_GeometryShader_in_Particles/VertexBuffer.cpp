@@ -1,10 +1,10 @@
 #include "Device.h"
 #include "VertexBuffer.h"
 
-void VertexBuffer::CreateVertexBuffer(const vector<Vertex>& buffer, shared_ptr<Device> devicePtr)
+void VertexBuffer::CreateVertexBuffer(const vector<GSPoint>& buffer, shared_ptr<Device> devicePtr)
 {
 	_vertexCount = static_cast<UINT>(buffer.size());
-	UINT bufferSize = _vertexCount * sizeof(Vertex);
+	UINT bufferSize = _vertexCount * sizeof(GSPoint);
 
 	D3D12_HEAP_PROPERTIES heapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
@@ -18,6 +18,6 @@ void VertexBuffer::CreateVertexBuffer(const vector<Vertex>& buffer, shared_ptr<D
 	_vertexBuffer->Unmap(0, nullptr);
 
 	_vertexBufferView.BufferLocation = _vertexBuffer->GetGPUVirtualAddress();
-	_vertexBufferView.StrideInBytes = sizeof(Vertex);
+	_vertexBufferView.StrideInBytes = sizeof(GSPoint);
 	_vertexBufferView.SizeInBytes = bufferSize;
 }
