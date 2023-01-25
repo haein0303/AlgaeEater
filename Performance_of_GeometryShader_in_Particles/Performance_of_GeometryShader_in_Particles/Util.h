@@ -71,3 +71,13 @@ struct WindowInfo {
 	int ClientWidth = 600;
 	int ClientHeight = 600;
 };
+
+struct Particle
+{
+	int alive = 0;
+	XMVECTOR dir;
+	float moveSpeed;
+	XMVECTOR pos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	float lifeTime = 0.f;
+	float curTime = 0.f;
+};

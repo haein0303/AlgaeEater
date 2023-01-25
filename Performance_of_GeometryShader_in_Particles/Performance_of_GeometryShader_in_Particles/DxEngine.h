@@ -37,6 +37,8 @@ public:
 	shared_ptr<DSV> dsvPtr = make_shared<DSV>();
 	shared_ptr<Camera> cameraPtr = make_shared<Camera>();
 
+	Particle particle[100];
+
 private:
 	//화면 크기 관련
 	D3D12_VIEWPORT	_viewport;

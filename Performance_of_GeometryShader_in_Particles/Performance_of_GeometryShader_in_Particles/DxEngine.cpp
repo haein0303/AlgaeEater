@@ -22,20 +22,19 @@ void DxEngine::Init(WindowInfo windowInfo)
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 	SetWindowPos(windowInfo.hwnd, 0, 100, 100, windowInfo.ClientWidth, windowInfo.ClientHeight, 0);
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
+
+	srand((unsigned int)time(NULL));
 }
 
 void DxEngine::Draw()
 {
-	//WVP 변환
+	//VP 변환
 	XMVECTOR pos = XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up); //뷰 변환 행렬
 	XMStoreFloat4x4(&cameraPtr->mView, view);
-	XMMATRIX world = XMLoadFloat4x4(&cameraPtr->mWorld); //월드 변환 행렬
 	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //투영 변환 행렬
-	XMMATRIX worldViewProj = world * view * proj;
-	XMStoreFloat4x4(&vertexBufferPtr->_transform.worldViewProj, XMMatrixTranspose(worldViewProj));
 
 	//렌더 시작
 	cmdQueuePtr->_cmdAlloc->Reset();
@@ -65,18 +64,47 @@ void DxEngine::Draw()
 	cmdQueuePtr->_cmdList->SetPipelineState(psoPtr->_pipelineState.Get());
 
 	//렌더
+
+	for (int i = 0; i < 100; i++)
 	{
-		cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
-		cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+		//파티클 랜덤 이동
+		if (particle[i].alive == 0)
 		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+			particle[i].lifeTime = (float)(rand() % 101) / 100 + 1; //1~2
+			particle[i].curTime = 0.0f;
+			particle[i].pos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+			particle[i].moveSpeed = (float)(rand() % 101) / 10000; //0~0.01
+			particle[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+			XMVector3Normalize(particle[i].dir);
+			particle[i].alive = 1;
+		}
+		if (particle[i].alive == 1)
+		{
+			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed);
+			XMStoreFloat4x4(&cameraPtr->mWorld, XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
+			XMMATRIX world = XMLoadFloat4x4(&cameraPtr->mWorld); //월드 변환 행렬
+			XMMATRIX worldViewProj = world * view * proj;
+			XMStoreFloat4x4(&vertexBufferPtr->_transform.worldViewProj, XMMatrixTranspose(worldViewProj));
+			particle[i].curTime += 0.001;
+			if (particle[i].lifeTime < particle[i].curTime)
+			{
+				particle[i].alive = 0;
+			}
 		}
 
-		descHeapPtr->CommitTable(cmdQueuePtr);
-		cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
+		{
+			cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
+			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable(cmdQueuePtr);
+			cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
+		}
 	}
 
 	//렌더 종료
