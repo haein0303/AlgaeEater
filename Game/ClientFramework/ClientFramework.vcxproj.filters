@@ -48,7 +48,7 @@
     <ClCompile Include="DxEngine.cpp">
       <Filter>DxEngine</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="CmdQueue.cpp">

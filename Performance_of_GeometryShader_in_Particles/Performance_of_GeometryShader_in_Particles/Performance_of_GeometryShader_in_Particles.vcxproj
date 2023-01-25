@@ -18,11 +18,57 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="CmdQueue.h" />
+    <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="DescHeap.h" />
+    <ClInclude Include="Device.h" />
+    <ClInclude Include="DSV.h" />
+    <ClInclude Include="DxEngine.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="lib\d3dx12.h" />
+    <ClInclude Include="lib\DirectXTex.h" />
+    <ClInclude Include="PSO.h" />
+    <ClInclude Include="RootSignature.h" />
+    <ClInclude Include="RTV.h" />
+    <ClInclude Include="SwapChain.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Util.h" />
+    <ClInclude Include="VertexBuffer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CmdQueue.cpp" />
+    <ClCompile Include="ConstantBuffer.cpp" />
+    <ClCompile Include="DescHeap.cpp" />
+    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DSV.cpp" />
+    <ClCompile Include="DxEngine.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="PSO.cpp" />
+    <ClCompile Include="RootSignature.cpp" />
+    <ClCompile Include="RTV.cpp" />
+    <ClCompile Include="SwapChain.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_Main</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\DirectXTex.inl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7eb48f7f-2134-43d8-9949-8fb8cfe6dd4e}</ProjectGuid>
-    <RootNamespace>ClientFramework</RootNamespace>
+    <ProjectGuid>{adcd2035-8867-49ad-865f-4406af123f56}</ProjectGuid>
+    <RootNamespace>PerformanceofGeometryShaderinParticles</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -105,13 +151,10 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/ClientFramework/FbxSdk;$(SolutionDir);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)/ClientFramework/FbxLib;$(SolutionDir)\SFMLLib</AdditionalLibraryDirectories>
-      <AdditionalOptions>libfbxsdk-md.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,68 +173,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CmdQueue.cpp" />
-    <ClCompile Include="ComputeShader.cpp" />
-    <ClCompile Include="Device.cpp" />
-    <ClCompile Include="DSV.cpp" />
-    <ClCompile Include="DxEngine.cpp" />
-    <ClCompile Include="FbxLoader.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="NetWork_Client.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="RootSignature.cpp" />
-    <ClCompile Include="RTV.cpp" />
-    <ClCompile Include="SwapChain.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
-    <ClCompile Include="PSO.cpp" />
-    <ClCompile Include="ConstantBuffer.cpp" />
-    <ClCompile Include="DescHeap.cpp" />
-    <ClCompile Include="IndexBuffer.cpp" />
-    <ClCompile Include="Texture.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Animation.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="ComputeShader.h" />
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="Device.h" />
-    <ClInclude Include="DirectXTex.h" />
-    <ClInclude Include="DSV.h" />
-    <ClInclude Include="DxEngine.h" />
-    <ClInclude Include="FbxLoader.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="NetWork_Client.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="RootSignature.h" />
-    <ClInclude Include="SFML.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Util.h" />
-    <ClInclude Include="CmdQueue.h" />
-    <ClInclude Include="SwapChain.h" />
-    <ClInclude Include="RTV.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="PSO.h" />
-    <ClInclude Include="ConstantBuffer.h" />
-    <ClInclude Include="DescHeap.h" />
-    <ClInclude Include="IndexBuffer.h" />
-    <ClInclude Include="Texture.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\Shader.hlsl">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_Main</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="DirectXTex.inl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
