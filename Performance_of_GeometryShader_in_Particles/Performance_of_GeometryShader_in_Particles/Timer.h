@@ -13,6 +13,8 @@ public:
 
 	HWND _hwnd;
 
+	int isGS = 0;
+
 	void InitTimer(WindowInfo& windowInfo);
 	void TimerUpdate();
 	void ShowFps();

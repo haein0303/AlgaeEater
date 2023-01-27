@@ -14,6 +14,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Timer.h"
+#include "Input.h"
 
 class DxEngine {
 public:
@@ -38,8 +39,9 @@ public:
 	shared_ptr<DSV> dsvPtr = make_shared<DSV>();
 	shared_ptr<Camera> cameraPtr = make_shared<Camera>();
 	shared_ptr<Timer> timerPtr = make_shared<Timer>();
+	shared_ptr<Input> inputPtr = make_shared<Input>();
 
-	ParticleData particle[100];
+	ParticleData particle[PARTICLE_NUM];
 
 private:
 	//화면 크기 관련

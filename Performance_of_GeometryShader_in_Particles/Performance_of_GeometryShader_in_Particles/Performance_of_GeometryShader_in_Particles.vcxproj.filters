@@ -81,6 +81,9 @@
     <ClInclude Include="Timer.h">
       <Filter>소스 파일\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>소스 파일\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -128,6 +131,9 @@
     <ClCompile Include="Timer.cpp">
       <Filter>소스 파일\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>소스 파일\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\DirectXTex.inl">
@@ -135,6 +141,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="GS.hlsl">
+      <Filter>소스 파일\Shader</Filter>
+    </FxCompile>
     <FxCompile Include="Shader.hlsl">
       <Filter>소스 파일\Shader</Filter>
     </FxCompile>

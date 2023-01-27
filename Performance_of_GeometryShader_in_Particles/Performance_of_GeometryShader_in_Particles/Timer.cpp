@@ -33,7 +33,15 @@ void Timer::ShowFps()
 	UINT fps = _fps;
 
 	WCHAR text[100] = L"";
-	::wsprintf(text, L"Performance_of_GeometryShader_in_Particles   FPS : %d", fps);
+	if (isGS == 0)
+	{
+		::wsprintf(text, L"Performance_of_GeometryShader_in_Particles GS : Off   FPS : %d", fps);
+	}
+	else if (isGS == 1)
+	{
+		::wsprintf(text, L"Performance_of_GeometryShader_in_Particles GS : On   FPS : %d", fps);
+	}
+	
 
 	::SetWindowText(_hwnd, text);
 }

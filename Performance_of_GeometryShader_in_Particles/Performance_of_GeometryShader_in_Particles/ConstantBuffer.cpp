@@ -5,7 +5,7 @@ void ConstantBuffer::CreateConstantBuffer(UINT size, UINT count, shared_ptr<Devi
 	_elementSize = (size + 255) & ~255;
 	_elementCount = count;
 
-	UINT bufferSize = _elementSize * _elementCount;
+	UINT64 bufferSize = _elementSize * _elementCount;
 	D3D12_HEAP_PROPERTIES heapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
