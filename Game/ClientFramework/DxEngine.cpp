@@ -29,6 +29,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 	SetWindowPos(windowInfo.hwnd, 0, 100, 100, windowInfo.ClientWidth, windowInfo.ClientHeight, 0);
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
+	srand((unsigned int)time(NULL));
 
 	inputPtr->Init(windowInfo); //벡터 사이즈 초기화
 	for (int i = 0; i < PLAYERMAX; i++)
@@ -184,16 +185,37 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
 		}
 	}
-	{ //파티클 렌더
+	for (int i = 0; i < 100; i++) //파티클 렌더
+	{
+		//파티클 랜덤 이동
+		if (particle[i].alive == 0)
+		{
+			particle[i].lifeTime = (float)(rand() % 101) / 100 + 1; //1~2
+			particle[i].curTime = 0.0f;
+			particle[i].pos = XMVectorSet(npcArr[9].transform.x, npcArr[9].transform.y + 2.f, npcArr[9].transform.z, 1.f);
+			particle[i].moveSpeed = (float)(rand() % 101) / 10000; //0~0.01
+			particle[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+			XMVector3Normalize(particle[i].dir);
+			particle[i].alive = 1;
+		}
+		if (particle[i].alive == 1)
+		{
+			//월드 변환
+			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed);
+			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
+			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world); //월드 변환 행렬
+			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+			particle[i].curTime += 0.001;
+			if (particle[i].lifeTime < particle[i].curTime)
+			{
+				particle[i].alive = 0;
+			}
+		}
+
 		cmdQueuePtr->_cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
 		cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 		cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
 		cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
-
-		//월드 변환
-		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(npcArr[9].transform.x, npcArr[9].transform.y, npcArr[9].transform.z));
-		XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 		{
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
 			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);

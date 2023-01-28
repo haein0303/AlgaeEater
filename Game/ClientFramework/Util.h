@@ -165,12 +165,12 @@ struct WindowInfo {
 
 //ÆÄÆ¼Å¬
 struct ParticleData {
-	XMFLOAT3 worldPos;
-	float curTime;
-	XMFLOAT3 worldDir;
-	float lifeTime;
-	int	alive;
-	int	padding[3];
+	int alive = 0;
+	XMVECTOR dir;
+	float moveSpeed;
+	XMVECTOR pos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	float lifeTime = 0.f;
+	float curTime = 0.f;
 };
 
 #pragma once

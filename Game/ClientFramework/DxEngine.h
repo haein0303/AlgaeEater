@@ -57,6 +57,7 @@ public:
 	Obj playerArr[PLAYERMAX];
 	Obj npcArr[NPCMAX];
 	Obj cubeArr[CubeMax];
+	ParticleData particle[100];
 
 private:
 	//화면 크기 관련

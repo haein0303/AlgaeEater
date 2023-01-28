@@ -41,7 +41,7 @@ void ComputeShader::DoComputeShader(shared_ptr<Device> devicePtr, shared_ptr<Cmd
 
 	for (int i = 0; i < 32; ++i)
 	{
-		printf_s("%f %f %f\n", mappedData[i].worldPos.x, mappedData[i].worldPos.y, mappedData[i].worldPos.z);
+		//printf_s("%f %f %f\n", mappedData[i].worldPos.x, mappedData[i].worldPos.y, mappedData[i].worldPos.z);
 	}
 
 
