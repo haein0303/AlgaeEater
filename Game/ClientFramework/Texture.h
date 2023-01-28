@@ -3,8 +3,8 @@
 class Texture
 {
 public:
-	ScratchImage _imageArr[2];
-	ComPtr<ID3D12Resource> _texArr[2];
+	ScratchImage _imageArr[3];
+	ComPtr<ID3D12Resource> _texArr[3];
 
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
 	CD3DX12_CPU_DESCRIPTOR_HANDLE	 _srvHandle;
@@ -13,5 +13,5 @@ public:
 	void CreateTexture(const wstring& path, shared_ptr<Device> devicePtr, shared_ptr<CmdQueue> cmdQueuePtr, int index);
 
 	//SRV »ý¼º
-	void CreateSRV(shared_ptr<Device> devicePtr);
+	void CreateSRVs(shared_ptr<Device> devicePtr);
 };

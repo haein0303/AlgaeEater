@@ -150,6 +150,12 @@ struct Obj
 	XMFLOAT4 transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 };
 
+struct Point
+{
+	XMFLOAT3 pos;
+	XMFLOAT2 size;
+};
+
 //윈도우와 관련된 정보
 struct WindowInfo {
 	HWND hwnd;

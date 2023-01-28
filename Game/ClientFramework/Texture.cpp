@@ -37,7 +37,7 @@ void Texture::CreateTexture(const wstring& path, shared_ptr<Device> devicePtr, s
 	cmdQueuePtr->FlushResourceCommandQueue();
 }
 
-void Texture::CreateSRV(shared_ptr<Device> devicePtr)
+void Texture::CreateSRVs(shared_ptr<Device> devicePtr)
 {
 	//SRVHeap 서술
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
@@ -61,4 +61,10 @@ void Texture::CreateSRV(shared_ptr<Device> devicePtr)
 
 	srvDesc.Format = _imageArr[1].GetMetadata().format;
 	devicePtr->_device->CreateShaderResourceView(_texArr[1].Get(), &srvDesc, _srvHandle);
+
+	//세번째 SRV 생성
+	_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+	srvDesc.Format = _imageArr[2].GetMetadata().format;
+	devicePtr->_device->CreateShaderResourceView(_texArr[2].Get(), &srvDesc, _srvHandle);
 }

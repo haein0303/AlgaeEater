@@ -93,6 +93,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 	cmdQueuePtr->_cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	cmdQueuePtr->_cmdList->SetPipelineState(psoPtr->_pipelineState.Get());
+	cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	cmdQueuePtr->_cmdList->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
 	constantBufferPtr->_currentIndex = 0;
@@ -102,10 +103,13 @@ void DxEngine::Draw(WindowInfo windowInfo)
 	cmdQueuePtr->_cmdList->SetDescriptorHeaps(1, &descHeap);
 
 	//·»´õ
-	for (int i = 0; i < PLAYERMAX; i++)
+	for (int i = 0; i < PLAYERMAX; i++) //ÇÃ·¹ÀÌ¾î ·»´õ
 	{
 		if (playerArr[i].on == true)
 		{
+			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
+			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
+
 			{
 				//¿ùµå º¯È¯
 				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
@@ -113,9 +117,6 @@ void DxEngine::Draw(WindowInfo windowInfo)
 				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 
 				//·»´õ
-				cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
-				cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -126,15 +127,18 @@ void DxEngine::Draw(WindowInfo windowInfo)
 				}
 
 				descHeapPtr->CommitTable(cmdQueuePtr);
-				cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
+				cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_playerIndexCount, 1, 0, 0, 0);
 			}
 		}
 	}
 	
-	for (int i = 0; i < NPCMAX; i++)
+	for (int i = 0; i < NPCMAX; i++) //npc ·»´õ
 	{
 		if (npcArr[i].on == true)
 		{
+			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
+			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);
+
 			{
 				//¿ùµå º¯È¯
 				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
@@ -142,8 +146,6 @@ void DxEngine::Draw(WindowInfo windowInfo)
 				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 
 				//·»´õ
-				cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
-				cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -153,22 +155,23 @@ void DxEngine::Draw(WindowInfo windowInfo)
 				}
 
 				descHeapPtr->CommitTable(cmdQueuePtr);
-				cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
+				cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_npcIndexCount, 1, 0, 0, 0);
 			}
 		}
 	}
-	for(int i = 0 ;i < CubeMax; i++)
+	for(int i = 0 ;i < CubeMax; i++) //±âµÕ ·»´õ
 	{
 		if (cubeArr[i].on == true)
 		{
+			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
+			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+
 			//¿ùµå º¯È¯
 			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.f, cubeArr[i].transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
 			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 
 			//·»´õ
-			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
-			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -181,7 +184,27 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
 		}
 	}
-	
+	{ //ÆÄÆ¼Å¬ ·»´õ
+		cmdQueuePtr->_cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
+		cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
+		cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
+
+		//¿ùµå º¯È¯
+		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(npcArr[9].transform.x, npcArr[9].transform.y, npcArr[9].transform.z));
+		XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
+		XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+			texturePtr->_srvHandle.Offset(2, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+			descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+		}
+		descHeapPtr->CommitTable(cmdQueuePtr);
+		cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
+	}
+
 
 	//·»´õ Á¾·á
 	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[swapChainPtr->_backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // È­¸é Ãâ·Â

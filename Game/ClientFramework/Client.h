@@ -36,7 +36,6 @@ public:
 		AllocConsole();
 		freopen("CONOUT$", "wt", stdout);
 
-
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
 
@@ -44,23 +43,32 @@ public:
 		vector<Vertex> cubeVertexVec;
 		vector<UINT> cubeIndexVec;
 		dxEngine.fbxLoaderPtr->LoadFbxData(cubeVertexVec, cubeIndexVec, "../Resources/Cube.fbx");
-		dxEngine.vertexBufferPtr->CreateVertexBuffer(cubeVertexVec, dxEngine.devicePtr, 0);
-		dxEngine.indexBufferPtr->CreateIndexBuffer(cubeIndexVec, dxEngine.devicePtr, 0);
+		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_vertexBuffer, dxEngine.vertexBufferPtr->_vertexBufferView, cubeVertexVec, dxEngine.devicePtr);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_indexBuffer, dxEngine.indexBufferPtr->_indexBufferView, cubeIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_indexCount);
 		vector<Vertex> playerVertexVec;
 		vector<UINT> playerIndexVec;
 		dxEngine.fbxLoaderPtr->LoadFbxData(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.fbx");
-		dxEngine.vertexBufferPtr->CreateVertexBuffer(playerVertexVec, dxEngine.devicePtr, 1);
-		dxEngine.indexBufferPtr->CreateIndexBuffer(playerIndexVec, dxEngine.devicePtr, 1);
+		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
 		vector<Vertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
 		dxEngine.fbxLoaderPtr->LoadFbxData(npcVertexVec, npcIndexVec, "../Resources/Dragon.fbx");
-		dxEngine.vertexBufferPtr->CreateVertexBuffer(npcVertexVec, dxEngine.devicePtr, 2);
-		dxEngine.indexBufferPtr->CreateIndexBuffer(npcIndexVec, dxEngine.devicePtr, 2);
+		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
+		vector<Point> pointVertexvec(1);
+		vector<UINT> pointIndexVec;
+		pointVertexvec[0].pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		pointVertexvec[0].size = XMFLOAT2(0.5f, 0.5f);
+		pointIndexVec.push_back(0);
+		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_particleVertexBuffer, dxEngine.vertexBufferPtr->_particleVertexBufferView, pointVertexvec, dxEngine.devicePtr);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_particleIndexBuffer, dxEngine.indexBufferPtr->_particleIndexBufferView, pointIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_particleIndexCount);
 
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
+		dxEngine.psoPtr->CreateInputLayoutAndGSAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\bricks.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
-		dxEngine.texturePtr->CreateSRV(dxEngine.devicePtr);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\Star.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 2);
+		dxEngine.texturePtr->CreateSRVs(dxEngine.devicePtr);
 
 		dxEngine.cmdQueuePtr->WaitSync();
 	}
