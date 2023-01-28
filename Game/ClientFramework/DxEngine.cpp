@@ -53,10 +53,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	//VP 변환
-	XMVECTOR pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x - 5 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.y + 2 + 5 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.z - 5 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
+	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x - 5 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.y + 2 + 5 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.z - 5 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
 	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId].transform.x, playerArr[networkPtr->myClientId].transform.y, playerArr[networkPtr->myClientId].transform.z, playerArr[networkPtr->myClientId].transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up); //뷰 변환 행렬
+	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //뷰 변환 행렬
 	XMStoreFloat4x4(&vertexBufferPtr->_transform.view, XMMatrixTranspose(view));
 
 	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //투영 변환 행렬
@@ -202,7 +202,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 		{
 			//월드 변환
 			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed);
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
+			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
 			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world); //월드 변환 행렬
 			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
 			particle[i].curTime += 0.001;
