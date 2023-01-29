@@ -58,7 +58,7 @@ public:
 		vector<Point> pointVertexvec(1);
 		vector<UINT> pointIndexVec;
 		pointVertexvec[0].pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		pointVertexvec[0].size = XMFLOAT2(0.5f, 0.5f);
+		pointVertexvec[0].size = XMFLOAT2(0.25f, 0.25f);
 		pointIndexVec.push_back(0);
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_particleVertexBuffer, dxEngine.vertexBufferPtr->_particleVertexBufferView, pointVertexvec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_particleIndexBuffer, dxEngine.indexBufferPtr->_particleIndexBufferView, pointIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_particleIndexCount);

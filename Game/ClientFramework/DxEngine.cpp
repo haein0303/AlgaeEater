@@ -185,23 +185,35 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
 		}
 	}
-	for (int i = 0; i < 100; i++) //파티클 렌더
+	//파티클
+	if (pow(playerArr[0].transform.x - npcArr[9].transform.x, 2) + pow(playerArr[0].transform.z - npcArr[9].transform.z, 2) <= 4.f) //충돌 처리
 	{
-		//파티클 랜덤 이동
-		if (particle[i].alive == 0)
+		if (playerArr[0].isCollision == false)
+			playerArr[0].isFirstCollision = true;
+		else
+			playerArr[0].isFirstCollision = false;
+		playerArr[0].isCollision = true;
+	}
+	if (pow(playerArr[0].transform.x - npcArr[9].transform.x, 2) + pow(playerArr[0].transform.z - npcArr[9].transform.z, 2) > 4.f)
+	{
+		playerArr[0].isCollision = false;
+	}
+	for (int i = 0; i < 100; i++) //파티클 렌더
+	{	
+		if (playerArr[0].isFirstCollision == true && particle[i].alive == 0)
 		{
-			particle[i].lifeTime = (float)(rand() % 101) / 100 + 1; //1~2
+			particle[i].lifeTime = (float)(rand() % 101) / 1000 + 0.1f; //0.1~0.2
 			particle[i].curTime = 0.0f;
 			particle[i].pos = XMVectorSet(npcArr[9].transform.x, npcArr[9].transform.y + 2.f, npcArr[9].transform.z, 1.f);
-			particle[i].moveSpeed = (float)(rand() % 101) / 10000; //0~0.01
+			particle[i].moveSpeed = (float)(rand() % 101) / 50 + 2.f; //2~4
 			particle[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 			XMVector3Normalize(particle[i].dir);
 			particle[i].alive = 1;
 		}
-		if (particle[i].alive == 1)
+		else if (particle[i].alive == 1)
 		{
 			//월드 변환
-			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed);
+			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
 			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
 			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world); //월드 변환 행렬
 			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
@@ -210,21 +222,21 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			{
 				particle[i].alive = 0;
 			}
-		}
 
-		cmdQueuePtr->_cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
-		cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
-		cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
-		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-			texturePtr->_srvHandle.Offset(2, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-			descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+			cmdQueuePtr->_cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
+			cmdQueuePtr->_cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
+			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+				texturePtr->_srvHandle.Offset(2, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+			}
+			descHeapPtr->CommitTable(cmdQueuePtr);
+			cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 		}
-		descHeapPtr->CommitTable(cmdQueuePtr);
-		cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 	}
 
 

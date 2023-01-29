@@ -78,10 +78,10 @@ void process_packet(int c_id, char* packet)
 	}
 	case CS_MOVE: {
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		float x = p->x;
-		float y = p->y;
-		float z = p->z;
-		float degree = p->degree;
+		//float x = p->x;
+		//float y = p->y;
+		//float z = p->z;
+		//float degree = p->degree;
 		/*switch (p->direction) {
 		case 0:
 		{
@@ -105,10 +105,10 @@ void process_packet(int c_id, char* packet)
 		}
 		}*/
 
-		clients[c_id].x = x;
-		clients[c_id].y = y;
-		clients[c_id].z = z;
-		clients[c_id].degree = degree;
+		//clients[c_id].x = x;
+		//clients[c_id].y = y;
+		//clients[c_id].z = z;
+		//clients[c_id].degree = degree;
 
 		//clients[c_id].send_move_packet(c_id, x, y);
 
@@ -119,7 +119,7 @@ void process_packet(int c_id, char* packet)
 				pl._sl.unlock();
 				continue;
 			}
-			pl.send_move_packet(c_id, x, y, z, degree);
+			//pl.send_move_packet(c_id, x, y, z, degree);
 			pl._sl.unlock();
 		}
 		break;

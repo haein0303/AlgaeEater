@@ -148,6 +148,8 @@ struct Obj
 	bool on = false;
 	float	degree;
 	XMFLOAT4 transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	bool isCollision = false;
+	bool isFirstCollision = false;
 };
 
 struct Point
