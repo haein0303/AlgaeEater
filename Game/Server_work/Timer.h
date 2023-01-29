@@ -1,7 +1,7 @@
 #pragma once
 
 
-enum EVENT_TYPE { EV_MOVE, EV_RUSH, EV_CK, EV_CB };
+enum EVENT_TYPE { EV_MOVE, EV_RUSH, EV_CK, EV_CB, EV_UP };
 
 struct TIMER_EVENT {
 	int object_id;

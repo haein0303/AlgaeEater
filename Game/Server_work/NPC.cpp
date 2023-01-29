@@ -5,6 +5,7 @@
 #include "Session.h"
 #include "Timer.h"
 #include "Lua_API.h"
+#include "Tic.h"
 
 
 extern HANDLE g_h_iocp;
@@ -16,6 +17,7 @@ extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, 4> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
+extern Tic tic;
 
 void initialize_npc()
 {
@@ -29,7 +31,8 @@ void initialize_npc()
 		clients[i].move_degree = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
-		clients[i]._delta_time = 0.f;
+		clients[i]._delta_time = tic._deltaTime;
+		clients[i].key_state = 5;
 		add_timer(i, 5000, EV_MOVE, i);
 	}
 
@@ -42,7 +45,8 @@ void initialize_npc()
 	clients[19].move_degree = 0;
 	clients[19]._name[0] = 0;
 	clients[19]._prev_remain = 0;
-	clients[19]._delta_time = 0.f;
+	clients[19]._delta_time = tic._deltaTime;
+	clients[19].key_state = 5;
 
 	L = luaL_newstate();
 	clients[19].L = L;

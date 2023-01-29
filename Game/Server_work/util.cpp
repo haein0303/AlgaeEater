@@ -56,6 +56,9 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].send_login_ok_packet(c_id, 0, 0, 0, 0);
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._sl.unlock();
+		clients[c_id]._delta_time = tic._deltaTime;
+		clients[c_id].key_state = 5;
+		clients[c_id].cam_angle = 0;
 
 		for (int i = 0; i < MAX_USER; ++i) {
 			auto& pl = clients[i];
@@ -78,50 +81,9 @@ void process_packet(int c_id, char* packet)
 	}
 	case CS_MOVE: {
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		//float x = p->x;
-		//float y = p->y;
-		//float z = p->z;
-		//float degree = p->degree;
-		/*switch (p->direction) {
-		case 0:
-		{
-			y--;
-			break;
-		}
-		case 1:
-		{
-			y++;
-			break;
-		}
-		case 2:
-		{
-			x--;
-			break;
-		}
-		case 3:
-		{
-			x++;
-			break;
-		}
-		}*/
-
-		//clients[c_id].x = x;
-		//clients[c_id].y = y;
-		//clients[c_id].z = z;
-		//clients[c_id].degree = degree;
-
-		//clients[c_id].send_move_packet(c_id, x, y);
-
-		for (auto& pl : clients) {
-			if (pl._id == c_id) continue;
-			pl._sl.lock();
-			if (ST_INGAME != pl._s_state) {
-				pl._sl.unlock();
-				continue;
-			}
-			//pl.send_move_packet(c_id, x, y, z, degree);
-			pl._sl.unlock();
-		}
+		clients[c_id].key_state = p->keyNum;
+		clients[c_id]._delta_time = tic._deltaTime;
+		clients[c_id].cam_angle = p->cameraX;
 		break;
 	}
 	case CS_CONSOLE: {
@@ -177,9 +139,6 @@ void do_worker()
 			}
 		}
 
-		tic.fixed_update_tic();
-		tic.TimerUpdate();
-
 		switch (ex_over->_comp_type) {
 		case OP_ACCEPT: {
 			SOCKET c_socket = reinterpret_cast<SOCKET>(ex_over->_wsabuf.buf);
@@ -223,29 +182,103 @@ void do_worker()
 			clients[key].do_recv();
 			break;
 		}
-		case OP_SEND:
+		case OP_SEND: {
 			if (0 == num_bytes) disconnect(client_id);
 			delete ex_over;
 			break;
-
-		case OP_NPC_MOVE:
-		{
+		}
+		case OP_NPC_MOVE: {
 			move_npc(ex_over->target_id);
 			delete ex_over;
 			break;
 		}
-		case OP_NPC_RUSH:
-		{
+		case OP_NPC_RUSH: {
 			rush_npc(ex_over->target_id);
 			delete ex_over;
 			break;
 		}
-		case OP_CREATE_CUBE:
-		{
+		case OP_CREATE_CUBE: {
 			initialize_cube(clients[19].x, clients[19].y, clients[19].z);
 			delete ex_over;
 			break;
 		}
+		case OP_UPDATE: {
+			tic.TimerUpdate();
+			Update_Player();
+			add_timer(19, 15, EV_UP, 19);
+			delete ex_over;
+			break;
 		}
+		}
+	}
+}
+
+void Update_Player() 
+{
+	for (int i = 0; i < MAX_USER; i++) {
+		auto& pl = clients[i];
+		pl._sl.lock();
+		if (ST_INGAME != pl._s_state) {
+			pl._sl.unlock();
+			continue;
+		}
+		pl._sl.unlock();
+		pl._delta_time = tic._deltaTime;
+		switch (pl.key_state)
+		{
+		case 1:
+			pl.x -= 5.0f * cosf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.z -= 5.0f * sinf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.degree = -pl.cam_angle - 225.f;
+			break;
+		case 2:
+			pl.x -= 5.0f * cosf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.z -= 5.0f * sinf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.degree = -pl.cam_angle - 270.f;
+			break;
+		case 3:
+			pl.x -= 5.0f * cosf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.z += 5.0f * sinf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.degree = -pl.cam_angle - 315.f;
+			break;
+		case 4:
+			pl.x -= 5.0f * cosf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.z -= 5.0f * sinf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.degree = -pl.cam_angle - 180.f;
+			break;
+		case 5:
+			break;
+		case 6:
+			pl.x += 5.0f * cosf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.z += 5.0f * sinf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.degree = -pl.cam_angle;
+			break;
+		case 7:
+			pl.x += 5.0f * cosf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.z -= 5.0f * sinf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.degree = -pl.cam_angle - 135.f;
+			break;
+		case 8:
+			pl.x += 5.0f * cosf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.z += 5.0f * sinf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.degree = -pl.cam_angle - 90.f;
+			break;
+		case 9:
+			pl.x += 5.0f * cosf(pl.cam_angle * PI / 180.f) * pl._delta_time;
+			pl.z += 5.0f * sinf(pl.cam_angle * PI / 180.f - PI / 2.0f) * pl._delta_time;
+			pl.degree = -pl.cam_angle - 45.f;
+			break;
+		}
+	}
+
+	for (int i = 0; i < MAX_USER; i++) {
+		auto& pl = clients[i];
+		pl._sl.lock();
+		if (ST_INGAME != pl._s_state) {
+			pl._sl.unlock();
+			continue;
+		}
+		pl.send_move_packet(i, pl.x, pl.y, pl.z, pl.degree);
+		pl._sl.unlock();
 	}
 }

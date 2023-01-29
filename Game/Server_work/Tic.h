@@ -1,9 +1,11 @@
 #pragma once
+#include <mutex>
 class Tic
 {
 public:
 	float	_deltaTime = 0.f;
 	unsigned _int32	_fps = 0;
+	std::mutex _d_lock;
 
 	void InitTimer();
 
@@ -21,6 +23,5 @@ private:
 
 	unsigned _int32	_frameCount = 0;
 	float	_frameTime = 0.f;
-
 };
 
