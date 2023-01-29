@@ -28,8 +28,11 @@ Tic tic;
 
 int main()
 {
-	initialize_npc();
 	tic.InitTimer();
+	tic.TimerUpdate();
+	initialize_npc();
+	add_timer(19, 500, EV_UP, 19);
+
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	g_s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);

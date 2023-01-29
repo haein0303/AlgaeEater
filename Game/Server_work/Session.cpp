@@ -14,6 +14,8 @@ SESSION::SESSION()
 	move_stack = 0;
 	move_degree = 0;
 	_delta_time = 0.f;
+	key_state = 5;
+	cam_angle = 0;
 }
 
 SESSION::~SESSION()
