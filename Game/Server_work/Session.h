@@ -33,7 +33,7 @@ public:
 	int move_degree;
 	// 루아 사용 변수
 	lua_State* L;
-	bool M_cooltime;
+	float _delta_time;
 public:
 	SESSION();
 	~SESSION();

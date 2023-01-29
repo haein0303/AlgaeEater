@@ -29,6 +29,7 @@ void initialize_npc()
 		clients[i].move_degree = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
+		clients[i]._delta_time = 0.f;
 		add_timer(i, 5000, EV_MOVE, i);
 	}
 
@@ -41,6 +42,7 @@ void initialize_npc()
 	clients[19].move_degree = 0;
 	clients[19]._name[0] = 0;
 	clients[19]._prev_remain = 0;
+	clients[19]._delta_time = 0.f;
 
 	L = luaL_newstate();
 	clients[19].L = L;

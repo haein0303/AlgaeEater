@@ -8,6 +8,7 @@
 #include "Timer.h"
 #include "Lua_API.h"
 #include "NPC.h"
+#include "Tic.h"
 
 array<SESSION, MAX_USER + NPC_NUM> clients;
 
@@ -23,10 +24,12 @@ uniform_int_distribution<> uid{ 0, 3 };
 
 priority_queue<TIMER_EVENT> timer_queue;
 mutex timer_l;
+Tic tic;
 
 int main()
 {
 	initialize_npc();
+	tic.InitTimer();
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	g_s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);

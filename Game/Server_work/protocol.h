@@ -29,11 +29,7 @@ struct CS_LOGIN_PACKET {
 struct CS_MOVE_PACKET {
 	unsigned char size;
 	char	type;
-	float	degree;
-	float	x;
-	float	y;
-	float	z;
-	unsigned  client_time;
+	int key_num;
 };
 
 struct CS_CONSOLE_PACKET {

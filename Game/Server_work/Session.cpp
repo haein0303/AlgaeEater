@@ -13,7 +13,7 @@ SESSION::SESSION()
 	_prev_remain = 0;
 	move_stack = 0;
 	move_degree = 0;
-	M_cooltime = true;
+	_delta_time = 0.f;
 }
 
 SESSION::~SESSION()

@@ -68,7 +68,12 @@ void reset_lua()
 	clients[19].L = L;
 
 	luaL_openlibs(L);
-	luaL_loadfile(L, "hello.lua");
+	if (luaL_loadfile(L, "hello.lua")) {
+		printf("소환 실패");
+	}
+	else {
+		printf("소환 성공");
+	}
 	lua_pcall(L, 0, 0, 0);
 
 	lua_getglobal(L, "set_object_id");

@@ -5,6 +5,7 @@
 #include "Timer.h"
 #include "Lua_API.h"
 #include "NPC.h"
+#include "Tic.h"
 
 extern HANDLE g_h_iocp;
 extern SOCKET g_s_socket;
@@ -15,6 +16,7 @@ extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, 4> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
+extern Tic tic;
 
 int get_new_client_id()
 {
@@ -174,6 +176,9 @@ void do_worker()
 				continue;
 			}
 		}
+
+		tic.fixed_update_tic();
+		tic.TimerUpdate();
 
 		switch (ex_over->_comp_type) {
 		case OP_ACCEPT: {
