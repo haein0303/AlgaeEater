@@ -9,6 +9,12 @@ public:
 	//화면회전(이후에 캐릭터 요소로 옮길 예정)
 	POINT angle = { 0,0 };
 
+	bool w = false;
+	bool a = false;
+	bool s = false;
+	bool d = false;
+	int keyNum;
+
 	//벡터 사이즈 초기화
 	void Init(WindowInfo windowInfo);
 
