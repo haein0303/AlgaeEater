@@ -43,7 +43,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		w = true;
 		key_toggle = true;
 	}
-	if (_states['W'] == 0)
+	if (_states['W'] == 3)
 	{
 		w = false;
 		key_toggle = true;
@@ -53,7 +53,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		s = true;
 		key_toggle = true;
 	}
-	if (_states['S'] == 0)
+	if (_states['S'] == 3)
 	{
 		s = false;
 		key_toggle = true;
@@ -63,7 +63,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		a = true;
 		key_toggle = true;
 	}
-	if (_states['A'] == 0)
+	if (_states['A'] == 3)
 	{
 		a = false;
 		key_toggle = true;
@@ -73,7 +73,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		d = true;
 		key_toggle = true;
 	}
-	if (_states['D'] == 0)
+	if (_states['D'] == 3)
 	{
 		d = false;
 		key_toggle = true;
