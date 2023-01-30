@@ -8,7 +8,6 @@
 #include "Timer.h"
 #include "Lua_API.h"
 #include "NPC.h"
-#include "Tic.h"
 
 array<SESSION, MAX_USER + NPC_NUM> clients;
 
@@ -24,12 +23,9 @@ uniform_int_distribution<> uid{ 0, 3 };
 
 priority_queue<TIMER_EVENT> timer_queue;
 mutex timer_l;
-Tic tic;
 
 int main()
 {
-	tic.InitTimer();
-	tic.TimerUpdate();
 	initialize_npc();
 	add_timer(19, 500, EV_UP, 19);
 

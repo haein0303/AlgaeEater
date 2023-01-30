@@ -33,10 +33,7 @@ public:
 	int move_degree;
 	// 루아 사용 변수
 	lua_State* L;
-	float _delta_time;
-	int key_state;
-	float cam_angle;
-	std::mutex _cl_l;
+
 public:
 	SESSION();
 	~SESSION();
