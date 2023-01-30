@@ -204,8 +204,11 @@ struct CS_LOGIN_PACKET {
 struct CS_MOVE_PACKET {
 	unsigned char size;
 	char	type;
-	int		keyNum;
-	LONG	cameraX;
+	float	degree;
+	float	x;
+	float	y;
+	float	z;
+	unsigned  client_time;
 };
 
 struct CS_CONSOLE_PACKET {

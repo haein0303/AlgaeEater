@@ -13,7 +13,6 @@ public:
 	bool a = false;
 	bool s = false;
 	bool d = false;
-	int keyNum;
 
 	//벡터 사이즈 초기화
 	void Init(WindowInfo windowInfo);

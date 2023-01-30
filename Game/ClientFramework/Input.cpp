@@ -83,31 +83,59 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 	if (w != s && a == d)
 	{
 		if (w == true)
-			keyNum = 8;
+		{
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
+			playerArr[networkPtr->myClientId].degree = -angle.x - 90.f;
+		}
 		else
-			keyNum = 2;
+		{
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
+			playerArr[networkPtr->myClientId].degree = -angle.x - 270.f;
+		}
 	}
 	else if (w == s && a != d)
 	{
 		if (a == true)
-			keyNum = 4;
+		{
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x - 180.f;
+		}
 		else
-			keyNum = 6;
+		{
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x;
+		}
 	}
 	else if (w != s && a != d)
 	{
 		if (w == true && a == true)
-			keyNum = 7;
+		{
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x - 135.f;
+		}
 		else if (w == true && d == true)
-			keyNum = 9;
+		{
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x - 45.f;
+		}
 		else if (s == true && a == true)
-			keyNum = 1;
+		{
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x - 225.f;
+		}
 		else
-			keyNum = 3;
-	}
-	else
-	{
-		keyNum = 5;
+		{
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x - 315.f;
+		}
 	}
 	
 	if (_states['1'] == 2)
@@ -124,8 +152,9 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);
 		p.type = CS_MOVE;
-		p.keyNum = keyNum;
-		p.cameraX = angle.x;
+		p.x = playerArr[networkPtr->myClientId].transform.x;
+		p.y = playerArr[networkPtr->myClientId].transform.y;
+		p.z = playerArr[networkPtr->myClientId].transform.z;
 		networkPtr->send_packet(&p);
 	}
 	
@@ -169,8 +198,9 @@ void Input::inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr)
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);
 		p.type = CS_MOVE;
-		p.keyNum = keyNum;
-		p.cameraX = angle.x;
+		p.x = playerArr[networkPtr->myClientId].transform.x;
+		p.y = playerArr[networkPtr->myClientId].transform.y;
+		p.z = playerArr[networkPtr->myClientId].transform.z;
 		networkPtr->send_packet(&p);
 	}
 	//cout << angle.x << ":" << angle.y << endl;
