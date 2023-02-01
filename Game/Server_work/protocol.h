@@ -3,7 +3,7 @@ constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
 
-constexpr int MAX_USER = 10;
+constexpr int MAX_USER = 3000;
 constexpr int NPC_NUM = 10;
 
 // Packet ID
@@ -33,6 +33,7 @@ struct CS_MOVE_PACKET {
 	float	y;
 	float	z;
 	float	degree;
+	unsigned int client_time;
 };
 
 struct CS_CONSOLE_PACKET {
