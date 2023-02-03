@@ -27,7 +27,7 @@ mutex timer_l;
 int main()
 {
 	initialize_npc();
-	add_timer(19, 500, EV_UP, 19);
+	add_timer(0, 500, EV_UP, 0);
 
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);

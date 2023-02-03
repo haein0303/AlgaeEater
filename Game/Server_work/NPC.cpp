@@ -32,18 +32,18 @@ void initialize_npc()
 		add_timer(i, 5000, EV_MOVE, i);
 	}
 
-	clients[19]._s_state = ST_INGAME;
-	clients[19].x = 9 * 1.5;
-	clients[19].y = 0;
-	clients[19].z = 0;
-	clients[19].degree = 0;
-	clients[19].move_stack = 0;
-	clients[19].move_degree = 0;
-	clients[19]._name[0] = 0;
-	clients[19]._prev_remain = 0;
+	clients[MAX_USER + NPC_NUM - 1]._s_state = ST_INGAME;
+	clients[MAX_USER + NPC_NUM - 1].x = 9 * 1.5;
+	clients[MAX_USER + NPC_NUM - 1].y = 0;
+	clients[MAX_USER + NPC_NUM - 1].z = 0;
+	clients[MAX_USER + NPC_NUM - 1].degree = 0;
+	clients[MAX_USER + NPC_NUM - 1].move_stack = 0;
+	clients[MAX_USER + NPC_NUM - 1].move_degree = 0;
+	clients[MAX_USER + NPC_NUM - 1]._name[0] = 0;
+	clients[MAX_USER + NPC_NUM - 1]._prev_remain = 0;
 
 	L = luaL_newstate();
-	clients[19].L = L;
+	clients[MAX_USER + NPC_NUM - 1].L = L;
 
 	luaL_openlibs(L);
 
@@ -56,7 +56,7 @@ void initialize_npc()
 	lua_pcall(L, 0, 0, 0);
 
 	lua_getglobal(L, "set_object_id");
-	lua_pushnumber(L, 19);
+	lua_pushnumber(L, MAX_USER + NPC_NUM - 1);
 	lua_pcall(L, 1, 0, 0);
 
 	lua_register(L, "API_get_x", API_get_x);
@@ -65,7 +65,7 @@ void initialize_npc()
 	lua_register(L, "API_Cube", API_Cube);
 	lua_register(L, "API_get_state", API_get_state);
 
-	add_timer(19, 10000, EV_CK, 0);
+	add_timer(MAX_USER + NPC_NUM - 1, 10000, EV_CK, 0);
 }
 
 void initialize_cube(float x, float y, float z)
@@ -111,32 +111,32 @@ void initialize_cube(float x, float y, float z)
 		}
 	}
 
-	add_timer(19, 5000, EV_CB, 0);
+	add_timer(MAX_USER + NPC_NUM - 1, 5000, EV_CB, 0);
 }
 
 void rush_npc(int player_id)
 {
-	float x = clients[19].x;
-	float z = clients[19].z;
+	float x = clients[MAX_USER + NPC_NUM - 1].x;
+	float z = clients[MAX_USER + NPC_NUM - 1].z;
 
 	Sleep(10);
 
 	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 3) {
-		add_timer(19, 10000, EV_RUSH, 0);
+		add_timer(MAX_USER + NPC_NUM - 1, 10000, EV_RUSH, 0);
 		return;
 	}
 
 	for (int i = 0; i < 4; i++) {
 		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 3) {
 			cout << "±âµÕ Ãæµ¹" << endl;
-			add_timer(19, 10000, EV_RUSH, 0);
+			add_timer(MAX_USER + NPC_NUM - 1, 10000, EV_RUSH, 0);
 			return;
 		}
 	}
 
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
 	de = de * 180 / PI;
-	clients[19].degree = de;
+	clients[MAX_USER + NPC_NUM - 1].degree = de;
 
 	if (x > clients[player_id].x) x--;
 	else if (x < clients[player_id].x) x++;
@@ -147,12 +147,18 @@ void rush_npc(int player_id)
 	if (abs(x - clients[player_id].x) < 1) x = clients[player_id].x;
 	if (abs(z - clients[player_id].z) < 1) z = clients[player_id].z;
 
-	clients[19].x = x;
-	clients[19].z = z;
+	clients[MAX_USER + NPC_NUM - 1].x = x;
+	clients[MAX_USER + NPC_NUM - 1].z = z;
 
 	for (int i = 0; i < MAX_USER; ++i) {
-		auto& pl = clients;
-		pl[i].send_move_packet(19, clients[19].x, clients[19].y, clients[19].z, clients[19].degree);
+		auto& pl = clients[i];
+		pl._sl.lock();
+		if (pl._s_state != ST_INGAME) { 
+			pl._sl.unlock();
+			continue; 
+		}
+		pl.send_move_packet(MAX_USER + NPC_NUM - 1, clients[MAX_USER + NPC_NUM - 1].x, clients[MAX_USER + NPC_NUM - 1].y, clients[MAX_USER + NPC_NUM - 1].z, clients[MAX_USER + NPC_NUM - 1].degree);
+		pl._sl.unlock();
 	}
 
 	rush_npc(player_id);
@@ -201,7 +207,13 @@ void move_npc(int npc_id)
 	clients[npc_id].x = x;
 
 	for (int i = 0; i < MAX_USER; ++i) {
-		auto& pl = clients;
-		pl[i].send_move_packet(npc_id, clients[npc_id].x, clients[npc_id].y, clients[npc_id].z, clients[npc_id].degree);
+		auto& pl = clients[i];
+		pl._sl.lock();
+		if (pl._s_state != ST_INGAME) {
+			pl._sl.unlock();
+			continue;
+		}
+		pl.send_move_packet(npc_id, clients[npc_id].x, clients[npc_id].y, clients[npc_id].z, clients[npc_id].degree);
+		pl._sl.unlock();
 	}
 }

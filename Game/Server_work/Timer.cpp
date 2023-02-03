@@ -82,19 +82,20 @@ void do_timer()
 			case EV_CK:
 			{
 				srand((unsigned int)time(NULL));
-				int rd_id = rand() % MAX_USER;
+				//int rd_id = rand() % MAX_USER;
+				int rd_id = 0;
 
 				if (clients[rd_id]._s_state == ST_INGAME) {
-					lua_getglobal(clients[19].L, "event_rush");
-					lua_pushnumber(clients[19].L, rd_id);
-					lua_pcall(clients[19].L, 1, 0, 0);
+					lua_getglobal(clients[MAX_USER + NPC_NUM - 1].L, "event_rush");
+					lua_pushnumber(clients[MAX_USER + NPC_NUM - 1].L, rd_id);
+					lua_pcall(clients[MAX_USER + NPC_NUM - 1].L, 1, 0, 0);
 
-					lua_getglobal(clients[19].L, "create_cube");
-					lua_pushnumber(clients[19].L, 19);
-					lua_pcall(clients[19].L, 1, 0, 0);
+					lua_getglobal(clients[MAX_USER + NPC_NUM - 1].L, "create_cube");
+					lua_pushnumber(clients[MAX_USER + NPC_NUM - 1].L, MAX_USER + NPC_NUM - 1);
+					lua_pcall(clients[MAX_USER + NPC_NUM - 1].L, 1, 0, 0);
 				}
 				else {
-					add_timer(19, 10, EV_CK, 0);
+					add_timer(0, 10, EV_CK, 0);
 				}
 				break;
 			}

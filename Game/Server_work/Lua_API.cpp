@@ -65,7 +65,7 @@ void reset_lua()
 	lua_close(L);
 
 	L = luaL_newstate();
-	clients[19].L = L;
+	clients[MAX_USER + NPC_NUM - 1].L = L;
 
 	luaL_openlibs(L);
 	if (luaL_loadfile(L, "hello.lua")) {
@@ -77,7 +77,7 @@ void reset_lua()
 	lua_pcall(L, 0, 0, 0);
 
 	lua_getglobal(L, "set_object_id");
-	lua_pushnumber(L, 19);
+	lua_pushnumber(L, MAX_USER + NPC_NUM - 1);
 	lua_pcall(L, 1, 0, 0);
 
 	lua_register(L, "API_get_x", API_get_x);

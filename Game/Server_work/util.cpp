@@ -142,6 +142,8 @@ void do_worker()
 			if (client_id != -1) {
 				clients[client_id].x = 0;
 				clients[client_id].y = 0;
+				clients[client_id].z = 0;
+				clients[client_id].degree = 0;
 				clients[client_id]._id = client_id;
 				clients[client_id]._name[0] = 0;
 				clients[client_id]._prev_remain = 0;
@@ -194,13 +196,13 @@ void do_worker()
 			break;
 		}
 		case OP_CREATE_CUBE: {
-			initialize_cube(clients[19].x, clients[19].y, clients[19].z);
+			initialize_cube(clients[MAX_USER + NPC_NUM - 1].x, clients[MAX_USER + NPC_NUM - 1].y, clients[MAX_USER + NPC_NUM - 1].z);
 			delete ex_over;
 			break;
 		}
 		case OP_UPDATE: {
 			Update_Player();
-			add_timer(19, 33, EV_UP, 19);
+			add_timer(0, 33, EV_UP, 0);
 			delete ex_over;
 			break;
 		}
@@ -212,19 +214,22 @@ void Update_Player()
 {
 	for (int i = 0; i < MAX_USER; i++) {
 		for (int j = 0; j < MAX_USER; j++) {
+			if (i == j) continue;
+
 			clients[j]._sl.lock();
 			if (ST_INGAME != clients[j]._s_state) {
 				clients[j]._sl.unlock();
 				continue;
 			}
 			clients[j]._sl.unlock();
-			if (i == j) continue;
+			
 			auto& pl = clients[i];
 			pl._sl.lock();
 			if (ST_INGAME != pl._s_state) {
 				pl._sl.unlock();
 				continue;
 			}
+
 			pl.send_move_packet(j, clients[j].x, clients[j].y, clients[j].z, clients[j].degree);
 			pl._sl.unlock();
 		}
