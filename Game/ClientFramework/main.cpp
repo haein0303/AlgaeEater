@@ -11,8 +11,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	MSG msg = { 0 };
 
 	thread logical_thread{ &Client::Logic,&client };
-	thread render_thread{ &Client::Draw,&client };
-
+	thread render_thread1{ &Client::Draw,&client };
+	thread render_thread2{ &Client::Draw,&client };
 
 
 	while (msg.message != WM_QUIT)
@@ -31,8 +31,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	}
 
 	logical_thread.join();
-	render_thread.join();
-
+	render_thread1.join(); 
+	render_thread2.join();
 
 
 

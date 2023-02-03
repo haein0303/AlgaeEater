@@ -8,9 +8,17 @@ void CmdQueue::CreateCmdListAndCmdQueue(shared_ptr<Device> devicePtr)
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
 	devicePtr->_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&_cmdQueue)); //커맨드 큐 생성
+
 	devicePtr->_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdAlloc)); //커맨드 할당자 생성
 	devicePtr->_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _cmdAlloc.Get(), nullptr, IID_PPV_ARGS(&_cmdList)); //커맨드 리스트 생성
 	_cmdList->Close();
+
+	//멀티쓰레드용 커멘드 리스트 분리
+	for (int i = 0; i < 2; ++i) {
+		devicePtr->_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_arr_cmdAlloc[i])); //커맨드 할당자 생성
+		devicePtr->_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _arr_cmdAlloc[0].Get(), nullptr, IID_PPV_ARGS(&_arr_cmdList[i])); //커맨드 리스트 생성
+		_arr_cmdList[i]->Close();
+	}
 
 	devicePtr->_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_resCmdAlloc)); //리소스용 커맨드 할당자 생성
 	devicePtr->_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _resCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&_resCmdList)); //리소스용 커맨드 리스트 생성
@@ -44,3 +52,4 @@ void CmdQueue::FlushResourceCommandQueue()
 	_resCmdAlloc->Reset();
 	_resCmdList->Reset(_resCmdAlloc.Get(), nullptr);
 }
+

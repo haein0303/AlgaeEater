@@ -106,7 +106,7 @@ public:
 			dxEngine.timerPtr->ShowFps(windowInfo);
 
 			dxEngine.Update(windowInfo, isActive);
-			dxEngine.Draw(windowInfo);
+			dxEngine.Draw_multi(windowInfo);
 		}
 	}
 

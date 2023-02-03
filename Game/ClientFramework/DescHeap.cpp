@@ -37,3 +37,13 @@ void DescHeap::CommitTable(shared_ptr<CmdQueue> cmdQueuePtr)
 
 	_currentGroupIndex++;
 }
+
+void DescHeap::CommitTable_multi(shared_ptr<CmdQueue> cmdQueuePtr, int index)
+{
+
+	D3D12_GPU_DESCRIPTOR_HANDLE handle = _descHeap->GetGPUDescriptorHandleForHeapStart();
+	handle.ptr += _currentGroupIndex * _groupSize;
+	cmdQueuePtr->_arr_cmdList[index]->SetGraphicsRootDescriptorTable(0, handle);
+
+	_currentGroupIndex++;
+}

@@ -14,4 +14,5 @@ public:
 	void CopyDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, UINT reg, shared_ptr<Device> devicePtr);
 
 	void CommitTable(shared_ptr<CmdQueue> cmdQueuePtr);
+	void CommitTable_multi(shared_ptr<CmdQueue> cmdQueuePtr,int index);
 };
