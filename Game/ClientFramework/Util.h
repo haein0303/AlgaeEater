@@ -48,8 +48,8 @@
 #pragma comment (lib, "ws2_32.lib")
 
 #define CHARACTERINDEX 0
-#define PLAYERMAX 10
-#define NPCMAX 10
+#define PLAYERMAX 50
+#define NPCMAX 50
 #define CubeMax 4
 #pragma endregion
 
@@ -180,8 +180,8 @@ constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
 
-constexpr int MAX_USER = 10;
-constexpr int NPC_NUM = 10;
+constexpr int MAX_USER = PLAYERMAX;
+constexpr int NPC_NUM = NPCMAX;
 
 // Packet ID
 constexpr char CS_LOGIN = 0;
