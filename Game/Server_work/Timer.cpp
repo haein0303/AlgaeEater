@@ -87,7 +87,7 @@ void do_timer()
 
 				if (clients[rd_id]._s_state == ST_INGAME) {
 					lua_getglobal(clients[MAX_USER + NPC_NUM - 1].L, "event_rush");
-					lua_pushnumber(clients[MAX_USER + NPC_NUM - 1].L, rd_id);
+					lua_pushnumber(clients[MAX_USER + NPC_NUM - 1].L, 0);
 					lua_pcall(clients[MAX_USER + NPC_NUM - 1].L, 1, 0, 0);
 
 					lua_getglobal(clients[MAX_USER + NPC_NUM - 1].L, "create_cube");
