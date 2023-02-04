@@ -60,6 +60,9 @@ public:
 	Obj cubeArr[CubeMax];
 	ParticleData particle[100];
 
+	//상수버퍼로 넘길 데이터
+	Constants _transform = {};
+
 	HANDLE _renderEvent = INVALID_HANDLE_VALUE;
 	HANDLE _excuteEvent = INVALID_HANDLE_VALUE;
 	int _render_thread_num = 0;

@@ -14,11 +14,6 @@ cbuffer TEST_B0 : register(b0)
     LightInfo lightInfo;
 };
 
-cbuffer TEST_B1 : register(b1)
-{
-    float4 offset;
-};
-
 Texture2D tex_0 : register(t0);
 SamplerState sam_0 : register(s0);
 

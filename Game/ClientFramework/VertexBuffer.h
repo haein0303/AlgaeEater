@@ -16,8 +16,6 @@ public:
 	ComPtr<ID3D12Resource> _particleVertexBuffer;
 	D3D12_VERTEX_BUFFER_VIEW _particleVertexBufferView = {};
 
-	Constants _transform = {};
-
 	//버텍스 버퍼 생성
 	template <typename T>
 	void CreateVertexBuffer(ComPtr<ID3D12Resource>& vertexBuffer, D3D12_VERTEX_BUFFER_VIEW& vertexBufferView, const vector<T>& buffer, shared_ptr<Device> devicePtr)

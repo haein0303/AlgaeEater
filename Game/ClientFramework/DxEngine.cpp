@@ -61,14 +61,14 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId].transform.x, playerArr[networkPtr->myClientId].transform.y, playerArr[networkPtr->myClientId].transform.z, playerArr[networkPtr->myClientId].transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //뷰 변환 행렬
-	XMStoreFloat4x4(&vertexBufferPtr->_transform.view, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
 
 	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //투영 변환 행렬
-	XMStoreFloat4x4(&vertexBufferPtr->_transform.proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
 
 	//Light
 	LightInfo lightInfo;
-	vertexBufferPtr->_transform.lnghtInfo = lightInfo;
+	_transform.lnghtInfo = lightInfo;
 }
 
 void DxEngine::Update(WindowInfo windowInfo, bool isActive)
@@ -117,17 +117,15 @@ void DxEngine::Draw(WindowInfo windowInfo)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, 
-					XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
-				XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+				XMStoreFloat4x4(&_transform.world, 
+					XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 				//렌더
 				{
-					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
-					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
 					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 				}
@@ -147,14 +145,14 @@ void DxEngine::Draw(WindowInfo windowInfo)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, 
+				XMStoreFloat4x4(&_transform.world, 
 					XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
-				XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 				//렌더
 				{
-					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
@@ -174,13 +172,13 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
 
 			//월드 변환
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.f, cubeArr[i].transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.f, cubeArr[i].transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 			//렌더
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
@@ -220,13 +218,13 @@ void DxEngine::Draw(WindowInfo windowInfo)
 		{
 			//월드 변환
 			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, 
+			XMStoreFloat4x4(&_transform.world, 
 				XMMatrixRotationY(
 					atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], 
 						cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], 
 							particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
-			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world); //월드 변환 행렬
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //월드 변환 행렬
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			particle[i].curTime += 0.001;
 			if (particle[i].lifeTime < particle[i].curTime)
 			{
@@ -238,7 +236,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			cmdQueuePtr->_cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
 			cmdQueuePtr->_cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				texturePtr->_srvHandle.Offset(2, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
@@ -324,13 +322,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
-				XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 				//렌더
 				{
-					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
 					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
@@ -353,13 +351,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
-				XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-				XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 				//렌더
 				{
-					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
@@ -379,13 +377,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
 
 			//월드 변환
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.f, cubeArr[i].transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world);
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.f, cubeArr[i].transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 			//렌더
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
@@ -425,9 +423,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 		{
 			//월드 변환
 			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
-			XMMATRIX world = XMLoadFloat4x4(&vertexBufferPtr->_transform.world); //월드 변환 행렬
-			XMStoreFloat4x4(&vertexBufferPtr->_transform.world, XMMatrixTranspose(world));
+			XMStoreFloat4x4(&_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //월드 변환 행렬
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			particle[i].curTime += 0.001;
 			if (particle[i].lifeTime < particle[i].curTime)
 			{
@@ -439,7 +437,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				texturePtr->_srvHandle.Offset(2, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));

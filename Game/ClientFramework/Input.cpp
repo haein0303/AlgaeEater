@@ -114,14 +114,14 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 	{
 		if (w == true && a == true)
 		{
-			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
 			playerArr[networkPtr->myClientId].degree = -angle.x - 135.f;
 		}
 		else if (w == true && d == true)
 		{
-			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
 			playerArr[networkPtr->myClientId].degree = -angle.x - 45.f;
 		}
 		else if (s == true && a == true)
@@ -132,8 +132,8 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		}
 		else
 		{
-			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
 			playerArr[networkPtr->myClientId].degree = -angle.x - 315.f;
 		}
 	}
