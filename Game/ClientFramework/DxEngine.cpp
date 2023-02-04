@@ -268,7 +268,17 @@ void DxEngine::Draw(WindowInfo windowInfo)
 void DxEngine::Draw_multi(WindowInfo windowInfo)
 {
 	::WaitForSingleObject(_renderEvent, INFINITE);
-	int i_now_render_index = swapChainPtr->_backBufferIndex;
+	int i_now_render_index;
+
+	if (!_render_thread_num) {
+		i_now_render_index = 0;
+		_render_thread_num++;
+	}
+	else {
+		i_now_render_index = 1;
+		_render_thread_num = 0;
+	}
+
 
 
 
@@ -284,12 +294,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = rtvPtr->_rtvHandle[i_now_render_index];
-	if (_render_thread_num) {
-		cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearRenderTargetView(backBufferView, Colors::LightGreen, 0, nullptr);
-	}
-	else {
-		cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
-	}
+	
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
+	
 	//cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearRenderTargetView(backBufferView, Colors::LightGreen, 0, nullptr);
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dsvPtr->_dsvHandle;
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
