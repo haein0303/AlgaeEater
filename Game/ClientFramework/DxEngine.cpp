@@ -77,6 +77,8 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 
 }
 
+#pragma region Draw
+/*
 void DxEngine::Draw(WindowInfo windowInfo)
 {
 	//렌더 시작
@@ -117,7 +119,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&_transform.world, 
+				XMStoreFloat4x4(&_transform.world,
 					XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -135,7 +137,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			}
 		}
 	}
-	
+
 	for (int i = 0; i < NPCMAX; i++) //npc 렌더
 	{
 		if (npcArr[i].on == true)
@@ -145,7 +147,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&_transform.world, 
+				XMStoreFloat4x4(&_transform.world,
 					XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -164,7 +166,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			}
 		}
 	}
-	for(int i = 0 ;i < CubeMax; i++) //기둥 렌더
+	for (int i = 0; i < CubeMax; i++) //기둥 렌더
 	{
 		if (cubeArr[i].on == true)
 		{
@@ -203,7 +205,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 		playerArr[0].isCollision = false;
 	}
 	for (int i = 0; i < 100; i++) //파티클 렌더
-	{	
+	{
 		if (playerArr[0].isFirstCollision == true && particle[i].alive == 0)
 		{
 			particle[i].lifeTime = (float)(rand() % 101) / 1000 + 0.1f; //0.1~0.2
@@ -218,10 +220,10 @@ void DxEngine::Draw(WindowInfo windowInfo)
 		{
 			//월드 변환
 			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
-			XMStoreFloat4x4(&_transform.world, 
+			XMStoreFloat4x4(&_transform.world,
 				XMMatrixRotationY(
-					atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], 
-						cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], 
+					atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0],
+						cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0],
 							particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //월드 변환 행렬
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -246,7 +248,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 			cmdQueuePtr->_cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 		}
 	}
-	
+
 	//렌더 종료
 	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[swapChainPtr->_backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // 화면 출력
 
@@ -261,7 +263,8 @@ void DxEngine::Draw(WindowInfo windowInfo)
 	cmdQueuePtr->WaitSync();
 
 	swapChainPtr->_backBufferIndex = (swapChainPtr->_backBufferIndex + 1) % SWAP_CHAIN_BUFFER_COUNT;
-}
+}*/
+#pragma endregion
 
 void DxEngine::Draw_multi(WindowInfo windowInfo)
 {
@@ -322,7 +325,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[networkPtr->myClientId].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(playerArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
