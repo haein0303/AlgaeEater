@@ -57,7 +57,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	//VP 변환
-	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x - 5 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.y + 2 + 5 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.z - 5 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
+	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x - 7 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.y + 4 + 7 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), playerArr[networkPtr->myClientId].transform.z - 7 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
 	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId].transform.x, playerArr[networkPtr->myClientId].transform.y, playerArr[networkPtr->myClientId].transform.z, playerArr[networkPtr->myClientId].transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //뷰 변환 행렬
