@@ -78,6 +78,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		d = false;
 		key_toggle = true;
 	}
+	if (_states[VK_ESCAPE] == 1) {
+		cout << "QUIT" << endl;
+		ExitProcess(0);
+	}
 
 	//w = 8, a = 4, s = 2, d = 6, wa = 7, wd = 9, sa = 1, sd = 3 , none or full = 5 
 	if (w != s && a == d)

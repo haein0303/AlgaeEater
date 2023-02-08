@@ -297,8 +297,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = rtvPtr->_rtvHandle[i_now_render_index];
 	
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
-	
-	//cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearRenderTargetView(backBufferView, Colors::LightGreen, 0, nullptr);
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dsvPtr->_dsvHandle;
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
 
@@ -463,11 +461,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo)
 	ID3D12CommandList* cmdListArr[] = { cmdQueuePtr->_arr_cmdList[i_now_render_index].Get() };
 	cmdQueuePtr->_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
-	//note 23.02.03.23:56
-	// Present에서 에러가 남
-	// 두개의 커멘드 리스트를 쓰기 위해서 스왑체인의 인덱스를 활용하는 아이디어
-	// 실행 순서를 분석해볼 필요가 있음
-	//
 
 	swapChainPtr->_swapChain->Present(0, 0);
 

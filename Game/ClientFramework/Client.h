@@ -90,7 +90,7 @@ public:
 		while (g_isLive) {
 			//cout << "UPDATE";
 			float fTimeElapsed = 0;
-			float fLockFPS =10.f;
+			float fLockFPS = 30.f;
 			dxEngine.timerPtr->TimerUpdate();
 			if (!isActive) { //액티브 상태가 아닐때				
 				while (fTimeElapsed < (1.f / fLockFPS)) {
@@ -136,7 +136,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_DESTROY: case WM_QUIT:
 		g_isLive = false;
-		PostQuitMessage(0);	
+		ExitProcess(0);
 		break;
 	case WM_CLOSE:
 		FreeConsole();
