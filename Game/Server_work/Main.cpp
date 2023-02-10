@@ -11,12 +11,10 @@
 
 array<SESSION, MAX_USER + NPC_NUM> clients;
 
-array<CUBE, 4> cubes;
+array<CUBE, CUBE_NUM> cubes;
 
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
-
-lua_State* L;
 
 default_random_engine dre;
 uniform_int_distribution<> uid{ 0, 3 };
@@ -26,6 +24,7 @@ mutex timer_l;
 
 int main()
 {
+	initialize_cube();
 	initialize_npc();
 	add_timer(0, 500, EV_UP, 0);
 

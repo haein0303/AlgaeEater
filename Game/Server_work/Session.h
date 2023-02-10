@@ -2,6 +2,7 @@
 #include <mutex>
 #include <thread>
 #include <iostream>
+#include <unordered_set>
 #include <array>
 #include "protocol.h"
 #include "Over_EXP.h"
@@ -33,6 +34,8 @@ public:
 	int move_degree;
 	// 루아 사용 변수
 	lua_State* L;
+	int		_Room_Num;
+	std::unordered_set <int> room_list;
 
 public:
 	SESSION();
@@ -50,4 +53,5 @@ struct CUBE {
 public:
 	float x, y, z;
 	float degree;
+	int		_Room_Num;
 };

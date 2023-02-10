@@ -48,8 +48,8 @@
 #pragma comment (lib, "ws2_32.lib")
 
 #define CHARACTERINDEX 0
-#define PLAYERMAX 50
-#define NPCMAX 50
+#define PLAYERMAX 4
+#define NPCMAX 10
 #define CubeMax 4
 #pragma endregion
 

@@ -15,11 +15,10 @@ using namespace chrono;
 
 extern HANDLE g_h_iocp;
 extern SOCKET g_s_socket;
-extern lua_State* L;
 extern default_random_engine dre;
 extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
-extern array<CUBE, 4> cubes;
+extern array<CUBE, CUBE_NUM> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
@@ -76,23 +75,22 @@ void do_timer()
 				auto ex_over = new OVER_EXP;
 				ex_over->_comp_type = OP_NPC_RUSH;
 				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			}
 			case EV_CK:
 			{
 				srand((unsigned int)time(NULL));
-				//int rd_id = rand() % MAX_USER;
-				int rd_id = 0;
+				int rd_id = clients[ev.object_id]._Room_Num * 4;
 
 				if (clients[rd_id]._s_state == ST_INGAME) {
-					lua_getglobal(clients[MAX_USER + NPC_NUM - 1].L, "event_rush");
-					lua_pushnumber(clients[MAX_USER + NPC_NUM - 1].L, 0);
-					lua_pcall(clients[MAX_USER + NPC_NUM - 1].L, 1, 0, 0);
+					lua_getglobal(clients[ev.object_id].L, "event_rush");
+					lua_pushnumber(clients[ev.object_id].L, rd_id);
+					lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 
-					lua_getglobal(clients[MAX_USER + NPC_NUM - 1].L, "create_cube");
-					lua_pushnumber(clients[MAX_USER + NPC_NUM - 1].L, MAX_USER + NPC_NUM - 1);
-					lua_pcall(clients[MAX_USER + NPC_NUM - 1].L, 1, 0, 0);
+					lua_getglobal(clients[ev.object_id].L, "create_cube");
+					lua_pushnumber(clients[ev.object_id].L, ev.object_id);
+					lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 				}
 				else {
 					add_timer(0, 10, EV_CK, 0);

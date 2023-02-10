@@ -7,12 +7,11 @@
 #include "NPC.h"
 
 extern HANDLE g_h_iocp;
-extern SOCKET g_s_socket;
-extern lua_State* L;
+extern SOCKET g_s_socket;	
 extern default_random_engine dre;
 extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
-extern array<CUBE, 4> cubes;
+extern array<CUBE, CUBE_NUM> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
@@ -51,8 +50,10 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].y = 0;
 		clients[c_id].z = 0;
 		clients[c_id].degree = 0;
-		clients[c_id].send_login_ok_packet(c_id, 0, 0, 0, 0);
+		clients[c_id].send_login_ok_packet(c_id % 4, 0, 0, 0, 0);
 		clients[c_id]._s_state = ST_INGAME;
+		clients[c_id]._Room_Num = c_id / 4;
+		clients[c_id].room_list.clear();
 		clients[c_id]._sl.unlock();
 
 		for (int i = 0; i < MAX_USER; ++i) {
@@ -63,13 +64,28 @@ void process_packet(int c_id, char* packet)
 				pl._sl.unlock();
 				continue;
 			}
-			pl.send_add_object(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id]._name);
-			clients[c_id].send_add_object(pl._id, pl.x, pl.y, pl.z, pl.degree, pl._name);
+			if (pl._Room_Num == clients[c_id]._Room_Num) {
+				pl.send_add_object(c_id % 4, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id]._name);
+				clients[c_id].send_add_object(pl._id % 4, pl.x, pl.y, pl.z, pl.degree, pl._name);
+				pl.room_list.insert(c_id);
+				clients[c_id].room_list.insert(pl._id);
+			}
 			pl._sl.unlock();
 		}
 
+		if (clients[c_id].room_list.size() == 0) {
+			for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
+				add_timer(i, 5000, EV_MOVE, i);
+			}
+			add_timer((clients[c_id]._Room_Num * 10) + MAX_USER + 9, 10000, EV_CK, 0);
+		}
+
 		for (int i = MAX_USER; i < MAX_USER + NPC_NUM; i++) {
-			clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
+			if (clients[c_id]._Room_Num == clients[i]._Room_Num) {
+				clients[c_id].room_list.insert(i);
+				clients[i].room_list.insert(c_id);
+				clients[c_id].send_add_object((i - MAX_USER) % 10 + 4, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
+			}
 		}
 
 		break;
@@ -83,7 +99,7 @@ void process_packet(int c_id, char* packet)
 		break;
 	}
 	case CS_CONSOLE: {
-		reset_lua();
+		reset_lua(c_id);
 		break;
 	}
 	}
@@ -100,19 +116,20 @@ void disconnect(int c_id)
 	clients[c_id]._s_state = ST_FREE;
 	clients[c_id]._sl.unlock();
 
-	for (auto& pl : clients) {
-		if (pl._id == c_id) continue;
-		pl._sl.lock();
-		if (pl._s_state != ST_INGAME) {
-			pl._sl.unlock();
+	for (auto& pl : clients[c_id].room_list) {
+		if (clients[pl]._id == c_id) continue;
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
 			continue;
 		}
 		SC_REMOVE_OBJECT_PACKET p;
 		p.id = c_id;
 		p.size = sizeof(p);
 		p.type = SC_REMOVE_OBJECT;
-		pl.do_send(&p);
-		pl._sl.unlock();
+		clients[pl].do_send(&p);
+		clients[pl]._sl.unlock();
+		clients[pl].room_list.erase(c_id);
 	}
 }
 
@@ -191,12 +208,12 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_RUSH: {
-			rush_npc(ex_over->target_id);
+			rush_npc(ex_over->target_id, key);
 			delete ex_over;
 			break;
 		}
 		case OP_CREATE_CUBE: {
-			initialize_cube(clients[MAX_USER + NPC_NUM - 1].x, clients[MAX_USER + NPC_NUM - 1].y, clients[MAX_USER + NPC_NUM - 1].z);
+			send_cube(ex_over->target_id, clients[ex_over->target_id].x, clients[ex_over->target_id].y, clients[ex_over->target_id].z);
 			delete ex_over;
 			break;
 		}
@@ -213,25 +230,25 @@ void do_worker()
 void Update_Player()
 {
 	for (int i = 0; i < MAX_USER; i++) {
-		for (int j = 0; j < MAX_USER; j++) {
-			if (i == j) continue;
-
-			clients[j]._sl.lock();
-			if (ST_INGAME != clients[j]._s_state) {
-				clients[j]._sl.unlock();
+		for (auto& pl : clients[i].room_list) {
+			clients[i]._sl.lock();
+			if (clients[i]._s_state != ST_INGAME) {
+				clients[i]._sl.unlock();
 				continue;
 			}
-			clients[j]._sl.unlock();
-			
-			auto& pl = clients[i];
-			pl._sl.lock();
-			if (ST_INGAME != pl._s_state) {
-				pl._sl.unlock();
+			clients[i]._sl.unlock();
+
+			clients[pl]._sl.lock();
+			if (clients[pl]._s_state != ST_INGAME) {
+				clients[pl]._sl.unlock();
 				continue;
 			}
+			clients[pl]._sl.unlock();
 
-			pl.send_move_packet(j, clients[j].x, clients[j].y, clients[j].z, clients[j].degree);
-			pl._sl.unlock();
+			if (pl < 400)
+				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree);
+			else
+				clients[i].send_move_packet((pl - MAX_USER) % 10 + 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree);
 		}
 	}
 }

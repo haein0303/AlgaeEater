@@ -5,7 +5,6 @@
 #include "Timer.h"
 
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
-extern lua_State* L;
 
 
 int API_get_x(lua_State* L)
@@ -60,29 +59,29 @@ int API_get_state(lua_State* L)
 	return 1;
 }
 
-void reset_lua()
+void reset_lua(int c_id)
 {
-	lua_close(L);
+	int npc_id = clients[c_id]._Room_Num * 10 + MAX_USER + 9;
+	lua_close(clients[npc_id].L);
 
-	L = luaL_newstate();
-	clients[MAX_USER + NPC_NUM - 1].L = L;
+	clients[npc_id].L = luaL_newstate();
 
-	luaL_openlibs(L);
-	if (luaL_loadfile(L, "hello.lua")) {
+	luaL_openlibs(clients[npc_id].L);
+	if (luaL_loadfile(clients[npc_id].L, "hello.lua")) {
 		printf("소환 실패");
 	}
 	else {
 		printf("소환 성공");
 	}
-	lua_pcall(L, 0, 0, 0);
+	lua_pcall(clients[npc_id].L, 0, 0, 0);
 
-	lua_getglobal(L, "set_object_id");
-	lua_pushnumber(L, MAX_USER + NPC_NUM - 1);
-	lua_pcall(L, 1, 0, 0);
+	lua_getglobal(clients[npc_id].L, "set_object_id");
+	lua_pushnumber(clients[npc_id].L, npc_id);
+	lua_pcall(clients[npc_id].L, 1, 0, 0);
 
-	lua_register(L, "API_get_x", API_get_x);
-	lua_register(L, "API_get_z", API_get_z);
-	lua_register(L, "API_Rush", API_Rush);
-	lua_register(L, "API_Cube", API_Cube);
-	lua_register(L, "API_get_state", API_get_state);
+	lua_register(clients[npc_id].L, "API_get_x", API_get_x);
+	lua_register(clients[npc_id].L, "API_get_z", API_get_z);
+	lua_register(clients[npc_id].L, "API_Rush", API_Rush);
+	lua_register(clients[npc_id].L, "API_Cube", API_Cube);
+	lua_register(clients[npc_id].L, "API_get_state", API_get_state);
 }
