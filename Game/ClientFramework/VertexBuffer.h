@@ -1,5 +1,6 @@
 #pragma once
 #include "Util.h"
+#include "Device.h"
 
 class VertexBuffer
 {

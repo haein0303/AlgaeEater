@@ -90,7 +90,7 @@
     <ClCompile Include="DSV.cpp">
       <Filter>DxEngine\DSV</Filter>
     </ClCompile>
-    <ClCompile Include="FbxLoader.cpp">
+    <ClCompile Include="ObjectLoader.cpp">
       <Filter>DxEngine\메쉬%28정점버퍼, 인덱스버퍼, 상수버퍼%29</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
@@ -164,7 +164,7 @@
     <ClInclude Include="Camera.h">
       <Filter>DxEngine\GameUtil</Filter>
     </ClInclude>
-    <ClInclude Include="FbxLoader.h">
+    <ClInclude Include="ObjectLoader.h">
       <Filter>DxEngine\메쉬%28정점버퍼, 인덱스버퍼, 상수버퍼%29</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">

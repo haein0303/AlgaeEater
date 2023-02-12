@@ -4,7 +4,6 @@
 
 #include <Windows.h>
 #include <tchar.h>
-
 #include <dxgi1_4.h>
 #include <wrl.h>
 #include <d3dcompiler.h>
@@ -15,8 +14,6 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-
-#include <string>
 #include <filesystem>
 
 #include "DirectXTex.h"
@@ -118,7 +115,7 @@ struct LightInfo
 struct Vertex
 {
 	XMFLOAT3 pos;
-	XMFLOAT4 color;
+	XMFLOAT4 normal;
 	XMFLOAT2 uv;
 };
 

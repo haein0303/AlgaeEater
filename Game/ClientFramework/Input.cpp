@@ -90,13 +90,13 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		{
 			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
 			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
-			playerArr[networkPtr->myClientId].degree = -angle.x - 90.f;
+			playerArr[networkPtr->myClientId].degree = -angle.x + 90.f;
 		}
-		else
+		else if(s == true)
 		{
 			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
 			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
-			playerArr[networkPtr->myClientId].degree = -angle.x - 270.f;
+			playerArr[networkPtr->myClientId].degree = -angle.x + 270.f;
 		}
 	}
 	else if (w == s && a != d)
@@ -105,40 +105,40 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		{
 			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
 			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x - 180.f;
+			playerArr[networkPtr->myClientId].degree = -angle.x;
 		}
-		else
+		else if(d == true)
 		{
 			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
 			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x;
+			playerArr[networkPtr->myClientId].degree = -angle.x + 180.f;
 		}
 	}
 	else if (w != s && a != d)
 	{
-		if (w == true && a == true)
+		if (w == true && a == true && s == false && d == false)
 		{
 			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
 			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x - 135.f;
+			playerArr[networkPtr->myClientId].degree = -angle.x + 45.f;
 		}
-		else if (w == true && d == true)
+		else if (w == true && d == true && s == false && a == false)
 		{
-			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x - 45.f;
+			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f - XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f - XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x + 135.f;
 		}
-		else if (s == true && a == true)
+		else if (s == true && a == true && w == false && d == false)
 		{
 			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
 			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x - 225.f;
+			playerArr[networkPtr->myClientId].degree = -angle.x + 315.f;
 		}
-		else
+		else if (s == true && d == true && w == false && a == false)
 		{
-			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x - 315.f;
+			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f + XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f + XM_PI / 2.0f);
+			playerArr[networkPtr->myClientId].degree = -angle.x + 225.f;
 		}
 	}
 	

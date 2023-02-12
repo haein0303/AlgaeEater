@@ -42,17 +42,17 @@ public:
 		//오브젝트 데이터 생성
 		vector<Vertex> cubeVertexVec;
 		vector<UINT> cubeIndexVec;
-		dxEngine.fbxLoaderPtr->LoadFbxData(cubeVertexVec, cubeIndexVec, "../Resources/Cube.fbx");
+		dxEngine.fbxLoaderPtr->LoadObject(cubeVertexVec, cubeIndexVec, "../Resources/Cube.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_vertexBuffer, dxEngine.vertexBufferPtr->_vertexBufferView, cubeVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_indexBuffer, dxEngine.indexBufferPtr->_indexBufferView, cubeIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_indexCount);
 		vector<Vertex> playerVertexVec;
 		vector<UINT> playerIndexVec;
-		dxEngine.fbxLoaderPtr->LoadFbxData(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.fbx");
+		dxEngine.fbxLoaderPtr->LoadObject(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
 		vector<Vertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
-		dxEngine.fbxLoaderPtr->LoadFbxData(npcVertexVec, npcIndexVec, "../Resources/Dragon.fbx");
+		dxEngine.fbxLoaderPtr->LoadObject(npcVertexVec, npcIndexVec, "../Resources/mechanical_spider.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
 		vector<Point> pointVertexvec(1);
@@ -66,8 +66,14 @@ public:
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndGSAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0);
-		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\bricks.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
-		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\Star.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 2);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 2);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 3);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 4);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 5);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\Star.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 6);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\bricks.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 7);
+		
 		dxEngine.texturePtr->CreateSRVs(dxEngine.devicePtr);
 
 		dxEngine.cmdQueuePtr->WaitSync();
@@ -84,7 +90,7 @@ public:
 	}
 
 	void Draw() {
-
+		
 		//cout << "DRAW CALL" << endl;
 
 		while (g_isLive) {

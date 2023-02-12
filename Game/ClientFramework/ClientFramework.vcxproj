@@ -137,7 +137,7 @@
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DSV.cpp" />
     <ClCompile Include="DxEngine.cpp" />
-    <ClCompile Include="FbxLoader.cpp" />
+    <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NetWork_Client.cpp">
@@ -164,7 +164,7 @@
     <ClInclude Include="DirectXTex.h" />
     <ClInclude Include="DSV.h" />
     <ClInclude Include="DxEngine.h" />
-    <ClInclude Include="FbxLoader.h" />
+    <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="NetWork_Client.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

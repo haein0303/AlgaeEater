@@ -13,7 +13,7 @@
 #include "IndexBuffer.h"
 #include "Texture.h"
 #include "Camera.h"
-#include "FbxLoader.h"
+#include "ObjectLoader.h"
 #include "Timer.h"
 #include "Input.h"
 #include "SFML.h"
@@ -48,7 +48,7 @@ public:
 	shared_ptr<Texture> texturePtr = make_shared<Texture>();
 	shared_ptr<DSV> dsvPtr = make_shared<DSV>();
 	shared_ptr<Camera> cameraPtr = make_shared<Camera>();
-	shared_ptr<FbxLoader> fbxLoaderPtr = make_shared<FbxLoader>();
+	shared_ptr<ObjectLoader> fbxLoaderPtr = make_shared<ObjectLoader>();
 	shared_ptr<Timer> timerPtr = make_shared<Timer>();
 	shared_ptr<Timer> logicTimerPtr = make_shared<Timer>();
 	shared_ptr<Input> inputPtr = make_shared<Input>();

@@ -395,7 +395,7 @@ struct SkinnedModelInstance
 	}
 };
 
-class FbxLoader
+class ObjectLoader
 {
 public:
 	struct FbxKeyFrameInfo

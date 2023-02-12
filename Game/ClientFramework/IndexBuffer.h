@@ -1,5 +1,7 @@
 #pragma once
 #include "Util.h"
+#include "Device.h"
+
 class IndexBuffer
 {
 public:

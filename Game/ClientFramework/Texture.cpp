@@ -67,4 +67,34 @@ void Texture::CreateSRVs(shared_ptr<Device> devicePtr)
 
 	srvDesc.Format = _imageArr[2].GetMetadata().format;
 	devicePtr->_device->CreateShaderResourceView(_texArr[2].Get(), &srvDesc, _srvHandle);
+
+	//네번째 SRV 생성
+	_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+	srvDesc.Format = _imageArr[3].GetMetadata().format;
+	devicePtr->_device->CreateShaderResourceView(_texArr[3].Get(), &srvDesc, _srvHandle);
+
+	//다섯번째 SRV 생성
+	_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+	srvDesc.Format = _imageArr[4].GetMetadata().format;
+	devicePtr->_device->CreateShaderResourceView(_texArr[4].Get(), &srvDesc, _srvHandle);
+
+	//여섯번째 SRV 생성
+	_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+	srvDesc.Format = _imageArr[5].GetMetadata().format;
+	devicePtr->_device->CreateShaderResourceView(_texArr[5].Get(), &srvDesc, _srvHandle);
+
+	//일곱번째 SRV 생성
+	_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+	srvDesc.Format = _imageArr[6].GetMetadata().format;
+	devicePtr->_device->CreateShaderResourceView(_texArr[6].Get(), &srvDesc, _srvHandle);
+
+	//여덟번째 SRV 생성
+	_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+	srvDesc.Format = _imageArr[7].GetMetadata().format;
+	devicePtr->_device->CreateShaderResourceView(_texArr[7].Get(), &srvDesc, _srvHandle);
 }
