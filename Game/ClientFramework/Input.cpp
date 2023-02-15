@@ -15,11 +15,15 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 	HWND hwnd = GetActiveWindow();
 	bool key_toggle = false;
 
-	for (UINT key = 0; key < 255; key++)
+	BYTE asciikeys[255] = {};
+	if (GetKeyboardState(asciikeys) == false)
+		return;
+
+	for (UINT key = 0; key < 256; key++)
 	{
 		//key Á¤º¸
 		//
-		if (GetAsyncKeyState(key) & 0x8000)
+		if (asciikeys[key] & 0x80)
 		{
 			if (_states[key] == 1 || _states[key] == 2)
 				_states[key] = 1;
