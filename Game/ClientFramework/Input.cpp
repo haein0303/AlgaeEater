@@ -15,7 +15,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 	HWND hwnd = GetActiveWindow();
 	bool key_toggle = false;
 
-	BYTE asciikeys[255] = {};
+	BYTE asciikeys[256] = {};
 	if (GetKeyboardState(asciikeys) == false)
 		return;
 
