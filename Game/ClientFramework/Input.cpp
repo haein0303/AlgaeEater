@@ -3,7 +3,7 @@
 
 void Input::Init(WindowInfo windowInfo)
 {
-	_states.resize(255);
+	_states.resize(256);
 	m_ptOldCursorPos.x = windowInfo.ClientWidth / 2 + 100;
 	m_ptOldCursorPos.y = windowInfo.ClientHeight / 2 + 100;
 
