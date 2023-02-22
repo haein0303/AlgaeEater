@@ -98,17 +98,17 @@ public:
 			float fTimeElapsed = 0;
 			float fLockFPS = 30.f;
 			dxEngine.timerPtr->TimerUpdate();
-			if (!isActive) { //액티브 상태가 아닐때				
-				while (fTimeElapsed < (1.f / fLockFPS)) {
-					dxEngine.timerPtr->TimerUpdate();
-					fTimeElapsed += dxEngine.timerPtr->_deltaTime;
-				}	
-				dxEngine.timerPtr->_fps = static_cast<int>(1.f / fTimeElapsed);
-				//cout << "\rDRAW BACK GROUND\n";
-			}
-			else {
-				//cout << "\rACTIVE\n";
-			}
+			//if (!isActive) { //액티브 상태가 아닐때				
+			//	while (fTimeElapsed < (1.f / fLockFPS)) {
+			//		dxEngine.timerPtr->TimerUpdate();
+			//		fTimeElapsed += dxEngine.timerPtr->_deltaTime;
+			//	}	
+			//	dxEngine.timerPtr->_fps = static_cast<int>(1.f / fTimeElapsed);
+			//	//cout << "\rDRAW BACK GROUND\n";
+			//}
+			//else {
+			//	//cout << "\rACTIVE\n";
+			//}
 			dxEngine.timerPtr->ShowFps(windowInfo);
 
 			dxEngine.Update(windowInfo, isActive);
