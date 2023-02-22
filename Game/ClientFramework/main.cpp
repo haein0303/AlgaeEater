@@ -10,9 +10,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	//매 프레임마다 업데이트
 	MSG msg = { 0 };
 
+	cout << "make Thread" << endl;
+
 	thread logical_thread{ &Client::Logic,&client };
+	cout << "make logical_thread" << endl;
 	thread render_thread1{ &Client::Draw,&client };
+	cout << "make render_thread1" << endl;
 	thread render_thread2{ &Client::Draw,&client };
+	cout << "make render_thread2" << endl;
 
 
 	while (msg.message != WM_QUIT)
