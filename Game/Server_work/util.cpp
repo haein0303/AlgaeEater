@@ -116,20 +116,22 @@ void disconnect(int c_id)
 	clients[c_id]._s_state = ST_FREE;
 	clients[c_id]._sl.unlock();
 
-	for (auto& pl : clients[c_id].room_list) {
-		if (clients[pl]._id == c_id) continue;
-		clients[pl]._sl.lock();
-		if (clients[pl]._s_state != ST_INGAME) {
+	if (clients[c_id].room_list.size() != 0) {
+
+		for (auto& pl : clients[c_id].room_list) {
+			clients[pl]._sl.lock();
+			if (clients[pl]._s_state != ST_INGAME) {
+				clients[pl]._sl.unlock();
+				continue;
+			}
+			SC_REMOVE_OBJECT_PACKET p;
+			p.id = c_id;
+			p.size = sizeof(p);
+			p.type = SC_REMOVE_OBJECT;
+			clients[pl].do_send(&p);
 			clients[pl]._sl.unlock();
-			continue;
+			clients[pl].room_list.erase(c_id);
 		}
-		SC_REMOVE_OBJECT_PACKET p;
-		p.id = c_id;
-		p.size = sizeof(p);
-		p.type = SC_REMOVE_OBJECT;
-		clients[pl].do_send(&p);
-		clients[pl]._sl.unlock();
-		clients[pl].room_list.erase(c_id);
 	}
 }
 
