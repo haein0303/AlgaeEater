@@ -44,8 +44,6 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
-
-	cout << "engine init finish" << endl;
 }
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
@@ -268,10 +266,10 @@ void DxEngine::Draw(WindowInfo windowInfo)
 }*/
 #pragma endregion
 
-void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
+void DxEngine::Draw_multi(WindowInfo windowInfo)
 {
 	::WaitForSingleObject(_renderEvent, INFINITE);
-	/*int i_now_render_index;
+	int i_now_render_index;
 
 	if (!_render_thread_num) {
 		i_now_render_index = 0;
@@ -280,7 +278,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	else {
 		i_now_render_index = 1;
 		_render_thread_num = 0;
-	}*/
+	}
 
 
 
@@ -471,7 +469,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 
 	swapChainPtr->_swapChain->Present(0, 0);
-	cout << i_now_render_index << "가 익스큐트중이야" << endl;
+
 	cmdQueuePtr->WaitSync();
 
 	swapChainPtr->_backBufferIndex = (swapChainPtr->_backBufferIndex + 1) % SWAP_CHAIN_BUFFER_COUNT;

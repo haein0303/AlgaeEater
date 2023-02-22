@@ -11,8 +11,6 @@ public:
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
 
-	atomic<int> _render_thread_num = 0;
-
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
 
@@ -41,27 +39,22 @@ public:
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
 
-		cout << "finish settings" << endl;
-
 		//오브젝트 데이터 생성
 		vector<Vertex> cubeVertexVec;
 		vector<UINT> cubeIndexVec;
 		dxEngine.fbxLoaderPtr->LoadObject(cubeVertexVec, cubeIndexVec, "../Resources/Cube.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_vertexBuffer, dxEngine.vertexBufferPtr->_vertexBufferView, cubeVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_indexBuffer, dxEngine.indexBufferPtr->_indexBufferView, cubeIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_indexCount);
-		cout << "finish loading cube" << endl;
 		vector<Vertex> playerVertexVec;
 		vector<UINT> playerIndexVec;
 		dxEngine.fbxLoaderPtr->LoadObject(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
-		cout << "finish loading AnimeCharcter" << endl;
 		vector<Vertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
 		dxEngine.fbxLoaderPtr->LoadObject(npcVertexVec, npcIndexVec, "../Resources/mechanical_spider.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
-		cout << "finish loading mechanical_spider" << endl;
 		vector<Point> pointVertexvec(1);
 		vector<UINT> pointIndexVec;
 		pointVertexvec[0].pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -69,8 +62,6 @@ public:
 		pointIndexVec.push_back(0);
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_particleVertexBuffer, dxEngine.vertexBufferPtr->_particleVertexBufferView, pointVertexvec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_particleIndexBuffer, dxEngine.indexBufferPtr->_particleIndexBufferView, pointIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_particleIndexCount);
-
-		
 
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndGSAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
@@ -86,31 +77,21 @@ public:
 		dxEngine.texturePtr->CreateSRVs(dxEngine.devicePtr);
 
 		dxEngine.cmdQueuePtr->WaitSync();
-
-		cout << "game init finish" << endl;
 	}
 
 	//fixed_update
 	void Logic()
 	{
 		while (g_isLive) {
+			dxEngine.logicTimerPtr->fixed_update_tic();
+
 			dxEngine.FixedUpdate(windowInfo, isActive);
-			dxEngine.logicTimerPtr->fixed_update_tic();			
 		}		
 	}
 
 	void Draw() {
 		
 		//cout << "DRAW CALL" << endl;
-		int i_now_render_index;
-		if (!_render_thread_num) {
-			i_now_render_index = 0;
-			_render_thread_num++;
-		}
-		else {
-			i_now_render_index = 1;
-			_render_thread_num = 0;
-		}
 
 		while (g_isLive) {
 			//cout << "UPDATE";
@@ -131,7 +112,7 @@ public:
 			dxEngine.timerPtr->ShowFps(windowInfo);
 
 			dxEngine.Update(windowInfo, isActive);
-			dxEngine.Draw_multi(windowInfo, i_now_render_index);
+			dxEngine.Draw_multi(windowInfo);
 		}
 	}
 

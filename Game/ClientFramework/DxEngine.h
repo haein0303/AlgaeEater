@@ -31,8 +31,8 @@ public:
 	
 
 	//매 프레임마다 그리기
-	//void Draw(WindowInfo windowInfo);
-	void Draw_multi(WindowInfo windowInfo, int i_now_render_index);
+	void Draw(WindowInfo windowInfo);
+	void Draw_multi(WindowInfo windowInfo);
 
 	//요소별 객체 포인터
 	shared_ptr<Device> devicePtr = make_shared<Device>();
@@ -65,7 +65,7 @@ public:
 
 	HANDLE _renderEvent = INVALID_HANDLE_VALUE;
 	HANDLE _excuteEvent = INVALID_HANDLE_VALUE;
-	
+	int _render_thread_num = 0;
 
 private:
 	//화면 크기 관련
