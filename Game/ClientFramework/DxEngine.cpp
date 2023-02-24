@@ -266,19 +266,19 @@ void DxEngine::Draw(WindowInfo windowInfo)
 }*/
 #pragma endregion
 
-void DxEngine::Draw_multi(WindowInfo windowInfo)
+void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 {
 	::WaitForSingleObject(_renderEvent, INFINITE);
-	int i_now_render_index;
+	
 
-	if (!_render_thread_num) {
-		i_now_render_index = 0;
-		_render_thread_num++;
-	}
-	else {
-		i_now_render_index = 1;
-		_render_thread_num = 0;
-	}
+	//if (!_render_thread_num) {
+	//	i_now_render_index = 0;
+	//	_render_thread_num++;
+	//}
+	//else {
+	//	i_now_render_index = 1;
+	//	_render_thread_num = 0;
+	//}
 
 
 

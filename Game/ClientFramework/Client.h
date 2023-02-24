@@ -10,7 +10,7 @@ class Client
 public:
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
-
+	int _render_thread_num = 0;
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
 
@@ -92,11 +92,19 @@ public:
 	void Draw() {
 		
 		//cout << "DRAW CALL" << endl;
-
+		int i_now_render_index;
+		if (!_render_thread_num) {
+			i_now_render_index = 0;
+			_render_thread_num++;
+		}
+		else {
+			i_now_render_index = 1;
+			_render_thread_num = 0;
+		}
 		while (g_isLive) {
 			//cout << "UPDATE";
-			float fTimeElapsed = 0;
-			float fLockFPS = 30.f;
+			/*float fTimeElapsed = 0;
+			float fLockFPS = 30.f;*/
 			dxEngine.timerPtr->TimerUpdate();
 			//if (!isActive) { //액티브 상태가 아닐때				
 			//	while (fTimeElapsed < (1.f / fLockFPS)) {
@@ -108,11 +116,12 @@ public:
 			//}
 			//else {
 			//	//cout << "\rACTIVE\n";
-			//}
+			//}			
+
 			dxEngine.timerPtr->ShowFps(windowInfo);
 
 			dxEngine.Update(windowInfo, isActive);
-			dxEngine.Draw_multi(windowInfo);
+			dxEngine.Draw_multi(windowInfo, i_now_render_index);
 		}
 	}
 
