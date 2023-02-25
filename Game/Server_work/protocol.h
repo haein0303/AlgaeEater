@@ -3,6 +3,9 @@ constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
 
+#define LOBBY_SERVER_IP "127.0.0.1"
+constexpr int LOBBY_SERVER_PORT_NUM = 4001;
+
 constexpr int ROOM_NUM = 100;
 constexpr int MAX_USER = ROOM_NUM * 4;
 constexpr int NPC_NUM = ROOM_NUM * 10;
@@ -18,6 +21,9 @@ constexpr char SC_ADD_OBJECT = 12;
 constexpr char SC_REMOVE_OBJECT = 13;
 constexpr char SC_MOVE_OBJECT = 14;
 constexpr char SC_ADD_CUBE = 15;
+
+constexpr char SS_CONNECT_SERVER = 20;
+constexpr char SS_DATA_PASS = 21;
 
 constexpr float PI = 3.1415926535;
 
@@ -84,4 +90,15 @@ struct SC_MOVE_OBJECT_PACKET {
 	unsigned int client_time;
 };
 
+struct SS_CONNECT_SERVER_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+};
+
+struct SS_DATA_PASS_PACKET {
+	unsigned char size;
+	char type;
+	int num;
+};
 #pragma pack (pop)
