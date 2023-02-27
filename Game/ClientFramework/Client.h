@@ -121,6 +121,7 @@ public:
 			dxEngine.timerPtr->ShowFps(windowInfo);
 
 			dxEngine.Update(windowInfo, isActive);
+			
 			dxEngine.Draw_multi(windowInfo, i_now_render_index);
 		}
 	}

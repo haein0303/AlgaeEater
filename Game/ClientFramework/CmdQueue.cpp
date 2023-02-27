@@ -16,7 +16,7 @@ void CmdQueue::CreateCmdListAndCmdQueue(shared_ptr<Device> devicePtr)
 	//멀티쓰레드용 커멘드 리스트 분리
 	for (int i = 0; i < 2; ++i) {
 		devicePtr->_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_arr_cmdAlloc[i])); //커맨드 할당자 생성
-		devicePtr->_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _arr_cmdAlloc[0].Get(), nullptr, IID_PPV_ARGS(&_arr_cmdList[i])); //커맨드 리스트 생성
+		devicePtr->_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _arr_cmdAlloc[i].Get(), nullptr, IID_PPV_ARGS(&_arr_cmdList[i])); //커맨드 리스트 생성
 		_arr_cmdList[i]->Close();
 	}
 
