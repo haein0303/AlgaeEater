@@ -194,7 +194,7 @@ void do_worker()
 			if (ex_over->_comp_type == OP_ACCEPT) cout << "Accept Error";
 			else {
 				cout << "GQCS Error on client[" << key << "]\n";
-				disconnect(static_cast<int>(key));
+				//disconnect(static_cast<int>(key));
 				if (ex_over->_comp_type == OP_SEND) delete ex_over;
 				continue;
 			}
