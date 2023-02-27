@@ -196,7 +196,6 @@ void do_worker()
 				cout << "GQCS Error on client[" << key << "]\n";
 				disconnect(static_cast<int>(key));
 				if (ex_over->_comp_type == OP_SEND) delete ex_over;
-				else if (ex_over->_comp_type == OP_RECV) delete ex_over;
 				continue;
 			}
 		}
