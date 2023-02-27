@@ -10,7 +10,7 @@ class Client
 public:
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
-	int _render_thread_num = 0;
+	atomic<int> _render_thread_num = 0;
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
 
