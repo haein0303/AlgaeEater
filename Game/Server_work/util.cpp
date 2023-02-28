@@ -160,7 +160,6 @@ void disconnect(int c_id)
 	}
 	closesocket(clients[c_id]._socket);
 	clients[c_id]._s_state = ST_FREE;
-	clients[c_id]._sl.unlock();
 
 	if (clients[c_id].room_list.size() != 0) {
 
@@ -179,6 +178,7 @@ void disconnect(int c_id)
 			clients[pl].room_list.erase(c_id);
 		}
 	}
+	clients[c_id]._sl.unlock();
 }
 
 void do_worker()
@@ -194,7 +194,7 @@ void do_worker()
 			if (ex_over->_comp_type == OP_ACCEPT) cout << "Accept Error";
 			else {
 				cout << "GQCS Error on client[" << key << "]\n";
-				//disconnect(static_cast<int>(key));
+				disconnect(static_cast<int>(key));
 				if (ex_over->_comp_type == OP_SEND) delete ex_over;
 				continue;
 			}
