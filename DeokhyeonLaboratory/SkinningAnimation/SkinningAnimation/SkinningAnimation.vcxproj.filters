@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="GS.hlsl">
+      <Filter>소스파일\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader.hlsl">
+      <Filter>소스파일\Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CmdQueue.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBuffer.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DescHeap.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DSV.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DxEngine.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSO.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="RootSignature.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="RTV.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="SwapChain.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>소스파일\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>소스파일\Engine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CmdQueue.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DescHeap.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DSV.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DxEngine.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="PSO.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="RootSignature.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="RTV.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="SwapChain.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>소스파일\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\d3dx12.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\DirectXTex.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>소스파일\Engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{9e80b4b3-dce4-49c2-a5e9-53d1ae4ad800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일">
+      <UniqueIdentifier>{9f1ef132-e73e-4e0f-85f6-a8365cca54ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Client">
+      <UniqueIdentifier>{861c6051-e161-42df-a44c-55139b578819}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Engine">
+      <UniqueIdentifier>{8f93f9d6-3f36-47f5-947b-b4f7fc4a35de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Shader">
+      <UniqueIdentifier>{422d938d-82e2-4772-be4d-38873d1e144f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\DirectXTex.inl">
+      <Filter>Lib</Filter>
+    </None>
+  </ItemGroup>
+</Project>
