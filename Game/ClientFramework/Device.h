@@ -1,5 +1,6 @@
 #pragma once
 #include "Util.h"
+
 class Device
 {
 public:
