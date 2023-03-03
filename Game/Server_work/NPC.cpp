@@ -29,6 +29,7 @@ void initialize_npc()
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
 		clients[i]._Room_Num = (i - MAX_USER) / 10;
+		clients[i].Lua_on = false;
 
 		if (i % 10 == 9)
 		{
