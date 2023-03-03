@@ -164,6 +164,7 @@ void disconnect(int c_id)
 	if (clients[c_id].room_list.size() != 0) {
 
 		for (auto& pl : clients[c_id].room_list) {
+			if (pl > MAX_USER) continue;
 			clients[pl]._sl.lock();
 			if (clients[pl]._s_state != ST_INGAME) {
 				clients[pl]._sl.unlock();
@@ -293,7 +294,7 @@ void Update_Player()
 			}
 			clients[pl]._sl.unlock();
 
-			if (pl < 400)
+			if (pl < MAX_USER)
 				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree);
 			else
 				clients[i].send_move_packet((pl - MAX_USER) % 10 + 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree);
