@@ -14,10 +14,20 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	thread render_thread1{ &Client::Draw,&client };
 	thread render_thread2{ &Client::Draw,&client };
 
-
+	ShowCursor(false);
+	
 	while (msg.message != WM_QUIT)
 	{
-		
+		if (client.dxEngine.inputPtr->_mouse_chaged) {
+			client.dxEngine.inputPtr->_mouse_chaged = false;
+			if (client.dxEngine.inputPtr->_mouse_enable) {				
+				ShowCursor(true);
+			}
+			else {				
+				ShowCursor(false);
+			}
+		}
+
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);

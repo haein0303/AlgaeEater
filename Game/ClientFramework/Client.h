@@ -139,14 +139,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
-			ShowCursor(true);
-			ReleaseCapture();			
+			//ShowCursor(true);
+			//ReleaseCapture();			
 			isActive = false;
 		}
 		else
 		{
-			ShowCursor(false);
-			SetCapture(hwnd);
+			//ShowCursor(false);
+			//SetCapture(hwnd);
 			isActive = true;
 		}
 		return 0;

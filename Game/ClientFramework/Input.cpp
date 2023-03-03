@@ -7,7 +7,8 @@ void Input::Init(WindowInfo windowInfo)
 	m_ptOldCursorPos.x = windowInfo.ClientWidth / 2 + 100;
 	m_ptOldCursorPos.y = windowInfo.ClientHeight / 2 + 100;
 
-	::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+	//::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+	//ShowCursor(false);
 }
 
 void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr)
@@ -82,7 +83,21 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		cout << "QUIT" << endl;
 		ExitProcess(0);
 	}
-
+	if (_states[VK_TAB] == 2) {
+		cout << "TAP" << endl;
+		_mouse_enable = !_mouse_enable;
+		_mouse_chaged = true;
+		if (_mouse_enable) {
+			
+			ShowCursor(true);
+			cout << "ShowCursor(true);" << endl;
+		}
+		else {
+			ShowCursor(false);
+			cout << "ShowCursor(false);" << endl;
+		}
+		
+	}
 	//w = 8, a = 4, s = 2, d = 6, wa = 7, wd = 9, sa = 1, sd = 3 , none or full = 5 
 	if (w != s && a == d)
 	{
@@ -176,6 +191,11 @@ void Input::inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr)
 
 	float cxDelta = 0.0f, cyDelta = yMin;
 
+	if (_mouse_enable) {
+		//cout << "_mouse_enable이 true임으로 클라이언트 내 마우스 조작을 중단합니다" << endl;
+		return;
+	}
+
 
 	if (GetCapture() == hwnd) {
 		::SetCursor(NULL);
@@ -183,8 +203,8 @@ void Input::inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr)
 		::GetCursorPos(&ptCursorPos);
 		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
 		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-		m_ptOldCursorPos = ptCursorPos;
-		//::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		//m_ptOldCursorPos = ptCursorPos;
+		::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
 	}
 
 	if (cxDelta != 0.f) {
