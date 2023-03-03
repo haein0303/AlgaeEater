@@ -36,6 +36,7 @@ public:
 	lua_State* L;
 	int		_Room_Num;
 	std::unordered_set <int> room_list;
+	bool	Lua_on;
 
 public:
 	SESSION();

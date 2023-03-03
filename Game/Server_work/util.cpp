@@ -73,11 +73,13 @@ void process_packet(int c_id, char* packet)
 			pl._sl.unlock();
 		}
 
-		if (clients[c_id].room_list.size() == 0) {
+		if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
 			for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
 				add_timer(i, 5000, EV_MOVE, i);
+				clients[i].Lua_on = true;
 			}
-			add_timer((clients[c_id]._Room_Num * 10) + MAX_USER + 9, 10000, EV_CK, 0);
+			add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, (clients[c_id]._Room_Num * 10) + MAX_USER + 9);
+			clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
 		}
 
 		for (int i = MAX_USER; i < MAX_USER + NPC_NUM; i++) {

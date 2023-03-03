@@ -14,6 +14,7 @@ SESSION::SESSION()
 	move_stack = 0;
 	move_degree = 0;
 	_Room_Num = 0;
+	Lua_on = false;
 }
 
 SESSION::~SESSION()
