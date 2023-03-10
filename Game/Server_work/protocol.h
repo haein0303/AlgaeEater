@@ -92,13 +92,13 @@ struct SC_MOVE_OBJECT_PACKET {
 
 struct SS_CONNECT_SERVER_PACKET {
 	unsigned char size;
-	char type;
-	int id;
+	char	type;
+	char	name[NAME_SIZE];
 };
 
 struct SS_DATA_PASS_PACKET {
 	unsigned char size;
 	char type;
-	int num;
+	char	name[NAME_SIZE];
 };
 #pragma pack (pop)

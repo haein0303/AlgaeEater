@@ -106,48 +106,42 @@ void process_packet(int c_id, char* packet)
 	}
 	case SS_CONNECT_SERVER: {
 		cout << "SS_CONNECT_SERVER 로비 서버 커넥트" << endl;
-
-		// 게임 서버와 커넥트
-		WSADATA wsadata;
-		WSAStartup(MAKEWORD(2, 2), &wsadata);
-
-		SOCKET ss_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-		SOCKADDR_IN serverAddr;
-		memset(&serverAddr, 0, sizeof(serverAddr));
-		serverAddr.sin_family = AF_INET;
-		serverAddr.sin_port = htons(LOBBY_SERVER_PORT_NUM);
-		serverAddr.sin_addr.S_un.S_addr = inet_addr(LOBBY_SERVER_IP);
-
-		if (connect(ss_socket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-			cout << "커넥트 실패" << endl;
+		SS_CONNECT_SERVER_PACKET* p = reinterpret_cast<SS_CONNECT_SERVER_PACKET*>(packet);
+		clients[c_id]._sl.lock();
+		if (clients[c_id]._s_state == ST_FREE) {
+			clients[c_id]._sl.unlock();
+			break;
 		}
-		else {
-			cout << "커넥트 성공" << endl;
-
-			SS_CONNECT_SERVER_PACKET p;
-			p.size = sizeof(SS_CONNECT_SERVER_PACKET);
-			p.type = SS_CONNECT_SERVER;
-			p.id = 0;
-
-			OVER_EXP* sdata = new OVER_EXP{ reinterpret_cast<char*>(&p) };
-			WSAOVERLAPPED over;
-			char send_buf[BUF_SIZE];
-
-			sdata->_wsabuf.len = p.size;
-			sdata->_wsabuf.buf = send_buf;
-			ZeroMemory(&over, sizeof(over));
-			sdata->_comp_type = OP_SEND;
-			memcpy(send_buf, &p, p.size);
-
-			WSASend(ss_socket, &sdata->_wsabuf, 1, 0, 0, &sdata->_over, 0);
+		if (clients[c_id]._s_state == ST_INGAME) {
+			clients[c_id]._sl.unlock();
+			disconnect(c_id);
+			break;
 		}
+
+		strcpy_s(clients[c_id]._name, p->name);
+		clients[c_id].x = 0;
+		clients[c_id].y = 0;
+		clients[c_id].z = 0;
+		clients[c_id].degree = 0;
+		clients[c_id]._s_state = ST_INGAME;
+		clients[c_id]._Room_Num = 999;
+		clients[c_id].room_list.clear();
+		clients[c_id]._sl.unlock();
+		
+
+		SS_CONNECT_SERVER_PACKET pi;
+		pi.size = sizeof(SS_CONNECT_SERVER_PACKET);
+		pi.type = SS_CONNECT_SERVER;
+		strcpy_s(pi.name, "game");
+		
+		clients[c_id].do_send(&pi);
 		break;
 	}
 	case SS_DATA_PASS: {
-		cout << "데이터 들어옴" << endl;
+		cout << "서버 간 데이터 송신 들어옴" << endl;
 		SS_DATA_PASS_PACKET* p = reinterpret_cast<SS_DATA_PASS_PACKET*>(packet);
 
-		cout << p->num << endl;
+		cout << p->name << endl;
 		break;
 	}
 	}

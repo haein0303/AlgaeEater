@@ -212,22 +212,29 @@ void process_packet(int c_id, char* packet)
 	case SS_CONNECT_SERVER: {
 		cout << "쌍방 연결 확인" << endl;
 
-		SS_DATA_PASS_PACKET p;
-		p.size = sizeof(SS_DATA_PASS_PACKET);
-		p.type = SS_DATA_PASS;
-		p.num = 12345;
+		SS_CONNECT_SERVER_PACKET* p = reinterpret_cast<SS_CONNECT_SERVER_PACKET*>(packet);
+		clients[c_id]._sl.lock();
+		if (clients[c_id]._s_state == ST_FREE) {
+			clients[c_id]._sl.unlock();
+			break;
+		}
+		if (clients[c_id]._s_state == ST_INGAME) {
+			clients[c_id]._sl.unlock();
+			disconnect(c_id);
+			break;
+		}
 
-		OVER_EXP* sdata = new OVER_EXP{ reinterpret_cast<char*>(&p) };
-		WSAOVERLAPPED over;
-		char send_buf[BUF_SIZE];
+		strcpy_s(clients[c_id]._name, p->name);
+		clients[c_id]._s_state = ST_INGAME;
+		clients[c_id]._sl.unlock();
 
-		sdata->_wsabuf.len = p.size;
-		sdata->_wsabuf.buf = send_buf;
-		ZeroMemory(&over, sizeof(over));
-		sdata->_comp_type = OP_SEND;
-		memcpy(send_buf, &p, p.size);
+		SS_DATA_PASS_PACKET pi;
+		pi.size = sizeof(SS_DATA_PASS_PACKET);
+		pi.type = SS_DATA_PASS;
+		strcpy_s(pi.name, "lobby");
 
-		WSASend(ss_socket, &sdata->_wsabuf, 1, 0, 0, &sdata->_over, 0);
+		clients[c_id].do_send(&pi);
+
 		break;
 	}
 	}
@@ -325,8 +332,6 @@ int main()
 	AcceptEx(g_s_socket, c_socket, a_over._send_buf, 0, addr_size + 16, addr_size + 16, 0, &a_over._over);
 
 	// 게임 서버와 커넥트
-	WSADATA wsadata;
-	WSAStartup(MAKEWORD(2, 2), &wsadata);
 
 	ss_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN serverAddr;
@@ -335,28 +340,42 @@ int main()
 	serverAddr.sin_port = htons(GAME_SERVER_PORT_NUM);
 	serverAddr.sin_addr.S_un.S_addr = inet_addr(GAME_SERVER_IP);
 
+	int client_id;
+
 	if (connect(ss_socket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
 		cout << "커넥트 실패" << endl;
 	}
 	else {
 		cout << "커넥트 성공" << endl;
-		
+		OVER_EXP ss_over;
+		ss_over._comp_type = OP_ACCEPT;
+		ss_over._wsabuf.buf = reinterpret_cast<CHAR*>(ss_socket);
+
+		SOCKET c_socket = reinterpret_cast<SOCKET>(ss_over._wsabuf.buf);
+		client_id = get_new_client_id();
+		if (client_id != -1) {
+			clients[client_id]._id = client_id;
+			clients[client_id]._name[0] = 0;
+			clients[client_id]._prev_remain = 0;
+			clients[client_id]._socket = c_socket;
+			CreateIoCompletionPort(reinterpret_cast<HANDLE>(c_socket), g_h_iocp, client_id, 0);
+			clients[client_id].do_recv();
+			c_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+		}
+		else cout << "Max user exceeded.\n";
+
+		ZeroMemory(&ss_over._over, sizeof(ss_over._over));
+		ss_over._wsabuf.buf = reinterpret_cast<CHAR*>(c_socket);
+		int addr_size = sizeof(SOCKADDR_IN);
+		AcceptEx(g_s_socket, c_socket, ss_over._send_buf, 0, addr_size + 16, addr_size + 16, 0, &ss_over._over);
+
+
 		SS_CONNECT_SERVER_PACKET p;
 		p.size = sizeof(SS_CONNECT_SERVER_PACKET);
 		p.type = SS_CONNECT_SERVER;
-		p.id = 0;
+		strcpy_s(p.name, "lobby");
 
-		OVER_EXP* sdata = new OVER_EXP{ reinterpret_cast<char*>(&p) };
-		WSAOVERLAPPED over;
-		char send_buf[BUF_SIZE];
-
-		sdata->_wsabuf.len = p.size;
-		sdata->_wsabuf.buf = send_buf;
-		ZeroMemory(&over, sizeof(over));
-		sdata->_comp_type = OP_SEND;
-		memcpy(send_buf, &p, p.size);
-
-		WSASend(ss_socket, &sdata->_wsabuf, 1, 0, 0, &sdata->_over, 0);
+		clients[client_id].do_send(&p);
 	}
 
 
