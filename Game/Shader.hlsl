@@ -80,11 +80,17 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     LightInfo totalColor = (LightInfo)0.f;
     LightInfo lightColor = CalculateLightColor(input.viewNormal, input.viewPos);
+
+    lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz)*1.5) / 2.0f;
+    //lightColor.specular.xyz = ceil(saturate(lightColor.specular.xyz)) / 2.0f;
+
     totalColor.diffuse += lightColor.diffuse;
     totalColor.ambient += lightColor.ambient;
     totalColor.specular += lightColor.specular;
 
     color.xyz = (totalColor.diffuse.xyz * color.xyz) + totalColor.ambient.xyz * color.xyz + totalColor.specular.xyz;
+
+    //color.xyz = ceil(saturate(color.xyz) * 5) / 5.0f;
 
     return color;
 }
