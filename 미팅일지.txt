@@ -456,3 +456,37 @@
 
 4. 다음미팅
  - 3월 14일 화요일 오후 7시
+
+2023-03-14
+----------
+1. 진행상황
+ - Animation : 독립적으로는 구현했는데, 통합과정에서 버그가 발생해서 디버깅 중
+ - 동접측정 : 플레이어 ID 중복문제 해결을 독립적으로는 구현했는데, 통합과정에서 버그가 발생해서 디버깅 중
+ - 파티클 : Geometry Shader는 오래전에 했고, Compute Shader 비교 필요.
+ - Toon Shading
+   2-TONE이 덧씌워지기는 하는데, 기본 light-shading이 그대로 있어서, 카툰렌더링 느낌은 들지 않는다
+ - 서버 버그 수정 (중복 PLAYER ID로 인한 LUA 가상머신 초기화 문제)
+ - 로비서버 
+  * 메인서버와의 접속 방식 업그레이드
+
+2. ToDo
+ - (우선순위 높음) Animation 클라이언트에 적용
+ - 동접 측정 : Stress Test프로그램에서 플레이어 ID 중복문제 해결
+ - 파티클 : Compute Shader 구현 후 성능 비교
+ - Toon Shading => Quality 개선 필요
+ - 로비서버 만들기
+  * 방생성, 게임 참가, 게임시작,  
+  * 일단 클라이언트에 UI가 없으니, 3D 렌더링으로 넘어가기 전 콘솔창에서 TEXT UI로 로비 진행. => 게임시작을 하면 3D로 넘어 가기.
+ - (우선순위 높음) 컨텐츠 구현
+   * 레벨디자인 (Unity로 할 예정)
+    - 바닥 추가
+   * 전투구현
+    - HP와 평타
+  * UI 구현
+    - HP, SKILL Icon & Cool Time, 몬스터이름
+
+3. VSYNC 끄기
+ - 일단 tearing을 켜고 https://learn.microsoft.com/en-us/windows/win32/direct3ddxgi/variable-refresh-rate-displays 여기 써져 있는대로 해볼것.
+
+3. 다음 미팅
+ - 3월 28일 화요일 오후 7시
