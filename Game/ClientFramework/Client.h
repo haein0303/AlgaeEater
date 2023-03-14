@@ -50,10 +50,10 @@ public:
 		dxEngine.fbxLoaderPtr->LoadObject(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
-		vector<Vertex> npcVertexVec;
+		vector<SkinnedVertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
-		dxEngine.fbxLoaderPtr->LoadObject(npcVertexVec, npcIndexVec, "../Resources/mechanical_spider.txt");
-		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
+		dxEngine.animationPtr->CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/mechanical_spider.txt");
+		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
 		vector<Point> pointVertexvec(1);
 		vector<UINT> pointIndexVec;
@@ -65,6 +65,7 @@ public:
 
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndGSAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
+		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShaderOfAniamtion(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 2);
@@ -119,6 +120,9 @@ public:
 			//}			
 
 			dxEngine.timerPtr->ShowFps(windowInfo);
+
+			//애니메이션
+			dxEngine.animationPtr->mSkinnedModel->UpdateSkinnedAnimation(dxEngine.timerPtr->_deltaTime);
 
 			dxEngine.Update(windowInfo, isActive);
 			

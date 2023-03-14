@@ -17,6 +17,7 @@
 #include "Timer.h"
 #include "Input.h"
 #include "SFML.h"
+#include "AnimationObject.h"
 
 
 
@@ -53,6 +54,7 @@ public:
 	shared_ptr<Timer> logicTimerPtr = make_shared<Timer>();
 	shared_ptr<Input> inputPtr = make_shared<Input>();
 	shared_ptr<SFML> networkPtr = make_shared<SFML>();
+	shared_ptr<AnimationObject> animationPtr = make_shared<AnimationObject>();
 
 	//오브젝트 객체 생성
 	Obj playerArr[PLAYERMAX];

@@ -131,7 +131,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="AnimationObject.cpp" />
+    <ClCompile Include="AnimationObjectLoader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CmdQueue.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
@@ -146,6 +148,7 @@
     </ClCompile>
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="RTV.cpp" />
+    <ClCompile Include="SkinnedModel.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -156,7 +159,9 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animation.h" />
+    <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="AnimationObject.h" />
+    <ClInclude Include="AnimationObjectLoader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ComputeShader.h" />
@@ -172,6 +177,7 @@
     </ClInclude>
     <ClInclude Include="RootSignature.h" />
     <ClInclude Include="SFML.h" />
+    <ClInclude Include="SkinnedModel.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="CmdQueue.h" />
@@ -193,6 +199,11 @@
     <FxCompile Include="..\Shader.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_Main</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\SkinningAnimation.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_Main</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

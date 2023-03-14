@@ -15,6 +15,7 @@
 #include <thread>
 #include <mutex>
 #include <filesystem>
+#include <fstream>
 
 #include "DirectXTex.h"
 #include "DirectXTex.inl"
@@ -179,6 +180,10 @@ struct Constants
 	XMFLOAT4X4 view = Identity4x4();
 	XMFLOAT4X4 proj = Identity4x4();
 	LightInfo lnghtInfo;
+	XMFLOAT4X4 TexTransform = Identity4x4();
+	XMFLOAT4X4 MatTransform = Identity4x4();
+	XMFLOAT4X4 BoneTransforms[96];
+	XMFLOAT4X4 wvp = Identity4x4();
 };
 
 struct Obj
@@ -196,14 +201,14 @@ struct Point
 	XMFLOAT2 size;
 };
 
-//윈도우와 관련된 정보
+// 윈도우와 관련된 정보
 struct WindowInfo {
 	HWND hwnd;
 	int ClientWidth = 1280;
 	int ClientHeight = 720;
 };
 
-//파티클
+// 파티클
 struct ParticleData {
 	int alive = 0;
 	XMVECTOR dir;
@@ -212,6 +217,59 @@ struct ParticleData {
 	float lifeTime = 0.f;
 	float curTime = 0.f;
 };
+
+// 애니메이션
+struct AniamtionConstants
+{
+	XMFLOAT4X4 world = Identity4x4();
+	XMFLOAT4X4 view = Identity4x4();
+	XMFLOAT4X4 proj = Identity4x4();
+	XMFLOAT4X4 TexTransform = Identity4x4();
+	XMFLOAT4X4 MatTransform = Identity4x4();
+	XMFLOAT4X4 BoneTransforms[96];
+};
+
+struct Keyframe  //bone하나 기준
+{
+	float TimePos = 0.0f;
+	XMFLOAT3 Translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3 Scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	XMFLOAT4 RotationQuat = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+};
+
+struct SkinnedVertex
+{
+	XMFLOAT3 Pos;
+	XMFLOAT3 Normal;
+	XMFLOAT2 TexC;
+	XMFLOAT3 TangentU;
+	XMFLOAT3 BoneWeights;
+	BYTE BoneIndices[4];
+};
+
+struct Subset
+{
+	UINT Id = -1;
+	UINT VertexStart = 0;
+	UINT VertexCount = 0;
+	UINT FaceStart = 0;
+	UINT FaceCount = 0;
+};
+
+struct framehierarchy
+{
+	int index, parentindex;
+	string myname, parentname;
+	vector<XMFLOAT4X4> boneOffsets;
+	int boneIndexToParentIndex;
+};
+
+struct animation
+{
+	string name;
+	vector<Keyframe> key;
+};
+
 
 #pragma once
 constexpr int PORT_NUM = 4000;

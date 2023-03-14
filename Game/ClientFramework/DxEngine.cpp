@@ -347,6 +347,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	{
 		if (npcArr[i].on == true)
 		{
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);
 
@@ -355,11 +356,18 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+				XMMATRIX view = XMLoadFloat4x4(&_transform.view);
+				XMMATRIX proj = XMLoadFloat4x4(&_transform.proj);
+				XMMATRIX wvp = world * view * proj;
+				XMStoreFloat4x4(&_transform.wvp, XMMatrixTranspose(wvp));
+				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+
+				// 스키닝 애니메이션 변환
+				copy(begin(animationPtr->mSkinnedModel->FinalTransforms), end(animationPtr->mSkinnedModel->FinalTransforms), &_transform.BoneTransforms[0]);
 
 				//렌더
-				int sum = 0;
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-				for (UINT i : fbxLoaderPtr->submeshCount[2])
+				for (Subset i : animationPtr->mSubsets)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -368,9 +376,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(i, 1, sum, 0, 0);
-
-					sum += i;
+					cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(i.FaceCount * 3, 1, i.FaceStart, 0, 0);
+					cout << "a - " << i.FaceCount * 3 << endl;
 				}
 				
 			}
@@ -380,6 +387,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	{
 		if (cubeArr[i].on == true)
 		{
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
 
