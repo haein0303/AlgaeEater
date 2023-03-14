@@ -14,7 +14,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Timer.h"
-#include "Animation.h"
+#include "AnimationObject.h"
 
 class DxEngine {
 public:
@@ -39,25 +39,7 @@ public:
 	shared_ptr<DSV> dsvPtr = make_shared<DSV>();
 	shared_ptr<Camera> cameraPtr = make_shared<Camera>();
 	shared_ptr<Timer> timerPtr = make_shared<Timer>();
-	shared_ptr<SkinningAnimation> animationPtr = make_shared<SkinningAnimation>();
-
-	ParticleData particle[PARTICLE_NUM];
-
-	string skinnedModelFilename = "..\\SkinningAnimation\\resources\\Animationtest.txt";
-	AnimationClip skinnedInfo;
-	vector<SkinningAnimation::Subset> skinnedSubsets;
-	vector<SkinningAnimation::Material> skinnedMats;
-	unique_ptr<SkinnedModelInstance> skinnedModelInst;
-	void LoadObj(vector<SkinnedVertex>& vertices, std::vector<UINT>& indices) {
-		SkinningAnimation m3dLoader;
-		m3dLoader.LoadM3d(skinnedModelFilename, vertices, indices, skinnedSubsets, skinnedMats, skinnedInfo);
-
-		skinnedModelInst = make_unique<SkinnedModelInstance>();
-		skinnedModelInst->SkinnedInfo = &skinnedInfo;
-		skinnedModelInst->FinalTransforms.resize(skinnedInfo.mBoneHierarchy.size());
-		skinnedModelInst->ClipName = "Action";
-		skinnedModelInst->TimePos = 0.0f;
-	}
+	shared_ptr<AnimationObject> animationPtr = make_shared<AnimationObject>();
 
 private:
 	//화면 크기 관련

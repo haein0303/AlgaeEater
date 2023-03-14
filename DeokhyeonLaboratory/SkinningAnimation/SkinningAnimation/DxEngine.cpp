@@ -34,7 +34,7 @@ void DxEngine::Draw()
 	timerPtr->ShowFps();
 
 	//애니메이션
-	skinnedModelInst->UpdateSkinnedAnimation(timerPtr->_deltaTime);
+	animationPtr->mSkinnedModel->UpdateSkinnedAnimation(timerPtr->_deltaTime);
 
 	//VP 변환
 	XMVECTOR pos = XMVectorSet(10.0f, 10.0f, -10.0f, 1.0f);
@@ -82,7 +82,7 @@ void DxEngine::Draw()
 	XMMATRIX worldViewProj = world * view * proj;
 	XMStoreFloat4x4(&vertexBufferPtr->_transform.worldViewProj, XMMatrixTranspose(worldViewProj));
 	XMStoreFloat4x4(&vertexBufferPtr->_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
-	copy(begin(skinnedModelInst->FinalTransforms), end(skinnedModelInst->FinalTransforms), &vertexBufferPtr->_transform.BoneTransforms[0]);
+	copy(begin(animationPtr->mSkinnedModel->FinalTransforms), end(animationPtr->mSkinnedModel->FinalTransforms), &vertexBufferPtr->_transform.BoneTransforms[0]);
 	
 	{
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &vertexBufferPtr->_transform, sizeof(vertexBufferPtr->_transform));

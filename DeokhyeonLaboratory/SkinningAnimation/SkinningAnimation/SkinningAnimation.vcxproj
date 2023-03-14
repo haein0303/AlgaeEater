@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animation.h" />
+    <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="AnimationObject.h" />
+    <ClInclude Include="AnimationObjectLoader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CmdQueue.h" />
@@ -34,6 +36,7 @@
     <ClInclude Include="PSO.h" />
     <ClInclude Include="RootSignature.h" />
     <ClInclude Include="RTV.h" />
+    <ClInclude Include="SkinnedModel.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
@@ -41,7 +44,9 @@
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="AnimationObject.cpp" />
+    <ClCompile Include="AnimationObjectLoader.cpp" />
     <ClCompile Include="CmdQueue.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="DescHeap.cpp" />
@@ -53,6 +58,7 @@
     <ClCompile Include="PSO.cpp" />
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="RTV.cpp" />
+    <ClCompile Include="SkinnedModel.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -66,11 +72,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_Main</EntryPointName>
-    </FxCompile>
-    <FxCompile Include="GS.hlsl">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_Main</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

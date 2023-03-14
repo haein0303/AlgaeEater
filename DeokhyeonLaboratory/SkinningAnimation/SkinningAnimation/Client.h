@@ -36,7 +36,7 @@ public:
 		//사각형 데이터 생성
 		std::vector<SkinnedVertex> vertices;
 		std::vector<UINT> indices;
-		dxEngine.LoadObj(vertices, indices);
+		dxEngine.animationPtr->CreateAnimationObject(vertices, indices, "..\\SkinningAnimation\\resources\\Animationtest.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(vertices, dxEngine.devicePtr, 0);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(indices, dxEngine.devicePtr, 0);
 		dxEngine.psoPtr->CreateInputLayoutAndShaderAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);

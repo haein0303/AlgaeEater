@@ -105,6 +105,9 @@
     <ClCompile Include="ComputeShader.cpp">
       <Filter>DxEngine\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>DxEngine\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">

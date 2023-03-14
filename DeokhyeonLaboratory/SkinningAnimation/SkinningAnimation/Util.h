@@ -90,10 +90,14 @@ struct ParticleData
 	float curTime = 0.f;
 };
 
-struct GSPoint
+// 스키닝 애니메이션
+
+struct Keyframe  //bone하나 기준
 {
-	XMFLOAT3 pos;
-	XMFLOAT2 size;
+	float TimePos = 0.0f;
+	XMFLOAT3 Translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3 Scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	XMFLOAT4 RotationQuat = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 };
 
 struct SkinnedVertex
@@ -106,117 +110,25 @@ struct SkinnedVertex
 	BYTE BoneIndices[4];
 };
 
-struct Keyframe  //bone하나 기준
+struct Subset
 {
-	float TimePos = 0.0f;
-	XMFLOAT3 Translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 Scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	XMFLOAT4 RotationQuat = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	UINT Id = -1;
+	UINT VertexStart = 0;
+	UINT VertexCount = 0;
+	UINT FaceStart = 0;
+	UINT FaceCount = 0;
 };
 
-struct AnimationClip
+struct framehierarchy
 {
-	template<typename T>
-	static T Max(const T& a, const T& b) {
-		return a > b ? a : b;
-	}
+	int index, parentindex;
+	string myname, parentname;
+	vector<XMFLOAT4X4> boneOffsets;
+	int boneIndexToParentIndex;
+};
 
-	float GetClipEndTime()const {
-		// Find largest end time over all bones in this clip.
-		float t = 0.0f;
-		for (UINT i = 0; i < animationVec.size(); ++i)
-		{
-			t = Max(t, animationVec[i].back().TimePos);
-		}
-
-		return t;
-	}
-
-	void Interpolate(vector<Keyframe> keyframeVec, float t, XMFLOAT4X4& M)const {
-		if (t <= keyframeVec.front().TimePos)
-		{
-			XMVECTOR S = XMLoadFloat3(&keyframeVec.front().Scale);
-			XMVECTOR P = XMLoadFloat3(&keyframeVec.front().Translation);
-			XMVECTOR Q = XMLoadFloat4(&keyframeVec.front().RotationQuat);
-
-			XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-			XMStoreFloat4x4(&M, XMMatrixAffineTransformation(S, zero, Q, P));
-		}
-		else if (t >= keyframeVec.back().TimePos)
-		{
-			XMVECTOR S = XMLoadFloat3(&keyframeVec.back().Scale);
-			XMVECTOR P = XMLoadFloat3(&keyframeVec.back().Translation);
-			XMVECTOR Q = XMLoadFloat4(&keyframeVec.back().RotationQuat);
-
-			XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-			XMStoreFloat4x4(&M, XMMatrixAffineTransformation(S, zero, Q, P));
-		}
-		else
-		{
-			for (UINT i = 0; i < keyframeVec.size() - 1; ++i)
-			{
-				if (t >= keyframeVec[i].TimePos && t <= keyframeVec[i + 1].TimePos)
-				{
-					float lerpPercent = (t - keyframeVec[i].TimePos) / (keyframeVec[i + 1].TimePos - keyframeVec[i].TimePos);
-
-					XMVECTOR s0 = XMLoadFloat3(&keyframeVec[i].Scale);
-					XMVECTOR s1 = XMLoadFloat3(&keyframeVec[i + 1].Scale);
-
-					XMVECTOR p0 = XMLoadFloat3(&keyframeVec[i].Translation);
-					XMVECTOR p1 = XMLoadFloat3(&keyframeVec[i + 1].Translation);
-
-					XMVECTOR q0 = XMLoadFloat4(&keyframeVec[i].RotationQuat);
-					XMVECTOR q1 = XMLoadFloat4(&keyframeVec[i + 1].RotationQuat);
-
-					XMVECTOR S = XMVectorLerp(s0, s1, lerpPercent);
-					XMVECTOR P = XMVectorLerp(p0, p1, lerpPercent);
-					XMVECTOR Q = XMQuaternionSlerp(q0, q1, lerpPercent);
-
-					XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-					XMStoreFloat4x4(&M, XMMatrixAffineTransformation(S, zero, Q, P));
-
-					break;
-				}
-			}
-		}
-	}
-
-	void GetFinalTransforms(const std::string& clipName, float timePos, std::vector<XMFLOAT4X4>& finalTransforms)const {
-		UINT numBones = mBoneOffsets.size();
-
-		std::vector<XMFLOAT4X4> toParentTransforms(numBones);
-
-		for (UINT i = 0; i < animationVec.size(); ++i)
-		{
-			Interpolate(animationVec[i], timePos, toParentTransforms[i]);
-		}
-
-		std::vector<XMFLOAT4X4> toRootTransforms(numBones);
-
-		toRootTransforms[0] = toParentTransforms[0];
-
-		for (UINT i = 1; i < numBones; ++i)
-		{
-			XMMATRIX toParent = XMLoadFloat4x4(&toParentTransforms[i]);
-
-			int parentIndex = mBoneHierarchy[i];
-			XMMATRIX parentToRoot = XMLoadFloat4x4(&toRootTransforms[parentIndex]);
-
-			XMMATRIX toRoot = XMMatrixMultiply(toParent, parentToRoot);
-
-			XMStoreFloat4x4(&toRootTransforms[i], toRoot);
-		}
-
-		for (UINT i = 0; i < numBones; ++i)
-		{
-			XMMATRIX offset = XMLoadFloat4x4(&mBoneOffsets[i]);
-			XMMATRIX toRoot = XMLoadFloat4x4(&toRootTransforms[i]);
-			XMMATRIX finalTransform = XMMatrixMultiply(offset, toRoot);
-			XMStoreFloat4x4(&finalTransforms[i], XMMatrixTranspose(finalTransform));
-		}
-	}
-
-	vector<int> mBoneHierarchy;
-	vector<DirectX::XMFLOAT4X4> mBoneOffsets;
-	vector<vector<Keyframe>> animationVec; //animationVec = animationClip / vector<Keyframe>, BoneAnimation, animation : 전체본의 한프레임 애니메이션
+struct animation
+{
+	string name;
+	vector<Keyframe> key;
 };

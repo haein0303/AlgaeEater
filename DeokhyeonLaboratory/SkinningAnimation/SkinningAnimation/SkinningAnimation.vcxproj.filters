@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="GS.hlsl">
-      <Filter>소스파일\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Shader.hlsl">
       <Filter>소스파일\Shader</Filter>
     </FxCompile>
@@ -54,8 +51,17 @@
     <ClCompile Include="Main.cpp">
       <Filter>소스파일\Client</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>소스파일\Engine</Filter>
+    <ClCompile Include="AnimationClip.cpp">
+      <Filter>소스파일\Engine\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationObjectLoader.cpp">
+      <Filter>소스파일\Engine\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationObject.cpp">
+      <Filter>소스파일\Engine\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedModel.cpp">
+      <Filter>소스파일\Engine\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,8 +122,17 @@
     <ClInclude Include="lib\DirectXTex.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>소스파일\Engine</Filter>
+    <ClInclude Include="AnimationClip.h">
+      <Filter>소스파일\Engine\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationObjectLoader.h">
+      <Filter>소스파일\Engine\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedModel.h">
+      <Filter>소스파일\Engine\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationObject.h">
+      <Filter>소스파일\Engine\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +150,9 @@
     </Filter>
     <Filter Include="소스파일\Shader">
       <UniqueIdentifier>{422d938d-82e2-4772-be4d-38873d1e144f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Engine\Animation">
+      <UniqueIdentifier>{6292a139-2fdc-4fa9-afd2-4c398ba5e344}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
