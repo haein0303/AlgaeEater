@@ -268,6 +268,7 @@ void DxEngine::Draw(WindowInfo windowInfo)
 
 void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 {
+
 	::WaitForSingleObject(_renderEvent, INFINITE);
 	
 
@@ -279,9 +280,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	//	i_now_render_index = 1;
 	//	_render_thread_num = 0;
 	//}
-
-
-
 
 	cmdQueuePtr->_arr_cmdAlloc[i_now_render_index]->Reset();
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
@@ -353,32 +351,44 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 
 			{
 				//월드 변환
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-				XMMATRIX view = XMLoadFloat4x4(&_transform.view);
-				XMMATRIX proj = XMLoadFloat4x4(&_transform.proj);
-				XMMATRIX wvp = world * view * proj;
-				XMStoreFloat4x4(&_transform.wvp, XMMatrixTranspose(wvp));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-				// 스키닝 애니메이션 변환
+				// 스키닝 애니메이션 행렬 데이터 복사
 				copy(begin(animationPtr->mSkinnedModel->FinalTransforms), end(animationPtr->mSkinnedModel->FinalTransforms), &_transform.BoneTransforms[0]);
 
 				//렌더
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+				
+				int sum = 0;
 				for (Subset i : animationPtr->mSubsets)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-
+					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
+					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
 					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
-
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(i.FaceCount * 3, 1, i.FaceStart, 0, 0);
-					cout << "a - " << i.FaceCount * 3 << endl;
+					cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+					sum += i.FaceCount * 3;
 				}
+
+				/*int sum = 0;
+				for (UINT i : fbxLoaderPtr->submeshCount[1])
+				{
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
+					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
+					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(i, 1, sum, 0, 0);
+					sum += i;
+				}*/
 				
 			}
 		}

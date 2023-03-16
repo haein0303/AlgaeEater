@@ -52,7 +52,7 @@ public:
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
 		vector<SkinnedVertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
-		dxEngine.animationPtr->CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/mechanical_spider.txt");
+		dxEngine.animationPtr->CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/OrangeSpider.txt");
 		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
 		vector<Point> pointVertexvec(1);
@@ -66,8 +66,8 @@ public:
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndGSAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShaderOfAniamtion(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
-		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0);
-		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0); //AnimeCharcter
+		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 2);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 3);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 4);

@@ -1,12 +1,20 @@
+struct LightInfo
+{
+    float4 diffuse;
+    float4 ambient;
+    float4 specular;
+    float4 direction;
+};
+
 cbuffer TEST_B0 : register(b0)
 {
     float4x4 gWorld;
     float4x4 gView;
-    float4x4 gProjection;
+    float4x4 gProj;
+    LightInfo lightInfo;
     float4x4 gTexTransform;
     float4x4 gMatTransform;
     float4x4 gBoneTransforms[96];
-    float4x4 gWorldViewProj;
 };
 
 Texture2D tex_0 : register(t0);
@@ -15,7 +23,7 @@ SamplerState sam_0 : register(s0);
 struct VS_IN
 {
     float3 pos    : POSITION;
-    float3 normal : NORMAL;
+    float4 normal : NORMAL;
     float2 uv    : TEXCOORD;
     float3 TangentL : TANGENT;
     float3 BoneWeights : WEIGHTS;
@@ -49,24 +57,17 @@ VS_OUT VS_Main(VS_IN input)
     float3 tangentL = float3(0.0f, 0.0f, 0.0f);
     for (int i = 0; i < 4; ++i)
     {
-        // Assume no nonuniform scaling when transforming normals, so 
-        // that we do not have to use the inverse-transpose.
-
         posL += weights[i] * mul(float4(input.pos, 1.0f), gBoneTransforms[input.BoneIndices[i]]).xyz;
-        normalL += weights[i] * mul(input.normal, (float3x3)gBoneTransforms[input.BoneIndices[i]]);
         tangentL += weights[i] * mul(input.TangentL.xyz, (float3x3)gBoneTransforms[input.BoneIndices[i]]);
     }
 
     input.pos = posL;
-    input.normal = normalL;
+    input.normal = float4(input.normal.xyz, 0.f);
     input.TangentL.xyz = tangentL;
 
-    output.pos = mul(float4(input.pos, 1.f), gWorldViewProj);
-    //output.pos += offset0;
+    output.pos = mul(float4(input.pos, 1.f), mul(gWorld, mul(gView, gProj)));
     output.normal = input.normal;
-
-    float4 texC = mul(float4(input.uv, 0.0f, 1.0f), gTexTransform);
-    output.uv = mul(texC, gMatTransform).xy;
+    output.uv = input.uv;
 
     return output;
 }

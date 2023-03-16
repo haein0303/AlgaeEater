@@ -183,7 +183,6 @@ struct Constants
 	XMFLOAT4X4 TexTransform = Identity4x4();
 	XMFLOAT4X4 MatTransform = Identity4x4();
 	XMFLOAT4X4 BoneTransforms[96];
-	XMFLOAT4X4 wvp = Identity4x4();
 };
 
 struct Obj
@@ -240,7 +239,7 @@ struct Keyframe  //bone하나 기준
 struct SkinnedVertex
 {
 	XMFLOAT3 Pos;
-	XMFLOAT3 Normal;
+	XMFLOAT4 Normal;
 	XMFLOAT2 TexC;
 	XMFLOAT3 TangentU;
 	XMFLOAT3 BoneWeights;
