@@ -58,7 +58,6 @@ void AnimationObjectLoader::LoadAnimationObject(const string& filename, vector<S
 			for (UINT i = 0; i < vcount; ++i)
 			{
 				fin >> vertices[i].TexC.x >> vertices[i].TexC.y;
-				vertices[i].TexC.y = 1.0f - vertices[i].TexC.y;
 			}
 
 		}

@@ -17,6 +17,21 @@ cbuffer TEST_B0 : register(b0)
 Texture2D tex_0 : register(t0);
 SamplerState sam_0 : register(s0);
 
+struct VS_IN
+{
+    float3 pos : POSITION;
+    float4 normal : NORMAL;
+    float2 uv : TEXCOORD;
+};
+
+struct VS_OUT
+{
+    float4 pos : SV_Position;
+    float3 viewNormal : NORMAL;
+    float2 uv : TEXCOORD;
+    float3 viewPos : POSITION;
+};
+
 LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
 {
     LightInfo color = (LightInfo)0.f;
@@ -42,21 +57,6 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
 
     return color;
 }
-
-struct VS_IN
-{
-    float3 pos : POSITION;
-    float4 normal : NORMAL;
-    float2 uv : TEXCOORD;
-};
-
-struct VS_OUT
-{
-    float4 pos : SV_Position;
-    float3 viewNormal : NORMAL;
-    float2 uv : TEXCOORD;
-    float3 viewPos : POSITION;
-};
 
 VS_OUT VS_Main(VS_IN input)
 {
