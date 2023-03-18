@@ -32,7 +32,6 @@ public:
 	
 
 	//매 프레임마다 그리기
-	void Draw(WindowInfo windowInfo);
 	void Draw_multi(WindowInfo windowInfo,int);
 
 	//요소별 객체 포인터

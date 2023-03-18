@@ -122,7 +122,7 @@ public:
 			dxEngine.timerPtr->ShowFps(windowInfo);
 
 			//애니메이션
-			dxEngine.animationPtr->mSkinnedModel->UpdateSkinnedAnimation(dxEngine.timerPtr->_deltaTime);
+			
 
 			dxEngine.Update(windowInfo, isActive);
 			
