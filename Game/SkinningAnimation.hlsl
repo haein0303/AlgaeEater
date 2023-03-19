@@ -33,13 +33,36 @@ struct VS_IN
 struct VS_OUT
 {
     float4 pos    : SV_POSITION;
-    float4 ShadowPosH : POSITION0;
-    float4 SsaoPosH   : POSITION1;
-    float3 PosW    : POSITION2;
-    float3 normal : NORMAL;
-    float3 TangentW : TANGENT;
+    float3 viewNormal : NORMAL;
     float2 uv    : TEXCOORD;
+    float3 viewPos : POSITION;
 };
+
+LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
+{
+    LightInfo color = (LightInfo)0.f;
+
+    float3 viewLightDir = (float3)0.f;
+
+    float diffuseRatio = 0.f;
+    float specularRatio = 0.f;
+    float distanceRatio = 1.f;
+
+    // Directional Light
+    viewLightDir = normalize(mul(float4(lightInfo.direction.xyz, 0.f), gView).xyz);
+    diffuseRatio = saturate(dot(-viewLightDir, viewNormal));
+
+    float3 reflectionDir = normalize(viewLightDir + 2 * (saturate(dot(-viewLightDir, viewNormal)) * viewNormal));
+    float3 eyeDir = normalize(viewPos);
+    specularRatio = saturate(dot(-eyeDir, reflectionDir));
+    specularRatio = pow(specularRatio, 2);
+
+    color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;
+    color.ambient = lightInfo.ambient * distanceRatio;
+    color.specular = lightInfo.specular * specularRatio * distanceRatio;
+
+    return color;
+}
 
 VS_OUT VS_Main(VS_IN input)
 {
@@ -66,7 +89,7 @@ VS_OUT VS_Main(VS_IN input)
     input.TangentL.xyz = tangentL;
 
     output.pos = mul(float4(input.pos, 1.f), mul(gWorld, mul(gView, gProj)));
-    output.normal = input.normal;
+    output.viewNormal = input.normal;
     output.uv = input.uv;
 
     return output;
@@ -75,5 +98,17 @@ VS_OUT VS_Main(VS_IN input)
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 color = tex_0.Sample(sam_0, input.uv);
+
+    LightInfo totalColor = (LightInfo)0.f;
+    LightInfo lightColor = CalculateLightColor(input.viewNormal, input.viewPos);
+
+    lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz) * 1.5) / 2.0f;
+
+    totalColor.diffuse += lightColor.diffuse;
+    totalColor.ambient += lightColor.ambient;
+    totalColor.specular += lightColor.specular;
+
+    color.xyz = (totalColor.diffuse.xyz * color.xyz) + totalColor.ambient.xyz * color.xyz + totalColor.specular.xyz;
+
     return color;
 }
