@@ -108,12 +108,6 @@
     <ClCompile Include="AnimationObjectLoader.cpp">
       <Filter>Engine\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="SkinnedModel.cpp">
-      <Filter>Engine\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationClip.cpp">
-      <Filter>Engine\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="AnimationObject.cpp">
       <Filter>Engine\Animation</Filter>
     </ClCompile>
@@ -191,16 +185,10 @@
     <ClInclude Include="ComputeShader.h">
       <Filter>Engine\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationClip.h">
-      <Filter>Engine\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="AnimationObject.h">
       <Filter>Engine\Animation</Filter>
     </ClInclude>
     <ClInclude Include="AnimationObjectLoader.h">
-      <Filter>Engine\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinnedModel.h">
       <Filter>Engine\Animation</Filter>
     </ClInclude>
   </ItemGroup>

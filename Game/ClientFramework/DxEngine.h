@@ -53,7 +53,7 @@ public:
 	shared_ptr<Timer> logicTimerPtr = make_shared<Timer>();
 	shared_ptr<Input> inputPtr = make_shared<Input>();
 	shared_ptr<SFML> networkPtr = make_shared<SFML>();
-	shared_ptr<AnimationObject> animationPtr = make_shared<AnimationObject>();
+	unique_ptr<AnimationObject[]> animationPtr = make_unique<AnimationObject[]>(2);
 
 	//오브젝트 객체 생성
 	Obj playerArr[PLAYERMAX];

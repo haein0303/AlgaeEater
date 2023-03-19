@@ -85,7 +85,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	::WaitForSingleObject(_renderEvent, INFINITE);
 
 	//애니메이션
-	animationPtr->mSkinnedModel->UpdateSkinnedAnimation(timerPtr->_deltaTime);
+	animationPtr[0].UpdateSkinnedAnimation(timerPtr->_deltaTime);
 
 	//if (!_render_thread_num) {
 	//	i_now_render_index = 0;
@@ -172,13 +172,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 				// 스키닝 애니메이션 행렬 데이터 복사
-				copy(begin(animationPtr->mSkinnedModel->FinalTransforms), end(animationPtr->mSkinnedModel->FinalTransforms), &_transform.BoneTransforms[0]);
+				copy(begin(animationPtr[0].FinalTransforms), end(animationPtr[0].FinalTransforms), &_transform.BoneTransforms[0]);
 
 				//렌더
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				
 				int sum = 0;
-				for (Subset i : animationPtr->mSubsets)
+				for (Subset i : animationPtr[0].mSubsets)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);

@@ -255,18 +255,12 @@ struct Subset
 	UINT FaceCount = 0;
 };
 
-struct framehierarchy
+struct FrameHierarchy
 {
 	int index, parentindex;
 	string myname, parentname;
 	vector<XMFLOAT4X4> boneOffsets;
 	int boneIndexToParentIndex;
-};
-
-struct animation
-{
-	string name;
-	vector<Keyframe> key;
 };
 
 

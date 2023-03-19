@@ -52,7 +52,7 @@ public:
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
 		vector<SkinnedVertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
-		dxEngine.animationPtr->CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/OrangeSpider.txt");
+		dxEngine.animationPtr[0].CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/OrangeSpider.txt");
 		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
 		vector<Point> pointVertexvec(1);
@@ -120,9 +120,6 @@ public:
 			//}			
 
 			dxEngine.timerPtr->ShowFps(windowInfo);
-
-			//애니메이션
-			
 
 			dxEngine.Update(windowInfo, isActive);
 			

@@ -131,7 +131,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnimationClip.cpp" />
     <ClCompile Include="AnimationObject.cpp" />
     <ClCompile Include="AnimationObjectLoader.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -148,7 +147,6 @@
     </ClCompile>
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="RTV.cpp" />
-    <ClCompile Include="SkinnedModel.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -159,7 +157,6 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimationClip.h" />
     <ClInclude Include="AnimationObject.h" />
     <ClInclude Include="AnimationObjectLoader.h" />
     <ClInclude Include="Camera.h" />
@@ -177,7 +174,6 @@
     </ClInclude>
     <ClInclude Include="RootSignature.h" />
     <ClInclude Include="SFML.h" />
-    <ClInclude Include="SkinnedModel.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="CmdQueue.h" />

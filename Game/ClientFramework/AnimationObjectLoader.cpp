@@ -1,6 +1,7 @@
 #include "AnimationObjectLoader.h"
 
-void AnimationObjectLoader::LoadAnimationObject(const string& filename, vector<SkinnedVertex>& vertices, vector<UINT>& indices, vector<Subset>& subsets, AnimationClip& skinInfo)
+void AnimationObjectLoader::LoadAnimationObject(const string& filename, vector<SkinnedVertex>& vertices, vector<UINT>& indices, vector<Subset>& subsets,
+	vector<int>& mBoneHierarchy, vector<XMFLOAT4X4>& mBoneOffsets, vector<vector<vector<Keyframe>>>& animations)
 {
 	ifstream fin(filename);
 
@@ -17,10 +18,12 @@ void AnimationObjectLoader::LoadAnimationObject(const string& filename, vector<S
 	int boneIndices[4];
 	float weights[4];
 	int boneNum = 0;
+	int animationNum = 0;
 
-	vector<framehierarchy> tempframehier;
-	vector<animation> tempanimations;
-	vector<vector<Keyframe>> tempanimation;
+	vector<FrameHierarchy> tempframehier;
+	//vector<vector<Animation>> tempanimations;
+	vector<string> framename;
+	vector<vector<vector<Keyframe>>> tmpanimations;
 
 	while (true)
 	{
@@ -122,7 +125,7 @@ void AnimationObjectLoader::LoadAnimationObject(const string& filename, vector<S
 			for (UINT i = 0; i < boneNum; ++i)
 			{
 				fin >> index;
-				skinInfo.mBoneHierarchy.push_back(index);
+				mBoneHierarchy.push_back(index);
 			}
 
 		}
@@ -131,13 +134,13 @@ void AnimationObjectLoader::LoadAnimationObject(const string& filename, vector<S
 		else if (str.compare("<BoneOffsets>:") == 0)
 		{
 			fin >> ignore;
-			skinInfo.mBoneOffsets.resize(boneNum);
+			mBoneOffsets.resize(boneNum);
 			for (int i = 0; i < boneNum; i++)
 			{
-				fin >> skinInfo.mBoneOffsets[i](0, 0) >> skinInfo.mBoneOffsets[i](0, 1) >> skinInfo.mBoneOffsets[i](0, 2) >> skinInfo.mBoneOffsets[i](0, 3) >>
-					skinInfo.mBoneOffsets[i](1, 0) >> skinInfo.mBoneOffsets[i](1, 1) >> skinInfo.mBoneOffsets[i](1, 2) >> skinInfo.mBoneOffsets[i](1, 3) >>
-					skinInfo.mBoneOffsets[i](2, 0) >> skinInfo.mBoneOffsets[i](2, 1) >> skinInfo.mBoneOffsets[i](2, 2) >> skinInfo.mBoneOffsets[i](2, 3) >>
-					skinInfo.mBoneOffsets[i](3, 0) >> skinInfo.mBoneOffsets[i](3, 1) >> skinInfo.mBoneOffsets[i](3, 2) >> skinInfo.mBoneOffsets[i](3, 3);
+				fin >> mBoneOffsets[i](0, 0) >> mBoneOffsets[i](0, 1) >> mBoneOffsets[i](0, 2) >> mBoneOffsets[i](0, 3) >>
+					mBoneOffsets[i](1, 0) >> mBoneOffsets[i](1, 1) >> mBoneOffsets[i](1, 2) >> mBoneOffsets[i](1, 3) >>
+					mBoneOffsets[i](2, 0) >> mBoneOffsets[i](2, 1) >> mBoneOffsets[i](2, 2) >> mBoneOffsets[i](2, 3) >>
+					mBoneOffsets[i](3, 0) >> mBoneOffsets[i](3, 1) >> mBoneOffsets[i](3, 2) >> mBoneOffsets[i](3, 3);
 			}
 		}
 
@@ -148,51 +151,63 @@ void AnimationObjectLoader::LoadAnimationObject(const string& filename, vector<S
 			int numFrames;
 			UINT numKeyframes = 0;
 
-			fin >> ignore;
+			fin >> animationNum;
+			animations.resize(animationNum);
+			tmpanimations.resize(animationNum);
 			fin >> ignore >> numFrames;
-			tempanimations.resize(numFrames);
+			framename.resize(numFrames);
+			for (int i = 0; i < animationNum; i++) {
+				tmpanimations[i].resize(numFrames);
+			}
 			for (int i = 0; i < numFrames; i++)
 			{
-				fin >> tempanimations[i].name;
+				fin >> framename[i];
 			}
 
-			fin >> ignore >> ignore >> clipName >> ignore >> ignore >> numKeyframes;
+			// Animation Sets ·Îµå
+			for (int i = 0; i < animationNum; i++) {
+				fin >> ignore >> ignore >> clipName >> ignore >> ignore >> numKeyframes;
 
-			for (UINT i = 0; i < numKeyframes; ++i)
-			{
-				float t = 0.0f;
-				fin >> ignore >> ignore >> t;
-
-				for (UINT boneIndex = 0; boneIndex < numFrames; ++boneIndex)
+				for (UINT j = 0; j < numKeyframes; ++j)
 				{
-					tempanimations[boneIndex].key.resize(numKeyframes);
+					float t = 0.0f;
+					fin >> ignore >> ignore >> t;
 
-					XMFLOAT3 p(0.0f, 0.0f, 0.0f);
-					XMFLOAT3 s(1.0f, 1.0f, 1.0f);
-					XMFLOAT4 q(0.0f, 0.0f, 0.0f, 1.0f);
+					for (UINT boneIndex = 0; boneIndex < numFrames; ++boneIndex)
+					{
+						tmpanimations[i][boneIndex].resize(numKeyframes);
 
-					fin >> p.x >> p.y >> p.z;
-					fin >> s.x >> s.y >> s.z;
-					fin >> q.x >> q.y >> q.z >> q.w;
+						XMFLOAT3 p(0.0f, 0.0f, 0.0f);
+						XMFLOAT3 s(1.0f, 1.0f, 1.0f);
+						XMFLOAT4 q(0.0f, 0.0f, 0.0f, 1.0f);
 
-					tempanimations[boneIndex].key[i].TimePos = t;
-					tempanimations[boneIndex].key[i].Translation = p;
-					tempanimations[boneIndex].key[i].Scale = s;
-					tempanimations[boneIndex].key[i].RotationQuat = q;
+						fin >> p.x >> p.y >> p.z;
+						fin >> s.x >> s.y >> s.z;
+						fin >> q.x >> q.y >> q.z >> q.w;
+
+						tmpanimations[i][boneIndex][j].TimePos = t;
+						tmpanimations[i][boneIndex][j].Translation = p;
+						tmpanimations[i][boneIndex][j].Scale = s;
+						tmpanimations[i][boneIndex][j].RotationQuat = q;
+					}
 				}
 			}
 
 		}
 		else if (fin.eof())
 		{
-			for (framehierarchy frame : tempframehier)
+			for (FrameHierarchy frame : tempframehier)
 			{
-				for (animation bone : tempanimations)
+				int i = 0;
+				for (string name : framename)
 				{
-					if (frame.myname.compare(bone.name) == 0)
+					if (frame.myname.compare(name) == 0)
 					{
-						skinInfo.animationVec.push_back(bone.key);
+						for (int j = 0; j < animationNum; j++) {
+							animations[j].push_back(tmpanimations[j][i]);
+						}
 					}
+					++i;
 				}
 			}
 
