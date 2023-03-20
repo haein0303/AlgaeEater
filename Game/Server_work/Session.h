@@ -29,6 +29,8 @@ public:
 	char	_name[NAME_SIZE];
 	int		_prev_remain;
 	std::mutex	_sl;
+	int		hp;
+	int		char_state;
 	// 과제용 임시 변수
 	int move_stack;
 	int move_degree;
@@ -43,9 +45,9 @@ public:
 	~SESSION();
 	void do_recv();
 	void do_send(void* packet);
-	void send_login_ok_packet(int c_id, float x, float y, float z, float degree);
-	void send_move_packet(int c_id, float x, float y, float z, float degree);
-	void send_add_object(int c_id, float x, float y, float z, float degree, char* name);
+	void send_login_ok_packet(int c_id, float x, float y, float z, float degree, int hp);
+	void send_move_packet(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
+	void send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
 	void send_remove_object(int c_id);
 	void send_cube_add(int c_id, float x, float y, float z, float degree);
 };

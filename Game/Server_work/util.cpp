@@ -50,7 +50,9 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].y = 0;
 		clients[c_id].z = 0;
 		clients[c_id].degree = 0;
-		clients[c_id].send_login_ok_packet(c_id % 4, 0, 0, 0, 0);
+		clients[c_id].char_state = 0;
+		clients[c_id].hp = 100;
+		clients[c_id].send_login_ok_packet(c_id % 4, 0, 0, 0, 0, 100);
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._Room_Num = c_id / 4;
 		clients[c_id].room_list.clear();
@@ -65,8 +67,9 @@ void process_packet(int c_id, char* packet)
 				continue;
 			}
 			if (pl._Room_Num == clients[c_id]._Room_Num) {
-				pl.send_add_object(c_id % 4, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id]._name);
-				clients[c_id].send_add_object(pl._id % 4, pl.x, pl.y, pl.z, pl.degree, pl._name);
+				pl.send_add_object(c_id % 4, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, 
+					clients[c_id]._name, clients[c_id].hp, clients[c_id].char_state);
+				clients[c_id].send_add_object(pl._id % 4, pl.x, pl.y, pl.z, pl.degree, pl._name, pl.hp, pl.char_state);
 				pl.room_list.insert(c_id);
 				clients[c_id].room_list.insert(pl._id);
 			}
@@ -86,7 +89,7 @@ void process_packet(int c_id, char* packet)
 			if (clients[c_id]._Room_Num == clients[i]._Room_Num) {
 				clients[c_id].room_list.insert(i);
 				clients[i].room_list.insert(c_id);
-				clients[c_id].send_add_object((i - MAX_USER) % 10 + 4, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
+				clients[c_id].send_add_object((i - MAX_USER) % 10 + 4, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
 			}
 		}
 
@@ -98,6 +101,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].y = p->y;
 		clients[c_id].z = p->z;
 		clients[c_id].degree = p->degree;
+		clients[c_id].char_state = p->char_state;
 		break;
 	}
 	case CS_CONSOLE: {
@@ -291,9 +295,9 @@ void Update_Player()
 			clients[pl]._sl.unlock();
 
 			if (pl < MAX_USER)
-				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree);
+				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree, clients[pl]._name, clients[pl].hp, clients[pl].char_state);
 			else
-				clients[i].send_move_packet((pl - MAX_USER) % 10 + 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree);
+				clients[i].send_move_packet((pl - MAX_USER) % 10 + 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree, clients[pl]._name, clients[pl].hp, clients[pl].char_state);
 		}
 	}
 }

@@ -9,6 +9,8 @@ SESSION::SESSION()
 	z = 0;
 	degree = 0;
 	_name[0] = 0;
+	char_state = 0;
+	hp = 0;
 	_s_state = ST_FREE;
 	_prev_remain = 0;
 	move_stack = 0;
@@ -37,7 +39,7 @@ void SESSION::do_send(void* packet)
 	WSASend(_socket, &sdata->_wsabuf, 1, 0, 0, &sdata->_over, 0);
 }
 
-void SESSION::send_login_ok_packet(int c_id, float x, float y, float z, float degree)
+void SESSION::send_login_ok_packet(int c_id, float x, float y, float z, float degree, int hp)
 {
 	SC_LOGIN_OK_PACKET p;
 	p.id = c_id;
@@ -46,10 +48,11 @@ void SESSION::send_login_ok_packet(int c_id, float x, float y, float z, float de
 	p.x = x;
 	p.y = y;
 	p.z = z;
+	p.hp = hp;
 	do_send(&p);
 }
 
-void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree)
+void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree, char* name, int hp, int state)
 {
 	SC_MOVE_OBJECT_PACKET p;
 	p.id = c_id;
@@ -59,10 +62,13 @@ void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree
 	p.y = y;
 	p.z = z;
 	p.degree = degree;
+	strcpy_s(p.name, name);
+	p.hp = hp;
+	p.char_state = state;
 	do_send(&p);
 }
 
-void SESSION::send_add_object(int c_id, float x, float y, float z, float degree, char* name)
+void SESSION::send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state)
 {
 	SC_ADD_OBJECT_PACKET p;
 	p.id = c_id;
@@ -73,6 +79,8 @@ void SESSION::send_add_object(int c_id, float x, float y, float z, float degree,
 	p.z = z;
 	p.degree = degree;
 	strcpy_s(p.name, name);
+	p.hp = hp;
+	p.char_state = state;
 	do_send(&p);
 }
 

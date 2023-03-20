@@ -26,6 +26,8 @@ void initialize_npc()
 		clients[i].degree = 0;
 		clients[i].move_stack = 0;
 		clients[i].move_degree = 0;
+		clients[i].hp = 100;
+		clients[i].char_state = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
 		clients[i]._Room_Num = (i - MAX_USER) / 10;
@@ -40,6 +42,8 @@ void initialize_npc()
 			clients[i].degree = 0;
 			clients[i].move_stack = 0;
 			clients[i].move_degree = 0;
+			clients[i].hp = 100;
+			clients[i].char_state = 0;
 			clients[i]._name[0] = 0;
 			clients[i]._prev_remain = 0;
 			clients[i]._Room_Num = (i - MAX_USER) / 10;
