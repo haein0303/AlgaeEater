@@ -297,6 +297,7 @@ struct CS_MOVE_PACKET {
 	float	y;
 	float	z;
 	float	degree;
+	int		char_state;
 	unsigned int client_time;
 };
 
@@ -312,6 +313,7 @@ struct SC_LOGIN_OK_PACKET {
 	int	id;
 	float	x, y, z;
 	float	degree;
+	int		hp;
 };
 
 struct SC_ADD_OBJECT_PACKET {
@@ -321,6 +323,8 @@ struct SC_ADD_OBJECT_PACKET {
 	float	x, y, z;
 	float	degree;
 	char	name[NAME_SIZE];
+	int		hp;
+	int		char_state;
 };
 
 struct SC_ADD_CUBE_PACKET {
@@ -329,6 +333,8 @@ struct SC_ADD_CUBE_PACKET {
 	int		id;
 	float	x, y, z;
 	float	degree;
+	char	name[NAME_SIZE];
+	int		hp;
 };
 
 struct SC_REMOVE_OBJECT_PACKET {
@@ -343,7 +349,9 @@ struct SC_MOVE_OBJECT_PACKET {
 	int	id;
 	float	x, y, z;
 	float	degree;
-	unsigned int client_time;
+	char	name[NAME_SIZE];
+	int		hp;
+	int		char_state;
 };
 
 #pragma pack (pop)
