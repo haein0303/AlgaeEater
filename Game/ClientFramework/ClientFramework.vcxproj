@@ -139,6 +139,8 @@
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DSV.cpp" />
     <ClCompile Include="DxEngine.cpp" />
+    <ClCompile Include="MESH.cpp" />
+    <ClCompile Include="OBJECT.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -147,6 +149,7 @@
     </ClCompile>
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="RTV.cpp" />
+    <ClCompile Include="SCENE.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -167,12 +170,15 @@
     <ClInclude Include="DirectXTex.h" />
     <ClInclude Include="DSV.h" />
     <ClInclude Include="DxEngine.h" />
+    <ClInclude Include="MESH.h" />
+    <ClInclude Include="OBJECT.h" />
     <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="NetWork_Client.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="RootSignature.h" />
+    <ClInclude Include="SCENE.h" />
     <ClInclude Include="SFML.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Util.h" />

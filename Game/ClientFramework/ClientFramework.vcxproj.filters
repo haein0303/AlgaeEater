@@ -8,9 +8,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{1f0034f6-10e6-4a3a-9ea3-99abd6e2beed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -111,6 +108,15 @@
     <ClCompile Include="AnimationObject.cpp">
       <Filter>Engine\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="SCENE.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJECT.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="MESH.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">
@@ -190,6 +196,15 @@
     </ClInclude>
     <ClInclude Include="AnimationObjectLoader.h">
       <Filter>Engine\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="SCENE.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJECT.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="MESH.h">
+      <Filter>Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -87,15 +87,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	//애니메이션
 	animationPtr[0].UpdateSkinnedAnimation(timerPtr->_deltaTime);
 
-	//if (!_render_thread_num) {
-	//	i_now_render_index = 0;
-	//	_render_thread_num++;
-	//}
-	//else {
-	//	i_now_render_index = 1;
-	//	_render_thread_num = 0;
-	//}
-
 	cmdQueuePtr->_arr_cmdAlloc[i_now_render_index]->Reset();
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
 

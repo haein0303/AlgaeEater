@@ -35,7 +35,7 @@ public:
 		
 		AllocConsole();
 		freopen("CONOUT$", "wt", stdout);
-
+		
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
 
