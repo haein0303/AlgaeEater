@@ -1,4 +1,6 @@
 #pragma once
+#include<iostream>
+#include<chrono>
 constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
@@ -96,6 +98,7 @@ struct SC_MOVE_OBJECT_PACKET {
 	char	name[NAME_SIZE];
 	int		hp;
 	int		char_state;
+	std::chrono::milliseconds time;
 };
 
 struct SS_CONNECT_SERVER_PACKET {

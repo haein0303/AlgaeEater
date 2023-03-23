@@ -16,6 +16,7 @@ SESSION::SESSION()
 	move_stack = 0;
 	move_degree = 0;
 	_Room_Num = 0;
+	prev_time = std::chrono::system_clock::now();
 	Lua_on = false;
 }
 
@@ -52,7 +53,7 @@ void SESSION::send_login_ok_packet(int c_id, float x, float y, float z, float de
 	do_send(&p);
 }
 
-void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree, char* name, int hp, int state)
+void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree, char* name, int hp, int state, std::chrono::milliseconds time)
 {
 	SC_MOVE_OBJECT_PACKET p;
 	p.id = c_id;
@@ -65,6 +66,7 @@ void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree
 	strcpy_s(p.name, name);
 	p.hp = hp;
 	p.char_state = state;
+	p.time = time;
 	do_send(&p);
 }
 

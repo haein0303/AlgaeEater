@@ -106,14 +106,6 @@ HANDLE g_h_iocp;
 SOCKET g_s_socket;
 SOCKET ss_socket;
 
-struct SOCKETINFO
-{
-	WSAOVERLAPPED overlapped;
-	WSABUF dataBuffer;
-	int receiveBytes;
-	int sendBytes;
-};
-
 int get_new_client_id()
 {
 	for (int i = 0; i < MAX_USER; ++i) {

@@ -31,6 +31,7 @@ public:
 	std::mutex	_sl;
 	int		hp;
 	int		char_state;
+	std::chrono::system_clock::time_point prev_time;
 	// 과제용 임시 변수
 	int move_stack;
 	int move_degree;
@@ -46,7 +47,7 @@ public:
 	void do_recv();
 	void do_send(void* packet);
 	void send_login_ok_packet(int c_id, float x, float y, float z, float degree, int hp);
-	void send_move_packet(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
+	void send_move_packet(int c_id, float x, float y, float z, float degree, char* name, int hp, int state, std::chrono::milliseconds time);
 	void send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
 	void send_remove_object(int c_id);
 	void send_cube_add(int c_id, float x, float y, float z, float degree);
