@@ -308,10 +308,10 @@ void Update_Player()
 			
 			if (pl < MAX_USER)
 				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl]._name, clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
+				 clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
 			else
 				clients[i].send_move_packet((pl - MAX_USER) % 10 + 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl]._name, clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
+					 clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
 
 			clients[pl].prev_time = now;
 		}

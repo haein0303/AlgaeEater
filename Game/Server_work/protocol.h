@@ -95,7 +95,6 @@ struct SC_MOVE_OBJECT_PACKET {
 	int		id;
 	float	x, y, z;
 	float	degree;
-	char	name[NAME_SIZE];
 	int		hp;
 	int		char_state;
 	std::chrono::milliseconds time;
