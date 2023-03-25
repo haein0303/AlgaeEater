@@ -16,6 +16,7 @@
 #include <mutex>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 
 #include "DirectXTex.h"
 #include "DirectXTex.inl"
@@ -192,6 +193,7 @@ struct Obj
 	XMFLOAT4 transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	bool isCollision = false;
 	bool isFirstCollision = false;
+	chrono::milliseconds time;
 };
 
 struct Point
@@ -352,6 +354,7 @@ struct SC_MOVE_OBJECT_PACKET {
 	char	name[NAME_SIZE];
 	int		hp;
 	int		char_state;
+	std::chrono::milliseconds time;
 };
 
 #pragma pack (pop)

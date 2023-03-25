@@ -48,8 +48,10 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr,cubeArr);
+	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr);
 	
+	animationPtr[0].server_time_pos = npcArr[0].time.count() / 1000.f;
+
 	if (isActive)
 	{
 		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
@@ -81,7 +83,6 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 
 void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 {
-
 	::WaitForSingleObject(_renderEvent, INFINITE);
 
 	//애니메이션

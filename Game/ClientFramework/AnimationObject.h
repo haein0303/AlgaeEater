@@ -14,6 +14,8 @@ public:
 	vector<XMFLOAT4X4> FinalTransforms;
 	string ClipName;
 	float TimePos = 0.0f;
+	float server_time_pos0 = 0.0f;
+	float server_time_pos = 0.0f;
 
 	int state = 1;
 
@@ -35,5 +37,5 @@ public:
 	void Interpolate(vector<Keyframe> keyframeVec, float t, XMFLOAT4X4& M);
 
 	// 보간된 애니메이션 행렬들에 대해서 최종 행렬 연산
-	void GetFinalTransforms(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms);
+	void GetFinalTransforms(const string& clipName, float timePos, float sever_time_pos, vector<XMFLOAT4X4>& finalTransforms);
 };

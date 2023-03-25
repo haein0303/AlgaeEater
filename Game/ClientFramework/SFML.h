@@ -123,6 +123,7 @@ public:
 				npcArr[id - PLAYERMAX].transform.y = my_packet->y;
 				npcArr[id - PLAYERMAX].transform.z = my_packet->z;
 				npcArr[id - PLAYERMAX].degree = my_packet->degree;
+				npcArr[id - PLAYERMAX].time = my_packet->time;
 			}
 			
 			break;
