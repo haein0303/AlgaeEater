@@ -31,7 +31,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	SetWindowPos(windowInfo.hwnd, 0, 100, 100, windowInfo.ClientWidth, windowInfo.ClientHeight, 0);
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
 	srand((unsigned int)time(NULL));
-
+	
 	inputPtr->Init(windowInfo); //벡터 사이즈 초기화
 	for (int i = 0; i < PLAYERMAX; i++)
 	{
@@ -44,6 +44,15 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
+}
+
+void DxEngine::late_Init(WindowInfo windowInfo)
+{
+	cube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr);
+	cube.Init("../Resources/Cube.txt");
+	cube.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	cube.Make_SRV();
+
 }
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
@@ -155,6 +164,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);
 
+			
 			{
 				//월드 변환
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y, npcArr[i].transform.z));
@@ -203,9 +213,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	{
 		if (cubeArr[i].on == true)
 		{
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
+			/*cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);*/
+
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube._vertexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube._indexBufferView);
 
 			//월드 변환
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.0f, cubeArr[i].transform.z));
@@ -216,13 +230,19 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+				
+				/*texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				texturePtr->_srvHandle.Offset(7, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);*/
+
+				cube._tex._srvHandle = cube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				//texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+				//texturePtr->_srvHandle.Offset(7, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				descHeapPtr->CopyDescriptor(cube._tex._srvHandle, 5, devicePtr);
 			}
 
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(indexBufferPtr->_indexCount, 1, 0, 0, 0);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(cube._indexCount, 1, 0, 0, 0);
 		}
 	}
 	//파티클
