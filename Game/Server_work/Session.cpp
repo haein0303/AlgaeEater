@@ -17,6 +17,7 @@ SESSION::SESSION()
 	move_degree = 0;
 	_Room_Num = 0;
 	prev_time = std::chrono::system_clock::now();
+	anim_time = std::chrono::milliseconds::zero();
 	Lua_on = false;
 }
 

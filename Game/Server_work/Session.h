@@ -32,6 +32,7 @@ public:
 	int		hp;
 	int		char_state;
 	std::chrono::system_clock::time_point prev_time;
+	std::chrono::milliseconds anim_time;
 	// 과제용 임시 변수
 	int move_stack;
 	int move_degree;

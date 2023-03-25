@@ -296,16 +296,16 @@ void Update_Player()
 
 			system_clock::time_point now = system_clock::now();
 
-			milliseconds tic_time = duration_cast<milliseconds>(now - clients[pl].prev_time);
+			clients[pl].anim_time += duration_cast<milliseconds>(now - clients[pl].prev_time);
 
-			cout << tic_time.count() << endl;
+			if (clients[pl].anim_time > milliseconds(75000)) clients[pl].anim_time = milliseconds(0);
 			
 			if (pl < MAX_USER)
 				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl]._name, clients[pl].hp, clients[pl].char_state, tic_time);
+					clients[pl]._name, clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
 			else
 				clients[i].send_move_packet((pl - MAX_USER) % 10 + 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl]._name, clients[pl].hp, clients[pl].char_state, tic_time);
+					clients[pl]._name, clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
 
 			clients[pl].prev_time = now;
 		}
