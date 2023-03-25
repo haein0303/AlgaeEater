@@ -298,7 +298,7 @@ void Update_Player()
 
 			clients[pl].anim_time += duration_cast<milliseconds>(now - clients[pl].prev_time);
 
-			if (clients[pl].anim_time > milliseconds(75000)) clients[pl].anim_time = milliseconds(0);
+			if (clients[pl].anim_time > milliseconds(750)) clients[pl].anim_time = milliseconds(0);
 			
 			if (pl < MAX_USER)
 				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
