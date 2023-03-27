@@ -49,7 +49,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 void DxEngine::late_Init(WindowInfo windowInfo)
 {
 	cube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr);
-	cube.Init("../Resources/Cube.txt");
+	cube.Init("../Resources/Cube.txt",false);
 	cube.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	cube.Make_SRV();
 

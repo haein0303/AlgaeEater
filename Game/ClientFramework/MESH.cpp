@@ -20,10 +20,18 @@ void MESH_ASSET::Link_ptr(
 	_cmdQueuePtr =  cmdQueuePtr;
 }
 
-void MESH_ASSET::Init(const char* path)
+void MESH_ASSET::Init(const char* path, bool is_animation)
 {
-	_fbxLoaderPtr->LoadObject(VertexVec, IndexVec, path);
-	_vertexBufferPtr->CreateVertexBuffer(_vertexBuffer, _vertexBufferView, VertexVec, _devicePtr);
+	_is_ani = is_animation;
+	
+	if (is_animation) {
+		_animationPtr->CreateAnimationObject(AniVertexVec, IndexVec, path);
+		_vertexBufferPtr->CreateAnimationVertexBuffer(_vertexBufferPtr->_npcVertexBuffer, _vertexBufferPtr->_npcVertexBufferView, AniVertexVec, _devicePtr);
+	}
+	else {
+		_fbxLoaderPtr->LoadObject(VertexVec, IndexVec, path);
+		_vertexBufferPtr->CreateVertexBuffer(_vertexBuffer, _vertexBufferView, VertexVec, _devicePtr);
+	}	
 	_indexBufferPtr->CreateIndexBuffer(_indexBuffer, _indexBufferView, IndexVec, _devicePtr, _indexCount);
 
 }

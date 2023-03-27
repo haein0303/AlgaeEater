@@ -7,11 +7,15 @@ struct LightInfo
 };
 
 cbuffer TEST_B0 : register(b0)
-{
+{     
     float4x4 gWorld;
     float4x4 gView;
     float4x4 gProjection;
     LightInfo lightInfo;
+    float4x4 gTexTransform;
+    float4x4 gMatTransform;
+    float4x4 gBoneTransforms[96];
+    int object_type;
 };
 
 Texture2D tex_0 : register(t0);
@@ -53,7 +57,7 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
 
     color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;
     color.ambient = lightInfo.ambient * distanceRatio;
-    color.specular = lightInfo.specular * specularRatio * distanceRatio;
+    color.specular = lightInfo.specular * specularRatio * distanceRatio * 0.6f;
 
     return color;
 }
@@ -81,8 +85,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     LightInfo totalColor = (LightInfo)0.f;
     LightInfo lightColor = CalculateLightColor(input.viewNormal, input.viewPos);
 
-    lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz)*1.5) / 2.0f;
-    //lightColor.specular.xyz = ceil(saturate(lightColor.specular.xyz)) / 2.0f;
+    lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz)*1.5f) / 2.0f;
+    lightColor.specular.xyz = ceil(saturate(lightColor.specular.xyz) * 3.0f) / 3.0f;
 
     totalColor.diffuse += lightColor.diffuse;
     totalColor.ambient += lightColor.ambient;

@@ -5,8 +5,6 @@ class Texture;
 
 class MESH_ASSET
 {
-private:
-	
 public:
 	shared_ptr<Device> _devicePtr;
 	shared_ptr<ObjectLoader> _fbxLoaderPtr;
@@ -14,6 +12,8 @@ public:
 	shared_ptr<IndexBuffer> _indexBufferPtr;
 	shared_ptr<CmdQueue> _cmdQueuePtr;
 
+	shared_ptr<AnimationObject> _animationPtr;
+	vector<SkinnedVertex> AniVertexVec;
 	vector<Vertex> VertexVec;
 	vector<UINT> IndexVec;
 
@@ -25,7 +25,7 @@ public:
 	UINT _indexCount = 0;
 
 	Texture _tex;
-
+	bool _is_ani;
 	int			tex_index = 0;
 
 	void Link_ptr(
@@ -35,7 +35,7 @@ public:
 		shared_ptr<IndexBuffer> indexBufferPtr,
 		shared_ptr<CmdQueue> cmdQueuePtr
 	);
-	void Init(const char* path);
+	void Init(const char* path,bool is_animation);
 	void Add_texture(const wstring& path);
 	void Make_SRV();
 };
