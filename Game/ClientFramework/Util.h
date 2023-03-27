@@ -176,7 +176,7 @@ static XMFLOAT4X4 Identity4x4()
 
 //상수버퍼로 넘겨줄 구조체의 형태
 struct Constants
-{
+{	
 	XMFLOAT4X4 world = Identity4x4();
 	XMFLOAT4X4 view = Identity4x4();
 	XMFLOAT4X4 proj = Identity4x4();
@@ -184,6 +184,7 @@ struct Constants
 	XMFLOAT4X4 TexTransform = Identity4x4();
 	XMFLOAT4X4 MatTransform = Identity4x4();
 	XMFLOAT4X4 BoneTransforms[96];
+	int obj_type = 0;
 };
 
 struct Obj

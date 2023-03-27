@@ -8,9 +8,11 @@ atomic<bool> g_isLive = true;
 class Client
 {
 public:
+	
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
 	atomic<int> _render_thread_num = 0;
+	
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
 
@@ -38,6 +40,8 @@ public:
 		
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
+		dxEngine.late_Init(windowInfo);
+		
 
 		//오브젝트 데이터 생성
 		vector<Vertex> cubeVertexVec;
@@ -63,9 +67,12 @@ public:
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_particleVertexBuffer, dxEngine.vertexBufferPtr->_particleVertexBufferView, pointVertexvec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_particleIndexBuffer, dxEngine.indexBufferPtr->_particleIndexBufferView, pointIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_particleIndexCount);
 
+		//기본으로 있어야 되는 아가들
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndGSAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShaderOfAniamtion(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
+		
+		
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\AnimeCharcter.dds", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 0); //AnimeCharcter
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 1);
 		dxEngine.texturePtr->CreateTexture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png", dxEngine.devicePtr, dxEngine.cmdQueuePtr, 2);

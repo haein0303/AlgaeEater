@@ -1,6 +1,7 @@
 #pragma once
 
 
+//전방선언데스네
 class Device;
 class CmdQueue;
 
@@ -11,8 +12,8 @@ public:
 	ScratchImage			_imageArr[8];
 	ComPtr<ID3D12Resource>	_texArr[8];
 
-	ScratchImage			_image;
-	ComPtr<ID3D12Resource>	_tex;
+	vector<ScratchImage> _v_image;
+	vector<ComPtr<ID3D12Resource>> _v_tex;
 
 	ComPtr<ID3D12DescriptorHeap>	_srvHeap;
 	CD3DX12_CPU_DESCRIPTOR_HANDLE	_srvHandle;

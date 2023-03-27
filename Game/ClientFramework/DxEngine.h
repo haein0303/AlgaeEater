@@ -18,14 +18,17 @@
 #include "Input.h"
 #include "SFML.h"
 #include "AnimationObject.h"
-
+#include "MESH.h"
 
 
 class DxEngine {
 public:
+
 	//DX엔진 초기화
 	void Init(WindowInfo windowInfo);
-	
+	void late_Init(WindowInfo windowInfo);
+
+
 	//매 프레임마다 업데이트
 	void FixedUpdate(WindowInfo windowInfo, bool isActive);
 	void Update(WindowInfo windowInfo, bool isActive);
@@ -60,6 +63,8 @@ public:
 	Obj npcArr[NPCMAX];
 	Obj cubeArr[CubeMax];
 	ParticleData particle[100];
+
+	MESH_ASSET cube;
 
 	//상수버퍼로 넘길 데이터
 	Constants _transform = {};

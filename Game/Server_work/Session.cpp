@@ -54,7 +54,7 @@ void SESSION::send_login_ok_packet(int c_id, float x, float y, float z, float de
 	do_send(&p);
 }
 
-void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree, char* name, int hp, int state, std::chrono::milliseconds time)
+void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree, int hp, int state, std::chrono::milliseconds time)
 {
 	SC_MOVE_OBJECT_PACKET p;
 	p.id = c_id;
@@ -64,7 +64,6 @@ void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree
 	p.y = y;
 	p.z = z;
 	p.degree = degree;
-	strcpy_s(p.name, name);
 	p.hp = hp;
 	p.char_state = state;
 	p.time = time;
