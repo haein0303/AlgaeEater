@@ -313,7 +313,7 @@ struct CS_CONSOLE_PACKET {
 struct SC_LOGIN_OK_PACKET {
 	unsigned char size;
 	char	type;
-	int	id;
+	int		id;
 	float	x, y, z;
 	float	degree;
 	int		hp;
@@ -343,16 +343,15 @@ struct SC_ADD_CUBE_PACKET {
 struct SC_REMOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;
-	int	id;
+	int		id;
 };
 
 struct SC_MOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;
-	int	id;
+	int		id;
 	float	x, y, z;
 	float	degree;
-	char	name[NAME_SIZE];
 	int		hp;
 	int		char_state;
 	std::chrono::milliseconds time;
