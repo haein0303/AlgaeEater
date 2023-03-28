@@ -174,6 +174,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.x = playerArr[networkPtr->myClientId].transform.x;
 		p.y = playerArr[networkPtr->myClientId].transform.y;
 		p.z = playerArr[networkPtr->myClientId].transform.z;
+		p.degree = playerArr[networkPtr->myClientId].degree;
 		networkPtr->send_packet(&p);
 	}
 	
@@ -226,6 +227,7 @@ void Input::inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr)
 		p.x = playerArr[networkPtr->myClientId].transform.x;
 		p.y = playerArr[networkPtr->myClientId].transform.y;
 		p.z = playerArr[networkPtr->myClientId].transform.z;
+		p.degree = playerArr[networkPtr->myClientId].degree;
 		networkPtr->send_packet(&p);
 	}
 	//cout << angle.x << ":" << angle.y << endl;
