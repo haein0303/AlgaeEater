@@ -52,8 +52,6 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].degree = 0;
 		clients[c_id].char_state = 0;
 		clients[c_id].hp = 100;
-		clients[c_id].prev_time = system_clock::now();
-		clients[c_id].anim_time = milliseconds(0);
 		clients[c_id].send_login_ok_packet(c_id % 4, 0, 0, 0, 0, 100);
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._Room_Num = c_id / 4;
@@ -214,8 +212,6 @@ void do_worker()
 				clients[client_id].degree = 0;
 				clients[client_id].char_state = 0;
 				clients[client_id].hp = 100;
-				clients[client_id].prev_time = system_clock::now();
-				clients[client_id].anim_time = milliseconds(0);
 				clients[client_id]._id = client_id;
 				clients[client_id]._name[0] = 0;
 				clients[client_id]._prev_remain = 0;
@@ -299,21 +295,13 @@ void Update_Player()
 				continue;
 			}
 			clients[pl]._sl.unlock();
-
-			system_clock::time_point now = system_clock::now();
-
-			clients[pl].anim_time += duration_cast<milliseconds>(now - clients[pl].prev_time);
-
-			if (clients[pl].anim_time > milliseconds(750)) clients[pl].anim_time = milliseconds(0);
 			
 			if (pl < MAX_USER)
 				clients[i].send_move_packet(pl % 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-				 clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
+				 clients[pl].hp, clients[pl].char_state);
 			else
 				clients[i].send_move_packet((pl - MAX_USER) % 10 + 4, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					 clients[pl].hp, clients[pl].char_state, clients[pl].anim_time);
-
-			clients[pl].prev_time = now;
+					 clients[pl].hp, clients[pl].char_state);
 		}
 	}
 }

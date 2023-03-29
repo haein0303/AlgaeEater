@@ -97,7 +97,6 @@ struct SC_MOVE_OBJECT_PACKET {
 	float	degree;
 	int		hp;
 	int		char_state;
-	std::chrono::milliseconds time;
 };
 
 struct SS_CONNECT_SERVER_PACKET {
