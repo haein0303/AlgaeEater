@@ -48,6 +48,7 @@ struct CLIENT {
 	float x;
 	float y;
 	float z;
+	bool state = false;
 	atomic_bool connected;
 
 	SOCKET client_socket;
@@ -138,12 +139,12 @@ void ProcessPacket(int ci, unsigned char packet[])
 				g_clients[my_id].z = move_packet->z;
 			}
 			if (ci == my_id) {
-				if (0 != move_packet->client_time) {
+				/*if (0 != move_packet->client_time) {
 					auto d_ms = duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count() - move_packet->client_time;
 
 					if (global_delay < d_ms) global_delay++;
 					else if (global_delay > d_ms) global_delay--;
-				}
+				}*/
 			}
 		}
 	}
@@ -154,6 +155,15 @@ void ProcessPacket(int ci, unsigned char packet[])
 	{
 		g_clients[ci].connected = true;
 		active_clients++;
+
+		while (true) {
+			if (g_clients[ci].state == true) {
+				ci += 1;
+			}
+			else break;
+		}
+
+
 		SC_LOGIN_OK_PACKET* login_packet = reinterpret_cast<SC_LOGIN_OK_PACKET*>(packet);
 		int my_id = ci;
 		client_map[login_packet->id] = my_id;
@@ -161,6 +171,7 @@ void ProcessPacket(int ci, unsigned char packet[])
 		g_clients[my_id].x = login_packet->x;
 		g_clients[my_id].y = login_packet->y;
 		g_clients[my_id].z = login_packet->z;
+		g_clients[my_id].state = true;
 
 		/*cs_packet_teleport t_packet;
 		t_packet.size = sizeof(t_packet);
