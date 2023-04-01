@@ -139,6 +139,7 @@
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DSV.cpp" />
     <ClCompile Include="DxEngine.cpp" />
+    <ClCompile Include="lobby_client.cpp" />
     <ClCompile Include="MESH.cpp" />
     <ClCompile Include="OBJECT.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="DirectXTex.h" />
     <ClInclude Include="DSV.h" />
     <ClInclude Include="DxEngine.h" />
+    <ClInclude Include="lobby_client.h" />
     <ClInclude Include="MESH.h" />
     <ClInclude Include="OBJECT.h" />
     <ClInclude Include="ObjectLoader.h" />

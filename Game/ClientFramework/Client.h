@@ -1,6 +1,8 @@
 #pragma once
 #include "DxEngine.h"
 
+
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 bool isActive = true;
 atomic<bool> g_isLive = true;
@@ -35,8 +37,7 @@ public:
 		ShowWindow(windowInfo.hwnd, nCmdShow);
 		UpdateWindow(windowInfo.hwnd);
 		
-		AllocConsole();
-		freopen("CONOUT$", "wt", stdout);
+		
 		
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
@@ -90,6 +91,7 @@ public:
 	//fixed_update
 	void Logic()
 	{
+		cout << "LOGIC CALL" << endl;
 		while (g_isLive) {
 			dxEngine.logicTimerPtr->fixed_update_tic();
 
@@ -99,7 +101,7 @@ public:
 
 	void Draw() {
 		
-		//cout << "DRAW CALL" << endl;
+		cout << "DRAW CALL" << endl;
 		int i_now_render_index;
 		if (!_render_thread_num) {
 			i_now_render_index = 0;
@@ -110,21 +112,9 @@ public:
 			_render_thread_num = 0;
 		}
 		while (g_isLive) {
-			//cout << "UPDATE";
-			/*float fTimeElapsed = 0;
-			float fLockFPS = 30.f;*/
+			
 			dxEngine.timerPtr->TimerUpdate();
-			//if (!isActive) { //액티브 상태가 아닐때				
-			//	while (fTimeElapsed < (1.f / fLockFPS)) {
-			//		dxEngine.timerPtr->TimerUpdate();
-			//		fTimeElapsed += dxEngine.timerPtr->_deltaTime;
-			//	}	
-			//	dxEngine.timerPtr->_fps = static_cast<int>(1.f / fTimeElapsed);
-			//	//cout << "\rDRAW BACK GROUND\n";
-			//}
-			//else {
-			//	//cout << "\rACTIVE\n";
-			//}			
+			
 
 			dxEngine.timerPtr->ShowFps(windowInfo);
 

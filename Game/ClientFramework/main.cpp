@@ -1,21 +1,47 @@
 #include "Client.h"
+#include "lobby_client.h"
+
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nCmdShow)
 {
-	//cout << "WinMain INIT CALL" << endl;
+	/*AllocConsole();
+	freopen("CONOUT$", "wt", stdout);*/
+	MSG msg = { 0 };
+
+	cout << "WinMain INIT CALL" << endl;
+	LOBBY_CLIENT lobby_client;
+	lobby_client.init(hInst, nCmdShow);
+	while (msg.message != WM_QUIT)
+	{
+		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
+		{
+			//client.Logic();
+		}
+
+	}
+	cout << "EXIT lobby Msg Queue INIT CALL" << endl;
+
 	Client client;
 	//클라이언트 초기화
 	client.Init(hInst, nCmdShow);
 	//매 프레임마다 업데이트
-	MSG msg = { 0 };
+	cout << "create client" << endl;
 
 	thread logical_thread{ &Client::Logic,&client };
 	thread render_thread1{ &Client::Draw,&client };
 	thread render_thread2{ &Client::Draw,&client };
 
+	cout << "create threads" << endl;
+
 	ShowCursor(false);
-	
+	msg.message = 0;
 	while (msg.message != WM_QUIT)
 	{
 		if (client.dxEngine.inputPtr->_mouse_chaged) {

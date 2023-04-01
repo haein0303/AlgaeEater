@@ -5,7 +5,9 @@
 void DxEngine::Init(WindowInfo windowInfo)
 {
 	//통신시작
+	cout << "try server connect" << endl;
 	networkPtr->ConnectServer(); //데이터 보냄
+	cout << "complite server connect" << endl;
 
 	//화면 크기 설정
 	_viewport = { 0, 0, static_cast<FLOAT>(windowInfo.ClientWidth), static_cast<FLOAT>(windowInfo.ClientHeight), 0.0f, 1.0f };
@@ -22,6 +24,8 @@ void DxEngine::Init(WindowInfo windowInfo)
 	constantBufferPtr->CreateView(devicePtr);
 	descHeapPtr->CreateDescTable(256, devicePtr);
 	
+	cout << "complite Init ptr" << endl;
+
 	timerPtr->InitTimer();
 	logicTimerPtr->InitTimer();
 
@@ -44,6 +48,8 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
+
+	cout << "complite all init" << endl;
 }
 
 void DxEngine::late_Init(WindowInfo windowInfo)
@@ -52,7 +58,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	cube.Init("../Resources/Cube.txt",false);
 	cube.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	cube.Make_SRV();
-
+	cout << "complite late init" << endl;
 }
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
