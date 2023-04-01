@@ -268,7 +268,8 @@ struct FrameHierarchy
 
 
 #pragma once
-constexpr int PORT_NUM = 4000;
+constexpr int GAME_PORT_NUM = 4000;
+constexpr int LOBBY_PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
 

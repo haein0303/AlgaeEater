@@ -8,10 +8,10 @@ public:
 	sf::TcpSocket socket;
 	int myClientId = 0;
 
-	void ConnectServer() //서버에 접속시 보내주는 부분
+	void ConnectServer(int PortNum) //서버에 접속시 보내주는 부분
 	{
 		wcout.imbue(locale("korean"));
-		sf::Socket::Status status = socket.connect("127.0.0.1", PORT_NUM);
+		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum);
 		socket.setBlocking(false);
 
 		if (status != sf::Socket::Done) {
