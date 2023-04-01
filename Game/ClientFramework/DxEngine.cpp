@@ -58,8 +58,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr);
-	
-	animationPtr[0].server_time_pos = npcArr[0].time.count() / 1000.f;
 
 	if (isActive)
 	{

@@ -354,7 +354,6 @@ struct SC_MOVE_OBJECT_PACKET {
 	float	degree;
 	int		hp;
 	int		char_state;
-	std::chrono::milliseconds time;
 };
 
 #pragma pack (pop)

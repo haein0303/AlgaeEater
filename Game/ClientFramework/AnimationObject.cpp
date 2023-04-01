@@ -11,37 +11,21 @@ void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vec
 
 void AnimationObject::UpdateSkinnedAnimation(float dt)
 {
-	cout << "server time " << server_time_pos << endl;
-
-	if (server_time_pos0 != server_time_pos)
-	{
-		TimePos = server_time_pos0;
-		server_time_pos0 = server_time_pos;
-	}
-	if (TimePos < server_time_pos)
-	{
-		TimePos += dt;
-	}
-	else if (TimePos >= server_time_pos)
-	{
-		TimePos = server_time_pos;
-	}
+	TimePos += dt;
 
 	// 애니메이션이 끝나면 애니메이션 루프
 	if (TimePos > GetClipEndTime()) {
-		/*if (state == 0) {
+		if (state == 0) {
 			state = 1;
 		}
 		else {
 			state = 0;
-		}*/
-		TimePos = 0.0f;
-		server_time_pos0 = 0.0f;
-		server_time_pos = 0.0f;
+		}
+		TimePos = 0.f;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
-	GetFinalTransforms(ClipName, TimePos, server_time_pos, FinalTransforms);
+	GetFinalTransforms(ClipName, TimePos, FinalTransforms);
 }
 
 float AnimationObject::GetClipEndTime() {
@@ -103,7 +87,7 @@ void AnimationObject::Interpolate(vector<Keyframe> keyframeVec, float t, XMFLOAT
 	}
 }
 
-void AnimationObject::GetFinalTransforms(const string& clipName, float timePos, float sever_time_pos, vector<XMFLOAT4X4>& finalTransforms) {
+void AnimationObject::GetFinalTransforms(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms) {
 	UINT numBones = mBoneOffsets.size();
 
 	vector<XMFLOAT4X4> toParentTransforms(numBones);
