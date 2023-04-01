@@ -54,10 +54,18 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::late_Init(WindowInfo windowInfo)
 {
-	cube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr);
-	cube.Init("../Resources/Cube.txt",false);
-	cube.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-	cube.Make_SRV();
+	cube_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr);
+	cube_asset.Init("../Resources/Cube.txt",false);
+	cube_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	cube_asset.Make_SRV();
+
+	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr);
+	player_asset.Init("../Resources/AnimeCharacter.txt", false);
+	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
+	player_asset.Make_SRV();
+
+
+
 	cout << "complite late init" << endl;
 }
 
@@ -140,6 +148,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	{
 		if (playerArr[i].on == true)
 		{
+			//쓰는이유 : 일반적인 애랑 애니메이션이랑 달라서 그럼
+			//상태가 바껴서 파이프라인 스테이트 오브젝트를 불러서 갱신해주는것
+			//이거 합칠 수 있는 작업 있지 않을까?
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
+			
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
 			
@@ -227,8 +240,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);*/
 
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube._vertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube._indexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube_asset._indexBufferView);
 
 			//월드 변환
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.0f, cubeArr[i].transform.z));
@@ -244,14 +257,14 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				texturePtr->_srvHandle.Offset(7, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);*/
 
-				cube._tex._srvHandle = cube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				cube_asset._tex._srvHandle = cube_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 				//texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				//texturePtr->_srvHandle.Offset(7, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-				descHeapPtr->CopyDescriptor(cube._tex._srvHandle, 5, devicePtr);
+				descHeapPtr->CopyDescriptor(cube_asset._tex._srvHandle, 5, devicePtr);
 			}
 
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(cube._indexCount, 1, 0, 0, 0);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(cube_asset._indexCount, 1, 0, 0, 0);
 		}
 	}
 	//파티클

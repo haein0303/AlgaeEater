@@ -64,7 +64,8 @@ public:
 	Obj cubeArr[CubeMax];
 	ParticleData particle[100];
 
-	MESH_ASSET cube;
+	MESH_ASSET cube_asset;
+	MESH_ASSET player_asset;
 
 	//상수버퍼로 넘길 데이터
 	Constants _transform = {};

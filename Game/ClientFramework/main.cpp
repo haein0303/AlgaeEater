@@ -11,7 +11,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	MSG msg = { 0 };
 
 	cout << "WinMain INIT CALL" << endl;
-	LOBBY_CLIENT lobby_client;
+	/*LOBBY_CLIENT lobby_client;
 	lobby_client.init(hInst, nCmdShow);
 	while (msg.message != WM_QUIT)
 	{
@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 			//client.Logic();
 		}
 
-	}
+	}*/
 	cout << "EXIT lobby Msg Queue INIT CALL" << endl;
 
 	Client client;
