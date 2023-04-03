@@ -6,6 +6,8 @@ constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
 
 #define LOBBY_SERVER_IP "127.0.0.1"
+#define GAME_SERVER_IP "127.0.0.1"
+constexpr int GAME_SERVER_PORT_NUM = 4000;
 constexpr int LOBBY_SERVER_PORT_NUM = 4001;
 
 constexpr int ROOM_NUM = 100;
@@ -26,6 +28,12 @@ constexpr char SC_ADD_CUBE = 15;
 
 constexpr char SS_CONNECT_SERVER = 20;
 constexpr char SS_DATA_PASS = 21;
+
+constexpr char LCS_LOGIN = 30;
+constexpr char LCS_MATCH = 31;
+
+constexpr char LSC_LOGIN_OK = 40;
+constexpr char LSC_CONGAME = 41;
 
 constexpr float PI = 3.1415926535;
 
@@ -109,5 +117,27 @@ struct SS_DATA_PASS_PACKET {
 	unsigned char size;
 	char type;
 	char	name[NAME_SIZE];
+};
+
+struct LCS_LOGIN_PACKET {
+	unsigned char size;
+	char	type;
+};
+
+struct LCS_MATCH_PACKET {
+	unsigned char size;
+	char	type;
+};
+
+struct LSC_LOGIN_OK_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+};
+
+struct LSC_CONGAME_PACKET {
+	unsigned char size;
+	char	type;
+	bool	connect;
 };
 #pragma pack (pop)

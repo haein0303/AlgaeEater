@@ -159,6 +159,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].do_send(&p);
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._sl.unlock();
+		cout << "클라 접속 확인" << endl;
 		break;
 	}
 	case LCS_MATCH: {
