@@ -60,6 +60,7 @@ public:
 	int _id;
 	SOCKET _socket;
 	char	_name[NAME_SIZE];
+	int		_state;
 	int		_prev_remain;
 
 public:
@@ -69,6 +70,7 @@ public:
 		_socket = 0;
 		_name[0] = 0;
 		_s_state = ST_FREE;
+		_state = 0;
 		_prev_remain = 0;
 	}
 
@@ -102,9 +104,11 @@ void SESSION::send_login_ok_packet(int c_id)
 
 array<SESSION, MAX_USER> clients;
 
+
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 SOCKET ss_socket;
+queue<int> match_list;
 
 int get_new_client_id()
 {
@@ -135,8 +139,7 @@ void disconnect(int c_id)
 void process_packet(int c_id, char* packet)
 {
 	switch (packet[1]) {
-	case CS_LOGIN: {
-		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
+	case LCS_LOGIN: {
 		clients[c_id]._sl.lock();
 		if (clients[c_id]._s_state == ST_FREE) {
 			clients[c_id]._sl.unlock();
@@ -148,57 +151,19 @@ void process_packet(int c_id, char* packet)
 			break;
 		}
 
-		strcpy_s(clients[c_id]._name, p->name);
-		clients[c_id].send_login_ok_packet(c_id % 4);
+		LSC_LOGIN_OK_PACKET p;
+		p.id = c_id;
+		p.size = sizeof(LSC_LOGIN_OK_PACKET);
+		p.type = LSC_LOGIN_OK;
+
+		clients[c_id].do_send(&p);
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._sl.unlock();
-
-		for (int i = 0; i < MAX_USER; ++i) {
-			auto& pl = clients[i];
-			if (pl._id == c_id) continue;
-			pl._sl.lock();
-			if (ST_INGAME != pl._s_state) {
-				pl._sl.unlock();
-				continue;
-			}
-			/*if (pl._Room_Num == clients[c_id]._Room_Num) {
-				pl.send_add_object(c_id % 4, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id]._name);
-				clients[c_id].send_add_object(pl._id % 4, pl.x, pl.y, pl.z, pl.degree, pl._name);
-				pl.room_list.insert(c_id);
-				clients[c_id].room_list.insert(pl._id);
-			}*/
-			pl._sl.unlock();
-		}
-
-		/*if (clients[c_id].room_list.size() == 0) {
-			for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
-				add_timer(i, 5000, EV_MOVE, i);
-			}
-			add_timer((clients[c_id]._Room_Num * 10) + MAX_USER + 9, 10000, EV_CK, 0);
-		}
-
-		for (int i = MAX_USER; i < MAX_USER + NPC_NUM; i++) {
-			if (clients[c_id]._Room_Num == clients[i]._Room_Num) {
-				clients[c_id].room_list.insert(i);
-				clients[i].room_list.insert(c_id);
-				clients[c_id].send_add_object((i - MAX_USER) % 10 + 4, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name);
-			}
-		}*/
-
 		break;
 	}
-	case CS_MOVE: {
-		cout << "move 지원 안함" << endl;
-		/*CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		clients[c_id].x = p->x;
-		clients[c_id].y = p->y;
-		clients[c_id].z = p->z;
-		clients[c_id].degree = p->degree;*/
-		break;
-	}
-	case CS_CONSOLE: {
-		cout << "콘솔 지원 안함" << endl;
-		//reset_lua(c_id);
+	case LCS_MATCH: {
+		clients[c_id]._state = 1;
+		match_list.push(c_id);
 		break;
 	}
 	case SS_CONNECT_SERVER: {
@@ -232,6 +197,82 @@ void process_packet(int c_id, char* packet)
 	}
 }
 
+enum EVENT_TYPE { EV_MATCH };
+mutex timer_l;
+
+
+using namespace chrono;
+
+struct TIMER_EVENT {
+	int object_id;
+	EVENT_TYPE ev;
+	chrono::system_clock::time_point act_time;
+	int target_id;
+
+	constexpr bool operator < (const TIMER_EVENT& _Left) const
+	{
+		return (act_time > _Left.act_time);
+	}
+
+};
+
+priority_queue<TIMER_EVENT> timer_queue;
+
+void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id)
+{
+	TIMER_EVENT ev;
+	ev.act_time = system_clock::now() + milliseconds(act_time);
+	ev.object_id = obj_id;
+	ev.ev = e_type;
+	ev.target_id = target_id;
+
+	timer_l.lock();
+	timer_queue.push(ev);
+	timer_l.unlock();
+}
+
+void do_timer()
+{
+	while (true)
+	{
+		while (true)
+		{
+			timer_l.lock();
+
+			if (timer_queue.empty() == true)
+			{
+				timer_l.unlock();
+				break;
+			}
+
+			if (timer_queue.top().act_time > chrono::system_clock::now())
+			{
+				timer_l.unlock();
+				break;
+			}
+
+			TIMER_EVENT ev = timer_queue.top();
+			timer_queue.pop();
+			timer_l.unlock();
+
+			switch (ev.ev)
+			{
+			case EV_MATCH:
+			{
+				auto ex_over = new OVER_EXP;
+				ex_over->_comp_type = OP_UPDATE;
+				ex_over->target_id = ev.object_id;
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+				add_timer(ev.object_id, 100, ev.ev, ev.target_id);
+				break;
+			}
+			default:
+				break;
+			}
+		}
+	}
+}
+
 void do_worker()
 {
 	while (true) {
@@ -259,6 +300,7 @@ void do_worker()
 				clients[client_id]._id = client_id;
 				clients[client_id]._name[0] = 0;
 				clients[client_id]._prev_remain = 0;
+				clients[client_id]._state = 0;
 				clients[client_id]._socket = c_socket;
 				CreateIoCompletionPort(reinterpret_cast<HANDLE>(c_socket), g_h_iocp, client_id, 0);
 				clients[client_id].do_recv();
@@ -296,6 +338,19 @@ void do_worker()
 			if (0 == num_bytes) disconnect(client_id);
 			delete ex_over;
 			break;
+		case OP_UPDATE:
+			if (match_list.size() >= 4) {
+				// 만약에 겜서버 준비가 필요하면 여기서 하라고 보내줘야 함
+				for (int i = 0; i < 4; ++i) {
+					LSC_CONGAME_PACKET p;
+					p.connect = true;
+					p.size = sizeof(LSC_CONGAME_PACKET);
+					p.type = LSC_CONGAME;
+					clients[match_list.front()].do_send(&p);
+					match_list.pop();
+				}
+			}
+			break;
 		}
 	}
 }
@@ -308,7 +363,7 @@ int main()
 	SOCKADDR_IN server_addr;
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(PORT_NUM);
+	server_addr.sin_port = htons(LOBBY_SERVER_PORT_NUM);
 	server_addr.sin_addr.S_un.S_addr = INADDR_ANY;
 	bind(g_s_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr));
 	listen(g_s_socket, SOMAXCONN);
@@ -322,6 +377,10 @@ int main()
 	a_over._comp_type = OP_ACCEPT;
 	a_over._wsabuf.buf = reinterpret_cast<CHAR*>(c_socket);
 	AcceptEx(g_s_socket, c_socket, a_over._send_buf, 0, addr_size + 16, addr_size + 16, 0, &a_over._over);
+
+
+	match_list.empty();
+	add_timer(0, 1000, EV_MATCH, 0);
 
 	// 게임 서버와 커넥트
 
@@ -374,6 +433,9 @@ int main()
 	vector <thread> worker_threads;
 	for (int i = 0; i < 6; ++i)
 		worker_threads.emplace_back(do_worker);
+
+	thread timer_thread{ do_timer };
+	timer_thread.join();
 
 	for (auto& th : worker_threads)
 		th.join();
