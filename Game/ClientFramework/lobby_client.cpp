@@ -25,14 +25,22 @@ HWND LOBBY_CLIENT::init(HINSTANCE hInst, int nCmdShow)
 	RegisterClass(&WndClass);
 	_hwnd = hwnd = CreateWindow(_T("AlgaeEater_lobby"), _T("AlgaeEater_lobby"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, LobbyWidth, LobbyHeight, NULL, NULL, hInst, NULL);
 	ShowWindow(hwnd, nCmdShow);
-	UpdateWindow(hwnd);
-	//이후 연결될 준비 되면 주석 풀것 23.04.01 23:13
-	//Lobby_network->ConnectServer(LOBBY_PORT_NUM);
+	UpdateWindow(hwnd);	
 
 	return hwnd;
 }
 
+int LOBBY_CLIENT::connect_server(int port)
+{
+	if (_is_connected) {
+		return 1;
+	}
+	Lobby_network->ConnectServer(port);
+	return 0;
+}
+
 CImage BG;
+HFONT hFont;
 
 LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -52,11 +60,36 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	static HBRUSH hBrush;
 	static HBRUSH B_INGAME_BG;
 
+	RECT rc = { 10, 10, 500, 500 };
+	const wchar_t* text = L"Hello, world!";
+
+	
+
+	
 
 	switch (iMsg)
 	{
 	case WM_CREATE:
 		BG.Load(L"..\\Resources\\Lobby\\test.jpg");
+		AddFontResource(L"..\\Resources\\Lobby\\BusanBada.ttf");
+
+		hFont = CreateFont(
+			50, // Height of the font
+			0, // Width of the font (0 = default)
+			0, // Angle of escapement (0 = default)
+			0, // Orientation angle (0 = default)
+			FW_NORMAL, // Font weight (normal)
+			FALSE, // Italic
+			FALSE, // Underline
+			FALSE, // Strikeout
+			DEFAULT_CHARSET, // Character set
+			OUT_DEFAULT_PRECIS, // Output precision
+			CLIP_DEFAULT_PRECIS, // Clipping precision
+			DEFAULT_QUALITY, // Output quality
+			DEFAULT_PITCH | FF_DONTCARE, // Pitch and family
+			L"BusanBada" // Font name (must match the actual font name in the file)
+		);
+
 		break;
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE)
@@ -74,7 +107,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		hBitmap = CreateCompatibleBitmap(hdc, 1280, 720);
 		hBrush = CreateSolidBrush(RGB(255, 255, 255));
 		
-
+		
 		SelectObject(memDC, (HBITMAP)hBitmap);
 
 		SelectObject(memDC, hBrush);
@@ -84,12 +117,17 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
 		BG.Draw(memDC, 0, 0, 1280, 720);
 
+		SelectObject(memDC, hFont);
+		SetBkMode(memDC, TRANSPARENT);
+		DrawText(memDC, text, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
 		BitBlt(hdc, 0, 0, 1280, 720, memDC, 0, 0, SRCCOPY);
 
 
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_QUIT:
+		DeleteObject(hFont);
 		cout << "WM_QUIT" << endl;
 		break;
 	case WM_DESTROY:
