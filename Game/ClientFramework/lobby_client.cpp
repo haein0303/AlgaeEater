@@ -70,7 +70,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	switch (iMsg)
 	{
 	case WM_CREATE:
-		BG.Load(L"..\\Resources\\Lobby\\test.jpg");
+		BG.Load(L"..\\Resources\\Lobby\\test.png");
 		AddFontResource(L"..\\Resources\\Lobby\\BusanBada.ttf");
 
 		hFont = CreateFont(
