@@ -7,8 +7,13 @@
 
 
 
+extern LOBBY_CLIENT lobby_client;
+void CALLBACK TimerProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime);
+
 HWND LOBBY_CLIENT::init(HINSTANCE hInst, int nCmdShow)
-{
+{	
+	
+
 	HWND hwnd;
 	//윈도우 객체 초기화
 	WNDCLASS WndClass;
@@ -27,20 +32,49 @@ HWND LOBBY_CLIENT::init(HINSTANCE hInst, int nCmdShow)
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);	
 
+	wsprintf(_state_msg[0], L"READY");
+	wsprintf(_state_msg[1], L"WAIT");
+	wsprintf(_state_msg[2], L"SERVER NOT CONNECT");
+	wsprintf(_state_msg[3], L"LOADING");
+
+
 	return hwnd;
 }
 
 int LOBBY_CLIENT::connect_server(int port)
 {
 	if (_is_connected) {
-		return 1;
+		draw_text(L"SERVER CONNECTED");
+		_ready_state = 1;
+		return 0;
 	}
-	Lobby_network->ConnectServer(port);
+	draw_text(L"TRY CONNECT SERVER");
+	if (-1 == Lobby_network->ConnectServer(port)) {
+		_ready_state = 2;
+		draw_text(L"SERVER CONNECTED FAIL");
+		return -1;
+	}
+
+	LCS_LOGIN_PACKET p_LOGIN;
+	p_LOGIN.size = sizeof(p_LOGIN);
+	p_LOGIN.type = LCS_LOGIN;
+	Lobby_network->send_packet(&p_LOGIN);
+	draw_text(L"SERVER CONNECTED");
+	_ready_state = 1;
 	return 0;
 }
 
+void LOBBY_CLIENT::draw_text(const wchar_t* input)
+{
+	wsprintf(_client_msg, input);
+	InvalidateRect(_hwnd, NULL, false);
+	UpdateWindow(_hwnd);
+}
+
 CImage BG;
+CImage Icon[4];
 HFONT hFont;
+
 
 LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -60,21 +94,25 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	static HBRUSH hBrush;
 	static HBRUSH B_INGAME_BG;
 
-	RECT rc = { 10, 10, 500, 500 };
-	const wchar_t* text = L"Hello, world!";
-
-	
-
-	
+	RECT Game_info_rc = { 5, 5, 1000, 35 };
+	RECT Game_state_rc = { 0, 650, 1100, 680 };
+	RECT Game_ready_rc = { 0, 620, 1280, 680 };
 
 	switch (iMsg)
 	{
 	case WM_CREATE:
+		SetTimer(hwnd, 1, 200, (TIMERPROC)TimerProc);
 		BG.Load(L"..\\Resources\\Lobby\\test.png");
+		for (int i = 1; i <= 4; ++i) {
+			wchar_t loading[40];
+			wsprintf(loading,L"..\\Resources\\Lobby\\button_%d.png", i);
+			Icon[i-1].Load(loading);
+		}
+
 		AddFontResource(L"..\\Resources\\Lobby\\BusanBada.ttf");
 
 		hFont = CreateFont(
-			50, // Height of the font
+			30, // Height of the font
 			0, // Width of the font (0 = default)
 			0, // Angle of escapement (0 = default)
 			0, // Orientation angle (0 = default)
@@ -89,6 +127,10 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 			DEFAULT_PITCH | FF_DONTCARE, // Pitch and family
 			L"BusanBada" // Font name (must match the actual font name in the file)
 		);
+		wsprintf(lobby_client._client_msg, L"LOADING");
+
+		
+		
 
 		break;
 	case WM_ACTIVATE:
@@ -108,6 +150,8 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		hBrush = CreateSolidBrush(RGB(255, 255, 255));
 		
 		
+		
+		
 		SelectObject(memDC, (HBITMAP)hBitmap);
 
 		SelectObject(memDC, hBrush);
@@ -117,16 +161,25 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
 		BG.Draw(memDC, 0, 0, 1280, 720);
 
+
 		SelectObject(memDC, hFont);
 		SetBkMode(memDC, TRANSPARENT);
-		DrawText(memDC, text, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+		DrawText(memDC, lobby_client._client_msg, -1, &Game_info_rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+		Icon[lobby_client._ready_state].Draw(memDC, 1280 - 176, 720 - 190, 126, 140);
+		DrawText(memDC, lobby_client._state_msg[lobby_client._ready_state], -1, &Game_state_rc, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+
+		DrawText(memDC, L"Press Space for Ready", -1, &Game_ready_rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 		BitBlt(hdc, 0, 0, 1280, 720, memDC, 0, 0, SRCCOPY);
 
-
+		
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_QUIT:
+
+		
+		
 		DeleteObject(hFont);
 		cout << "WM_QUIT" << endl;
 		break;
@@ -138,8 +191,35 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		cout << "WM_CLOSE" << endl;
 		//FreeConsole();
 		break;
+	case WM_KEYDOWN:
+		switch (wParam) {
+		case VK_SPACE:
+			LCS_MATCH_PACKET p_MACCH;
+			p_MACCH.size = sizeof(p_MACCH);
+			p_MACCH.type = LCS_MATCH;
+			lobby_client.Lobby_network->send_packet(&p_MACCH);
+			lobby_client.draw_text(L"SEND MATCH PACKET");
+			lobby_client._ready_state = 0;
+			break;
+		}		
+		break;
 	default:
 		break;
 	}
 	return DefWindowProc(hwnd, iMsg, wParam, lParam);
+}
+
+void CALLBACK TimerProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime)
+{
+	switch (idEvent) {
+	case 1:
+		lobby_client.Lobby_network->ReceiveServer(lobby_client._ready_state);
+		if (lobby_client._ready_state == -1) {
+			PostQuitMessage(0);
+			DestroyWindow(lobby_client._hwnd);
+		}
+		break;
+	
+	}
+	InvalidateRect(hWnd, NULL, false);
 }

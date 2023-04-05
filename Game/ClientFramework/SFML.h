@@ -8,7 +8,7 @@ public:
 	sf::TcpSocket socket;
 	int myClientId = 0;
 
-	void ConnectServer(int PortNum) //서버에 접속시 보내주는 부분
+	int ConnectServer(int PortNum) //서버에 접속시 보내주는 부분
 	{
 		wcout.imbue(locale("korean"));
 		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum);
@@ -16,6 +16,7 @@ public:
 
 		if (status != sf::Socket::Done) {
 			wcout << L"서버와 연결할 수 없습니다.\n";
+			return -1;
 			while (true);
 		}
 
@@ -24,6 +25,7 @@ public:
 		p.type = CS_LOGIN;
 		strcpy_s(p.name, "a");
 		send_packet(&p);
+		return 0;
 	}
 
 	void ReceiveServer(Obj* playerArr, Obj* npcArr, Obj* cubeArr) //서버에서 받는거, clientMain
@@ -65,6 +67,8 @@ public:
 			}
 		}
 	}
+
+
 
 	//서버에서 데이터 받을때(패킷종류별로 무슨 작업 할건지 ex: 이동 패킷, 로그인 패킷 how to 처리)
 	void ProcessPacket(char* ptr, Obj* playerArr, Obj* npcArr, Obj* cubeArr)
@@ -158,4 +162,72 @@ public:
 		size_t sent = 0;
 		socket.send(packet, p[0], sent);
 	}
+
+
+	/*
+	* 20230405 임해인 추가
+	* 
+	* 아래로는 Lobby용 오버로딩된 함수들이라네~ 
+	*/
+
+
+	void process_data(char* net_buf, size_t io_byte, int& data)
+	{
+		char* ptr = net_buf;
+		static size_t in_packet_size = 0;
+		static size_t saved_packet_size = 0;
+		static char packet_buffer[BUF_SIZE];
+
+		while (0 != io_byte) {
+			if (0 == in_packet_size) in_packet_size = ptr[0];
+			if (io_byte + saved_packet_size >= in_packet_size) {
+				memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
+				ProcessPacket(packet_buffer, data);
+				ptr += in_packet_size - saved_packet_size;
+				io_byte -= in_packet_size - saved_packet_size;
+				in_packet_size = 0;
+				saved_packet_size = 0;
+			}
+			else {
+				memcpy(packet_buffer + saved_packet_size, ptr, io_byte);
+				saved_packet_size += io_byte;
+				io_byte = 0;
+			}
+		}
+	}
+
+	void ReceiveServer(int &data) //서버에서 받는거, clientMain
+	{
+		char net_buf[BUF_SIZE];
+		size_t	received;
+
+		auto recv_result = socket.receive(net_buf, BUF_SIZE, received);
+		if (recv_result == sf::Socket::Error)
+		{
+			wcout << L"Recv 에러!";
+			while (true);
+		}
+		if (recv_result != sf::Socket::NotReady)
+			if (received > 0) process_data(net_buf, received, data);
+	}
+
+
+
+	void ProcessPacket(char* ptr, int& data) {
+		switch (ptr[1])
+		{
+		case LSC_LOGIN_OK: 
+		{
+			LSC_LOGIN_OK_PACKET* packet = reinterpret_cast<LSC_LOGIN_OK_PACKET*>(ptr);
+		}
+		break;
+		case LSC_CONGAME: 
+		{
+			LSC_CONGAME_PACKET* packet = reinterpret_cast<LSC_CONGAME_PACKET*>(ptr);
+			data = -1;
+		}
+		break;
+		}
+	}
+
 };

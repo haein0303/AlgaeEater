@@ -6,7 +6,10 @@ void DxEngine::Init(WindowInfo windowInfo)
 {
 	//통신시작
 	cout << "try server connect" << endl;
-	networkPtr->ConnectServer(GAME_PORT_NUM); //데이터 보냄
+	if (-1 == networkPtr->ConnectServer(GAME_PORT_NUM)) {
+		cout << "SERVER CONNECT FAIL" << endl;
+		return;
+	}//데이터 보냄
 	cout << "complite server connect" << endl;
 
 	//화면 크기 설정

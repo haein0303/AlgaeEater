@@ -287,6 +287,17 @@ constexpr char SC_REMOVE_OBJECT = 13;
 constexpr char SC_MOVE_OBJECT = 14;
 constexpr char SC_ADD_CUBE = 15;
 
+constexpr char SS_CONNECT_SERVER = 20;
+constexpr char SS_DATA_PASS = 21;
+
+constexpr char LCS_LOGIN = 30;
+constexpr char LCS_MATCH = 31;
+
+constexpr char LSC_LOGIN_OK = 40;
+constexpr char LSC_CONGAME = 41;
+
+
+
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET {
 	unsigned char size;
@@ -356,5 +367,25 @@ struct SC_MOVE_OBJECT_PACKET {
 	int		hp;
 	int		char_state;
 };
+struct LCS_LOGIN_PACKET {
+	unsigned char size;
+	char	type;
+};
 
+struct LCS_MATCH_PACKET {
+	unsigned char size;
+	char	type;
+};
+
+struct LSC_LOGIN_OK_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+};
+
+struct LSC_CONGAME_PACKET {
+	unsigned char size;
+	char	type;
+	bool	connect;
+};
 #pragma pack (pop)

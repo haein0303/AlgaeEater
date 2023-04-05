@@ -340,9 +340,9 @@ void do_worker()
 			delete ex_over;
 			break;
 		case OP_UPDATE:
-			if (match_list.size() >= 4) {
+			if (match_list.size() >= 1) {
 				// 만약에 겜서버 준비가 필요하면 여기서 하라고 보내줘야 함
-				for (int i = 0; i < 4; ++i) {
+				for (int i = 0; i < 1; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;
 					p.size = sizeof(LSC_CONGAME_PACKET);
