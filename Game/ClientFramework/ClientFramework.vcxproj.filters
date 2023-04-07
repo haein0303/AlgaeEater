@@ -231,5 +231,8 @@
     <None Include="DirectXTex.inl">
       <Filter>Util</Filter>
     </None>
+    <None Include="bricks.hlsl">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

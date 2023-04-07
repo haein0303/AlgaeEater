@@ -211,6 +211,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="bricks.hlsl" />
     <None Include="DirectXTex.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

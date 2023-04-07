@@ -7,7 +7,7 @@ struct LightInfo
 };
 
 cbuffer TEST_B0 : register(b0)
-{     
+{
     float4x4 gWorld;
     float4x4 gView;
     float4x4 gProjection;
@@ -70,7 +70,7 @@ VS_OUT VS_Main(VS_IN input)
 
     input.normal = float4(input.normal.xyz, 0.f);
 
-    output.pos = mul(float4(input.pos, 1.f), mul(gWorld , mul(gView, gProjection)));
+    output.pos = mul(float4(input.pos, 1.f), mul(gWorld, mul(gView, gProjection)));
     output.viewPos = mul(float4(input.pos, 1.f), WV).xyz;
     output.viewNormal = normalize(mul(input.normal, WV).xyz);
     output.uv = input.uv;
@@ -85,8 +85,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     LightInfo totalColor = (LightInfo)0.f;
     LightInfo lightColor = CalculateLightColor(input.viewNormal, input.viewPos);
 
-    //lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz)*1.5f) / 2.0f;
-    //lightColor.specular.xyz = ceil(saturate(lightColor.specular.xyz) * 3.0f) / 3.0f;
+    lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz)*1.5f) / 2.0f;
+    lightColor.specular.xyz = ceil(saturate(lightColor.specular.xyz) * 3.0f) / 3.0f;
 
     totalColor.diffuse += lightColor.diffuse;
     totalColor.ambient += lightColor.ambient;

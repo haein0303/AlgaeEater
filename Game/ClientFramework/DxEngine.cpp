@@ -8,7 +8,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	cout << "try server connect" << endl;
 	if (-1 == networkPtr->ConnectServer(GAME_PORT_NUM)) {
 		cout << "SERVER CONNECT FAIL" << endl;
-		return;
+		while (1);
 	}//µ¥ÀÌÅÍ º¸³¿
 	cout << "complite server connect" << endl;
 
@@ -57,15 +57,17 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::late_Init(WindowInfo windowInfo)
 {
-	cube_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr);
+	cube_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr,rootSignaturePtr,dsvPtr);
 	cube_asset.Init("../Resources/Cube.txt",false);
 	cube_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	cube_asset.Make_SRV();
+	cube_asset.CreatePSO(L"..\\Shader.hlsl");
 
-	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr);
+	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_asset.Init("../Resources/AnimeCharacter.txt", false);
 	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_asset.Make_SRV();
+	player_asset.CreatePSO(L"..\\Shader.hlsl");
 
 
 
@@ -242,7 +244,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);*/
 
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(cube_asset._pipelineState.Get());
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube_asset._indexBufferView);
 
