@@ -108,7 +108,7 @@ array<SESSION, MAX_USER> clients;
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 SOCKET ss_socket;
-queue<int> match_list;
+list<int> match_list;
 
 int get_new_client_id()
 {
@@ -164,7 +164,12 @@ void process_packet(int c_id, char* packet)
 	}
 	case LCS_MATCH: {
 		clients[c_id]._state = 1;
-		match_list.push(c_id);
+		match_list.push_back(c_id);
+		break;
+	}
+	case LCS_OUT: {
+		clients[c_id]._state = 0;
+		match_list.remove(c_id);
 		break;
 	}
 	case SS_CONNECT_SERVER: {
@@ -348,7 +353,7 @@ void do_worker()
 					p.size = sizeof(LSC_CONGAME_PACKET);
 					p.type = LSC_CONGAME;
 					clients[match_list.front()].do_send(&p);
-					match_list.pop();
+					match_list.pop_front();
 				}
 			}
 			break;
