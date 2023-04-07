@@ -292,6 +292,7 @@ constexpr char SS_DATA_PASS = 21;
 
 constexpr char LCS_LOGIN = 30;
 constexpr char LCS_MATCH = 31;
+constexpr char LCS_OUT = 32;
 
 constexpr char LSC_LOGIN_OK = 40;
 constexpr char LSC_CONGAME = 41;
@@ -388,4 +389,10 @@ struct LSC_CONGAME_PACKET {
 	char	type;
 	bool	connect;
 };
+
+struct LCS_OUT_PACKET {
+	unsigned char size;
+	char	type;
+};
+
 #pragma pack (pop)
