@@ -4,6 +4,14 @@
 
 #include "TestScene.h"
 
+TestScene::TestScene()
+{
+}
+
+TestScene::TestScene(SceneTag tag, DxEngine* dxEngine) :SCENE(tag, dxEngine)
+{
+}
+
 void TestScene::Init(WindowInfo windowInfo)
 {
 }

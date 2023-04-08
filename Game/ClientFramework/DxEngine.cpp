@@ -355,7 +355,7 @@ void DxEngine::Make_Scene()
 {	
 	// arrScene[SceneTag::Title] = new TitleScene();	// 이런 방식으로 씬을 만들어라.
 	//이렇게 계속 추가합니다.
-	arrScene[SCENE::SceneTag::test_scene] = new TestScene();
+	arrScene[SCENE::SceneTag::test_scene] = new TestScene(SCENE::SceneTag::test_scene, this);
 }
 
 void DxEngine::ChangeScene(SCENE::SceneTag tag)
