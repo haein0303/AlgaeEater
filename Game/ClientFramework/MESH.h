@@ -32,7 +32,8 @@ public:
 
 	Texture _tex;
 	bool _is_ani;
-	int			tex_index = 0;
+	int	 tex_index = 0;
+	bool _is_default_shader = true;
 
 	void Link_ptr(
 		shared_ptr<Device> devicePtr,
@@ -46,6 +47,7 @@ public:
 	void Init(const char* path,bool is_animation);
 	void Add_texture(const wstring& path);
 	void Make_SRV();
+	void CreatePSO();
 	void CreatePSO(const wchar_t* shader);
 };
 

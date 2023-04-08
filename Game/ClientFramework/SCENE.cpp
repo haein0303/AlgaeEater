@@ -4,19 +4,10 @@
 #include "DxEngine.h"
 #include "SCENE.h"
 
-
-void SCENE::Init(WindowInfo windowInfo)
+SCENE::SCENE()
 {
 }
 
-void SCENE::FixedUpdate(WindowInfo windowInfo, bool isActive)
-{
-}
-
-void SCENE::Update(WindowInfo windowInfo, bool isActive)
-{
-}
-
-void SCENE::Draw(WindowInfo windowInfo, int)
+SCENE::SCENE(SceneTag tag, DxEngine* dxEngine):_tag(tag),_dxengine(dxEngine)
 {
 }

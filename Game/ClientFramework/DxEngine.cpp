@@ -1,6 +1,6 @@
 #include "DxEngine.h"
 #include "Device.h"
-
+#include "TestScene.h"
 
 void DxEngine::Init(WindowInfo windowInfo)
 {
@@ -61,14 +61,23 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	cube_asset.Init("../Resources/Cube.txt",false);
 	cube_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	cube_asset.Make_SRV();
-	cube_asset.CreatePSO(L"..\\Shader.hlsl");
+	cube_asset.CreatePSO(L"..\\Bricks.hlsl");
 
 	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_asset.Init("../Resources/AnimeCharacter.txt", false);
 	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_asset.Make_SRV();
-	player_asset.CreatePSO(L"..\\Shader.hlsl");
+	player_asset.CreatePSO();
 
+	/*npc_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	npc_asset.Init("../Resources/OrangeSpider.txt", true);
+	npc_asset.Add_texture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png");
+	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
+	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+	npc_asset.Make_SRV();
+	npc_asset.CreatePSO();*/
 
 
 	cout << "complite late init" << endl;
@@ -156,10 +165,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			//쓰는이유 : 일반적인 애랑 애니메이션이랑 달라서 그럼
 			//상태가 바껴서 파이프라인 스테이트 오브젝트를 불러서 갱신해주는것
 			//이거 합칠 수 있는 작업 있지 않을까?
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(player_asset._pipelineState.Get());
 			
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &player_asset._vertexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&player_asset._indexBufferView);
 			
 			{
 				//월드 변환
@@ -173,12 +182,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
 					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
-					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+					player_asset._tex._srvHandle = player_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					descHeapPtr->CopyDescriptor(player_asset._tex._srvHandle, 5, devicePtr);
 				}
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(indexBufferPtr->_playerIndexCount, 1, 0, 0, 0);
+				cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(player_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
 	}
@@ -240,10 +249,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	{
 		if (cubeArr[i].on == true)
 		{
-			/*cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_vertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_indexBufferView);*/
-
+			
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(cube_asset._pipelineState.Get());
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube_asset._indexBufferView);
@@ -258,13 +264,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 				
-				/*texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-				texturePtr->_srvHandle.Offset(7, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);*/
+				
 
 				cube_asset._tex._srvHandle = cube_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				//texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-				//texturePtr->_srvHandle.Offset(7, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				
 				descHeapPtr->CopyDescriptor(cube_asset._tex._srvHandle, 5, devicePtr);
 			}
 
@@ -346,4 +349,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	swapChainPtr->_backBufferIndex = (swapChainPtr->_backBufferIndex + 1) % SWAP_CHAIN_BUFFER_COUNT;
 
 	SetEvent(_excuteEvent);
+}
+
+void DxEngine::Make_Scene()
+{	
+	// arrScene[SceneTag::Title] = new TitleScene();	// 이런 방식으로 씬을 만들어라.
+	//이렇게 계속 추가합니다.
+	arrScene[SCENE::SceneTag::test_scene] = new TestScene();
+}
+
+void DxEngine::ChangeScene(SCENE::SceneTag tag)
+{
+	m_pCurrScene = arrScene[tag];
 }

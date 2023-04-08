@@ -51,12 +51,12 @@ public:
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_vertexBuffer, dxEngine.vertexBufferPtr->_vertexBufferView, cubeVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_indexBuffer, dxEngine.indexBufferPtr->_indexBufferView, cubeIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_indexCount);
 		*/
-		vector<Vertex> playerVertexVec;
+		/*vector<Vertex> playerVertexVec;
 		vector<UINT> playerIndexVec;
 		dxEngine.fbxLoaderPtr->LoadObject(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.txt");
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
-		
+		*/
 		vector<SkinnedVertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
 		dxEngine.animationPtr[0].CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/OrangeSpider.txt");

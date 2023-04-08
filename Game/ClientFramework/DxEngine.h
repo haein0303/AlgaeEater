@@ -19,6 +19,7 @@
 #include "SFML.h"
 #include "AnimationObject.h"
 #include "MESH.h"
+#include "SCENE.h"
 
 
 class DxEngine {
@@ -36,6 +37,9 @@ public:
 
 	//매 프레임마다 그리기
 	void Draw_multi(WindowInfo windowInfo,int);
+
+	void Make_Scene();
+	void ChangeScene(SCENE::SceneTag tag);
 
 	//요소별 객체 포인터
 	shared_ptr<Device> devicePtr = make_shared<Device>();
@@ -66,6 +70,7 @@ public:
 
 	MESH_ASSET cube_asset;
 	MESH_ASSET player_asset;
+	MESH_ASSET npc_asset;
 
 	//상수버퍼로 넘길 데이터
 	Constants _transform = {};
@@ -73,6 +78,9 @@ public:
 	HANDLE _renderEvent = INVALID_HANDLE_VALUE;
 	HANDLE _excuteEvent = INVALID_HANDLE_VALUE;
 	int _render_thread_num = 0;
+
+	SCENE* arrScene[SCENE::SceneTag::Count];
+	SCENE* m_pCurrScene;
 
 private:
 	//화면 크기 관련

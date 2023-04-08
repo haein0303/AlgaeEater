@@ -43,6 +43,9 @@
     <Filter Include="Lobby">
       <UniqueIdentifier>{cd29041a-ccba-4d61-8963-bd9ccdd603b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{64b9f6b8-48dd-4e00-ad97-b5c3b8ae3aa3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DxEngine.cpp">
@@ -111,9 +114,6 @@
     <ClCompile Include="AnimationObject.cpp">
       <Filter>Engine\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="SCENE.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
     <ClCompile Include="OBJECT.cpp">
       <Filter>Client</Filter>
     </ClCompile>
@@ -122,6 +122,12 @@
     </ClCompile>
     <ClCompile Include="lobby_client.cpp">
       <Filter>Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="SCENE.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,9 +209,6 @@
     <ClInclude Include="AnimationObjectLoader.h">
       <Filter>Engine\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="SCENE.h">
-      <Filter>Client</Filter>
-    </ClInclude>
     <ClInclude Include="OBJECT.h">
       <Filter>Client</Filter>
     </ClInclude>
@@ -214,6 +217,12 @@
     </ClInclude>
     <ClInclude Include="lobby_client.h">
       <Filter>Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="SCENE.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -226,13 +235,13 @@
     <FxCompile Include="..\SkinningAnimation.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bricks.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectXTex.inl">
       <Filter>Util</Filter>
-    </None>
-    <None Include="bricks.hlsl">
-      <Filter>Shader</Filter>
     </None>
   </ItemGroup>
 </Project>
