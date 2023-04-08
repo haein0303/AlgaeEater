@@ -89,7 +89,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 	if (isActive)
 	{
-		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
+		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, animationPtr[0].state);
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
@@ -126,6 +126,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 
 	//애니메이션
 	animationPtr[0].UpdateSkinnedAnimation(timerPtr->_deltaTime);
+	animationPtr[1].UpdateSkinnedAnimation(timerPtr->_deltaTime);
 
 	cmdQueuePtr->_arr_cmdAlloc[i_now_render_index]->Reset();
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
@@ -165,16 +166,19 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			//쓰는이유 : 일반적인 애랑 애니메이션이랑 달라서 그럼
 			//상태가 바껴서 파이프라인 스테이트 오브젝트를 불러서 갱신해주는것
 			//이거 합칠 수 있는 작업 있지 않을까?
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(player_asset._pipelineState.Get());
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
 			
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &player_asset._vertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&player_asset._indexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
+			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
 			
 			{
 				//월드 변환
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixRotationY(playerArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f)  * XMMatrixRotationY(playerArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+				// 스키닝 애니메이션 행렬 데이터 복사
+				copy(begin(animationPtr[0].FinalTransforms), end(animationPtr[0].FinalTransforms), &_transform.BoneTransforms[0]);
 
 				//렌더
 				{
@@ -182,12 +186,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
 					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
-					player_asset._tex._srvHandle = player_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-					descHeapPtr->CopyDescriptor(player_asset._tex._srvHandle, 5, devicePtr);
+					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 				}
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(player_asset._indexCount, 1, 0, 0, 0);
+				cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(indexBufferPtr->_playerIndexCount, 1, 0, 0, 0);
 			}
 		}
 	}
@@ -209,7 +213,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 				// 스키닝 애니메이션 행렬 데이터 복사
-				copy(begin(animationPtr[0].FinalTransforms), end(animationPtr[0].FinalTransforms), &_transform.BoneTransforms[0]);
+				copy(begin(animationPtr[1].FinalTransforms), end(animationPtr[1].FinalTransforms), &_transform.BoneTransforms[0]);
 
 				//렌더
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();

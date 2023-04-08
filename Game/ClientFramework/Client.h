@@ -51,17 +51,20 @@ public:
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_vertexBuffer, dxEngine.vertexBufferPtr->_vertexBufferView, cubeVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_indexBuffer, dxEngine.indexBufferPtr->_indexBufferView, cubeIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_indexCount);
 		*/
-		/*vector<Vertex> playerVertexVec;
+		vector<SkinnedVertex> playerVertexVec;
 		vector<UINT> playerIndexVec;
-		dxEngine.fbxLoaderPtr->LoadObject(playerVertexVec, playerIndexVec, "../Resources/AnimeCharacter.txt");
-		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
+		dxEngine.animationPtr[0].CreateAnimationObject(playerVertexVec, playerIndexVec, "../Resources/Character.txt");
+		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
-		*/
+		
 		vector<SkinnedVertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
-		dxEngine.animationPtr[0].CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/OrangeSpider.txt");
+		dxEngine.animationPtr[1].CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/OrangeSpider.txt");
+		dxEngine.animationPtr[1].state = 1;
+		dxEngine.animationPtr[1].state0 = 1;
 		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
+
 		vector<Point> pointVertexvec(1);
 		vector<UINT> pointIndexVec;
 		pointVertexvec[0].pos = XMFLOAT3(0.0f, 0.0f, 0.0f);

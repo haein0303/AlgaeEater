@@ -13,14 +13,14 @@ void AnimationObject::UpdateSkinnedAnimation(float dt)
 {
 	TimePos += dt;
 
+	if (state0 != state)
+	{
+		TimePos = 0.f;
+		state0 = state;
+	}
+
 	// 애니메이션이 끝나면 애니메이션 루프
 	if (TimePos > GetClipEndTime()) {
-		if (state == 0) {
-			state = 1;
-		}
-		else {
-			state = 0;
-		}
 		TimePos = 0.f;
 	}
 

@@ -15,7 +15,8 @@ public:
 	string ClipName;
 	float TimePos = 0.0f;
 
-	int state = 1;
+	int state = 0;
+	int state0 = 0;
 
 public:
 	void CreateAnimationObject(vector<SkinnedVertex>& vertices, vector<UINT>& indices, const string& filePath);

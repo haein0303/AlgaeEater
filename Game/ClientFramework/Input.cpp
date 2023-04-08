@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "AnimationObject.h"
 #include "Input.h"
 
 void Input::Init(WindowInfo windowInfo)
@@ -11,7 +12,7 @@ void Input::Init(WindowInfo windowInfo)
 	//ShowCursor(false);
 }
 
-void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr)
+void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr, int& state)
 {
 	HWND hwnd = GetActiveWindow();
 	bool key_toggle = false;
@@ -157,6 +158,13 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		}
 	}
 	
+	if (!(w == false && a == false && s == false && d == false)) {
+		state = 1;
+	}
+	else {
+		state = 0;
+	}
+
 	if (_states['1'] == 2)
 	{
 		CS_CONSOLE_PACKET p;

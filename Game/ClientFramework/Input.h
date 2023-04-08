@@ -20,7 +20,7 @@ public:
 	void Init(WindowInfo windowInfo);
 
 	//е╟ ют╥б
-	void InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr);
+	void InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr, int& state);
 	void inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr);
 
 private:
