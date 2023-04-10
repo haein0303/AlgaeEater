@@ -63,6 +63,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	cube_asset.Make_SRV();
 	cube_asset.CreatePSO(L"..\\Bricks.hlsl");
 
+	map_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	map_asset.Init("../Resources/Map.txt", false);
+	map_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	map_asset.Make_SRV();
+	map_asset.CreatePSO(L"..\\Bricks.hlsl");
+
 	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_asset.Init("../Resources/AnimeCharacter.txt", false);
 	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
@@ -255,6 +261,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			}
 		}
 	}
+
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(cube_asset._pipelineState.Get());	
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube_asset._indexBufferView);
@@ -262,9 +269,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	{
 		if (cubeArr[i].on == true)
 		{
-			
-			
-
 			//월드 변환
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.0f, cubeArr[i].transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
@@ -274,7 +278,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);		
-				
 
 				cube_asset._tex._srvHandle = cube_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 				
@@ -285,6 +288,28 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(cube_asset._indexCount, 1, 0, 0, 0);
 		}
 	}
+
+	// 맵 렌더
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(map_asset._pipelineState.Get());
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&map_asset._indexBufferView);
+	//월드 변환
+	XMStoreFloat4x4(&_transform.world, XMMatrixScaling(3.0f, 3.0f, 3.0f)* XMMatrixTranslation(0.f, 0.f, 0.f));
+	XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+	XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+	//렌더
+	{
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+		map_asset._tex._srvHandle = map_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+		descHeapPtr->CopyDescriptor(map_asset._tex._srvHandle, 5, devicePtr);
+	}
+
+	descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
+
 	//파티클
 	if (pow(playerArr[0].transform.x - npcArr[9].transform.x, 2) + pow(playerArr[0].transform.z - npcArr[9].transform.z, 2) <= 4.f) //충돌 처리
 	{
