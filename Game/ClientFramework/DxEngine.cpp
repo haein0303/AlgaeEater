@@ -127,45 +127,47 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 {
 	::WaitForSingleObject(_renderEvent, INFINITE);
+	ComPtr<ID3D12CommandAllocator>		cmdAlloc = cmdQueuePtr->_arr_cmdAlloc[i_now_render_index];
+	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
 
 	//¾Ö´Ï¸ÞÀÌ¼Ç
 	animationPtr[0].UpdateSkinnedAnimation(timerPtr->_deltaTime);
 	animationPtr[1].UpdateSkinnedAnimation(timerPtr->_deltaTime);
 	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime);
 
-	cmdQueuePtr->_arr_cmdAlloc[i_now_render_index]->Reset();
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
+	cmdAlloc->Reset();
+	cmdList->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
 
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->ResourceBarrier(1, &barrier);
+	cmdList->ResourceBarrier(1, &barrier);
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->RSSetViewports(1, &_viewport);
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->RSSetScissorRects(1, &_scissorRect);
+	cmdList->RSSetViewports(1, &_viewport);
+	cmdList->RSSetScissorRects(1, &_scissorRect);
 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = rtvPtr->_rtvHandle[i_now_render_index];
 	
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
+	cmdList->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dsvPtr->_dsvHandle;
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
+	cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
 
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_pipelineState.Get());
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->SetPipelineState(psoPtr->_pipelineState.Get());
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
+	cmdList->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
 	constantBufferPtr->_currentIndex = 0;
 	descHeapPtr->_currentGroupIndex = 0;
 
 	ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetDescriptorHeaps(1, &descHeap);
+	cmdList->SetDescriptorHeaps(1, &descHeap);
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
+	cmdList->SetPipelineState(psoPtr->_animationPipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
+	cmdList->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
 	//·»´õ
 	for (int i = 0; i < PLAYERMAX; i++) //ÇÃ·¹ÀÌ¾î ·»´õ
 	{
@@ -194,17 +196,17 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				}
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(indexBufferPtr->_playerIndexCount, 1, 0, 0, 0);
+				cmdList->DrawIndexedInstanced(indexBufferPtr->_playerIndexCount, 1, 0, 0, 0);
 			}
 		}
 	}
-	/*cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);*/
+	/*cmdList->SetPipelineState(psoPtr->_animationPipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
+	cmdList->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);*/
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(npc_asset._pipelineState.Get());
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&npc_asset._indexBufferView);
+	cmdList->SetPipelineState(npc_asset._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
+	cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
 	for (int i = 0; i < NPCMAX; i++) //npc ·»´õ
 	{
 		if (npcArr[i].on == true)
@@ -217,7 +219,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 				// ½ºÅ°´× ¾Ö´Ï¸ÞÀÌ¼Ç Çà·Ä µ¥ÀÌÅÍ º¹»ç
-				//copy(begin(animationPtr[1].FinalTransforms), end(animationPtr[1].FinalTransforms), &_transform.BoneTransforms[0]);
+				//copy(begin(cmdList.FinalTransforms), end(animationPtr[1].FinalTransforms), &_transform.BoneTransforms[0]);
 				copy(begin(npc_asset._animationPtr->FinalTransforms), end(npc_asset._animationPtr->FinalTransforms), &_transform.BoneTransforms[0]);
 
 
@@ -234,7 +236,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+					cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
 					sum += i.FaceCount * 3;
 				}
 
@@ -248,16 +250,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(i, 1, sum, 0, 0);
+					cmdList->DrawIndexedInstanced(i, 1, sum, 0, 0);
 					sum += i;
 				}*/
 				
 			}
 		}
 	}
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(cube_asset._pipelineState.Get());	
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube_asset._indexBufferView);
+	cmdList->SetPipelineState(cube_asset._pipelineState.Get());	
+	cmdList->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
+	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
 	for (int i = 0; i < CubeMax; i++) //±âµÕ ·»´õ
 	{
 		if (cubeArr[i].on == true)
@@ -282,7 +284,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			}
 
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(cube_asset._indexCount, 1, 0, 0, 0);
+			cmdList->DrawIndexedInstanced(cube_asset._indexCount, 1, 0, 0, 0);
 		}
 	}
 	//ÆÄÆ¼Å¬
@@ -323,10 +325,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				particle[i].alive = 0;
 			}
 
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_gsPipelineState.Get());
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
+			cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
+			cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+			cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
+			cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -335,7 +337,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 			}
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
+			cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 		}
 	}
 
@@ -345,10 +347,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	//·»´õ Á¾·á
 	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // È­¸é Ãâ·Â
 
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->ResourceBarrier(1, &barrier2);
-	cmdQueuePtr->_arr_cmdList[i_now_render_index]->Close();
+	cmdList->ResourceBarrier(1, &barrier2);
+	cmdList->Close();
 
-	ID3D12CommandList* cmdListArr[] = { cmdQueuePtr->_arr_cmdList[i_now_render_index].Get() };
+	ID3D12CommandList* cmdListArr[] = { cmdList.Get() };
 	cmdQueuePtr->_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
 

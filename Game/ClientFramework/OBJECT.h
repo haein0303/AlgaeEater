@@ -2,30 +2,31 @@
 
 
 struct WindowInfo;
+class MESH_ASSET;
 
 class OBJECT
 {
 public:
-	bool		on = false;
-	float		degree;
-	XMFLOAT4	transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	bool		isCollision = false;
-	bool		isFirstCollision = false;
+	bool		_on = false;
+	float		_degree;
+	XMFLOAT4	_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	bool		_isCollision = false;
+	bool		_isFirstCollision = false;
 
-	
+	shared_ptr<MESH_ASSET> _my_mesh;
 
 	
 public:
 	//DX엔진 초기화
-	void Init(WindowInfo windowInfo);
+	virtual void Init(WindowInfo windowInfo);
 
 	//매 프레임마다 업데이트
-	void FixedUpdate(WindowInfo windowInfo, bool isActive);
-	void Update(WindowInfo windowInfo, bool isActive);
+	virtual void FixedUpdate(WindowInfo windowInfo, bool isActive);
+	virtual void Update(WindowInfo windowInfo, bool isActive);
 
 
 	//매 프레임마다 그리기
-	void Draw(WindowInfo windowInfo, int);
+	virtual void Draw(WindowInfo windowInfo, int);
 };
 
 class PLAYER :public OBJECT {
