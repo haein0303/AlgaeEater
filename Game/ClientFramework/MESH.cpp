@@ -29,14 +29,14 @@ void MESH_ASSET::Init(const char* path, bool is_animation)
 	_is_ani = is_animation;
 	
 	if (is_animation) {
-		_animationPtr->CreateAnimationObject(AniVertexVec, IndexVec, path);
-		_vertexBufferPtr->CreateAnimationVertexBuffer(_vertexBuffer, _vertexBufferView, AniVertexVec, _devicePtr);
+		_animationPtr->CreateAnimationObject(_AniVertexVec, _IndexVec, path);
+		_vertexBufferPtr->CreateAnimationVertexBuffer(_vertexBuffer, _vertexBufferView, _AniVertexVec, _devicePtr);
 	}
 	else {
-		_fbxLoaderPtr->LoadObject(VertexVec, IndexVec, path);
-		_vertexBufferPtr->CreateVertexBuffer(_vertexBuffer, _vertexBufferView, VertexVec, _devicePtr);
+		_fbxLoaderPtr->LoadObject(_VertexVec, _IndexVec, path);
+		_vertexBufferPtr->CreateVertexBuffer(_vertexBuffer, _vertexBufferView, _VertexVec, _devicePtr);
 	}	
-	_indexBufferPtr->CreateIndexBuffer(_indexBuffer, _indexBufferView, IndexVec, _devicePtr, _indexCount);
+	_indexBufferPtr->CreateIndexBuffer(_indexBuffer, _indexBufferView, _IndexVec, _devicePtr, _indexCount);
 
 }
 
@@ -131,6 +131,11 @@ void MESH_ASSET::CreatePSO()
 		_devicePtr->_device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState));
 	}
 
+}
+
+void MESH_ASSET::UpdateSkinnedAnimation(float dt)
+{
+	_animationPtr->UpdateSkinnedAnimation(dt);
 }
 
 void MESH_ASSET::CreatePSO(const wchar_t* shader)

@@ -25,7 +25,7 @@ public:
 	//매 프레임마다 그리기
 	virtual void Draw(WindowInfo windowInfo, int) = 0;
 
-
+protected:
 	SceneTag _tag;
 	DxEngine* _dxengine;
 

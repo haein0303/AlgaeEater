@@ -18,10 +18,10 @@ public:
 	//내부데이터란다
 	ComPtr<ID3D12PipelineState> _pipelineState;
 
-	shared_ptr<AnimationObject> _animationPtr;
-	vector<SkinnedVertex> AniVertexVec;
-	vector<Vertex> VertexVec;
-	vector<UINT> IndexVec;
+	shared_ptr<AnimationObject> _animationPtr = make_shared<AnimationObject>();
+	vector<SkinnedVertex> _AniVertexVec;
+	vector<Vertex> _VertexVec;
+	vector<UINT> _IndexVec;
 
 	ComPtr<ID3D12Resource> _vertexBuffer;
 	D3D12_VERTEX_BUFFER_VIEW _vertexBufferView = {};
@@ -49,5 +49,7 @@ public:
 	void Make_SRV();
 	void CreatePSO();
 	void CreatePSO(const wchar_t* shader);
+	void UpdateSkinnedAnimation(float dt);
+
 };
 

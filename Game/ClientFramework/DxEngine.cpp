@@ -69,7 +69,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	player_asset.Make_SRV();
 	player_asset.CreatePSO();
 
-	/*npc_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	npc_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	npc_asset.Init("../Resources/OrangeSpider.txt", true);
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png");
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
@@ -77,7 +77,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
 	npc_asset.Make_SRV();
-	npc_asset.CreatePSO();*/
+	npc_asset.CreatePSO();
+
+	npc_asset._animationPtr->state = 1;
+	npc_asset._animationPtr->state0 = 1;
+
 
 
 	cout << "complite late init" << endl;
@@ -127,6 +131,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	//애니메이션
 	animationPtr[0].UpdateSkinnedAnimation(timerPtr->_deltaTime);
 	animationPtr[1].UpdateSkinnedAnimation(timerPtr->_deltaTime);
+	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime);
 
 	cmdQueuePtr->_arr_cmdAlloc[i_now_render_index]->Reset();
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
@@ -158,6 +163,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
 	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetDescriptorHeaps(1, &descHeap);
 
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
 	//렌더
 	for (int i = 0; i < PLAYERMAX; i++) //플레이어 렌더
 	{
@@ -165,12 +173,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 		{
 			//쓰는이유 : 일반적인 애랑 애니메이션이랑 달라서 그럼
 			//상태가 바껴서 파이프라인 스테이트 오브젝트를 불러서 갱신해주는것
-			//이거 합칠 수 있는 작업 있지 않을까?
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
-			
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
-			
+			//이거 합칠 수 있는 작업 있지 않을까?			
 			{
 				//월드 변환
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f)  * XMMatrixRotationY(playerArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
@@ -195,16 +198,17 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			}
 		}
 	}
+	/*cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);*/
 
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(npc_asset._pipelineState.Get());
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&npc_asset._indexBufferView);
 	for (int i = 0; i < NPCMAX; i++) //npc 렌더
 	{
 		if (npcArr[i].on == true)
-		{
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(psoPtr->_animationPipelineState.Get());
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);
-
-			
+		{			
 			{
 				//월드 변환
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y + 0.2f, npcArr[i].transform.z));
@@ -213,13 +217,15 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 				// 스키닝 애니메이션 행렬 데이터 복사
-				copy(begin(animationPtr[1].FinalTransforms), end(animationPtr[1].FinalTransforms), &_transform.BoneTransforms[0]);
+				//copy(begin(animationPtr[1].FinalTransforms), end(animationPtr[1].FinalTransforms), &_transform.BoneTransforms[0]);
+				copy(begin(npc_asset._animationPtr->FinalTransforms), end(npc_asset._animationPtr->FinalTransforms), &_transform.BoneTransforms[0]);
+
 
 				//렌더
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				
 				int sum = 0;
-				for (Subset i : animationPtr[0].mSubsets)
+				for (Subset i : npc_asset._animationPtr->mSubsets)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -249,14 +255,15 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			}
 		}
 	}
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(cube_asset._pipelineState.Get());	
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
+	cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube_asset._indexBufferView);
 	for (int i = 0; i < CubeMax; i++) //기둥 렌더
 	{
 		if (cubeArr[i].on == true)
 		{
 			
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->SetPipelineState(cube_asset._pipelineState.Get());
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
-			cmdQueuePtr->_arr_cmdList[i_now_render_index]->IASetIndexBuffer(&cube_asset._indexBufferView);
+			
 
 			//월드 변환
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.0f, cubeArr[i].transform.z));
@@ -266,8 +273,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			//렌더
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);		
 				
 
 				cube_asset._tex._srvHandle = cube_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
