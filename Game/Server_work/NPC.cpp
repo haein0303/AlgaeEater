@@ -20,9 +20,8 @@ void initialize_npc()
 {
 	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
 		clients[i]._s_state = ST_INGAME;
-		clients[i].x = (i - MAX_USER) / 10;
+		clients[i]._Room_Num = (i - MAX_USER) / 10;
 		clients[i].y = 0;
-		clients[i].z = 0;
 		clients[i].degree = 0;
 		clients[i].move_stack = 0;
 		clients[i].move_degree = 0;
@@ -30,24 +29,52 @@ void initialize_npc()
 		clients[i].char_state = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
-		clients[i]._Room_Num = (i - MAX_USER) / 10;
 		clients[i].Lua_on = false;
 
-		if (i % 10 == 9)
-		{
-			clients[i]._s_state = ST_INGAME;
-			clients[i].x = (i - MAX_USER) / 10;
-			clients[i].y = 0;
-			clients[i].z = 0;
-			clients[i].degree = 0;
-			clients[i].move_stack = 0;
-			clients[i].move_degree = 0;
-			clients[i].hp = 100;
-			clients[i].char_state = 0;
-			clients[i]._name[0] = 0;
-			clients[i]._prev_remain = 0;
-			clients[i]._Room_Num = (i - MAX_USER) / 10;
+		int st = (i - MAX_USER - clients[i]._Room_Num * 10);
 
+		switch (st)
+		{
+		case 0:
+			clients[i].x = -20;
+			clients[i].z = -20;
+			break;
+		case 1:
+			clients[i].x = -20;
+			clients[i].z = 0;
+			break;
+		case 2:
+			clients[i].x = -20;
+			clients[i].z = 20;
+			break;
+		case 3:
+			clients[i].x = 0;
+			clients[i].z = -20;
+			break;
+		case 4:
+			clients[i].x = 0;
+			clients[i].z = 0;
+			break;
+		case 5:
+			clients[i].x = 0;
+			clients[i].z = 20;
+			break;
+		case 6:
+			clients[i].x = 20;
+			clients[i].z = -20;
+			break;
+		case 7:
+			clients[i].x = 20;
+			clients[i].z = 0;
+			break;
+		case 8:
+			clients[i].x = 20;
+			clients[i].z = 20;
+			break;
+		case 9: // 얘가 돌진하는 애
+		{
+			clients[i].x = 30;
+			clients[i].z = 30;
 			clients[i].L = luaL_newstate();
 
 			luaL_openlibs(clients[i].L);
@@ -69,6 +96,10 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_Rush", API_Rush);
 			lua_register(clients[i].L, "API_Cube", API_Cube);
 			lua_register(clients[i].L, "API_get_state", API_get_state);
+			break;
+		}
+		default:
+			break;
 		}
 	}
 	cout << "npc 로딩 끝" << endl;
