@@ -141,10 +141,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	for (int i = 0; i < PLAYERMAX; i++)
 	{
 		if (playerArr[i].on == true) {
-			cout << playerArr[i].animation_state << endl;
 			animationPtr[i].state = playerArr[i].animation_state;
 			animationPtr[i].UpdateSkinnedAnimation(timerPtr->_deltaTime);
-			//animationPtr[1].UpdateSkinnedAnimation(timerPtr->_deltaTime);
 		}
 	}
 	
