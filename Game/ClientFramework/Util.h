@@ -192,6 +192,8 @@ struct Obj
 	bool on = false;
 	float	degree;
 	XMFLOAT4 transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	int animation_state;
+	int animation_state0;
 	bool isCollision = false;
 	bool isFirstCollision = false;
 	chrono::milliseconds time;

@@ -120,6 +120,7 @@ public:
 				playerArr[id].transform.y = my_packet->y;
 				playerArr[id].transform.z = my_packet->z;
 				playerArr[id].degree = my_packet->degree;
+				playerArr[id].animation_state = my_packet->char_state;
 			}
 			else if (id >= PLAYERMAX)
 			{

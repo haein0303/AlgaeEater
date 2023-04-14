@@ -12,7 +12,7 @@ void Input::Init(WindowInfo windowInfo)
 	//ShowCursor(false);
 }
 
-void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr, int& state)
+void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr)
 {
 	HWND hwnd = GetActiveWindow();
 	bool key_toggle = false;
@@ -159,10 +159,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 	}
 	
 	if (!(w == false && a == false && s == false && d == false)) {
-		state = 1;
+		playerArr[networkPtr->myClientId].animation_state = 1;
 	}
 	else {
-		state = 0;
+		playerArr[networkPtr->myClientId].animation_state = 0;
 	}
 
 	if (_states['1'] == 2)
@@ -174,8 +174,8 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		networkPtr->send_packet(&p);
 	}
 
-	// 키가 눌렸었다면 패킷 송신
-	if (key_toggle) {
+	// 애니메이션 상태가 바뀌면 패킷 송신
+	if (playerArr[networkPtr->myClientId].animation_state0 != playerArr[networkPtr->myClientId].animation_state) {
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);
 		p.type = CS_MOVE;
@@ -183,9 +183,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		p.y = playerArr[networkPtr->myClientId].transform.y;
 		p.z = playerArr[networkPtr->myClientId].transform.z;
 		p.degree = playerArr[networkPtr->myClientId].degree;
+		p.char_state = playerArr[networkPtr->myClientId].animation_state;
 		networkPtr->send_packet(&p);
+		playerArr[networkPtr->myClientId].animation_state0 = playerArr[networkPtr->myClientId].animation_state;
 	}
-	
 }
 
 void Input::inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr)

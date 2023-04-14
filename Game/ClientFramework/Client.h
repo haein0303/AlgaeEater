@@ -54,16 +54,17 @@ public:
 		vector<SkinnedVertex> playerVertexVec;
 		vector<UINT> playerIndexVec;
 		dxEngine.animationPtr[0].CreateAnimationObject(playerVertexVec, playerIndexVec, "../Resources/Character.txt");
+		dxEngine.animationPtr[1].CreateAnimationObject(playerVertexVec, playerIndexVec, "../Resources/Character.txt");
 		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
-		
-		vector<SkinnedVertex> npcVertexVec;
+
+		/*vector<SkinnedVertex> npcVertexVec;
 		vector<UINT> npcIndexVec;
 		dxEngine.animationPtr[1].CreateAnimationObject(npcVertexVec, npcIndexVec, "../Resources/OrangeSpider.txt");
 		dxEngine.animationPtr[1].state = 1;
 		dxEngine.animationPtr[1].state0 = 1;
 		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_npcVertexBuffer, dxEngine.vertexBufferPtr->_npcVertexBufferView, npcVertexVec, dxEngine.devicePtr);
-		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);
+		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_npcIndexBuffer, dxEngine.indexBufferPtr->_npcIndexBufferView, npcIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_npcIndexCount);*/
 
 		vector<Point> pointVertexvec(1);
 		vector<UINT> pointIndexVec;

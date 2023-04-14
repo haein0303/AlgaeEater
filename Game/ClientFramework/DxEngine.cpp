@@ -99,7 +99,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 	if (isActive)
 	{
-		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, animationPtr[0].state);
+		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
@@ -137,8 +137,17 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
 
 	//애니메이션
-	animationPtr[0].UpdateSkinnedAnimation(timerPtr->_deltaTime);
-	animationPtr[1].UpdateSkinnedAnimation(timerPtr->_deltaTime);
+	
+	for (int i = 0; i < PLAYERMAX; i++)
+	{
+		if (playerArr[i].on == true) {
+			cout << playerArr[i].animation_state << endl;
+			animationPtr[i].state = playerArr[i].animation_state;
+			animationPtr[i].UpdateSkinnedAnimation(timerPtr->_deltaTime);
+			//animationPtr[1].UpdateSkinnedAnimation(timerPtr->_deltaTime);
+		}
+	}
+	
 	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime);
 
 	cmdAlloc->Reset();
@@ -189,7 +198,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 				// 스키닝 애니메이션 행렬 데이터 복사
-				copy(begin(animationPtr[0].FinalTransforms), end(animationPtr[0].FinalTransforms), &_transform.BoneTransforms[0]);
+				copy(begin(animationPtr[i].FinalTransforms), end(animationPtr[i].FinalTransforms), &_transform.BoneTransforms[0]);
 
 				//렌더
 				{
