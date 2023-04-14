@@ -69,6 +69,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	map_asset.Make_SRV();
 	map_asset.CreatePSO(L"..\\Bricks.hlsl");
 
+	floor_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	floor_asset.Init("../Resources/Floor.txt", false);
+	floor_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	floor_asset.Make_SRV();
+	floor_asset.CreatePSO(L"..\\Bricks.hlsl");
+
 	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_asset.Init("../Resources/AnimeCharacter.txt", false);
 	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
@@ -298,25 +304,50 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	}
 
 	// ¸Ê ·»´õ
-	cmdList->SetPipelineState(map_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&map_asset._indexBufferView);
-	//¿ùµå º¯È¯
-	XMStoreFloat4x4(&_transform.world, XMMatrixScaling(3.0f, 3.0f, 3.0f)* XMMatrixTranslation(0.f, 0.f, 0.f));
-	XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-	XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-	//·»´õ
 	{
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+		cmdList->SetPipelineState(map_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&map_asset._indexBufferView);
+		//¿ùµå º¯È¯
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(3.0f, 3.0f, 3.0f)* XMMatrixTranslation(0.f, 0.f, 0.f));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+		//·»´õ
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-		map_asset._tex._srvHandle = map_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			map_asset._tex._srvHandle = map_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
-		descHeapPtr->CopyDescriptor(map_asset._tex._srvHandle, 5, devicePtr);
+			descHeapPtr->CopyDescriptor(map_asset._tex._srvHandle, 5, devicePtr);
+		}
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
 	}
 
-	descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-	cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
+	// ¹Ù´Ú ·»´õ
+	{
+		cmdList->SetPipelineState(floor_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &floor_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&floor_asset._indexBufferView);
+		//¿ùµå º¯È¯
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 1.0f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, -0.1f, 0.f));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+		//·»´õ
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+			floor_asset._tex._srvHandle = floor_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+			descHeapPtr->CopyDescriptor(floor_asset._tex._srvHandle, 5, devicePtr);
+		}
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(floor_asset._indexCount, 1, 0, 0, 0);
+	}
 
 	//ÆÄÆ¼Å¬
 	if (pow(playerArr[0].transform.x - npcArr[9].transform.x, 2) + pow(playerArr[0].transform.z - npcArr[9].transform.z, 2) <= 4.f) //Ãæµ¹ Ã³¸®

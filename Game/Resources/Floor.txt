@@ -1,0 +1,14 @@
+<Hierarchy>:
+	<Frame>: 0 0 Plane_Blender null
+		<Mesh>: 4 Plane
+			<Bounds>: 0 0 0 0.01 0.01 0
+			<Positions>: 4 -1 -1 0 1 -1 0 1 1 0 -1 1 0  
+			<TextureCoords0>: 4 10 10 0 10 0 0 10 0  
+			<TextureCoords1>: 0  
+			<Normals>: 4 0 0 1 0 0 1 0 0 1 0 0 1  
+			<SubMeshes>: 1
+				<SubMesh>:  6 0 1 2 0 2 3  
+		</Mesh>
+		<Children>: 0
+	</Frame>
+</Hierarchy>
