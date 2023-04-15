@@ -71,7 +71,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	floor_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	floor_asset.Init("../Resources/Floor.txt", false);
-	floor_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	floor_asset.Add_texture(L"..\\Resources\\Texture\\Floor.jpg");
 	floor_asset.Make_SRV();
 	floor_asset.CreatePSO(L"..\\Bricks.hlsl");
 
