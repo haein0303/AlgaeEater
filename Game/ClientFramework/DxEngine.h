@@ -20,6 +20,7 @@
 #include "AnimationObject.h"
 #include "MESH.h"
 #include "SCENE.h"
+#include "d11on12.h"
 
 
 class DxEngine {
@@ -61,6 +62,8 @@ public:
 	shared_ptr<Input> inputPtr = make_shared<Input>();
 	shared_ptr<SFML> networkPtr = make_shared<SFML>();
 	unique_ptr<AnimationObject[]> animationPtr = make_unique<AnimationObject[]>(2);
+
+	shared_ptr<d11on12> d11Ptr = make_shared<d11on12>();
 
 	//오브젝트 객체 생성
 	Obj playerArr[PLAYERMAX];

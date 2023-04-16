@@ -27,6 +27,8 @@ void DxEngine::Init(WindowInfo windowInfo)
 	constantBufferPtr->CreateView(devicePtr);
 	descHeapPtr->CreateDescTable(256, devicePtr);
 	
+	d11Ptr->init(this);
+
 	cout << "complite Init ptr" << endl;
 
 	timerPtr->InitTimer();
@@ -51,6 +53,8 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
+
+	
 
 	cout << "complite all init" << endl;
 }
