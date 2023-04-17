@@ -80,6 +80,18 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		d = false;
 		key_toggle = true;
 	}
+	if (_states[VK_LBUTTON] == 2) {
+		l_click = true;
+	}
+	if (_states[VK_LBUTTON] == 3) {
+		l_click = false;
+	}
+	if (_states[VK_RBUTTON] == 2) {
+		r_click = true;
+	}
+	if (_states[VK_RBUTTON] == 3) {
+		r_click = false;
+	}
 	if (_states[VK_ESCAPE] == 1) {
 		cout << "QUIT" << endl;
 		ExitProcess(0);
@@ -99,6 +111,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		}
 		
 	}
+
 	//w = 8, a = 4, s = 2, d = 6, wa = 7, wd = 9, sa = 1, sd = 3 , none or full = 5 
 	if (w != s && a == d)
 	{
@@ -158,7 +171,13 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		}
 	}
 	
-	if (!(w == false && a == false && s == false && d == false)) {
+	if (r_click == true) {
+		playerArr[networkPtr->myClientId].animation_state = 3;
+	}
+	else if (l_click == true) {
+		playerArr[networkPtr->myClientId].animation_state = 2;
+	}
+	else if (!(w == false && a == false && s == false && d == false)) {
 		playerArr[networkPtr->myClientId].animation_state = 1;
 	}
 	else {
