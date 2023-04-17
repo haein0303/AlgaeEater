@@ -281,13 +281,16 @@ void do_worker()
 void Update_Player()
 {
 	for (int i = 0; i < MAX_USER; i++) {
-		for (auto& pl : clients[i].room_list) {
-			clients[i]._sl.lock();
-			if (clients[i]._s_state != ST_INGAME) {
-				clients[i]._sl.unlock();
-				continue;
-			}
+
+		clients[i]._sl.lock();
+		if (clients[i]._s_state != ST_INGAME) {
 			clients[i]._sl.unlock();
+			continue;
+		}
+		clients[i]._sl.unlock();
+
+
+		for (auto& pl : clients[i].room_list) {			
 
 			clients[pl]._sl.lock();
 			if (clients[pl]._s_state != ST_INGAME) {

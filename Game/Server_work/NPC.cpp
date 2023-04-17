@@ -248,6 +248,6 @@ void move_npc(int npc_id)
 		clients[npc_id].move_stack++;
 	}
 
-	clients[npc_id].z = z;
-	clients[npc_id].x = x;
+	/*clients[npc_id].z = z;
+	clients[npc_id].x = x;*/
 }
