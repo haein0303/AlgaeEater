@@ -129,6 +129,9 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="d11on12.cpp">
+      <Filter>Engine\장치 초기화</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="TestScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="d11on12.h">
+      <Filter>Engine\장치 초기화</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

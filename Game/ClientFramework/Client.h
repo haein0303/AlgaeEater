@@ -53,8 +53,8 @@ public:
 		*/
 		vector<SkinnedVertex> playerVertexVec;
 		vector<UINT> playerIndexVec;
-		dxEngine.animationPtr[0].CreateAnimationObject(playerVertexVec, playerIndexVec, "../Resources/Character.txt");
-		dxEngine.animationPtr[1].CreateAnimationObject(playerVertexVec, playerIndexVec, "../Resources/Character.txt");
+		dxEngine.animationPtr[0].CreateAnimationObject(playerVertexVec, playerIndexVec, "../Resources/Character.txt"); // player0 - oneself
+		dxEngine.animationPtr[1].CreateAnimationObject(playerVertexVec, playerIndexVec, "../Resources/Character.txt"); // player1
 		dxEngine.vertexBufferPtr->CreateAnimationVertexBuffer(dxEngine.vertexBufferPtr->_playerVertexBuffer, dxEngine.vertexBufferPtr->_playerVertexBufferView, playerVertexVec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_playerIndexBuffer, dxEngine.indexBufferPtr->_playerIndexBufferView, playerIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_playerIndexCount);
 

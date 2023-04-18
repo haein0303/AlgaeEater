@@ -4,12 +4,15 @@
 
 #include <Windows.h>
 #include <tchar.h>
-#include <dxgi1_4.h>
+#include <dxgi1_6.h>
 #include <wrl.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <d3d12.h>
 #include "d3dx12.h"
+#include <d2d1_3.h>
+#include <dwrite.h>
+#include <d3d11on12.h>
 #include <DirectXColors.h>
 #include <vector>
 #include <thread>
@@ -17,6 +20,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <pix.h>
+
+#include <string>
+#include <shellapi.h>
 
 #include "DirectXTex.h"
 #include "DirectXTex.inl"
@@ -60,6 +67,8 @@
 
 #pragma comment (lib, "d3dcompiler.lib")
 #pragma comment (lib, "D3D12.lib")
+#pragma comment (lib, "D3D11.lib")
+//#pragma comment (lib, "D2d1_3.lib")
 #pragma comment (lib, "dxgi.lib")
 
 #include <dxgidebug.h>
