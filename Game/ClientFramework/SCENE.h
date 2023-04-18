@@ -23,7 +23,7 @@ public:
 
 
 	//매 프레임마다 그리기
-	virtual void Draw(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList) = 0;
+	virtual void Draw(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList, int& state, int& state0) = 0;
 
 protected:
 	SceneTag _tag;

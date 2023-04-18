@@ -44,10 +44,10 @@ void TestScene::Update(WindowInfo windowInfo, bool isActive)
 {
 }
 
-void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12GraphicsCommandList>	cmdList)
+void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12GraphicsCommandList>	cmdList, int& state, int& state0)
 {
 	//애니메이션
-	_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime);
+	_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, state, state0);
 
 	
 

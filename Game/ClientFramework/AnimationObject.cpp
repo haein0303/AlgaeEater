@@ -9,7 +9,7 @@ void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vec
 	TimePos = 0.0f;
 }
 
-void AnimationObject::UpdateSkinnedAnimation(float dt)
+void AnimationObject::UpdateSkinnedAnimation(float dt, int& state, int& state0)
 {
 	TimePos += dt;
 
@@ -20,15 +20,19 @@ void AnimationObject::UpdateSkinnedAnimation(float dt)
 	}
 
 	// 애니메이션이 끝나면 애니메이션 루프
-	if (TimePos > GetClipEndTime()) {
+	if ((state == 0 || state == 1) && TimePos > GetClipEndTime(state)) {
 		TimePos = 0.f;
+	}
+	// 공격 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
+	if ((state == 2 || state == 3) && TimePos > GetClipEndTime(state)) {
+		state = 0;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
-	GetFinalTransforms(ClipName, TimePos, FinalTransforms);
+	GetFinalTransforms(ClipName, TimePos, FinalTransforms, state);
 }
 
-float AnimationObject::GetClipEndTime() {
+float AnimationObject::GetClipEndTime(int state) {
 	float t = 0.0f;
 	for (UINT i = 0; i < animations[state].size(); ++i)
 	{
@@ -87,7 +91,7 @@ void AnimationObject::Interpolate(vector<Keyframe> keyframeVec, float t, XMFLOAT
 	}
 }
 
-void AnimationObject::GetFinalTransforms(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms) {
+void AnimationObject::GetFinalTransforms(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms, int state) {
 	UINT numBones = mBoneOffsets.size();
 
 	vector<XMFLOAT4X4> toParentTransforms(numBones);

@@ -95,11 +95,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
 
-	npc_asset._animationPtr->state = 1;
-	npc_asset._animationPtr->state0 = 1;
-
-
-
 	cout << "complite late init" << endl;
 }
 
@@ -147,16 +142,14 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
 
 	//애니메이션
-	
 	for (int i = 0; i < PLAYERMAX; i++)
 	{
 		if (playerArr[i].on == true) {
-			animationPtr[i].state = playerArr[i].animation_state;
-			animationPtr[i].UpdateSkinnedAnimation(timerPtr->_deltaTime);
+			animationPtr[i].UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i].animation_state, playerArr[i].animation_state0);
 		}
 	}
 	
-	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime);
+	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0].animation_state, npcArr[0].animation_state0);
 
 	cmdAlloc->Reset();
 	cmdList->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);

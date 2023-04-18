@@ -80,18 +80,6 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		d = false;
 		key_toggle = true;
 	}
-	if (_states[VK_LBUTTON] == 2) {
-		l_click = true;
-	}
-	if (_states[VK_LBUTTON] == 3) {
-		l_click = false;
-	}
-	if (_states[VK_RBUTTON] == 2) {
-		r_click = true;
-	}
-	if (_states[VK_RBUTTON] == 3) {
-		r_click = false;
-	}
 	if (_states[VK_ESCAPE] == 1) {
 		cout << "QUIT" << endl;
 		ExitProcess(0);
@@ -112,75 +100,73 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML
 		
 	}
 
-	//w = 8, a = 4, s = 2, d = 6, wa = 7, wd = 9, sa = 1, sd = 3 , none or full = 5 
-	if (w != s && a == d)
-	{
-		if (w == true)
-		{
-			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
-			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
-			playerArr[networkPtr->myClientId].degree = -angle.x + 90.f;
-		}
-		else if(s == true)
-		{
-			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
-			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
-			playerArr[networkPtr->myClientId].degree = -angle.x + 270.f;
-		}
-	}
-	else if (w == s && a != d)
-	{
-		if (a == true)
-		{
-			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x;
-		}
-		else if(d == true)
-		{
-			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x + 180.f;
-		}
-	}
-	else if (w != s && a != d)
-	{
-		if (w == true && a == true && s == false && d == false)
-		{
-			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x + 45.f;
-		}
-		else if (w == true && d == true && s == false && a == false)
-		{
-			playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f - XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x + 135.f;
-		}
-		else if (s == true && a == true && w == false && d == false)
-		{
-			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x + 315.f;
-		}
-		else if (s == true && d == true && w == false && a == false)
-		{
-			playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f + XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f + XM_PI / 2.0f);
-			playerArr[networkPtr->myClientId].degree = -angle.x + 225.f;
-		}
-	}
-	
-	if (r_click == true) {
+	if (_states[VK_RBUTTON] == 2) {
 		playerArr[networkPtr->myClientId].animation_state = 3;
 	}
-	else if (l_click == true) {
+	else if (_states[VK_LBUTTON] == 2) {
 		playerArr[networkPtr->myClientId].animation_state = 2;
 	}
-	else if (!(w == false && a == false && s == false && d == false)) {
+	else if (!(w == false && a == false && s == false && d == false) && playerArr[networkPtr->myClientId].animation_state != 2 && playerArr[networkPtr->myClientId].animation_state != 3) {
+		if (w != s && a == d)
+		{
+			if (w == true)
+			{
+				playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
+				playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
+				playerArr[networkPtr->myClientId].degree = -angle.x + 90.f;
+			}
+			else if (s == true)
+			{
+				playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f);
+				playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f);
+				playerArr[networkPtr->myClientId].degree = -angle.x + 270.f;
+			}
+		}
+		else if (w == s && a != d)
+		{
+			if (a == true)
+			{
+				playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].degree = -angle.x;
+			}
+			else if (d == true)
+			{
+				playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].degree = -angle.x + 180.f;
+			}
+		}
+		else if (w != s && a != d)
+		{
+			if (w == true && a == true && s == false && d == false)
+			{
+				playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
+				playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f);
+				playerArr[networkPtr->myClientId].degree = -angle.x + 45.f;
+			}
+			else if (w == true && d == true && s == false && a == false)
+			{
+				playerArr[networkPtr->myClientId].transform.x += 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f + XM_PI / 4.0f - XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].transform.z += 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f + XM_PI / 4.0f - XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].degree = -angle.x + 135.f;
+			}
+			else if (s == true && a == true && w == false && d == false)
+			{
+				playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+				playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f);
+				playerArr[networkPtr->myClientId].degree = -angle.x + 315.f;
+			}
+			else if (s == true && d == true && w == false && a == false)
+			{
+				playerArr[networkPtr->myClientId].transform.x -= 5.0f * timerPtr->_deltaTime * cosf(angle.x * XM_PI / 180.f - XM_PI / 4.0f + XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].transform.z -= 5.0f * timerPtr->_deltaTime * sinf(angle.x * XM_PI / 180.f - XM_PI / 4.0f + XM_PI / 2.0f);
+				playerArr[networkPtr->myClientId].degree = -angle.x + 225.f;
+			}
+		}
 		playerArr[networkPtr->myClientId].animation_state = 1;
 	}
-	else {
+	else if (playerArr[networkPtr->myClientId].animation_state != 2 && playerArr[networkPtr->myClientId].animation_state != 3){
 		playerArr[networkPtr->myClientId].animation_state = 0;
 	}
 

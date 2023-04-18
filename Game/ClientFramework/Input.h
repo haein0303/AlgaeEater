@@ -13,8 +13,6 @@ public:
 	bool a = false;
 	bool s = false;
 	bool d = false;
-	bool l_click = false;
-	bool r_click = false;
 
 	bool _mouse_enable = false;
 	bool _mouse_chaged = false;
