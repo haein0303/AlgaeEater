@@ -12,7 +12,6 @@ public:
 	};
 
 
-	SCENE();
 	SCENE(SceneTag tag, DxEngine* dxEngine);
 	//DX엔진 초기화
 	virtual void Init(WindowInfo windowInfo) = 0;
@@ -23,7 +22,8 @@ public:
 
 
 	//매 프레임마다 그리기
-	virtual void Draw(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList, int& state, int& state0) = 0;
+	virtual void Draw(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList) = 0;
+	void Draw_excute(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList, int i_now_render_index);
 
 protected:
 	SceneTag _tag;
