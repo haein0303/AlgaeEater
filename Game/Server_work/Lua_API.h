@@ -14,6 +14,8 @@ int API_Rush(lua_State* L);
 
 int API_get_state(lua_State* L);
 
+int API_Return(lua_State* L);
+
 int API_Tracking(lua_State* L);
 
 void reset_lua(int c_id);

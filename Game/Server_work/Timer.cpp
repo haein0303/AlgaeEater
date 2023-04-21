@@ -112,9 +112,10 @@ void do_timer()
 				break;
 			}
 			case EV_RETURN:
+				// cout << ev.target_id << ev.object_id << endl;
 				ex_over->_comp_type = OP_NPC_RETURN;
-				ex_over->target_id = ev.object_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+				ex_over->target_id = ev.target_id;
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			case EV_NPC_CON:
 				//cout << ev.object_id << ", " << ev.target_id << endl;

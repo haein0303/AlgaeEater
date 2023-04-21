@@ -26,7 +26,7 @@ void initialize_npc()
 		clients[i].start_x = 0;
 		clients[i].start_z = 0;
 		clients[i].hp = 100;
-		clients[i].char_state = 1;
+		clients[i].char_state = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;
@@ -56,6 +56,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 1:
 			clients[i].x = -20;
@@ -64,6 +65,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 2:
 			clients[i].x = -20;
@@ -72,6 +74,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 3:
 			clients[i].x = 0;
@@ -80,6 +83,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 4:
 			clients[i].x = 0;
@@ -88,6 +92,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 5:
 			clients[i].x = 0;
@@ -96,6 +101,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 6:
 			clients[i].x = 20;
@@ -104,6 +110,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 7:
 			clients[i].x = 20;
@@ -112,6 +119,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 8:
 			clients[i].x = 20;
@@ -120,6 +128,7 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 9: // 얘가 돌진하는 애
 		{
@@ -251,7 +260,7 @@ void move_npc(int player_id, int c_id)
 
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
-	clients[c_id].char_state = 0;
+	clients[c_id].char_state = 0;	
 	// 이거 1로하면 애러남
 
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
@@ -280,7 +289,7 @@ void return_npc(int c_id)
 {
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
-	clients[c_id].char_state = 1;
+	clients[c_id].char_state = 0;
 
 	float de = atan2(x - clients[c_id].start_x, z - clients[c_id].start_z);
 	de = de * 180 / PI;
