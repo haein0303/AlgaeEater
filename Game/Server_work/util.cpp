@@ -78,7 +78,7 @@ void process_packet(int c_id, char* packet)
 
 		if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
 			for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
-				add_timer(i, 5000, EV_MOVE, i);
+				add_timer(i, 10000, EV_NPC_CON, c_id);
 				clients[i].Lua_on = true;
 			}
 			add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, (clients[c_id]._Room_Num * 10) + MAX_USER + 9);
@@ -254,7 +254,8 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_MOVE: {
-			move_npc(ex_over->target_id);
+			//cout << "npc : " << key << ", player : " << ex_over->target_id << endl;
+			move_npc(ex_over->target_id, key);
 			delete ex_over;
 			break;
 		}
@@ -271,6 +272,11 @@ void do_worker()
 		case OP_UPDATE: {
 			Update_Player();
 			add_timer(0, 33, EV_UP, 0);
+			delete ex_over;
+			break;
+		}
+		case OP_NPC_RETURN: {
+			return_npc(key);
 			delete ex_over;
 			break;
 		}
@@ -291,7 +297,6 @@ void Update_Player()
 
 
 		for (auto& pl : clients[i].room_list) {			
-
 			clients[pl]._sl.lock();
 			if (clients[pl]._s_state != ST_INGAME) {
 				clients[pl]._sl.unlock();

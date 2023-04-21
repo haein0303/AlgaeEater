@@ -31,9 +31,9 @@ public:
 	std::mutex	_sl;
 	int		hp;
 	int		char_state;
-	// 과제용 임시 변수
-	int move_stack;
-	int move_degree;
+
+	// 임시 변수
+	float start_x, start_z;
 	// 루아 사용 변수
 	lua_State* L;
 	int		_Room_Num;

@@ -59,20 +59,20 @@ void do_timer()
 			timer_queue.pop();
 			timer_l.unlock();
 
+			auto ex_over = new OVER_EXP;
+
 			switch (ev.ev)
 			{
 			case EV_MOVE:
 			{
-				auto ex_over = new OVER_EXP;
+				//cout << "ev.obj : " << ev.object_id << ", ev.tar : " << ev.target_id << endl;
 				ex_over->_comp_type = OP_NPC_MOVE;
-				ex_over->target_id = ev.object_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
-				add_timer(ev.object_id, 100, ev.ev, ev.target_id);
+				ex_over->target_id = ev.target_id;
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			}
 			case EV_RUSH:
 			{
-				auto ex_over = new OVER_EXP;
 				ex_over->_comp_type = OP_NPC_RUSH;
 				ex_over->target_id = ev.target_id;
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
@@ -99,7 +99,6 @@ void do_timer()
 			}
 			case EV_CB:
 			{
-				auto ex_over = new OVER_EXP;
 				ex_over->_comp_type = OP_CREATE_CUBE;
 				ex_over->target_id = ev.target_id;
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
@@ -107,12 +106,25 @@ void do_timer()
 			}
 			case EV_UP:
 			{
-				auto ex_over = new OVER_EXP;
 				ex_over->_comp_type = OP_UPDATE;
 				ex_over->target_id = ev.target_id;
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
 				break;
 			}
+			case EV_RETURN:
+				ex_over->_comp_type = OP_NPC_RETURN;
+				ex_over->target_id = ev.object_id;
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
+				break;
+			case EV_NPC_CON:
+				//cout << ev.object_id << ", " << ev.target_id << endl;
+
+				lua_getglobal(clients[ev.object_id].L, "tracking_player");
+				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
+				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
+
+				add_timer(ev.object_id, 100, EV_NPC_CON, ev.target_id);
+				break;
 			default:
 				break;
 			}

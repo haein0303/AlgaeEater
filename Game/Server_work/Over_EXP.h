@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include "protocol.h"
 
-enum COMP_TYPE { OP_ACCEPT, OP_RECV, OP_SEND, OP_NPC_MOVE, OP_NPC_RUSH, OP_CREATE_CUBE, OP_UPDATE };
+enum COMP_TYPE { OP_ACCEPT, OP_RECV, OP_SEND, OP_NPC_MOVE, OP_NPC_RUSH, OP_CREATE_CUBE, OP_UPDATE, OP_NPC_RETURN};
 
 class OVER_EXP {
 public:

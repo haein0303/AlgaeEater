@@ -23,13 +23,27 @@ void initialize_npc()
 		clients[i]._Room_Num = (i - MAX_USER) / 10;
 		clients[i].y = 0;
 		clients[i].degree = 0;
-		clients[i].move_stack = 0;
-		clients[i].move_degree = 0;
+		clients[i].start_x = 0;
+		clients[i].start_z = 0;
 		clients[i].hp = 100;
 		clients[i].char_state = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;
+
+		clients[i].L = luaL_newstate();
+
+		luaL_openlibs(clients[i].L);
+
+		luaL_loadfile(clients[i].L, "hello.lua");
+		lua_pcall(clients[i].L, 0, 0, 0);
+
+		lua_getglobal(clients[i].L, "set_object_id");
+		lua_pushnumber(clients[i].L, i);
+		lua_pcall(clients[i].L, 1, 0, 0);
+
+		lua_register(clients[i].L, "API_get_x", API_get_x);
+		lua_register(clients[i].L, "API_get_z", API_get_z);
 
 		int st = (i - MAX_USER - clients[i]._Room_Num * 10);
 
@@ -38,61 +52,80 @@ void initialize_npc()
 		case 0:
 			clients[i].x = -20;
 			clients[i].z = -20;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 1:
 			clients[i].x = -20;
 			clients[i].z = 0;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 2:
 			clients[i].x = -20;
 			clients[i].z = 20;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 3:
 			clients[i].x = 0;
 			clients[i].z = -20;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 4:
 			clients[i].x = 0;
 			clients[i].z = 0;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 5:
 			clients[i].x = 0;
 			clients[i].z = 20;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 6:
 			clients[i].x = 20;
 			clients[i].z = -20;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 7:
 			clients[i].x = 20;
 			clients[i].z = 0;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 8:
 			clients[i].x = 20;
 			clients[i].z = 20;
+
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
 			break;
 		case 9: // 얘가 돌진하는 애
 		{
 			clients[i].x = 30;
 			clients[i].z = 30;
-			clients[i].L = luaL_newstate();
 
-			luaL_openlibs(clients[i].L);
-
-			if (luaL_loadfile(clients[i].L, "hello.lua")) {
-				//printf("소환 실패");
-			}
-			else {
-				//printf("소환 성공");
-			}
-			lua_pcall(clients[i].L, 0, 0, 0);
-
-			lua_getglobal(clients[i].L, "set_object_id");
-			lua_pushnumber(clients[i].L, i);
-			lua_pcall(clients[i].L, 1, 0, 0);
-
-			lua_register(clients[i].L, "API_get_x", API_get_x);
-			lua_register(clients[i].L, "API_get_z", API_get_z);
 			lua_register(clients[i].L, "API_Rush", API_Rush);
 			lua_register(clients[i].L, "API_Cube", API_Cube);
 			lua_register(clients[i].L, "API_get_state", API_get_state);
@@ -101,6 +134,9 @@ void initialize_npc()
 		default:
 			break;
 		}
+
+		clients[i].start_x = clients[i].x;
+		clients[i].start_z = clients[i].z;
 	}
 	cout << "npc 로딩 끝" << endl;
 }
@@ -209,45 +245,58 @@ void rush_npc(int player_id, int c_id)
 	rush_npc(player_id, c_id);
 }
 
-void move_npc(int npc_id)
+void move_npc(int player_id, int c_id)
 {
-	float z = clients[npc_id].z;
-	float x = clients[npc_id].x;
+	// cout << player_id << ", " << c_id << endl;
 
-	if (clients[npc_id].move_stack == 10) {
-		clients[npc_id].move_stack = 0;
-		clients[npc_id].move_degree = -1;
+	float x = clients[c_id].x;
+	float z = clients[c_id].z;
+	clients[c_id].char_state = 0;
+	// 이거 1로하면 애러남
+
+	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
+	de = de * 180 / PI;
+	clients[c_id].degree = de;
+
+	if (x > clients[player_id].x) x--;
+	else if (x < clients[player_id].x) x++;
+
+	if (z > clients[player_id].z) z--;
+	else if (z < clients[player_id].z) z++;
+
+	if (abs(x - clients[player_id].x) < 1) x = clients[player_id].x;
+	if (abs(z - clients[player_id].z) < 1) z = clients[player_id].z;
+
+	clients[c_id].x = x;
+	clients[c_id].z = z;
+
+	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 2) {
+		// 공격 처리 관련, 여기서 안 할 수도 있음
+		//clients[c_id].char_state = 2;
 	}
+}
 
-	if (clients[npc_id].move_degree == -1) {
-		clients[npc_id].move_degree = uid(dre);
-	}
+void return_npc(int c_id)
+{
+	float x = clients[c_id].x;
+	float z = clients[c_id].z;
+	clients[c_id].char_state = 1;
 
-	if (clients[npc_id].move_stack != 10) {
-		switch (clients[npc_id].move_degree)
-		{
-		case 0:
-			x++;
-			clients[npc_id].degree = 270;
-			break;
-		case 1:
-			x--;
-			clients[npc_id].degree = 90;
-			break;
-		case 2:
-			z++;
-			clients[npc_id].degree = 180;
-			break;
-		case 3:
-			z--;
-			clients[npc_id].degree = 0;
-			break;
-		default:
-			break;
-		}
-		clients[npc_id].move_stack++;
-	}
+	float de = atan2(x - clients[c_id].start_x, z - clients[c_id].start_z);
+	de = de * 180 / PI;
+	clients[c_id].degree = de;
 
-	/*clients[npc_id].z = z;
-	clients[npc_id].x = x;*/
+	if (x > clients[c_id].start_x) x--;
+	else if (x < clients[c_id].start_x) x++;
+
+	if (z > clients[c_id].start_z) z--;
+	else if (z < clients[c_id].start_z) z++;
+
+	if (abs(x - clients[c_id].start_x) < 1) x = clients[c_id].start_x;
+	if (abs(z - clients[c_id].start_z) < 1) z = clients[c_id].start_z;
+
+	if (x == clients[c_id].start_x && z == clients[c_id].start_z) clients[c_id].char_state = 0;
+
+	clients[c_id].x = x;
+	clients[c_id].z = z;
 }

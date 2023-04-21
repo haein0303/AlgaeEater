@@ -13,9 +13,9 @@ SESSION::SESSION()
 	hp = 0;
 	_s_state = ST_FREE;
 	_prev_remain = 0;
-	move_stack = 0;
-	move_degree = 0;
 	_Room_Num = 0;
+	start_x = 0;
+	start_z = 0;
 	Lua_on = false;
 }
 
