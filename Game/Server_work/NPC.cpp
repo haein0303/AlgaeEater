@@ -26,7 +26,7 @@ void initialize_npc()
 		clients[i].start_x = 0;
 		clients[i].start_z = 0;
 		clients[i].hp = 100;
-		clients[i].char_state = 0;
+		clients[i].char_state = 1;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;

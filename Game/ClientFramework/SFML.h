@@ -129,6 +129,7 @@ public:
 				npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
 				npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
 				npcArr[id - PLAYERMAX]._degree = my_packet->degree;
+				npcArr[id - PLAYERMAX]._animation_state = my_packet->char_state;
 			}
 			
 			break;

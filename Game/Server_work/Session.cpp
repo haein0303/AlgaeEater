@@ -9,7 +9,7 @@ SESSION::SESSION()
 	z = 0;
 	degree = 0;
 	_name[0] = 0;
-	char_state = 0;
+	char_state = 1;
 	hp = 0;
 	_s_state = ST_FREE;
 	_prev_remain = 0;
