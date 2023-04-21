@@ -6,30 +6,30 @@ void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vec
 
 	FinalTransforms.resize(mBoneHierarchy.size());
 	ClipName = "SkinningAnimtion";
-	TimePos = 0.0f;
+	//TimePos = 0.0f;
 }
 
-void AnimationObject::UpdateSkinnedAnimation(float dt, int& state, int& state0)
+void AnimationObject::UpdateSkinnedAnimation(float dt, int& state, int& state0, float& animation_time_pos)
 {
-	TimePos += dt;
+	animation_time_pos += dt;
 
 	if (state0 != state)
 	{
-		TimePos = 0.f;
+		animation_time_pos = 0.f;
 		state0 = state;
 	}
 
 	// 애니메이션이 끝나면 애니메이션 루프
-	if ((state == 0 || state == 1) && TimePos > GetClipEndTime(state)) {
-		TimePos = 0.f;
+	if ((state == 0 || state == 1) && animation_time_pos > GetClipEndTime(state)) {
+		animation_time_pos = 0.f;
 	}
 	// 공격 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
-	if ((state == 2 || state == 3) && TimePos > GetClipEndTime(state)) {
+	if ((state == 2 || state == 3) && animation_time_pos > GetClipEndTime(state)) {
 		state = 0;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
-	GetFinalTransforms(ClipName, TimePos, FinalTransforms, state);
+	GetFinalTransforms(ClipName, animation_time_pos, FinalTransforms, state);
 }
 
 float AnimationObject::GetClipEndTime(int state) {

@@ -133,9 +133,9 @@ void MESH_ASSET::CreatePSO()
 
 }
 
-void MESH_ASSET::UpdateSkinnedAnimation(float dt, int& state, int& state0)
+void MESH_ASSET::UpdateSkinnedAnimation(float dt, int& state, int& state0, float& animation_time_pos)
 {
-	_animationPtr->UpdateSkinnedAnimation(dt, state, state0);
+	_animationPtr->UpdateSkinnedAnimation(dt, state, state0, animation_time_pos);
 }
 
 void MESH_ASSET::CreatePSO(const wchar_t* shader)

@@ -12,6 +12,10 @@ public:
 	XMFLOAT4	_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	bool		_isCollision = false;
 	bool		_isFirstCollision = false;
+	int			_animation_state = 0;
+	int			_animation_state0 = 0;
+	float		_animation_time_pos = 0.f;
+	chrono::milliseconds time;
 
 	shared_ptr<MESH_ASSET> _my_mesh;
 
