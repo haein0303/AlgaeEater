@@ -244,6 +244,9 @@
     <FxCompile Include="..\Bricks.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\SkySphere.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectXTex.inl">

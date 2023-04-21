@@ -31,7 +31,7 @@ public:
 	UINT _indexCount = 0;
 
 	Texture _tex;
-	bool _is_ani;
+	ObjectType _obj_type;
 	int	 tex_index = 0;
 	bool _is_default_shader = true;
 
@@ -44,7 +44,7 @@ public:
 		shared_ptr<RootSignature> rootSignaturePtr,
 		shared_ptr<DSV> dsvPtr
 	);
-	void Init(const char* path,bool is_animation);
+	void Init(const char* path, ObjectType obj_type);
 	void Add_texture(const wstring& path);
 	void Make_SRV();
 	void CreatePSO();

@@ -62,31 +62,37 @@ void DxEngine::Init(WindowInfo windowInfo)
 void DxEngine::late_Init(WindowInfo windowInfo)
 {
 	cube_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr,rootSignaturePtr,dsvPtr);
-	cube_asset.Init("../Resources/Cube.txt",false);
+	cube_asset.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
 	cube_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	cube_asset.Make_SRV();
 	cube_asset.CreatePSO(L"..\\Bricks.hlsl");
 
 	map_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	map_asset.Init("../Resources/Map.txt", false);
+	map_asset.Init("../Resources/Map.txt", ObjectType::GeneralObjects);
 	map_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	map_asset.Make_SRV();
 	map_asset.CreatePSO(L"..\\Bricks.hlsl");
 
-	floor_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	floor_asset.Init("../Resources/Floor.txt", false);
-	floor_asset.Add_texture(L"..\\Resources\\Texture\\Floor.jpg");
-	floor_asset.Make_SRV();
-	floor_asset.CreatePSO(L"..\\Bricks.hlsl");
+	floor.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	floor.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
+	floor.Add_texture(L"..\\Resources\\Texture\\Floor.jpg");
+	floor.Make_SRV();
+	floor.CreatePSO(L"..\\Bricks.hlsl");
+
+	skybox.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	skybox.Init("../Resources/SkySphere.txt", ObjectType::SkyBox);
+	skybox.Add_texture(L"..\\Resources\\Texture\\Sky.jpg");
+	skybox.Make_SRV();
+	skybox.CreatePSO(L"..\\SkySphere.hlsl");
 
 	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	player_asset.Init("../Resources/AnimeCharacter.txt", false);
+	player_asset.Init("../Resources/AnimeCharacter.txt", ObjectType::GeneralObjects);
 	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_asset.Make_SRV();
 	player_asset.CreatePSO();
 
 	npc_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	npc_asset.Init("../Resources/OrangeSpider.txt", true);
+	npc_asset.Init("../Resources/OrangeSpider.txt", ObjectType::AnimationObjects);
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png");
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
@@ -325,9 +331,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 
 	// 바닥 렌더
 	{
-		cmdList->SetPipelineState(floor_asset._pipelineState.Get());
-		cmdList->IASetVertexBuffers(0, 1, &floor_asset._vertexBufferView);
-		cmdList->IASetIndexBuffer(&floor_asset._indexBufferView);
+		cmdList->SetPipelineState(floor._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
+		cmdList->IASetIndexBuffer(&floor._indexBufferView);
 		//월드 변환
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 1.0f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, -0.1f, 0.f));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
@@ -337,13 +343,37 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-			floor_asset._tex._srvHandle = floor_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
-			descHeapPtr->CopyDescriptor(floor_asset._tex._srvHandle, 5, devicePtr);
+			descHeapPtr->CopyDescriptor(floor._tex._srvHandle, 5, devicePtr);
 		}
 
 		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-		cmdList->DrawIndexedInstanced(floor_asset._indexCount, 1, 0, 0, 0);
+		cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
+	}
+
+	// 스카이 박스 렌더
+	{
+		cmdList->SetPipelineState(skybox._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &skybox._vertexBufferView);
+		cmdList->IASetIndexBuffer(&skybox._indexBufferView);
+		//월드 변환
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(0.f, 2.f, 0.f));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+		_transform.camera_pos = cameraPtr->pos;
+		//렌더
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+			skybox._tex._srvHandle = skybox._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+			descHeapPtr->CopyDescriptor(skybox._tex._srvHandle, 5, devicePtr);
+		}
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
 	}
 
 	//파티클

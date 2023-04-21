@@ -155,13 +155,11 @@ void Texture::_CreateSRVs(shared_ptr<Device> devicePtr)
 
 	_srvHandle = _srvHeap->GetCPUDescriptorHandleForHeapStart();
 
-	//첫번째 SRV 생성
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	//srvDesc.Format = _image.GetMetadata().format;
+
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Texture2D.MipLevels = 1;
-
 
 	int counter = 0;
 	for (int i = 0; i < _v_tex.size(); ++i) {

@@ -130,6 +130,13 @@ namespace COMUtil
 	}
 } // namespace COMUtil
 
+enum ObjectType
+{
+	GeneralObjects, // 일반 오브젝트
+	AnimationObjects, // 애니메이션 오브젝트, Skinned Mesh
+	SkyBox // 스카이 박스
+};
+
 struct LIGHT
 {
 	XMFLOAT4				m_xmf4Ambient;
@@ -194,6 +201,7 @@ struct Constants
 	XMFLOAT4X4 MatTransform = Identity4x4();
 	XMFLOAT4X4 BoneTransforms[96];
 	int obj_type = 0;
+	XMVECTOR camera_pos;
 };
 
 struct Obj

@@ -75,7 +75,8 @@ public:
 	MESH_ASSET player_asset;
 	MESH_ASSET npc_asset;
 	MESH_ASSET map_asset;
-	MESH_ASSET floor_asset;
+	MESH_ASSET floor;
+	MESH_ASSET skybox;
 
 	//상수버퍼로 넘길 데이터
 	Constants _transform = {};
