@@ -204,6 +204,7 @@ struct Constants
 	XMVECTOR camera_pos;
 };
 
+/*
 struct Obj
 {
 	bool on = false;
@@ -215,6 +216,7 @@ struct Obj
 	bool isFirstCollision = false;
 	chrono::milliseconds time;
 };
+*/
 
 struct Point
 {

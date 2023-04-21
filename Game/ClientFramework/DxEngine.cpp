@@ -42,14 +42,6 @@ void DxEngine::Init(WindowInfo windowInfo)
 	srand((unsigned int)time(NULL));
 	
 	inputPtr->Init(windowInfo); //벡터 사이즈 초기화
-	for (int i = 0; i < PLAYERMAX; i++)
-	{
-		playerArr[i].transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	}
-	for (int i = 0; i < NPCMAX; i++)
-	{
-		npcArr[i].transform = XMFLOAT4(5.0f * (i - NPCMAX / 2), 0.0f, 20.0f, 0.0f);
-	}
 
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
@@ -115,12 +107,12 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	//VP 변환
-	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId].transform.x - 7 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
-		playerArr[networkPtr->myClientId].transform.y + 4 + 7 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
-		playerArr[networkPtr->myClientId].transform.z - 7 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
-	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId].transform.x, playerArr[networkPtr->myClientId].transform.y + 1.65f,
-		playerArr[networkPtr->myClientId].transform.z,
-		playerArr[networkPtr->myClientId].transform.w);
+	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - 7 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+		playerArr[networkPtr->myClientId]._transform.y + 4 + 7 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+		playerArr[networkPtr->myClientId]._transform.z - 7 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
+	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x, playerArr[networkPtr->myClientId]._transform.y + 1.65f,
+		playerArr[networkPtr->myClientId]._transform.z,
+		playerArr[networkPtr->myClientId]._transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //뷰 변환 행렬
 	XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
@@ -150,12 +142,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	//애니메이션
 	for (int i = 0; i < PLAYERMAX; i++)
 	{
-		if (playerArr[i].on == true) {
-			animationPtr[i].UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i].animation_state, playerArr[i].animation_state0);
+		if (playerArr[i]._on == true) {
+			animationPtr[i].UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i]._animation_state, playerArr[i]._animation_state0, playerArr[i]._animation_time_pos);
 		}
 	}
 	
-	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0].animation_state, npcArr[0].animation_state0);
+	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0]._animation_state, npcArr[0]._animation_state0, npcArr[0]._animation_time_pos);
 
 	cmdAlloc->Reset();
 	cmdList->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
@@ -193,14 +185,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	//렌더
 	for (int i = 0; i < PLAYERMAX; i++) //플레이어 렌더
 	{
-		if (playerArr[i].on == true)
+		if (playerArr[i]._on == true)
 		{
 			//쓰는이유 : 일반적인 애랑 애니메이션이랑 달라서 그럼
 			//상태가 바껴서 파이프라인 스테이트 오브젝트를 불러서 갱신해주는것
 			//이거 합칠 수 있는 작업 있지 않을까?			
 			{
 				//월드 변환
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f)  * XMMatrixRotationY(playerArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(playerArr[i].transform.x, playerArr[i].transform.y, playerArr[i].transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) 
+					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -211,7 +205,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
+					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId]._transform, sizeof(playerArr[networkPtr->myClientId]._transform));
 					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
 					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
@@ -231,11 +225,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
 	for (int i = 0; i < NPCMAX; i++) //npc 렌더
 	{
-		if (npcArr[i].on == true)
+		if (npcArr[i]._on == true)
 		{			
 			{
 				//월드 변환
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixRotationY(npcArr[i].degree * XM_PI / 180.f) * XMMatrixTranslation(npcArr[i].transform.x, npcArr[i].transform.y + 0.2f, npcArr[i].transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
+					* XMMatrixRotationY(npcArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y + 0.2f, npcArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
@@ -253,7 +249,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
+					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId]._transform, sizeof(playerArr[networkPtr->myClientId]._transform));
 					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
 					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
@@ -261,21 +257,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 					cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
 					sum += i.FaceCount * 3;
 				}
-
-				/*int sum = 0;
-				for (UINT i : fbxLoaderPtr->submeshCount[1])
-				{
-					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId].transform, sizeof(playerArr[networkPtr->myClientId].transform));
-					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
-					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
-					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdList->DrawIndexedInstanced(i, 1, sum, 0, 0);
-					sum += i;
-				}*/
-				
 			}
 		}
 	}
@@ -284,10 +265,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
 	for (int i = 0; i < CubeMax; i++) //기둥 렌더
 	{
-		if (cubeArr[i].on == true)
+		if (cubeArr[i]._on == true)
 		{
 			//월드 변환
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i].transform.x, cubeArr[i].transform.y + 2.0f, cubeArr[i].transform.z));
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i]._transform.x, cubeArr[i]._transform.y + 2.0f, cubeArr[i]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -377,25 +358,25 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	}
 
 	//파티클
-	if (pow(playerArr[0].transform.x - npcArr[9].transform.x, 2) + pow(playerArr[0].transform.z - npcArr[9].transform.z, 2) <= 4.f) //충돌 처리
+	if (pow(playerArr[0]._transform.x - npcArr[9]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[9]._transform.z, 2) <= 4.f) //충돌 처리
 	{
-		if (playerArr[0].isCollision == false)
-			playerArr[0].isFirstCollision = true;
+		if (playerArr[0]._isCollision == false)
+			playerArr[0]._isFirstCollision = true;
 		else
-			playerArr[0].isFirstCollision = false;
-		playerArr[0].isCollision = true;
+			playerArr[0]._isFirstCollision = false;
+		playerArr[0]._isCollision = true;
 	}
-	if (pow(playerArr[0].transform.x - npcArr[9].transform.x, 2) + pow(playerArr[0].transform.z - npcArr[9].transform.z, 2) > 4.f)
+	if (pow(playerArr[0]._transform.x - npcArr[9]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[9]._transform.z, 2) > 4.f)
 	{
-		playerArr[0].isCollision = false;
+		playerArr[0]._isCollision = false;
 	}
 	for (int i = 0; i < 100; i++) //파티클 렌더
 	{
-		if (playerArr[0].isFirstCollision == true && particle[i].alive == 0)
+		if (playerArr[0]._isFirstCollision == true && particle[i].alive == 0)
 		{
 			particle[i].lifeTime = (float)(rand() % 101) / 1000 + 0.1f; //0.1~0.2
 			particle[i].curTime = 0.0f;
-			particle[i].pos = XMVectorSet(npcArr[9].transform.x, npcArr[9].transform.y, npcArr[9].transform.z, 1.f);
+			particle[i].pos = XMVectorSet(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z, 1.f);
 			particle[i].moveSpeed = (float)(rand() % 101) / 50 + 2.f; //2~4
 			particle[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 			XMVector3Normalize(particle[i].dir);

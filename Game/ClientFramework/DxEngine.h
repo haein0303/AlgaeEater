@@ -20,6 +20,7 @@
 #include "AnimationObject.h"
 #include "MESH.h"
 #include "SCENE.h"
+#include "OBJECT.h"
 #include "d11on12.h"
 
 
@@ -66,9 +67,9 @@ public:
 	shared_ptr<d11on12> d11Ptr = make_shared<d11on12>();
 
 	//오브젝트 객체 생성
-	Obj playerArr[PLAYERMAX];
-	Obj npcArr[NPCMAX];
-	Obj cubeArr[CubeMax];
+	OBJECT playerArr[PLAYERMAX];
+	OBJECT npcArr[NPCMAX];
+	OBJECT cubeArr[CubeMax];
 	ParticleData particle[100];
 
 	MESH_ASSET cube_asset;

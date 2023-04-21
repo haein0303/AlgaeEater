@@ -1,6 +1,7 @@
 #pragma once
 #include "Util.h"
 #include <iostream>
+#include "OBJECT.h"
 
 class SFML
 {
@@ -28,7 +29,7 @@ public:
 		return 0;
 	}
 
-	void ReceiveServer(Obj* playerArr, Obj* npcArr, Obj* cubeArr) //서버에서 받는거, clientMain
+	void ReceiveServer(OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr) //서버에서 받는거, clientMain
 	{
 		char net_buf[BUF_SIZE];
 		size_t	received;
@@ -43,7 +44,7 @@ public:
 			if (received > 0) process_data(net_buf, received, playerArr, npcArr, cubeArr);
 	}
 
-	void process_data(char* net_buf, size_t io_byte, Obj* playerArr, Obj* npcArr, Obj* cubeArr)
+	void process_data(char* net_buf, size_t io_byte, OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr)
 	{
 		char* ptr = net_buf;
 		static size_t in_packet_size = 0;
@@ -71,7 +72,7 @@ public:
 
 
 	//서버에서 데이터 받을때(패킷종류별로 무슨 작업 할건지 ex: 이동 패킷, 로그인 패킷 how to 처리)
-	void ProcessPacket(char* ptr, Obj* playerArr, Obj* npcArr, Obj* cubeArr)
+	void ProcessPacket(char* ptr, OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr)
 	{
 		static bool first_time = true;
 		switch (ptr[1])
@@ -80,11 +81,11 @@ public:
 		{
 			SC_LOGIN_OK_PACKET* packet = reinterpret_cast<SC_LOGIN_OK_PACKET*>(ptr);
 			myClientId = packet->id;
-			playerArr[myClientId].on = true;
-			playerArr[myClientId].transform.x = packet->x;
-			playerArr[myClientId].transform.y = packet->y;
-			playerArr[myClientId].transform.z = packet->z;
-			playerArr[myClientId].degree = packet->degree;
+			playerArr[myClientId]._on = true;
+			playerArr[myClientId]._transform.x = packet->x;
+			playerArr[myClientId]._transform.y = packet->y;
+			playerArr[myClientId]._transform.z = packet->z;
+			playerArr[myClientId]._degree = packet->degree;
 
 			break;
 		}
@@ -93,19 +94,19 @@ public:
 			SC_ADD_OBJECT_PACKET* my_packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(ptr);
 			int id = my_packet->id;
 			if (id < PLAYERMAX) {
-				playerArr[id].on = true;
-				playerArr[id].transform.x = my_packet->x;
-				playerArr[id].transform.y = my_packet->y;
-				playerArr[id].transform.z = my_packet->z;
-				playerArr[id].degree = my_packet->degree;
+				playerArr[id]._on = true;
+				playerArr[id]._transform.x = my_packet->x;
+				playerArr[id]._transform.y = my_packet->y;
+				playerArr[id]._transform.z = my_packet->z;
+				playerArr[id]._degree = my_packet->degree;
 			}
 			else if (id >= PLAYERMAX)
 			{
-				npcArr[id - PLAYERMAX].on = true;
-				npcArr[id - PLAYERMAX].transform.x = my_packet->x;
-				npcArr[id - PLAYERMAX].transform.y = my_packet->y;
-				npcArr[id - PLAYERMAX].transform.z = my_packet->z;
-				npcArr[id - PLAYERMAX].degree = my_packet->degree;
+				npcArr[id - PLAYERMAX]._on = true;
+				npcArr[id - PLAYERMAX]._transform.x = my_packet->x;
+				npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
+				npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
+				npcArr[id - PLAYERMAX]._degree = my_packet->degree;
 			}
 
 			break;
@@ -116,18 +117,18 @@ public:
 			int id = my_packet->id;
 			if (id < PLAYERMAX)
 			{
-				playerArr[id].transform.x = my_packet->x;
-				playerArr[id].transform.y = my_packet->y;
-				playerArr[id].transform.z = my_packet->z;
-				playerArr[id].degree = my_packet->degree;
-				playerArr[id].animation_state = my_packet->char_state;
+				playerArr[id]._transform.x = my_packet->x;
+				playerArr[id]._transform.y = my_packet->y;
+				playerArr[id]._transform.z = my_packet->z;
+				playerArr[id]._degree = my_packet->degree;
+				playerArr[id]._animation_state = my_packet->char_state;
 			}
 			else if (id >= PLAYERMAX)
 			{
-				npcArr[id - PLAYERMAX].transform.x = my_packet->x;
-				npcArr[id - PLAYERMAX].transform.y = my_packet->y;
-				npcArr[id - PLAYERMAX].transform.z = my_packet->z;
-				npcArr[id - PLAYERMAX].degree = my_packet->degree;
+				npcArr[id - PLAYERMAX]._transform.x = my_packet->x;
+				npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
+				npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
+				npcArr[id - PLAYERMAX]._degree = my_packet->degree;
 			}
 			
 			break;
@@ -136,18 +137,18 @@ public:
 		{
 			SC_REMOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(ptr);
 			int id = my_packet->id;
-			playerArr[id].on = false;
+			playerArr[id]._on = false;
 			break;
 		}
 		case SC_ADD_CUBE:
 		{
 			SC_ADD_CUBE_PACKET* my_packet = reinterpret_cast<SC_ADD_CUBE_PACKET*>(ptr);
 			int id = my_packet->id;
-			cubeArr[id].on = true;
-			cubeArr[id].transform.x = my_packet->x;
-			cubeArr[id].transform.y = my_packet->y;
-			cubeArr[id].transform.z = my_packet->z;
-			cubeArr[id].degree = my_packet->degree;
+			cubeArr[id]._on = true;
+			cubeArr[id]._transform.x = my_packet->x;
+			cubeArr[id]._transform.y = my_packet->y;
+			cubeArr[id]._transform.z = my_packet->z;
+			cubeArr[id]._degree = my_packet->degree;
 
 			break;
 		}

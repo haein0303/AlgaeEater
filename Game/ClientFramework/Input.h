@@ -2,6 +2,8 @@
 #include "Util.h"
 #include "SFML.h"
 
+class OBJECT;
+
 class Input
 {
 public:
@@ -20,8 +22,8 @@ public:
 	void Init(WindowInfo windowInfo);
 
 	//Å° ÀÔ·Â
-	void InputKey(shared_ptr<Timer> timerPtr, Obj* playerArr, shared_ptr<SFML> networkPtr);
-	void inputMouse(Obj* playerArr, shared_ptr<SFML> networkPtr);
+	void InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr);
+	void inputMouse(OBJECT* playerArr, shared_ptr<SFML> networkPtr);
 
 private:
 	POINT m_ptOldCursorPos;

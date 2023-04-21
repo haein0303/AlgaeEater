@@ -13,13 +13,13 @@ public:
 
 	vector<XMFLOAT4X4> FinalTransforms;
 	string ClipName;
-	float TimePos = 0.0f;
+	//float TimePos = 0.0f;
 
 public:
 	void CreateAnimationObject(vector<SkinnedVertex>& vertices, vector<UINT>& indices, const string& filePath);
 
 	// 매 프레임마다 애니메이션을 진행
-	void UpdateSkinnedAnimation(float dt, int& state, int& state0);
+	void UpdateSkinnedAnimation(float dt, int& state, int& state0, float& animation_time_pos);
 
 	template<typename T>
 	static T Max(const T& a, const T& b) {
