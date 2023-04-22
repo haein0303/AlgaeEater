@@ -16,6 +16,7 @@ public:
 	int			_animation_state0 = 0;
 	float		_animation_time_pos = 0.f;
 	chrono::milliseconds time;
+	vector<XMFLOAT4X4> _final_transforms;
 
 	shared_ptr<MESH_ASSET> _my_mesh;
 

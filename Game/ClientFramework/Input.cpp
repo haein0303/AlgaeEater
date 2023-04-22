@@ -81,6 +81,14 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		d = false;
 		key_toggle = true;
 	}
+	if (_states['1'] == 2)
+	{
+		CS_CONSOLE_PACKET p;
+		p.size = sizeof(p);
+		p.type = CS_CONSOLE;
+		p.console = 1;
+		networkPtr->send_packet(&p);
+	}
 	if (_states[VK_ESCAPE] == 1) {
 		cout << "QUIT" << endl;
 		ExitProcess(0);
@@ -173,17 +181,12 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		playerArr[networkPtr->myClientId]._animation_state = 0;
 	}
 
-	if (_states['1'] == 2)
-	{
-		CS_CONSOLE_PACKET p;
-		p.size = sizeof(p);
-		p.type = CS_CONSOLE;
-		p.console = 1;
-		networkPtr->send_packet(&p);
-	}
-
-	// 애니메이션 상태가 바뀌면 패킷 송신
+	
 	if (playerArr[networkPtr->myClientId]._animation_state0 != playerArr[networkPtr->myClientId]._animation_state) {
+		playerArr[networkPtr->myClientId]._animation_time_pos = 0.f;
+		playerArr[networkPtr->myClientId]._animation_state0 = playerArr[networkPtr->myClientId]._animation_state;
+
+		// 플레이어의 애니메이션 상태가 바뀌면 패킷 송신
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);
 		p.type = CS_MOVE;
@@ -193,7 +196,6 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		p.degree = playerArr[networkPtr->myClientId]._degree;
 		p.char_state = playerArr[networkPtr->myClientId]._animation_state;
 		networkPtr->send_packet(&p);
-		playerArr[networkPtr->myClientId]._animation_state0 = playerArr[networkPtr->myClientId]._animation_state;
 	}
 }
 

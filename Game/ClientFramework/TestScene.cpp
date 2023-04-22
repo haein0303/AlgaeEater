@@ -45,7 +45,7 @@ void TestScene::Update(WindowInfo windowInfo, bool isActive)
 void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12GraphicsCommandList>	cmdList)
 {
 	//애니메이션
-	_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[0]._animation_state, _dxengine->npcArr[0]._animation_state0, _dxengine->npcArr[0]._animation_time_pos);
+	_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[0]._animation_state, _dxengine->npcArr[0]._animation_time_pos, _dxengine->npcArr[0]._final_transforms);
 
 	
 

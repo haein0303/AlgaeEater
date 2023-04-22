@@ -260,8 +260,7 @@ void move_npc(int player_id, int c_id)
 
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
-	clients[c_id].char_state = 0;	
-	// 이거 1로하면 애러남
+	clients[c_id].char_state = 1;
 
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
 	de = de * 180 / PI;

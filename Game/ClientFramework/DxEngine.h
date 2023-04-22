@@ -71,7 +71,7 @@ public:
 	OBJECT npcArr[NPCMAX];
 	OBJECT cubeArr[CubeMax];
 	ParticleData particle[100];
-
+	
 	MESH_ASSET cube_asset;
 	MESH_ASSET player_asset;
 	MESH_ASSET npc_asset;

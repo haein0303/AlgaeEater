@@ -78,7 +78,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	skybox.CreatePSO(L"..\\SkySphere.hlsl");
 
 	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	player_asset.Init("../Resources/AnimeCharacter.txt", ObjectType::GeneralObjects);
+	player_asset.Init("../Resources/Character.txt", ObjectType::AnimationObjects);
 	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_asset.Make_SRV();
 	player_asset.CreatePSO();
@@ -92,6 +92,14 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
+
+	for (int i = 0; i < PLAYERMAX; ++i)
+	{
+		playerArr[i]._final_transforms.resize(player_asset._animationPtr->mBoneHierarchy.size());
+	}
+	for (int i = 0; i < NPCMAX; ++i) {
+		npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
+	}
 
 	cout << "complite late init" << endl;
 }
@@ -140,14 +148,17 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
 
 	//애니메이션
-	for (int i = 0; i < PLAYERMAX; i++)
+	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true) {
-			animationPtr[i].UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i]._animation_state, playerArr[i]._animation_state0, playerArr[i]._animation_time_pos);
+			player_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i]._animation_state, playerArr[i]._animation_time_pos, playerArr[i]._final_transforms);
 		}
 	}
-	
-	npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0]._animation_state, npcArr[0]._animation_state0, npcArr[0]._animation_time_pos);
+	for (int i = 0; i < NPCMAX; ++i) {
+		if (npcArr[i]._on == true) {
+			npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i]._animation_state, npcArr[i]._animation_time_pos, npcArr[i]._final_transforms);
+		}
+	}
 
 	cmdAlloc->Reset();
 	cmdList->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
@@ -169,7 +180,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 
 	cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	cmdList->SetPipelineState(psoPtr->_pipelineState.Get());
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	cmdList->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
@@ -179,9 +189,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
 	cmdList->SetDescriptorHeaps(1, &descHeap);
 
-	cmdList->SetPipelineState(psoPtr->_animationPipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_playerVertexBufferView);
-	cmdList->IASetIndexBuffer(&indexBufferPtr->_playerIndexBufferView);
+	cmdList->SetPipelineState(player_asset._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &player_asset._vertexBufferView);
+	cmdList->IASetIndexBuffer(&player_asset._indexBufferView);
 	//렌더
 	for (int i = 0; i < PLAYERMAX; i++) //플레이어 렌더
 	{
@@ -199,26 +209,21 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 				// 스키닝 애니메이션 행렬 데이터 복사
-				copy(begin(animationPtr[i].FinalTransforms), end(animationPtr[i].FinalTransforms), &_transform.BoneTransforms[0]);
+				copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
 				//렌더
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId]._transform, sizeof(playerArr[networkPtr->myClientId]._transform));
-					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
 					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 				}
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdList->DrawIndexedInstanced(indexBufferPtr->_playerIndexCount, 1, 0, 0, 0);
+				cmdList->DrawIndexedInstanced(player_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
 	}
-	/*cmdList->SetPipelineState(psoPtr->_animationPipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_npcVertexBufferView);
-	cmdList->IASetIndexBuffer(&indexBufferPtr->_npcIndexBufferView);*/
 
 	cmdList->SetPipelineState(npc_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
@@ -237,9 +242,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 				// 스키닝 애니메이션 행렬 데이터 복사
-				//copy(begin(cmdList.FinalTransforms), end(animationPtr[1].FinalTransforms), &_transform.BoneTransforms[0]);
-				copy(begin(npc_asset._animationPtr->FinalTransforms), end(npc_asset._animationPtr->FinalTransforms), &_transform.BoneTransforms[0]);
-
+				copy(begin(npcArr[i]._final_transforms), end(npcArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
 				//렌더
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
@@ -249,8 +252,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					D3D12_CPU_DESCRIPTOR_HANDLE handle2 = constantBufferPtr->PushData(1, &playerArr[networkPtr->myClientId]._transform, sizeof(playerArr[networkPtr->myClientId]._transform));
-					descHeapPtr->CopyDescriptor(handle2, 1, devicePtr);
 					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
