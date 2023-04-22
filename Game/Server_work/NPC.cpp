@@ -260,48 +260,48 @@ void move_npc(int player_id, int c_id)
 
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
-	clients[c_id].char_state = 1;
+
+	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.0f) {
+		// 공격 처리 관련, 여기서 안 할 수도 있음
+		clients[c_id].char_state = 2;
+	}
+	else clients[c_id].char_state = 1;
 
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
 	de = de * 180 / PI;
 	clients[c_id].degree = de;
 
-	if (x > clients[player_id].x) x--;
-	else if (x < clients[player_id].x) x++;
+	if (x > clients[player_id].x) x -= 0.5f;
+	else if (x < clients[player_id].x) x += 0.5f;
 
-	if (z > clients[player_id].z) z--;
-	else if (z < clients[player_id].z) z++;
+	if (z > clients[player_id].z) z -= 0.5f;
+	else if (z < clients[player_id].z) z += 0.5f;
 
-	if (abs(x - clients[player_id].x) < 1) x = clients[player_id].x;
-	if (abs(z - clients[player_id].z) < 1) z = clients[player_id].z;
+	if (abs(x - clients[player_id].x) < 0.5f) x = clients[player_id].x;
+	if (abs(z - clients[player_id].z) < 0.5f) z = clients[player_id].z;
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
-
-	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 2) {
-		// 공격 처리 관련, 여기서 안 할 수도 있음
-		//clients[c_id].char_state = 2;
-	}
 }
 
 void return_npc(int c_id)
 {
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
-	clients[c_id].char_state = 0;
+	clients[c_id].char_state = 1;
 
 	float de = atan2(x - clients[c_id].start_x, z - clients[c_id].start_z);
 	de = de * 180 / PI;
 	clients[c_id].degree = de;
 
-	if (x > clients[c_id].start_x) x--;
-	else if (x < clients[c_id].start_x) x++;
+	if (x > clients[c_id].start_x) x -= 0.5f;
+	else if (x < clients[c_id].start_x) x += 0.5f;
 
-	if (z > clients[c_id].start_z) z--;
-	else if (z < clients[c_id].start_z) z++;
+	if (z > clients[c_id].start_z) z -= 0.5f;
+	else if (z < clients[c_id].start_z) z += 0.5f;
 
-	if (abs(x - clients[c_id].start_x) < 1) x = clients[c_id].start_x;
-	if (abs(z - clients[c_id].start_z) < 1) z = clients[c_id].start_z;
+	if (abs(x - clients[c_id].start_x) < 0.5f) x = clients[c_id].start_x;
+	if (abs(z - clients[c_id].start_z) < 0.5f) z = clients[c_id].start_z;
 
 	if (x == clients[c_id].start_x && z == clients[c_id].start_z) clients[c_id].char_state = 0;
 
