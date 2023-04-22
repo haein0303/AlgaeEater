@@ -52,7 +52,7 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
 
     float3 reflectionDir = normalize(viewLightDir + 2 * (saturate(dot(-viewLightDir, viewNormal)) * viewNormal));
     float3 eyeDir = normalize(viewPos);
-    specularRatio = saturate(dot(-eyeDir, reflectionDir));
+    //specularRatio = saturate(dot(-eyeDir, reflectionDir));
     specularRatio = pow(specularRatio, 2);
 
     color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;

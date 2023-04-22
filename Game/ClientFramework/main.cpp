@@ -9,8 +9,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	
 	MSG msg = { 0 };
 
-	cout << "WinMain INIT CALL" << endl;
-//	LOBBY_CLIENT lobby_client;
+	/*cout << "WinMain INIT CALL" << endl;
+
 	lobby_client.init(hInst, nCmdShow);
 	lobby_client.connect_server(LOBBY_PORT_NUM);
 	while (msg.message != WM_QUIT)
@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 		}
 
 	}
-	cout << "EXIT lobby Msg Queue INIT CALL" << endl;
+	cout << "EXIT lobby Msg Queue INIT CALL" << endl;*/
 
 	Client client;
 	//클라이언트 초기화

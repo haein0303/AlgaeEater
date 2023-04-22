@@ -4,24 +4,24 @@
 
 void DxEngine::Init(WindowInfo windowInfo)
 {
-	//Åë½Å½ÃÀÛ
+	//ï¿½ï¿½Å½ï¿½ï¿½ï¿½
 	cout << "try server connect" << endl;
 	if (-1 == networkPtr->ConnectServer(GAME_PORT_NUM)) {
 		cout << "SERVER CONNECT FAIL" << endl;
 		while (1);
-	}//µ¥ÀÌÅÍ º¸³¿
+	}//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	cout << "complite server connect" << endl;
 
-	//È­¸é Å©±â ¼³Á¤
+	//È­ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	_viewport = { 0, 0, static_cast<FLOAT>(windowInfo.ClientWidth), static_cast<FLOAT>(windowInfo.ClientHeight), 0.0f, 1.0f };
 	_scissorRect = CD3DX12_RECT(0, 0, windowInfo.ClientWidth, windowInfo.ClientHeight);
 
-	//DX¿£Áø ÃÊ±âÈ­
+	//DXï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	devicePtr->CreateDevice();
 	cmdQueuePtr->CreateCmdListAndCmdQueue(devicePtr);
 	swapChainPtr->DescriptAndCreateSwapChain(windowInfo, devicePtr, cmdQueuePtr);
 	rtvPtr->CreateRTV(devicePtr, swapChainPtr);
-	cameraPtr->TransformProjection(windowInfo); //Åõ¿µ º¯È¯
+	cameraPtr->TransformProjection(windowInfo); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	rootSignaturePtr->CreateRootSignature(devicePtr);
 	constantBufferPtr->CreateConstantBuffer(sizeof(Constants), 256, devicePtr);
 	constantBufferPtr->CreateView(devicePtr);
@@ -41,7 +41,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
 	srand((unsigned int)time(NULL));
 	
-	inputPtr->Init(windowInfo); //º¤ÅÍ »çÀÌÁî ÃÊ±âÈ­
+	inputPtr->Init(windowInfo); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
@@ -101,6 +101,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
 	}
 
+	d11Ptr->LoadPipeline();
 	cout << "complite late init" << endl;
 }
 
@@ -114,7 +115,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
-	//VP º¯È¯
+	//VP ï¿½ï¿½È¯
 	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - 7 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
 		playerArr[networkPtr->myClientId]._transform.y + 4 + 7 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
 		playerArr[networkPtr->myClientId]._transform.z - 7 * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
@@ -122,10 +123,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		playerArr[networkPtr->myClientId]._transform.z,
 		playerArr[networkPtr->myClientId]._transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ºä º¯È¯ Çà·Ä
+	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½
 	XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
 
-	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //Åõ¿µ º¯È¯ Çà·Ä
+	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½
 	XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
 
 	//Light
@@ -147,7 +148,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	ComPtr<ID3D12CommandAllocator>		cmdAlloc = cmdQueuePtr->_arr_cmdAlloc[i_now_render_index];
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
 
-	//¾Ö´Ï¸ÞÀÌ¼Ç
+	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true) {
@@ -192,26 +193,26 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	cmdList->SetPipelineState(player_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_asset._indexBufferView);
-	//·»´õ
-	for (int i = 0; i < PLAYERMAX; i++) //ÇÃ·¹ÀÌ¾î ·»´õ
+	//ï¿½ï¿½ï¿½ï¿½
+	for (int i = 0; i < PLAYERMAX; i++) //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 		if (playerArr[i]._on == true)
 		{
-			//¾²´ÂÀÌÀ¯ : ÀÏ¹ÝÀûÀÎ ¾Ö¶û ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ¶û ´Þ¶ó¼­ ±×·³
-			//»óÅÂ°¡ ¹Ù²¸¼­ ÆÄÀÌÇÁ¶óÀÎ ½ºÅ×ÀÌÆ® ¿ÀºêÁ§Æ®¸¦ ºÒ·¯¼­ °»½ÅÇØÁÖ´Â°Í
-			//ÀÌ°Å ÇÕÄ¥ ¼ö ÀÖ´Â ÀÛ¾÷ ÀÖÁö ¾ÊÀ»±î?			
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : ï¿½Ï¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¶ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½Ì¶ï¿½ ï¿½Þ¶ï¿½ ï¿½×·ï¿½
+			//ï¿½ï¿½ï¿½Â°ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´Â°ï¿½
+			//ï¿½Ì°ï¿½ ï¿½ï¿½Ä¥ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?			
 			{
-				//¿ùµå º¯È¯
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) 
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-				// ½ºÅ°´× ¾Ö´Ï¸ÞÀÌ¼Ç Çà·Ä µ¥ÀÌÅÍ º¹»ç
+				// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
-				//·»´õ
+				//ï¿½ï¿½ï¿½ï¿½
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -228,12 +229,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	cmdList->SetPipelineState(npc_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
-	for (int i = 0; i < NPCMAX; i++) //npc ·»´õ
+	for (int i = 0; i < NPCMAX; i++) //npc ï¿½ï¿½ï¿½ï¿½
 	{
 		if (npcArr[i]._on == true)
 		{			
 			{
-				//¿ùµå º¯È¯
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(npcArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y + 0.2f, npcArr[i]._transform.z));
@@ -241,10 +242,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-				// ½ºÅ°´× ¾Ö´Ï¸ÞÀÌ¼Ç Çà·Ä µ¥ÀÌÅÍ º¹»ç
+				// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				copy(begin(npcArr[i]._final_transforms), end(npcArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
-				//·»´õ
+				//ï¿½ï¿½ï¿½ï¿½
 				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 				
 				int sum = 0;
@@ -264,16 +265,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	cmdList->SetPipelineState(cube_asset._pipelineState.Get());	
 	cmdList->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
-	for (int i = 0; i < CubeMax; i++) //±âµÕ ·»´õ
+	for (int i = 0; i < CubeMax; i++) //ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 		if (cubeArr[i]._on == true)
 		{
-			//¿ùµå º¯È¯
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i]._transform.x, cubeArr[i]._transform.y + 2.0f, cubeArr[i]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-			//·»´õ
+			//ï¿½ï¿½ï¿½ï¿½
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);		
@@ -288,16 +289,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 		}
 	}
 
-	// ¸Ê ·»´õ
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 		cmdList->SetPipelineState(map_asset._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
 		cmdList->IASetIndexBuffer(&map_asset._indexBufferView);
-		//¿ùµå º¯È¯
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(3.0f, 3.0f, 3.0f)* XMMatrixTranslation(0.f, 0.f, 0.f));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-		//·»´õ
+		//ï¿½ï¿½ï¿½ï¿½
 		{
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -311,16 +312,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 		cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
 	}
 
-	// ¹Ù´Ú ·»´õ
+	// ï¿½Ù´ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 		cmdList->SetPipelineState(floor._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
 		cmdList->IASetIndexBuffer(&floor._indexBufferView);
-		//¿ùµå º¯È¯
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 1.0f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, -0.1f, 0.f));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-		//·»´õ
+		//ï¿½ï¿½ï¿½ï¿½
 		{
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -334,17 +335,17 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 		cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
 	}
 
-	// ½ºÄ«ÀÌ ¹Ú½º ·»´õ
+	// ï¿½ï¿½Ä«ï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 		cmdList->SetPipelineState(skybox._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &skybox._vertexBufferView);
 		cmdList->IASetIndexBuffer(&skybox._indexBufferView);
-		//¿ùµå º¯È¯
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(0.f, 2.f, 0.f));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 		_transform.camera_pos = cameraPtr->pos;
-		//·»´õ
+		//ï¿½ï¿½ï¿½ï¿½
 		{
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
@@ -358,8 +359,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 		cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
 	}
 
-	//ÆÄÆ¼Å¬
-	if (pow(playerArr[0]._transform.x - npcArr[9]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[9]._transform.z, 2) <= 4.f) //Ãæµ¹ Ã³¸®
+	//ï¿½ï¿½Æ¼Å¬
+	if (pow(playerArr[0]._transform.x - npcArr[9]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[9]._transform.z, 2) <= 4.f) //ï¿½æµ¹ Ã³ï¿½ï¿½
 	{
 		if (playerArr[0]._isCollision == false)
 			playerArr[0]._isFirstCollision = true;
@@ -371,7 +372,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	{
 		playerArr[0]._isCollision = false;
 	}
-	for (int i = 0; i < 100; i++) //ÆÄÆ¼Å¬ ·»´õ
+	for (int i = 0; i < 100; i++) //ï¿½ï¿½Æ¼Å¬ ï¿½ï¿½ï¿½ï¿½
 	{
 		if (playerArr[0]._isFirstCollision == true && particle[i].alive == 0)
 		{
@@ -385,10 +386,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 		}
 		else if (particle[i].alive == 1)
 		{
-			//¿ùµå º¯È¯
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
 			XMStoreFloat4x4(&_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //¿ùµå º¯È¯ Çà·Ä
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			particle[i].curTime += 0.001;
 			if (particle[i].lifeTime < particle[i].curTime)
@@ -414,19 +415,24 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 
 	::WaitForSingleObject(_excuteEvent, INFINITE);
 	SetEvent(_renderEvent);
+
 	
-	//·»´õ Á¾·á
-	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // È­¸é Ãâ·Â
+
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // È­ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	cmdList->ResourceBarrier(1, &barrier2);
 	cmdList->Close();
 
+	
+
 	ID3D12CommandList* cmdListArr[] = { cmdList.Get() };
 	cmdQueuePtr->_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
-
+	d11Ptr->RenderUI(i_now_render_index);
+	
 	swapChainPtr->_swapChain->Present(0, 0);
-
+	
 	cmdQueuePtr->WaitSync();
 
 	swapChainPtr->_backBufferIndex = (swapChainPtr->_backBufferIndex + 1) % SWAP_CHAIN_BUFFER_COUNT;
@@ -436,8 +442,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 
 void DxEngine::Make_Scene()
 {	
-	// arrScene[SceneTag::Title] = new TitleScene();	// ÀÌ·± ¹æ½ÄÀ¸·Î ¾ÀÀ» ¸¸µé¾î¶ó.
-	//ÀÌ·¸°Ô °è¼Ó Ãß°¡ÇÕ´Ï´Ù.
+	// arrScene[SceneTag::Title] = new TitleScene();	// ï¿½Ì·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+	//ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Õ´Ï´ï¿½.
 	arrScene[SCENE::SceneTag::test_scene] = new TestScene(SCENE::SceneTag::test_scene, this);
 }
 
