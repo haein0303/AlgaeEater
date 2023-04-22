@@ -24,7 +24,7 @@ function tracking_player( player_id )
 	npc_x = API_get_x(my_id)
 	npc_z = API_get_z(my_id)
 
-	if ( math.abs (player_x - npc_start_x) + math.abs (player_z - npc_start_z) <= 7) then
+	if ( math.abs (player_x - npc_start_x) + math.abs (player_z - npc_start_z) <= 15) then
 		API_Tracking (player_id, my_id)
 	else
 		if (npc_start_x ~= npc_x or npc_start_z ~= npc_z) then
