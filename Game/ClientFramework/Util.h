@@ -303,6 +303,7 @@ constexpr int NPC_NUM = NPCMAX;
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
 constexpr char CS_CONSOLE = 2;
+constexpr char CS_COLLISION = 3;
 
 constexpr char SC_LOGIN_OK = 11;
 constexpr char SC_ADD_OBJECT = 12;
@@ -341,9 +342,17 @@ struct CS_MOVE_PACKET {
 };
 
 struct CS_CONSOLE_PACKET {
-	unsigned char size;
-	char	type;
-	int console;
+	unsigned char	size;
+	char			type;
+	int				console;
+};
+
+struct CS_COLLISION_PACKET {
+	unsigned char	size;
+	char			type;
+	char			attack_type;
+	int				attacker_id;	// 공격자 
+	int				target_id;		// 피격자
 };
 
 struct SC_LOGIN_OK_PACKET {

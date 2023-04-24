@@ -115,6 +115,38 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
+	// 플레이어와 npc 공격에 대한 충돌 처리
+	for (int i = 0; i < PLAYERMAX; ++i) {
+		if (playerArr[i]._on == true) {
+			for (int j = 0; j < NPCMAX; ++j)
+			{
+				if (npcArr[j]._on == true) {
+					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
+						if (playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3) { // 플레이어가 공격중이라면
+							CS_COLLISION_PACKET p;
+							p.size = sizeof(p);
+							p.type = CS_COLLISION;
+							p.attack_type = 'a'; // 의미 없는 값
+							p.attacker_id = i;
+							p.target_id = j;
+							networkPtr->send_packet(&p);
+						}
+						if (npcArr[i]._animation_state == 2) { // npc가 공격중이라면
+							CS_COLLISION_PACKET p;
+							p.size = sizeof(p);
+							p.type = CS_COLLISION;
+							p.attack_type = 'a'; // 의미 없는 값
+							p.attacker_id = j;
+							p.target_id = i;
+							networkPtr->send_packet(&p);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+
 	//VP ��ȯ
 	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - 7 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
 		playerArr[networkPtr->myClientId]._transform.y + 4 + 7 * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
@@ -142,7 +174,7 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 
 
 
-void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
+void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 {
 	::WaitForSingleObject(_renderEvent, INFINITE);
 	ComPtr<ID3D12CommandAllocator>		cmdAlloc = cmdQueuePtr->_arr_cmdAlloc[i_now_render_index];
@@ -173,7 +205,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = rtvPtr->_rtvHandle[i_now_render_index];
-	
+
 	cmdList->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dsvPtr->_dsvHandle;
 	cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
@@ -194,7 +226,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 	cmdList->IASetVertexBuffers(0, 1, &player_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_asset._indexBufferView);
 	//����
-	for (int i = 0; i < PLAYERMAX; i++) //�÷��̾� ����
+	for (int i = 0; i < PLAYERMAX; ++i) //�÷��̾� ����
 	{
 		if (playerArr[i]._on == true)
 		{
@@ -203,7 +235,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo,int i_now_render_index)
 			//�̰� ��ĥ �� �ִ� �۾� ���� ������?			
 			{
 				//���� ��ȯ
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) 
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);

@@ -15,6 +15,7 @@ public:
 	int			_animation_state = 0;
 	int			_animation_state0 = 0;
 	float		_animation_time_pos = 0.f;
+	float		_hp;
 	chrono::milliseconds time;
 	vector<XMFLOAT4X4> _final_transforms;
 
