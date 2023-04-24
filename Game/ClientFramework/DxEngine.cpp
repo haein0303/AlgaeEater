@@ -27,7 +27,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	constantBufferPtr->CreateView(devicePtr);
 	descHeapPtr->CreateDescTable(256, devicePtr);
 	
-	d11Ptr->init(this);
+	d11Ptr->init(this, windowInfo);
 
 	cout << "complite Init ptr" << endl;
 
@@ -102,6 +102,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	}
 
 	d11Ptr->LoadPipeline();
+	d11Ptr->addResource(L"..\\Resources\\Lobby\\button_1.png");
 	cout << "complite late init" << endl;
 }
 

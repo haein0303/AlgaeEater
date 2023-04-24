@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef HINST_THISCOMPONENT
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
+#endif
 
 //전방선언스
 class DxEngine;
@@ -24,19 +28,49 @@ private:
 	ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
 
 	
+	
 
 	ComPtr<ID2D1SolidColorBrush> mSolidColorBrush = nullptr;
 	ComPtr<IDWriteTextFormat> mDWriteTextFormat = nullptr;
 
+	//이미지용으로 따로 만들어야댕
+	IWICImagingFactory* m_pWICFactory;
+	ID2D1HwndRenderTarget* m_pRenderTarget;
+
 	UINT m_rtvDescriptorSize;
 
-
+	ID2D1Bitmap* test;
 
 public:
+	vector<ID2D1Bitmap*> _v_Resource;
+	~d11on12() {
+		m_d2dFactory->Release();
+	}
 
-	void init(DxEngine* engine);
+	void init(DxEngine* engine, WindowInfo windowInfo);
 	void LoadPipeline();
+
+	void addResource(LPCWSTR path);
 	void RenderUI(int mCurrBackbufferIndex);
+
+	HRESULT LoadBitmapFromFile(
+		ID2D1RenderTarget* pRenderTarget,
+		IWICImagingFactory* pIWICFactory,
+		PCWSTR uri,
+		UINT destinationWidth,
+		UINT destinationHeight,
+		ID2D1Bitmap** ppBitmap
+	);
 
 };
 
+template<class Interface>
+inline void SafeRelease(Interface** ppInterfaceToRelease)
+{
+	if (*ppInterfaceToRelease != NULL)
+	{
+		(*ppInterfaceToRelease)->Release();
+
+		(*ppInterfaceToRelease) = NULL;
+	}
+}
