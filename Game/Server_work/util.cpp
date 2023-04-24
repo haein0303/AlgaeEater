@@ -108,6 +108,21 @@ void process_packet(int c_id, char* packet)
 		reset_lua(c_id);
 		break;
 	}
+	case CS_COLLISION: {
+		CS_COLLISION_PACKET* p = reinterpret_cast<CS_COLLISION_PACKET*>(packet);
+		int npc_id = 0;
+		if (p->attacker_id < 4) {	// 공격자가 플레이어
+			npc_id = clients[c_id]._Room_Num * 10 + (p->target_id - 4) + MAX_USER;
+
+			clients[npc_id].hp -= 10;
+		}
+		else {						// 공격자가 npc
+			npc_id = clients[c_id]._Room_Num * 10 + (p->attacker_id - 4) + MAX_USER;
+
+			clients[c_id].hp -= 10;
+		}
+		break;
+	}
 	case SS_CONNECT_SERVER: {
 		cout << "SS_CONNECT_SERVER 로비 서버 커넥트" << endl;
 		SS_CONNECT_SERVER_PACKET* p = reinterpret_cast<SS_CONNECT_SERVER_PACKET*>(packet);
