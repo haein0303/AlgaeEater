@@ -310,6 +310,9 @@ void Update_Player()
 		}
 		clients[i]._sl.unlock();
 
+		clients[i].send_move_packet(i % 4, clients[i].x, clients[i].y, clients[i].z, clients[i].degree,
+			clients[i].hp, clients[i].char_state);
+
 
 		for (auto& pl : clients[i].room_list) {			
 			clients[pl]._sl.lock();
