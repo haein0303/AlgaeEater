@@ -117,6 +117,9 @@ public:
 			int id = my_packet->id;
 			if (id < PLAYERMAX)
 			{
+				playerArr[id]._hp = my_packet->hp;
+			}
+			else if (id < PLAYERMAX && myClientId != id) {
 				playerArr[id]._transform.x = my_packet->x;
 				playerArr[id]._transform.y = my_packet->y;
 				playerArr[id]._transform.z = my_packet->z;
@@ -129,6 +132,7 @@ public:
 				npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
 				npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
 				npcArr[id - PLAYERMAX]._degree = my_packet->degree;
+				npcArr[id - PLAYERMAX]._hp = my_packet->hp;
 				npcArr[id - PLAYERMAX]._animation_state = my_packet->char_state;
 			}
 			

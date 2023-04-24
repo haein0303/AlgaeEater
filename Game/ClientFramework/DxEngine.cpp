@@ -131,8 +131,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.attacker_id = i;
 							p.target_id = j;
 							networkPtr->send_packet(&p);
+
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
-						if (npcArr[i]._animation_state == 2) { // npc가 공격중이라면
+						if (npcArr[j]._animation_state == 2) { // npc가 공격중이라면
 							CS_COLLISION_PACKET p;
 							p.size = sizeof(p);
 							p.type = CS_COLLISION;
@@ -140,6 +143,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.attacker_id = j;
 							p.target_id = i;
 							networkPtr->send_packet(&p);
+
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 					}
 				}
