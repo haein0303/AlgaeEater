@@ -119,12 +119,17 @@ public:
 			{
 				playerArr[id]._hp = my_packet->hp;
 			}
-			else if (id < PLAYERMAX && myClientId != id) {
+			if (id < PLAYERMAX && myClientId != id) {
 				playerArr[id]._transform.x = my_packet->x;
 				playerArr[id]._transform.y = my_packet->y;
 				playerArr[id]._transform.z = my_packet->z;
 				playerArr[id]._degree = my_packet->degree;
 				playerArr[id]._animation_state = my_packet->char_state;
+
+				if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
+					playerArr[id]._animation_time_pos = 0.f;
+					playerArr[id]._animation_state0 = playerArr[id]._animation_state;
+				}
 			}
 			else if (id >= PLAYERMAX)
 			{
