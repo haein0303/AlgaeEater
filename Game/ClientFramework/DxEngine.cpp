@@ -320,6 +320,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y + 1.f, npcArr[i]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+			_transform.hp_bar_size = 2.f;
+			_transform.hp_bar_start_pos = npcArr[i]._transform;
+			_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f ;
+			cout << _transform.hp_bar_start_pos.x << endl;
+			_transform.current_hp = npcArr[i]._hp;
+			_transform.max_hp = 100;
 
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));

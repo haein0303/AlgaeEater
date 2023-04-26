@@ -204,21 +204,11 @@ struct Constants
 	XMFLOAT4X4 BoneTransforms[96];
 	int obj_type = 0;
 	XMVECTOR camera_pos;
+	XMFLOAT4 hp_bar_start_pos;
+	int current_hp;
+	float hp_bar_size;
+	int max_hp;
 };
-
-/*
-struct Obj
-{
-	bool on = false;
-	float	degree;
-	XMFLOAT4 transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	int animation_state;
-	int animation_state0;
-	bool isCollision = false;
-	bool isFirstCollision = false;
-	chrono::milliseconds time;
-};
-*/
 
 struct Point
 {
