@@ -13,21 +13,20 @@
 #include <queue>
 #include <array>
 #include <memory>
+#include "protocol.h"
 
 using namespace std;
 using namespace chrono;
 
 extern HWND		hWnd;
 
-const static int MAX_TEST = 3000;
+const static int MAX_TEST = MAX_USER;
 const static int MAX_CLIENTS = MAX_TEST * 2;
 const static int INVALID_ID = -1;
 const static int MAX_PACKET_SIZE = 255;
 const static int MAX_BUFF_SIZE = 255;
 
 #pragma comment (lib, "ws2_32.lib")
-
-#include "../../Game/Server_work/protocol.h"
 
 HANDLE g_hiocp;
 
@@ -48,7 +47,6 @@ struct CLIENT {
 	float x;
 	float y;
 	float z;
-	bool state = false;
 	atomic_bool connected;
 
 	SOCKET client_socket;
@@ -75,7 +73,7 @@ float point_cloud[MAX_TEST * 2];
 // 나중에 NPC까지 추가 확장 용
 struct ALIEN {
 	int id;
-	int x, y;
+	float x, y, z;
 	int visible_count;
 };
 
@@ -131,7 +129,7 @@ void ProcessPacket(int ci, unsigned char packet[])
 	switch (packet[1]) {
 	case SC_MOVE_OBJECT: {
 		SC_MOVE_OBJECT_PACKET* move_packet = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(packet);
-		if (move_packet->id < MAX_CLIENTS) {
+		if (move_packet->id < MAX_USER) {
 			int my_id = client_map[move_packet->id];
 			if (-1 != my_id) {
 				g_clients[my_id].x = move_packet->x;
@@ -139,12 +137,12 @@ void ProcessPacket(int ci, unsigned char packet[])
 				g_clients[my_id].z = move_packet->z;
 			}
 			if (ci == my_id) {
-				/*if (0 != move_packet->client_time) {
+				if (0 != move_packet->client_time) {
 					auto d_ms = duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count() - move_packet->client_time;
 
 					if (global_delay < d_ms) global_delay++;
 					else if (global_delay > d_ms) global_delay--;
-				}*/
+				}
 			}
 		}
 	}
@@ -156,14 +154,6 @@ void ProcessPacket(int ci, unsigned char packet[])
 		g_clients[ci].connected = true;
 		active_clients++;
 
-		while (true) {
-			if (g_clients[ci].state == true) {
-				ci += 1;
-			}
-			else break;
-		}
-
-
 		SC_LOGIN_OK_PACKET* login_packet = reinterpret_cast<SC_LOGIN_OK_PACKET*>(packet);
 		int my_id = ci;
 		client_map[login_packet->id] = my_id;
@@ -171,19 +161,10 @@ void ProcessPacket(int ci, unsigned char packet[])
 		g_clients[my_id].x = login_packet->x;
 		g_clients[my_id].y = login_packet->y;
 		g_clients[my_id].z = login_packet->z;
-		g_clients[my_id].state = true;
-
-		/*cs_packet_teleport t_packet;
-		t_packet.size = sizeof(t_packet);
-		t_packet.type = CS_TELEPORT;
-		SendPacket(my_id, &t_packet);*/
 	}
 	break;
 	case SC_ADD_CUBE:
 		break;
-	//case SC_LOGIN_FAIL: break;
-	//case SC_CHAT: break;
-	//case SC_STAT_CHANGE: break;
 	default: MessageBox(hWnd, L"Unknown Packet Type", L"ERROR", 0);
 		while (true);
 	}
@@ -269,9 +250,9 @@ void Worker_Thread()
 	}
 }
 
-constexpr int DELAY_LIMIT = 100;
-constexpr int DELAY_LIMIT2 = 150;
-constexpr int ACCEPT_DELY = 50;
+constexpr int DELAY_LIMIT = 1000;
+constexpr int DELAY_LIMIT2 = 1500;
+constexpr int ACCEPT_DELY = 500;
 
 void Adjust_Number_Of_Client()
 {
@@ -312,8 +293,8 @@ void Adjust_Number_Of_Client()
 	SOCKADDR_IN ServerAddr;
 	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
 	ServerAddr.sin_family = AF_INET;
-	ServerAddr.sin_port = htons(PORT_NUM);
-	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	ServerAddr.sin_port = htons(GAME_SERVER_PORT_NUM);
+	ServerAddr.sin_addr.s_addr = inet_addr(GAME_SERVER_IP);
 
 
 	int Result = WSAConnect(g_clients[num_connections].client_socket, (sockaddr*)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
@@ -359,7 +340,7 @@ fail_to_connect:
 void Test_Thread()
 {
 	while (true) {
-		//Sleep(max(20, global_delay));
+		Sleep(max(20, global_delay));
 		Adjust_Number_Of_Client();
 
 		for (int i = 0; i < num_connections; ++i) {
