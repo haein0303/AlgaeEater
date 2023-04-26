@@ -71,6 +71,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	floor.Make_SRV();
 	floor.CreatePSO(L"..\\Bricks.hlsl");
 
+	hp_bar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	hp_bar.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
+	hp_bar.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
+	hp_bar.Make_SRV();
+	hp_bar.CreatePSO(L"..\\HPBar.hlsl");
+
 	skybox.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	skybox.Init("../Resources/SkySphere.txt", ObjectType::SkyBox);
 	skybox.Add_texture(L"..\\Resources\\Texture\\Sky.jpg");
@@ -301,6 +307,34 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 	}
+
+	// npc hp bar
+	cmdList->SetPipelineState(hp_bar._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &hp_bar._vertexBufferView);
+	cmdList->IASetIndexBuffer(&hp_bar._indexBufferView);
+	for (int i = 0; i < NPCMAX; i++)
+	{
+		if (npcArr[i]._on == true) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
+				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._transform.z))
+				* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y + 1.f, npcArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+				hp_bar._tex._srvHandle = hp_bar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+				descHeapPtr->CopyDescriptor(hp_bar._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(hp_bar._indexCount, 1, 0, 0, 0);
+		}
+	}
+
 	cmdList->SetPipelineState(cube_asset._pipelineState.Get());	
 	cmdList->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
@@ -427,7 +461,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		{
 			//���� ��ȯ
 			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
-			XMStoreFloat4x4(&_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2])) * XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
+			XMStoreFloat4x4(&_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2]))
+				* XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //���� ��ȯ ���
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			particle[i].curTime += 0.001;

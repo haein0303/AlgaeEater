@@ -78,6 +78,7 @@ public:
 	MESH_ASSET map_asset;
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
+	MESH_ASSET hp_bar;
 
 	//상수버퍼로 넘길 데이터
 	Constants _transform = {};
