@@ -275,7 +275,9 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_RUSH: {
-			rush_npc(ex_over->target_id, key);
+			float t_x = clients[key].start_x;
+			float t_z = clients[key].start_z;
+			rush_npc(key, t_x, t_z);
 			delete ex_over;
 			break;
 		}

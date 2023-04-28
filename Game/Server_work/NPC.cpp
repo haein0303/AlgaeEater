@@ -215,43 +215,41 @@ void send_cube(int c_id, float x, float y, float z)
 	add_timer(0, 5000, EV_CB, c_id);
 }
 
-void rush_npc(int player_id, int c_id)
+void rush_npc(int c_id, float t_x, float t_z)
 {
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
 
-	Sleep(33);
-
-	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 2) {
-		add_timer(c_id, 10000, EV_RUSH, player_id);
+	if (abs(x - t_x) + abs(z - t_z) <= 2) {
+		add_timer(c_id, 10000, EV_CK, c_id);
 		return;
 	}
 
 	for (int i = clients[c_id]._Room_Num * 4; i < clients[c_id]._Room_Num * 4 + 4; i++) {
 		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 2) {
 			cout << "±âµÕ Ãæµ¹" << endl;
-			add_timer(c_id, 10000, EV_RUSH, player_id);
+			add_timer(c_id, 10000, EV_CK, c_id);
 			return;
 		}
 	}
 
-	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
+	float de = atan2(x - t_x, z - t_z);
 	de = de * 180 / PI;
 	clients[c_id].degree = de;
 
-	if (x > clients[player_id].x) x--;
-	else if (x < clients[player_id].x) x++;
+	if (x > t_x) x--;
+	else if (x < t_x) x++;
 
-	if (z > clients[player_id].z) z--;
-	else if (z < clients[player_id].z) z++;
+	if (z > t_z) z--;
+	else if (z < t_z) z++;
 
-	if (abs(x - clients[player_id].x) < 1) x = clients[player_id].x;
-	if (abs(z - clients[player_id].z) < 1) z = clients[player_id].z;
+	if (abs(x - t_x) < 1) x = t_x;
+	if (abs(z - t_z) < 1) z = t_z;
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
 
-	rush_npc(player_id, c_id);
+	add_timer(c_id, 30, EV_RUSH, c_id);
 }
 
 void move_npc(int player_id, int c_id)

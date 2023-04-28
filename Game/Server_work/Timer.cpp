@@ -83,18 +83,13 @@ void do_timer()
 				srand((unsigned int)time(NULL));
 				int rd_id = clients[ev.object_id]._Room_Num * 4;
 
-				if (clients[rd_id]._s_state == ST_INGAME) {
-					lua_getglobal(clients[ev.object_id].L, "event_rush");
-					lua_pushnumber(clients[ev.object_id].L, rd_id);
-					lua_pcall(clients[ev.object_id].L, 1, 0, 0);
+				lua_getglobal(clients[ev.object_id].L, "event_rush");
+				lua_pushnumber(clients[ev.object_id].L, rd_id);
+				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 
-					lua_getglobal(clients[ev.object_id].L, "create_cube");
-					lua_pushnumber(clients[ev.object_id].L, ev.object_id);
-					lua_pcall(clients[ev.object_id].L, 1, 0, 0);
-				}
-				else {
-					add_timer(0, 10, EV_CK, 0);
-				}
+				lua_getglobal(clients[ev.object_id].L, "create_cube");
+				lua_pushnumber(clients[ev.object_id].L, ev.object_id);
+				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 				break;
 			}
 			case EV_CB:

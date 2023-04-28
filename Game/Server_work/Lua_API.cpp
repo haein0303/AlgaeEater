@@ -62,11 +62,15 @@ int API_Cube(lua_State* L)
 
 int API_Rush(lua_State* L)
 {
-	int client_id = lua_tonumber(L, -2);
-	int npc_id = lua_tonumber(L, -1);
-	lua_pop(L, 3);
+	int npc_id = lua_tonumber(L, -3);
+	float t_x = lua_tonumber(L, -2);
+	float t_z = lua_tonumber(L, -1);
+	lua_pop(L, 4);
 
-	add_timer(npc_id, 10000, EV_RUSH, client_id);
+	clients[npc_id].start_x = t_x;
+	clients[npc_id].start_z = t_z;
+
+	add_timer(npc_id, 100, EV_RUSH, npc_id);
 	return 0;
 }
 

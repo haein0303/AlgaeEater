@@ -250,9 +250,9 @@ void Worker_Thread()
 	}
 }
 
-constexpr int DELAY_LIMIT = 1000;
-constexpr int DELAY_LIMIT2 = 1500;
-constexpr int ACCEPT_DELY = 500;
+constexpr int DELAY_LIMIT = 100;
+constexpr int DELAY_LIMIT2 = 150;
+constexpr int ACCEPT_DELY = 50;
 
 void Adjust_Number_Of_Client()
 {
@@ -340,7 +340,7 @@ fail_to_connect:
 void Test_Thread()
 {
 	while (true) {
-		Sleep(max(20, global_delay));
+		//Sleep(max(20, global_delay));
 		Adjust_Number_Of_Client();
 
 		for (int i = 0; i < num_connections; ++i) {
