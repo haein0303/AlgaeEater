@@ -16,6 +16,7 @@ SESSION::SESSION()
 	_Room_Num = 0;
 	start_x = 0;
 	start_z = 0;
+	stage = 0;
 	Lua_on = false;
 }
 

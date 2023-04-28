@@ -30,6 +30,7 @@ void initialize_npc()
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;
+		clients[i].stage = 0;
 
 		clients[i].L = luaL_newstate();
 

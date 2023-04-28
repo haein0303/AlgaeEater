@@ -19,6 +19,7 @@ constexpr int CUBE_NUM = ROOM_NUM * 4;
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
 constexpr char CS_CONSOLE = 2;
+constexpr char CS_COLLISION = 3;
 
 constexpr char SC_LOGIN_OK = 11;
 constexpr char SC_ADD_OBJECT = 12;
@@ -60,6 +61,14 @@ struct CS_CONSOLE_PACKET {
 	unsigned char size;
 	char	type;
 	int console;
+};
+
+struct CS_COLLISION_PACKET {
+	unsigned char size;
+	char	type;
+	char	attack_type;
+	int		attacker_id;
+	int		target_id;
 };
 
 struct SC_LOGIN_OK_PACKET {
@@ -128,6 +137,7 @@ struct LCS_LOGIN_PACKET {
 struct LCS_MATCH_PACKET {
 	unsigned char size;
 	char	type;
+	int		stage;
 };
 
 struct LCS_OUT_PACKET {

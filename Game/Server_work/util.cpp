@@ -56,6 +56,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._Room_Num = c_id / 4;
 		clients[c_id].room_list.clear();
+		clients[c_id].stage = p->stage;
 		clients[c_id]._sl.unlock();
 
 		for (int i = 0; i < MAX_USER; ++i) {

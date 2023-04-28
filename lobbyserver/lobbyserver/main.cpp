@@ -24,7 +24,7 @@ using namespace std;
 
 enum COMP_TYPE { OP_ACCEPT, OP_RECV, OP_SEND, OP_NPC_MOVE, OP_NPC_RUSH, OP_CREATE_CUBE, OP_UPDATE };
 
-enum SESSION_STATE { ST_FREE, ST_ACCEPTED, ST_INGAME, ST_SLEEP };
+enum SESSION_STATE { ST_FREE, ST_ACCEPTED, ST_INGAME };
 
 class OVER_EXP {
 public:
@@ -62,6 +62,7 @@ public:
 	char	_name[NAME_SIZE];
 	int		_state;
 	int		_prev_remain;
+	int		_stage;
 
 public:
 	SESSION()
@@ -72,6 +73,7 @@ public:
 		_s_state = ST_FREE;
 		_state = 0;
 		_prev_remain = 0;
+		_stage = 0;
 	}
 
 	~SESSION() {}
@@ -108,7 +110,8 @@ array<SESSION, MAX_USER> clients;
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 SOCKET ss_socket;
-list<int> match_list;
+list<int> test_match_list;
+list<int> stage1_match_list;
 
 int get_new_client_id()
 {
@@ -163,13 +166,37 @@ void process_packet(int c_id, char* packet)
 		break;
 	}
 	case LCS_MATCH: {
+		LCS_MATCH_PACKET* p = reinterpret_cast<LCS_MATCH_PACKET*>(packet);
 		clients[c_id]._state = 1;
-		match_list.push_back(c_id);
+		clients[c_id]._stage = p->stage;
+
+		// p->stage = 0이면 테스트, 1이면 스테이지 1
+		switch (clients[c_id]._stage)
+		{
+			case 0:
+				test_match_list.push_back(c_id);
+				break;
+			case 1:
+				stage1_match_list.push_back(c_id);
+				break;
+			default:
+				break;
+		}
 		break;
 	}
 	case LCS_OUT: {
 		clients[c_id]._state = 0;
-		match_list.remove(c_id);
+		switch (clients[c_id]._stage)
+		{
+		case 0:
+			test_match_list.remove(c_id);
+			break;
+		case 1:
+			stage1_match_list.remove(c_id);
+			break;
+		default:
+			break;
+		}
 		break;
 	}
 	case SS_CONNECT_SERVER: {
@@ -345,15 +372,24 @@ void do_worker()
 			delete ex_over;
 			break;
 		case OP_UPDATE:
-			if (match_list.size() >= 1) {
-				// 만약에 겜서버 준비가 필요하면 여기서 하라고 보내줘야 함
+			if (test_match_list.size() >= 1) {
 				for (int i = 0; i < 1; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;
 					p.size = sizeof(LSC_CONGAME_PACKET);
 					p.type = LSC_CONGAME;
-					clients[match_list.front()].do_send(&p);
-					match_list.pop_front();
+					clients[test_match_list.front()].do_send(&p);
+					test_match_list.pop_front();
+				}
+			}
+			if (stage1_match_list.size() >= 1) {
+				for (int i = 0; i < 1; ++i) {
+					LSC_CONGAME_PACKET p;
+					p.connect = true;
+					p.size = sizeof(LSC_CONGAME_PACKET);
+					p.type = LSC_CONGAME;
+					clients[stage1_match_list.front()].do_send(&p);
+					stage1_match_list.pop_front();
 				}
 			}
 			break;

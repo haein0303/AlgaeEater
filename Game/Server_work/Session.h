@@ -31,6 +31,7 @@ public:
 	std::mutex	_sl;
 	int		hp;
 	int		char_state;
+	int		stage;
 
 	// 임시 변수
 	float start_x, start_z;
