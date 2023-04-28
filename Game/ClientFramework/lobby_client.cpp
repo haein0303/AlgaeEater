@@ -102,7 +102,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	{
 	case WM_CREATE:
 		SetTimer(hwnd, 1, 200, (TIMERPROC)TimerProc);
-		BG.Load(L"..\\Resources\\Lobby\\test.png");
+		BG.Load(L"..\\Resources\\Lobby\\title_back.png");
 		for (int i = 1; i <= 4; ++i) {
 			wchar_t loading[40];
 			wsprintf(loading,L"..\\Resources\\Lobby\\button_%d.png", i);
@@ -206,6 +206,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				LCS_MATCH_PACKET p_MATCH;
 				p_MATCH.size = sizeof(p_MATCH);
 				p_MATCH.type = LCS_MATCH;
+				p_MATCH.stage = 0;
 				lobby_client.Lobby_network->send_packet(&p_MATCH);
 				lobby_client.draw_text(L"SEND MATCH PACKET");
 				lobby_client._ready_state = 0;
