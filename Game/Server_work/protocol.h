@@ -116,6 +116,7 @@ struct SC_MOVE_OBJECT_PACKET {
 	float	degree;
 	int		hp;
 	int		char_state;
+	unsigned int client_time;
 };
 
 struct SS_CONNECT_SERVER_PACKET {

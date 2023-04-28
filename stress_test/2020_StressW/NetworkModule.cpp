@@ -136,14 +136,14 @@ void ProcessPacket(int ci, unsigned char packet[])
 				g_clients[my_id].y = move_packet->y;
 				g_clients[my_id].z = move_packet->z;
 			}
-			if (ci == my_id) {
+			/*if (ci == my_id) {
 				if (0 != move_packet->client_time) {
 					auto d_ms = duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count() - move_packet->client_time;
 
 					if (global_delay < d_ms) global_delay++;
 					else if (global_delay > d_ms) global_delay--;
 				}
-			}
+			}*/
 		}
 	}
 					   break;

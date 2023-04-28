@@ -221,7 +221,7 @@ void rush_npc(int player_id, int c_id)
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
 
-	Sleep(33);
+	//Sleep(33);
 
 	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 2) {
 		add_timer(c_id, 10000, EV_RUSH, player_id);
