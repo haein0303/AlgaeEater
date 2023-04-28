@@ -2,12 +2,20 @@
 #include "Util.h"
 #include <iostream>
 #include "OBJECT.h"
+#include <unordered_map>
 
 class SFML
 {
 public:
 	sf::TcpSocket socket;
 	int myClientId = 0;
+	
+	int user_accept_counter = 0;
+	unordered_map<int, int> user_map;
+
+	int npc_accept_counter = 0;
+	unordered_map<int, int> npc_map;
+
 
 	int ConnectServer(int PortNum) //서버에 접속시 보내주는 부분
 	{
@@ -69,6 +77,21 @@ public:
 		}
 	}
 
+	int getNPCid(int id_from_server) {
+		if (npc_map.count(id_from_server) == 0) {
+			cout << "getNPCid is fail" << endl;
+			return -1;
+		}
+		return npc_map.find(id_from_server)->second;		
+	}
+
+	int getUSERid(int id_from_server) {
+		if (user_map.count(id_from_server) == 0) {
+			cout << "getUSERid is fail" << endl;
+			return -1;
+		}
+		return user_map.find(id_from_server)->second;
+	}
 
 
 	//서버에서 데이터 받을때(패킷종류별로 무슨 작업 할건지 ex: 이동 패킷, 로그인 패킷 how to 처리)
@@ -80,7 +103,8 @@ public:
 		case SC_LOGIN_OK:
 		{
 			SC_LOGIN_OK_PACKET* packet = reinterpret_cast<SC_LOGIN_OK_PACKET*>(ptr);
-			myClientId = packet->id;
+			
+			user_map.insert({ packet->id,user_accept_counter++ });
 			playerArr[myClientId]._on = true;
 			playerArr[myClientId]._transform.x = packet->x;
 			playerArr[myClientId]._transform.y = packet->y;
@@ -93,20 +117,25 @@ public:
 		{
 			SC_ADD_OBJECT_PACKET* my_packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(ptr);
 			int id = my_packet->id;
-			if (id < PLAYERMAX) {
-				playerArr[id]._on = true;
-				playerArr[id]._transform.x = my_packet->x;
-				playerArr[id]._transform.y = my_packet->y;
-				playerArr[id]._transform.z = my_packet->z;
-				playerArr[id]._degree = my_packet->degree;
+			
+			if (id < PLAYERMAX) { // MAX_USER로 교체
+				user_map.insert({ id,user_accept_counter });
+				playerArr[user_accept_counter]._on = true;
+				playerArr[user_accept_counter]._transform.x = my_packet->x;
+				playerArr[user_accept_counter]._transform.y = my_packet->y;
+				playerArr[user_accept_counter]._transform.z = my_packet->z;
+				playerArr[user_accept_counter]._degree = my_packet->degree;
+				user_accept_counter++;
 			}
-			else if (id >= PLAYERMAX)
+			else
 			{
-				npcArr[id - PLAYERMAX]._on = true;
-				npcArr[id - PLAYERMAX]._transform.x = my_packet->x;
-				npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
-				npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
-				npcArr[id - PLAYERMAX]._degree = my_packet->degree;
+				npc_map.insert({ id,npc_accept_counter });
+				npcArr[npc_accept_counter]._on = true;
+				npcArr[npc_accept_counter]._transform.x = my_packet->x;
+				npcArr[npc_accept_counter]._transform.y = my_packet->y;
+				npcArr[npc_accept_counter]._transform.z = my_packet->z;
+				npcArr[npc_accept_counter]._degree = my_packet->degree;
+				npc_accept_counter++;
 			}
 
 			break;
@@ -114,39 +143,70 @@ public:
 		case SC_MOVE_OBJECT:
 		{
 			SC_MOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(ptr);
-			int id = my_packet->id;
-			if (id < PLAYERMAX)
-			{
-				playerArr[id]._hp = my_packet->hp;
-			}
-			if (id < PLAYERMAX && myClientId != id) {
-				playerArr[id]._transform.x = my_packet->x;
-				playerArr[id]._transform.y = my_packet->y;
-				playerArr[id]._transform.z = my_packet->z;
-				playerArr[id]._degree = my_packet->degree;
-				playerArr[id]._animation_state = my_packet->char_state;
+			int id;
+			if (my_packet->id < PLAYERMAX) {// MAX_USER로 교체
+				id = getUSERid(my_packet->id);
 
-				if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
-					playerArr[id]._animation_time_pos = 0.f;
-					playerArr[id]._animation_state0 = playerArr[id]._animation_state;
+				playerArr[id]._hp = my_packet->hp;
+
+				if (myClientId != id) {
+					playerArr[id]._transform.x = my_packet->x;
+					playerArr[id]._transform.y = my_packet->y;
+					playerArr[id]._transform.z = my_packet->z;
+					playerArr[id]._degree = my_packet->degree;
+					playerArr[id]._animation_state = my_packet->char_state;
+
+					if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
+						playerArr[id]._animation_time_pos = 0.f;
+						playerArr[id]._animation_state0 = playerArr[id]._animation_state;
+					}
 				}
+
 			}
-			else if (id >= PLAYERMAX)
-			{
-				npcArr[id - PLAYERMAX]._transform.x = my_packet->x;
-				npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
-				npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
-				npcArr[id - PLAYERMAX]._degree = my_packet->degree;
-				npcArr[id - PLAYERMAX]._hp = my_packet->hp;
-				npcArr[id - PLAYERMAX]._animation_state = my_packet->char_state;
+			else {
+				id = getNPCid(my_packet->id);
+
+				npcArr[id]._transform.x = my_packet->x;
+				npcArr[id]._transform.y = my_packet->y;
+				npcArr[id]._transform.z = my_packet->z;
+				npcArr[id]._degree = my_packet->degree;
+				npcArr[id]._hp = my_packet->hp;
+				npcArr[id]._animation_state = my_packet->char_state;
 			}
+			
+			////얘가 뭐하는 코드인고?
+			//if (id < PLAYERMAX)
+			//{
+			//	playerArr[id]._hp = my_packet->hp;
+			//}
+			//if (id < PLAYERMAX && myClientId != id) {
+			//	playerArr[id]._transform.x = my_packet->x;
+			//	playerArr[id]._transform.y = my_packet->y;
+			//	playerArr[id]._transform.z = my_packet->z;
+			//	playerArr[id]._degree = my_packet->degree;
+			//	playerArr[id]._animation_state = my_packet->char_state;
+
+			//	if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
+			//		playerArr[id]._animation_time_pos = 0.f;
+			//		playerArr[id]._animation_state0 = playerArr[id]._animation_state;
+			//	}
+			//}
+			//else if (id >= PLAYERMAX)
+			//{
+			//	npcArr[id - PLAYERMAX]._transform.x = my_packet->x;
+			//	npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
+			//	npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
+			//	npcArr[id - PLAYERMAX]._degree = my_packet->degree;
+			//	npcArr[id - PLAYERMAX]._hp = my_packet->hp;
+			//	npcArr[id - PLAYERMAX]._animation_state = my_packet->char_state;
+			//}
 			
 			break;
 		}
 		case SC_REMOVE_OBJECT:
 		{
 			SC_REMOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(ptr);
-			int id = my_packet->id;
+			int id = getUSERid(my_packet->id);
 			playerArr[id]._on = false;
 			break;
 		}
@@ -176,11 +236,7 @@ public:
 	}
 
 
-	/*
-	* 20230405 임해인 추가
-	* 
-	* 아래로는 Lobby용 오버로딩된 함수들이라네~ 
-	*/
+
 
 
 	void process_data(char* net_buf, size_t io_byte, int& data)
