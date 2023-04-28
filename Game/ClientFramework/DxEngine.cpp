@@ -4,7 +4,7 @@
 
 void DxEngine::Init(WindowInfo windowInfo)
 {
-	//��Ž���
+	
 	cout << "try server connect" << endl;
 	if (-1 == networkPtr->ConnectServer(GAME_PORT_NUM)) {
 		cout << "SERVER CONNECT FAIL" << endl;
