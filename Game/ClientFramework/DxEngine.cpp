@@ -316,6 +316,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		if (npcArr[i]._on == true) {
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
+				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._transform.y + 1.f),
+					sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._transform.z, 2))))
 				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._transform.z))
 				* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y + 1.f, npcArr[i]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
