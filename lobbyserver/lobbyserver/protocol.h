@@ -44,6 +44,7 @@ struct CS_LOGIN_PACKET {
 	unsigned char size;
 	char	type;
 	char	name[NAME_SIZE];
+	int		stage;
 };
 
 struct CS_MOVE_PACKET {
