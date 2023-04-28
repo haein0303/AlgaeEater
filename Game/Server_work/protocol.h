@@ -32,6 +32,7 @@ constexpr char SS_DATA_PASS = 21;
 
 constexpr char LCS_LOGIN = 30;
 constexpr char LCS_MATCH = 31;
+constexpr char LCS_OUT = 32;
 
 constexpr char LSC_LOGIN_OK = 40;
 constexpr char LSC_CONGAME = 41;
@@ -133,6 +134,11 @@ struct LCS_LOGIN_PACKET {
 	unsigned char size;
 	char	type;
 	int		stage;
+};
+
+struct LCS_OUT_PACKET {
+	unsigned char size;
+	char	type;
 };
 
 struct LCS_MATCH_PACKET {
