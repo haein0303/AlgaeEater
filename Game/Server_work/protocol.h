@@ -133,15 +133,15 @@ struct SS_DATA_PASS_PACKET {
 struct LCS_LOGIN_PACKET {
 	unsigned char size;
 	char	type;
+};
+
+struct LCS_MATCH_PACKET {
+	unsigned char size;
+	char	type;
 	int		stage;
 };
 
 struct LCS_OUT_PACKET {
-	unsigned char size;
-	char	type;
-};
-
-struct LCS_MATCH_PACKET {
 	unsigned char size;
 	char	type;
 };
