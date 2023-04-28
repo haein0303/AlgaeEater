@@ -138,8 +138,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = j;
 							networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 						if (npcArr[j]._animation_state == 2) { // npc가 공격중이라면
 							CS_COLLISION_PACKET p;
@@ -150,8 +150,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = i;
 							networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 					}
 				}
@@ -323,7 +323,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			_transform.hp_bar_size = 2.f;
 			_transform.hp_bar_start_pos = npcArr[i]._transform;
 			_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f ;
-			cout << _transform.hp_bar_start_pos.x << endl;
+			//cout << _transform.hp_bar_start_pos.x << endl;
 			_transform.current_hp = npcArr[i]._hp;
 			_transform.max_hp = 100;
 

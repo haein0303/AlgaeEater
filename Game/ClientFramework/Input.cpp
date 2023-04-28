@@ -12,11 +12,12 @@ void Input::Init(WindowInfo windowInfo)
 	//::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
 	//ShowCursor(false);
 }
-
+bool key_toggle = false;
+bool send_toggle = false;
 void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr)
 {
 	HWND hwnd = GetActiveWindow();
-	bool key_toggle = false;
+	//bool key_toggle = false;
 
 	for (UINT key = 0; key < 255; key++)
 	{
@@ -24,8 +25,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		//
 		if (GetAsyncKeyState(key) & 0x8000)
 		{
-			if (_states[key] == 1 || _states[key] == 2)
+			if (_states[key] == 1 || _states[key] == 2) {
+				
 				_states[key] = 1;
+			}				
 			else
 				_states[key] = 2;
 		}
@@ -41,45 +44,59 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 	}
 
 	//이동 처리
+	if (_states['W'] == 1)
+	{
+		key_toggle = true;
+	}
+	if (_states['S'] == 1)
+	{
+		key_toggle = true;
+	}
+	if (_states['A'] == 1)
+	{
+		key_toggle = true;
+	}
+	if (_states['D'] == 1)
+	{
+		key_toggle = true;
+	}
 	if (_states['W'] == 2)
 	{
 		w = true;
-		key_toggle = true;
 	}
 	if (_states['W'] == 3)
 	{
 		w = false;
-		key_toggle = true;
 	}
 	if (_states['S'] == 2)
 	{
 		s = true;
-		key_toggle = true;
+	
 	}
 	if (_states['S'] == 3)
 	{
 		s = false;
-		key_toggle = true;
+	
 	}
 	if (_states['A'] == 2)
 	{
 		a = true;
-		key_toggle = true;
+	
 	}
 	if (_states['A'] == 3)
 	{
 		a = false;
-		key_toggle = true;
+
 	}
 	if (_states['D'] == 2)
 	{
 		d = true;
-		key_toggle = true;
+
 	}
 	if (_states['D'] == 3)
 	{
 		d = false;
-		key_toggle = true;
+
 	}
 	if (_states['1'] == 2)
 	{
@@ -196,6 +213,27 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		p.degree = playerArr[networkPtr->myClientId]._degree;
 		p.char_state = playerArr[networkPtr->myClientId]._animation_state;
 		networkPtr->send_packet(&p);
+
+		return;
+	}
+
+	//cout << key_toggle << endl;
+	if (key_toggle) {
+		if (send_toggle) {
+			send_toggle != send_toggle;
+			return;
+		}
+		CS_MOVE_PACKET p;
+		p.size = sizeof(p);
+		p.type = CS_MOVE;
+		p.x = playerArr[networkPtr->myClientId]._transform.x;
+		p.y = playerArr[networkPtr->myClientId]._transform.y;
+		p.z = playerArr[networkPtr->myClientId]._transform.z;
+		p.degree = playerArr[networkPtr->myClientId]._degree;
+		p.char_state = playerArr[networkPtr->myClientId]._animation_state;
+		networkPtr->send_packet(&p);
+		//cout << "Send Move Packet" << endl;
+
 	}
 }
 
