@@ -9,4 +9,6 @@ void disconnect(int c_id);
 
 void do_worker();
 
-void Update_Player();
+void Update_Player(int c_id);
+
+void Update_Npc();

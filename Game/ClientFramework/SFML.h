@@ -144,7 +144,7 @@ public:
 		{
 			SC_MOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(ptr);
 			int id;
-			if (my_packet->id < PLAYERMAX) {// MAX_USER로 교체
+			if (my_packet->id < MAX_USER) {// MAX_USER로 교체
 				id = getUSERid(my_packet->id);
 
 				playerArr[id]._hp = my_packet->hp;
