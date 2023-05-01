@@ -75,6 +75,7 @@ public:
 	MESH_ASSET cube_asset;
 	MESH_ASSET player_asset;
 	MESH_ASSET npc_asset;
+	MESH_ASSET boss;
 	MESH_ASSET map_asset;
 	MESH_ASSET floor;
 	MESH_ASSET skybox;

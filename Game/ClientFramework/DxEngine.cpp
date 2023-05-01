@@ -83,6 +83,16 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	skybox.Make_SRV();
 	skybox.CreatePSO(L"..\\SkySphere.hlsl");
 
+	boss.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	boss.Init("../Resources/mechanical_spider.txt", ObjectType::AnimationObjects);
+	boss.Add_texture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+	boss.Make_SRV();
+	boss.CreatePSO();
+
 	player_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_asset.Init("../Resources/Character.txt", ObjectType::AnimationObjects);
 	player_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
@@ -99,11 +109,14 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
 
+	
+
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		playerArr[i]._final_transforms.resize(player_asset._animationPtr->mBoneHierarchy.size());
 	}
-	for (int i = 0; i < NPCMAX; ++i) {
+	npcArr[0]._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
+	for (int i = 1; i < NPCMAX; ++i) {
 		npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
 	}
 
@@ -138,8 +151,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = j;
 							networkPtr->send_packet(&p);
 
-							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 						if (npcArr[j]._animation_state == 2) { // npc가 공격중이라면
 							CS_COLLISION_PACKET p;
@@ -150,12 +163,42 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = i;
 							networkPtr->send_packet(&p);
 
-							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 					}
 				}
 			}
+		}
+	}
+
+	// 플레이어 사망
+	for (int i = 0; i < PLAYERMAX; ++i) {
+		if (playerArr[i]._on == true && playerArr[i]._hp <= 0.f) {
+			playerArr[i]._animation_state = 4;
+			//playerArr[i]._on = false;
+
+			CS_MOVE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_MOVE;
+			p.degree = playerArr[networkPtr->myClientId]._degree;
+			p.char_state = playerArr[networkPtr->myClientId]._animation_state;
+			networkPtr->send_packet(&p);
+		}
+	}
+
+	// npc 사망
+	for (int i = 0; i < NPCMAX; ++i) {
+		if (npcArr[i]._on == true && npcArr[i]._hp <= 0.f) {
+			npcArr[i]._animation_state = 3;
+			//npcArr[i]._on = false;
+
+			CS_MOVE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_MOVE;
+			p.degree = npcArr[networkPtr->myClientId]._degree;
+			p.char_state = npcArr[networkPtr->myClientId]._animation_state;
+			networkPtr->send_packet(&p);
 		}
 	}
 	
@@ -200,7 +243,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			player_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i]._animation_state, playerArr[i]._animation_time_pos, playerArr[i]._final_transforms);
 		}
 	}
-	for (int i = 0; i < NPCMAX; ++i) {
+	if (npcArr[0]._on == true) {
+		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0]._animation_state, npcArr[0]._animation_time_pos, npcArr[0]._final_transforms);
+	}
+	for (int i = 1; i < NPCMAX; ++i) {
 		if (npcArr[i]._on == true) {
 			npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i]._animation_state, npcArr[i]._animation_time_pos, npcArr[i]._final_transforms);
 		}
@@ -271,10 +317,45 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 
+	// 보스
+	cmdList->SetPipelineState(boss._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
+	cmdList->IASetIndexBuffer(&boss._indexBufferView);
+	if (npcArr[0]._on == true)
+	{
+		{
+			//���� ��ȯ
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(400.f, 400.f, 400.f) * XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(npcArr[0]._degree * XM_PI / 180.f)
+				* XMMatrixTranslation(npcArr[0]._transform.x, npcArr[0]._transform.y + 0.2f, npcArr[0]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+			XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+
+			// ��Ű�� �ִϸ��̼� ��� ������ ����
+			copy(begin(npcArr[0]._final_transforms), end(npcArr[0]._final_transforms), &_transform.BoneTransforms[0]);
+
+			//����
+			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+			int sum = 0;
+			for (Subset i : boss._animationPtr->mSubsets)
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+				sum += i.FaceCount * 3;
+			}
+		}
+	}
+
 	cmdList->SetPipelineState(npc_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
-	for (int i = 0; i < NPCMAX; i++) //npc ����
+	for (int i = 1; i < NPCMAX; i++) //npc ����
 	{
 		if (npcArr[i]._on == true)
 		{			
@@ -312,7 +393,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(hp_bar._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &hp_bar._vertexBufferView);
 	cmdList->IASetIndexBuffer(&hp_bar._indexBufferView);
-	for (int i = 0; i < NPCMAX; i++)
+	for (int i = 1; i < NPCMAX; i++)
 	{
 		if (npcArr[i]._on == true) {
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
@@ -325,7 +406,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			_transform.hp_bar_size = 2.f;
 			_transform.hp_bar_start_pos = npcArr[i]._transform;
 			_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f ;
-			//cout << _transform.hp_bar_start_pos.x << endl;
 			_transform.current_hp = npcArr[i]._hp;
 			_transform.max_hp = 100;
 
