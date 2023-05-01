@@ -53,7 +53,7 @@ void SESSION::send_login_ok_packet(int c_id, float x, float y, float z, float de
 	do_send(&p);
 }
 
-void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree, int hp, int state)
+void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree, int hp, int state, unsigned int client_time)
 {
 	SC_MOVE_OBJECT_PACKET p;
 	p.id = c_id;
@@ -65,6 +65,7 @@ void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree
 	p.degree = degree;
 	p.hp = hp;
 	p.char_state = state;
+	p.client_time = client_time;
 	do_send(&p);
 }
 
