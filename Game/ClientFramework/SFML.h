@@ -104,13 +104,14 @@ public:
 		{
 			SC_LOGIN_OK_PACKET* packet = reinterpret_cast<SC_LOGIN_OK_PACKET*>(ptr);
 			
-			user_map.insert({ packet->id,user_accept_counter++ });
+			user_map.insert({ packet->id,user_accept_counter });
+			cout << myClientId <<" : id : " << packet->id << " || user_accept_counter : " << user_accept_counter << " : " << user_map.count(packet->id) << endl;
 			playerArr[myClientId]._on = true;
 			playerArr[myClientId]._transform.x = packet->x;
 			playerArr[myClientId]._transform.y = packet->y;
 			playerArr[myClientId]._transform.z = packet->z;
 			playerArr[myClientId]._degree = packet->degree;
-
+			user_accept_counter++;
 			break;
 		}
 		case SC_ADD_OBJECT:
@@ -120,6 +121,7 @@ public:
 			
 			if (id < MAX_USER) { // MAX_USER로 교체
 				user_map.insert({ id,user_accept_counter });
+				cout << "id : " << id << " || user_accept_counter : " << user_accept_counter << " : " << user_map.count(id) << endl;
 				playerArr[user_accept_counter]._on = true;
 				playerArr[user_accept_counter]._transform.x = my_packet->x;
 				playerArr[user_accept_counter]._transform.y = my_packet->y;
@@ -130,6 +132,7 @@ public:
 			else
 			{
 				npc_map.insert({ id,npc_accept_counter });
+				cout << "id : " << id << " || npc_accept_counter : " << npc_accept_counter << " : " << npc_map.count(id) << endl;
 				npcArr[npc_accept_counter]._on = true;
 				npcArr[npc_accept_counter]._transform.x = my_packet->x;
 				npcArr[npc_accept_counter]._transform.y = my_packet->y;
@@ -143,8 +146,8 @@ public:
 		case SC_MOVE_OBJECT:
 		{
 			SC_MOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(ptr);
-			int id;
-			if (my_packet->id < MAX_USER) {// MAX_USER로 교체
+			int id = my_packet->id;
+			if (id < MAX_USER) {// MAX_USER로 교체
 				id = getUSERid(my_packet->id);
 
 				playerArr[id]._hp = my_packet->hp;

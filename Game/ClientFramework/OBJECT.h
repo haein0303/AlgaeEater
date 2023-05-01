@@ -16,6 +16,8 @@ public:
 	int			_animation_state0 = 0;
 	float		_animation_time_pos = 0.f;
 	int			_hp;
+
+	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;
 	vector<XMFLOAT4X4> _final_transforms;
 

@@ -317,7 +317,7 @@ void Update_Player(int c_id)
 		clients[c_id].hp, clients[c_id].char_state);
 
 	for (auto& pl : clients[c_id].room_list) {
-		if (pl >= MAX_USER) break;
+		if (pl >= MAX_USER) continue;
 		clients[pl]._sl.lock();
 		if (clients[pl]._s_state != ST_INGAME) {
 			clients[pl]._sl.unlock();

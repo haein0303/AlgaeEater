@@ -137,7 +137,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 	// 플레이어와 npc 공격에 대한 충돌 처리
 	for (int i = 0; i < PLAYERMAX; ++i) {
-		if (playerArr[i]._on == true) {
+		if (playerArr[i]._on == true ) {
 			for (int j = 0; j < NPCMAX; ++j)
 			{
 				if (npcArr[j]._on == true) {
@@ -151,8 +151,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = j;
 							networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 						if (npcArr[j]._animation_state == 2) { // npc가 공격중이라면
 							CS_COLLISION_PACKET p;
@@ -163,8 +163,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = i;
 							networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 					}
 				}
@@ -183,7 +183,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			p.type = CS_MOVE;
 			p.degree = playerArr[networkPtr->myClientId]._degree;
 			p.char_state = playerArr[networkPtr->myClientId]._animation_state;
-			networkPtr->send_packet(&p);
+			//networkPtr->send_packet(&p);
 		}
 	}
 
@@ -198,7 +198,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			p.type = CS_MOVE;
 			p.degree = npcArr[networkPtr->myClientId]._degree;
 			p.char_state = npcArr[networkPtr->myClientId]._animation_state;
-			networkPtr->send_packet(&p);
+			//networkPtr->send_packet(&p);
 		}
 	}
 	
