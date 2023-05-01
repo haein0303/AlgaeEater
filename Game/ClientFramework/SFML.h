@@ -118,7 +118,7 @@ public:
 			SC_ADD_OBJECT_PACKET* my_packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(ptr);
 			int id = my_packet->id;
 			
-			if (id < PLAYERMAX) { // MAX_USER로 교체
+			if (id < MAX_USER) { // MAX_USER로 교체
 				user_map.insert({ id,user_accept_counter });
 				playerArr[user_accept_counter]._on = true;
 				playerArr[user_accept_counter]._transform.x = my_packet->x;
