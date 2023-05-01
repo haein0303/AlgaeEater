@@ -421,7 +421,8 @@ int main()
 	AcceptEx(g_s_socket, c_socket, a_over._send_buf, 0, addr_size + 16, addr_size + 16, 0, &a_over._over);
 
 
-	match_list.empty();
+	test_match_list.empty();
+	stage1_match_list.empty();
 	add_timer(0, 1000, EV_MATCH, 0);
 
 	// 게임 서버와 커넥트

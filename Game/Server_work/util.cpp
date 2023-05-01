@@ -57,7 +57,8 @@ void process_packet(int c_id, char* packet)
 		if (clients[0]._Room_Num != 999) clients[c_id]._Room_Num = c_id / 4;
 		else clients[c_id]._Room_Num = (c_id - 1) / 4;
 		clients[c_id].room_list.clear();
-		clients[c_id].stage = p->stage;
+		//clients[c_id].stage = p->stage;
+		clients[c_id].stage = 0;
 		clients[c_id]._sl.unlock();
 
 		// 다른 플레이어 업데이트 받는 부분
@@ -80,20 +81,26 @@ void process_packet(int c_id, char* packet)
 		}
 
 		// npc 세팅 부분
-		switch (clients[c_id].stage)
-		{
-		case 0: // 테스트 스테이지
-			break;
-		case 1:	// 스테이지 1
-			break;
-		default:
-			break;
-		}
 
 		if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
 			for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
+				switch (clients[c_id].stage)
+				{
+				case 0: // 테스트 스테이지
+					clients[i].x = 40;
+					clients[i].start_x = 40;
+					clients[i].z = -50 + (i - MAX_USER) * 10;
+					clients[i].start_z = -50 + (i - MAX_USER) * 10;
+					break;
+				case 1:	// 스테이지 1
+					break;
+				default:
+					break;
+				}
+
 				add_timer(i, 10000, EV_NPC_CON, c_id);
 				clients[i].Lua_on = true;
+				
 			}
 			add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, (clients[c_id]._Room_Num * 10) + MAX_USER + 9);
 			clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
