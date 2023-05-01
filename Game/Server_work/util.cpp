@@ -60,6 +60,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].stage = p->stage;
 		clients[c_id]._sl.unlock();
 
+		// 다른 플레이어 업데이트 받는 부분
 		for (int i = 0; i < MAX_USER; ++i) {
 			auto& pl = clients[i];
 			if (pl._id == c_id) continue;
@@ -76,6 +77,17 @@ void process_packet(int c_id, char* packet)
 				clients[c_id].room_list.insert(pl._id);
 			}
 			pl._sl.unlock();
+		}
+
+		// npc 세팅 부분
+		switch (clients[c_id].stage)
+		{
+		case 0: // 테스트 스테이지
+			break;
+		case 1:	// 스테이지 1
+			break;
+		default:
+			break;
 		}
 
 		if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
@@ -104,6 +116,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].z = p->z;
 		clients[c_id].degree = p->degree;
 		clients[c_id].char_state = p->char_state;
+		clients[c_id].client_time = p->client_time;
 		Update_Player(c_id);
 		break;
 	}
@@ -314,7 +327,7 @@ void Update_Player(int c_id)
 	clients[c_id]._sl.unlock();
 
 	clients[c_id].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree,
-		clients[c_id].hp, clients[c_id].char_state);
+		clients[c_id].hp, clients[c_id].char_state, clients[c_id].client_time);
 
 	for (auto& pl : clients[c_id].room_list) {
 		if (pl >= MAX_USER) continue;
@@ -326,7 +339,7 @@ void Update_Player(int c_id)
 		clients[pl]._sl.unlock();
 
 		clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree,
-			clients[c_id].hp, clients[c_id].char_state);
+			clients[c_id].hp, clients[c_id].char_state, 0);
 	}
 }
 
@@ -351,7 +364,7 @@ void Update_Npc()
 			clients[pl]._sl.unlock();
 
 			clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl].hp, clients[pl].char_state);
+				clients[pl].hp, clients[pl].char_state, 0);
 		}
 	}
 }
