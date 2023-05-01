@@ -104,6 +104,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].z = p->z;
 		clients[c_id].degree = p->degree;
 		clients[c_id].char_state = p->char_state;
+		Update_Player(c_id);
 		break;
 	}
 	case CS_CONSOLE: {
@@ -289,7 +290,7 @@ void do_worker()
 			break;
 		}
 		case OP_UPDATE: {
-			Update_Player();
+			Update_Npc();
 			add_timer(0, 33, EV_UP, 0);
 			delete ex_over;
 			break;
@@ -303,7 +304,33 @@ void do_worker()
 	}
 }
 
-void Update_Player()
+void Update_Player(int c_id)
+{
+	clients[c_id]._sl.lock();
+	if (clients[c_id]._s_state != ST_INGAME) {
+		clients[c_id]._sl.unlock();
+		return;
+	}
+	clients[c_id]._sl.unlock();
+
+	clients[c_id].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree,
+		clients[c_id].hp, clients[c_id].char_state);
+
+	for (auto& pl : clients[c_id].room_list) {
+		if (pl >= MAX_USER) continue;
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
+			continue;
+		}
+		clients[pl]._sl.unlock();
+
+		clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree,
+			clients[c_id].hp, clients[c_id].char_state);
+	}
+}
+
+void Update_Npc()
 {
 	for (int i = 0; i < MAX_USER; i++) {
 
@@ -314,24 +341,17 @@ void Update_Player()
 		}
 		clients[i]._sl.unlock();
 
-		clients[i].send_move_packet(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree,
-			clients[i].hp, clients[i].char_state);
-
-
-		for (auto& pl : clients[i].room_list) {			
+		for (auto& pl : clients[i].room_list) {
+			if (pl < MAX_USER) continue;
 			clients[pl]._sl.lock();
 			if (clients[pl]._s_state != ST_INGAME) {
 				clients[pl]._sl.unlock();
 				continue;
 			}
 			clients[pl]._sl.unlock();
-			
-			if (pl < MAX_USER)
-				clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+
+			clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
 					clients[pl].hp, clients[pl].char_state);
-			else
-				clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					 clients[pl].hp, clients[pl].char_state);
 		}
 	}
 }

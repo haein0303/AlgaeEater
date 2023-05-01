@@ -133,7 +133,7 @@
       <Filter>Engine\장치 초기화</Filter>
     </ClCompile>
     <ClCompile Include="scene_stage1.cpp">
-      <Filter>Lobby</Filter>
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -234,7 +234,7 @@
       <Filter>Engine\장치 초기화</Filter>
     </ClInclude>
     <ClInclude Include="scene_stage1.h">
-      <Filter>Lobby</Filter>
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
