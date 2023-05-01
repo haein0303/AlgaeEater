@@ -67,7 +67,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	floor.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	floor.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
-	floor.Add_texture(L"..\\Resources\\Texture\\Floor.jpg");
+	floor.Add_texture(L"..\\Resources\\Texture\\sample.png");
+	floor.Add_texture(L"..\\Resources\\Texture\\Back_wall.png");
+	floor.Add_texture(L"..\\Resources\\Texture\\Front_wall.png");
+	floor.Add_texture(L"..\\Resources\\Texture\\Right_wall.png");
+	floor.Add_texture(L"..\\Resources\\Texture\\Left_wall.png");
 	floor.Make_SRV();
 	floor.CreatePSO(L"..\\Bricks.hlsl");
 
@@ -181,7 +185,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
 			p.type = CS_MOVE;
-			p.degree = playerArr[networkPtr->myClientId]._degree;
 			p.char_state = playerArr[networkPtr->myClientId]._animation_state;
 			networkPtr->send_packet(&p);
 		}
@@ -196,7 +199,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
 			p.type = CS_MOVE;
-			p.degree = npcArr[networkPtr->myClientId]._degree;
 			p.char_state = npcArr[networkPtr->myClientId]._animation_state;
 			networkPtr->send_packet(&p);
 		}
@@ -324,18 +326,15 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	if (npcArr[0]._on == true)
 	{
 		{
-			//���� ��ȯ
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(400.f, 400.f, 400.f) * XMMatrixRotationX(-XM_PI / 2.f)
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(600.f, 600.f, 600.f) * XMMatrixRotationX(-XM_PI / 2.f)
 				* XMMatrixRotationY(npcArr[0]._degree * XM_PI / 180.f)
 				* XMMatrixTranslation(npcArr[0]._transform.x, npcArr[0]._transform.y + 0.2f, npcArr[0]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-			// ��Ű�� �ִϸ��̼� ��� ������ ����
 			copy(begin(npcArr[0]._final_transforms), end(npcArr[0]._final_transforms), &_transform.BoneTransforms[0]);
 
-			//����
 			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 
 			int sum = 0;
@@ -450,7 +449,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 
-	// �� ����
+	/*// �� ����
 	{
 		cmdList->SetPipelineState(map_asset._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
@@ -471,26 +470,66 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 		cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
-	}
+	}*/
 
-	// �ٴ� ����
+	// map
+	float map_size = 100.f;
+
+	cmdList->SetPipelineState(floor._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
+	cmdList->IASetIndexBuffer(&floor._indexBufferView);
+	for(int i = 0; i < 5; ++i)
 	{
-		cmdList->SetPipelineState(floor._pipelineState.Get());
-		cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
-		cmdList->IASetIndexBuffer(&floor._indexBufferView);
-		//���� ��ȯ
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 1.0f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, -0.1f, 0.f));
-		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-		//����
-		{
+		if (i == 0) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size, 1.0f)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(0.f, 0.f, 0.f));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-
 			floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-
-			descHeapPtr->CopyDescriptor(floor._tex._srvHandle, 5, devicePtr);
+			
 		}
+		if (i == 1) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f)* XMMatrixRotationX(0.f)* XMMatrixTranslation(0.f, map_size / 4.f, -map_size));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			
+		}
+		else if (i == 2) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f) * XMMatrixRotationX(XM_PI) * XMMatrixRotationZ(XM_PI) * XMMatrixTranslation(0.f, map_size / 4.f, map_size));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		}
+		else if (i == 3) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f) * XMMatrixRotationY(-XM_PI / 2.f) * XMMatrixTranslation(map_size, map_size / 4.f, 0.f));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		}
+		else if (i == 4) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(-map_size, map_size / 4.f, 0.f));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		}
+		
+		floor._tex._srvHandle.Offset(i, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+		descHeapPtr->CopyDescriptor(floor._tex._srvHandle, 5, devicePtr);
 
 		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 		cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
