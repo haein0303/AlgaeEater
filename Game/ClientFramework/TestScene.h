@@ -7,6 +7,6 @@ public:
 	void Init(WindowInfo windowInfo) override;
 	void FixedUpdate(WindowInfo windowInfo, bool isActive) override;
 	void Update(WindowInfo windowInfo, bool isActive) override;
-	void Draw(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList) override;
+	void Draw(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList, int i_now_render_index) override;
 };
 
