@@ -613,6 +613,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 		}
 	}
+	d11Ptr->RenderUI(i_now_render_index);
 
 	::WaitForSingleObject(_excuteEvent, INFINITE);
 	SetEvent(_renderEvent);
@@ -630,8 +631,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	ID3D12CommandList* cmdListArr[] = { cmdList.Get() };
 	cmdQueuePtr->_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
-	d11Ptr->RenderUI(i_now_render_index);
 	
+	d11Ptr->ExcuteUI(i_now_render_index);
 	swapChainPtr->_swapChain->Present(0, 0);
 	
 	cmdQueuePtr->WaitSync();

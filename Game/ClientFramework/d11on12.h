@@ -8,6 +8,14 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 //전방선언스
 class DxEngine;
 
+class UI_ASSET {
+public:
+	bool _is_image = false;
+	ID2D1Bitmap* test;
+	WCHAR text[256];
+	D2D1_RECT_F image_rect = D2D1::RectF(0.0f, 0.0f, 100.f, 100.f);
+};
+
 class d11on12
 {
 private:
@@ -52,16 +60,7 @@ public:
 
 	void addResource(LPCWSTR path);
 	void RenderUI(int mCurrBackbufferIndex);
-
-	HRESULT LoadBitmapFromFile(
-		ID2D1RenderTarget* pRenderTarget,
-		IWICImagingFactory* pIWICFactory,
-		PCWSTR uri,
-		UINT destinationWidth,
-		UINT destinationHeight,
-		ID2D1Bitmap** ppBitmap
-	);
-
+	void ExcuteUI(int mCurrBackbufferIndex);
 };
 
 template<class Interface>
