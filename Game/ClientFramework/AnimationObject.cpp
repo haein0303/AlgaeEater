@@ -1,4 +1,5 @@
 #include "AnimationObject.h"
+#include "OBJECT.h"
 
 void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vector<UINT>& indices, const string& filePath) {
 	AnimationObjectLoader animationObjectLoader;
@@ -7,22 +8,23 @@ void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vec
 	ClipName = "SkinningAnimtion";
 }
 
-void AnimationObject::UpdateSkinnedAnimation(float dt, int& state, float& animation_time_pos, vector<XMFLOAT4X4>& FinalTransforms)
+void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player)
 {
-	animation_time_pos += dt;
+	player._animation_time_pos += dt;
 
 	// 애니메이션이 끝나면 애니메이션 루프
-	if ((state == 0 || state == 1) && animation_time_pos >= GetClipEndTime(state)) {
-		animation_time_pos = 0.f;
+	if ((player._animation_state == 0 || player._animation_state == 1) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
+		player._animation_time_pos = 0.f;
 	}
 	// 공격 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
-	if ((state == 2 || state == 3) && animation_time_pos >= GetClipEndTime(state)) {
-		animation_time_pos = 0.f;
-		state = 0;
+	if ((player._animation_state == 2 || player._animation_state == 3) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
+		player._animation_time_pos = 0.f;
+		player._animation_state = 0;
+		player._can_attack = true;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
-	GetFinalTransforms(ClipName, animation_time_pos, FinalTransforms, state);
+	GetFinalTransforms(ClipName, player._animation_time_pos, player._final_transforms, player._animation_state);
 }
 
 float AnimationObject::GetClipEndTime(int state) {

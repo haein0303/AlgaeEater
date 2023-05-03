@@ -139,6 +139,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
+	
+
 	// 플레이어와 npc 공격에 대한 충돌 처리
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true ) {
@@ -146,7 +148,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				if (npcArr[j]._on == true) {
 					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
-						if (playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3) { // 플레이어가 공격중이라면
+						if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+							&& playerArr[i]._animation_time_pos >= player_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state / 2.f)
+							&& playerArr[i]._can_attack) { // 플레이어가 공격중이고 애니메이션이 타격시점이고 공격기회가 있다면
+							playerArr[i]._can_attack = false;
+
 							CS_COLLISION_PACKET p;
 							p.size = sizeof(p);
 							p.type = CS_COLLISION;
@@ -155,10 +161,14 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = j;
 							networkPtr->send_packet(&p);
 
-							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
-						if (npcArr[j]._animation_state == 2) { // npc가 공격중이라면
+						if (npcArr[j]._animation_state == 2
+							&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state / 2.f)
+							&& npcArr[j]._can_attack) { // npc가 공격중이고 애니메이션이 타격시점이고 공격기회가 있다면
+							npcArr[j]._can_attack = false;
+
 							CS_COLLISION_PACKET p;
 							p.size = sizeof(p);
 							p.type = CS_COLLISION;
@@ -167,8 +177,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							p.target_id = i;
 							networkPtr->send_packet(&p);
 
-							//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
-							//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
 						}
 					}
 				}
@@ -242,15 +252,15 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true) {
-			player_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i]._animation_state, playerArr[i]._animation_time_pos, playerArr[i]._final_transforms);
+			player_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i]);
 		}
 	}
 	if (npcArr[0]._on == true) {
-		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0]._animation_state, npcArr[0]._animation_time_pos, npcArr[0]._final_transforms);
+		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0]);
 	}
 	for (int i = 1; i < NPCMAX; ++i) {
 		if (npcArr[i]._on == true) {
-			npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i]._animation_state, npcArr[i]._animation_time_pos, npcArr[i]._final_transforms);
+			npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i]);
 		}
 	}
 

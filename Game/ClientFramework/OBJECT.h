@@ -15,7 +15,8 @@ public:
 	int			_animation_state = 0;
 	int			_animation_state0 = 0;
 	float		_animation_time_pos = 0.f;
-	int			_hp;
+	int			_hp = 100.f;
+	bool		_can_attack = true;
 
 	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;

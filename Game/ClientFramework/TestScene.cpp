@@ -110,20 +110,18 @@ void TestScene::Update(WindowInfo windowInfo, bool isActive)
 void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12GraphicsCommandList>	cmdList, int i_now_render_index)
 {
 	// 애니메이션
-	_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[0]._animation_state, _dxengine->npcArr[0]._animation_time_pos, _dxengine->npcArr[0]._final_transforms);
-
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		if (_dxengine->playerArr[i]._on == true) {
-			_dxengine->player_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->playerArr[i]._animation_state, _dxengine->playerArr[i]._animation_time_pos, _dxengine->playerArr[i]._final_transforms);
+			_dxengine->player_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->playerArr[i]);
 		}
 	}
 	if (_dxengine->npcArr[0]._on == true) {
-		_dxengine->boss.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[0]._animation_state, _dxengine->npcArr[0]._animation_time_pos, _dxengine->npcArr[0]._final_transforms);
+		_dxengine->boss.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[0]);
 	}
 	for (int i = 1; i < NPCMAX; ++i) {
 		if (_dxengine->npcArr[i]._on == true) {
-			_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[i]._animation_state, _dxengine->npcArr[i]._animation_time_pos, _dxengine->npcArr[i]._final_transforms);
+			_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[i]);
 		}
 	}
 

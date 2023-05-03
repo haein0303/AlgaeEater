@@ -133,9 +133,9 @@ void MESH_ASSET::CreatePSO()
 
 }
 
-void MESH_ASSET::UpdateSkinnedAnimation(float dt, int& state, float& animation_time_pos, vector<XMFLOAT4X4>& FinalTransforms)
+void MESH_ASSET::UpdateSkinnedAnimation(float dt, OBJECT& player)
 {
-	_animationPtr->UpdateSkinnedAnimation(dt, state, animation_time_pos, FinalTransforms);
+	_animationPtr->UpdateSkinnedAnimation(dt, player);
 }
 
 void MESH_ASSET::CreatePSO(const wchar_t* shader)
