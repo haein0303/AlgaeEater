@@ -198,6 +198,7 @@ void send_cube(int c_id, float x, float y, float z)
 		}
 
 		for (auto& pl : clients[c_id].room_list) {
+			if (pl >= MAX_USER) continue;
 			clients[pl]._sl.lock();
 			if (clients[pl]._s_state != ST_INGAME) {
 				clients[pl]._sl.unlock();
@@ -205,9 +206,7 @@ void send_cube(int c_id, float x, float y, float z)
 			}
 			clients[pl]._sl.unlock();
 
-			if (pl < MAX_USER) {
-				clients[pl].send_cube_add(i % 4, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
-			}
+			clients[pl].send_cube_add(i % 4, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
 		}
 
 		cnt++;
