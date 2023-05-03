@@ -12,12 +12,12 @@ void Input::Init(WindowInfo windowInfo)
 	//::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
 	//ShowCursor(false);
 }
-bool key_toggle = false;
+
 bool send_toggle = false;
 void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr)
 {
 	HWND hwnd = GetActiveWindow();
-	//bool key_toggle = false;
+	bool key_toggle = false;
 
 	for (UINT key = 0; key < 255; key++)
 	{
@@ -212,6 +212,8 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		p.z = playerArr[networkPtr->myClientId]._transform.z;
 		p.degree = playerArr[networkPtr->myClientId]._degree;
 		p.char_state = playerArr[networkPtr->myClientId]._animation_state;
+		p.client_time = timerPtr->_counter;
+		cout << "SEND : " << timerPtr->_counter << endl;
 		networkPtr->send_packet(&p);
 
 		return;
@@ -219,10 +221,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 
 	//cout << key_toggle << endl;
 	if (key_toggle) {
-		if (send_toggle) {
+		/*if (send_toggle) {
 			send_toggle != send_toggle;
 			return;
-		}
+		}*/
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);
 		p.type = CS_MOVE;
@@ -231,8 +233,9 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		p.z = playerArr[networkPtr->myClientId]._transform.z;
 		p.degree = playerArr[networkPtr->myClientId]._degree;
 		p.char_state = playerArr[networkPtr->myClientId]._animation_state;
+		p.client_time = timerPtr->_counter;
+		cout << "SEND : " << timerPtr->_counter << endl;
 		networkPtr->send_packet(&p);
-		//cout << "Send Move Packet" << endl;
 
 	}
 }

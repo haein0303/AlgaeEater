@@ -124,6 +124,9 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].degree = p->degree;
 		clients[c_id].char_state = p->char_state;
 		clients[c_id].client_time = p->client_time;
+		if (c_id == 0) {
+			cout << "RECV : " << p->client_time << endl;
+		}
 		Update_Player(c_id);
 		break;
 	}
@@ -326,13 +329,14 @@ void do_worker()
 
 void Update_Player(int c_id)
 {
+	
 	clients[c_id]._sl.lock();
 	if (clients[c_id]._s_state != ST_INGAME) {
 		clients[c_id]._sl.unlock();
 		return;
 	}
 	clients[c_id]._sl.unlock();
-
+	
 	clients[c_id].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree,
 		clients[c_id].hp, clients[c_id].char_state, clients[c_id].client_time);
 
@@ -348,6 +352,7 @@ void Update_Player(int c_id)
 		clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree,
 			clients[c_id].hp, clients[c_id].char_state, 0);
 	}
+	
 }
 
 void Update_Npc()

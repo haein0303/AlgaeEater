@@ -26,6 +26,8 @@ void Timer::TimerUpdate()
 		_frameTime = 0.f;
 		_frameCount = 0;
 	}
+	
+	
 }
 
 void Timer::fixed_update_tic()
@@ -35,7 +37,8 @@ void Timer::fixed_update_tic()
 
 	while ((1.f / (float)_lockFps) >= (currentCount - _prevCount) / static_cast<float>(_frequency)) {		
 		_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
-		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));		
+		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
+		_counter++;
 	}
 	//std::cout << "\rD_TIME : " << _deltaTime << ":" << (1.f / (float)_lockFps);
 	_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
@@ -51,6 +54,7 @@ void Timer::fixed_update_tic()
 		_frameTime = 0.f;
 		_frameCount = 0;
 	}
+	
 }
 
 void Timer::ShowFps(WindowInfo windowInfo)
