@@ -598,7 +598,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		{
 			//���� ��ȯ
 			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
-			XMStoreFloat4x4(&_transform.world, XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2]))
+			XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - particle[i].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2], 2))))
+				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2]))
 				* XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //���� ��ȯ ���
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
