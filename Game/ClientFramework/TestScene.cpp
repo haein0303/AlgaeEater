@@ -386,28 +386,28 @@ void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12Graph
 	}
 	for (int i = 0; i < 100; i++) //��ƼŬ ����
 	{
-		if (_dxengine->playerArr[0]._isFirstCollision == true && _dxengine->particle[i].alive == 0)
+		if (_dxengine->playerArr[0]._isFirstCollision == true && _dxengine->particles[i].alive == 0)
 		{
-			_dxengine->particle[i].lifeTime = (float)(rand() % 101) / 1000 + 0.1f; //0.1~0.2
-			_dxengine->particle[i].curTime = 0.0f;
-			_dxengine->particle[i].pos = XMVectorSet(_dxengine->npcArr[9]._transform.x, _dxengine->npcArr[9]._transform.y, _dxengine->npcArr[9]._transform.z, 1.f);
-			_dxengine->particle[i].moveSpeed = (float)(rand() % 101) / 50 + 2.f; //2~4
-			_dxengine->particle[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
-			XMVector3Normalize(_dxengine->particle[i].dir);
-			_dxengine->particle[i].alive = 1;
+			_dxengine->particles[i].lifeTime = (float)(rand() % 101) / 1000 + 0.1f; //0.1~0.2
+			_dxengine->particles[i].curTime = 0.0f;
+			_dxengine->particles[i].pos = XMVectorSet(_dxengine->npcArr[9]._transform.x, _dxengine->npcArr[9]._transform.y, _dxengine->npcArr[9]._transform.z, 1.f);
+			_dxengine->particles[i].moveSpeed = (float)(rand() % 101) / 50 + 2.f; //2~4
+			_dxengine->particles[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+			XMVector3Normalize(_dxengine->particles[i].dir);
+			_dxengine->particles[i].alive = 1;
 		}
-		else if (_dxengine->particle[i].alive == 1)
+		else if (_dxengine->particles[i].alive == 1)
 		{
 			//���� ��ȯ
-			_dxengine->particle[i].pos = XMVectorAdd(_dxengine->particle[i].pos, _dxengine->particle[i].dir * _dxengine->particle[i].moveSpeed * _dxengine->timerPtr->_deltaTime);
-			XMStoreFloat4x4(&_dxengine->_transform.world, XMMatrixRotationY(atan2f(_dxengine->cameraPtr->pos.m128_f32[0] - _dxengine->particle[i].pos.m128_f32[0], _dxengine->cameraPtr->pos.m128_f32[2] - _dxengine->particle[i].pos.m128_f32[2]))
-				* XMMatrixTranslation(_dxengine->particle[i].pos.m128_f32[0], _dxengine->particle[i].pos.m128_f32[1], _dxengine->particle[i].pos.m128_f32[2]));
+			_dxengine->particles[i].pos = XMVectorAdd(_dxengine->particles[i].pos, _dxengine->particles[i].dir * _dxengine->particles[i].moveSpeed * _dxengine->timerPtr->_deltaTime);
+			XMStoreFloat4x4(&_dxengine->_transform.world, XMMatrixRotationY(atan2f(_dxengine->cameraPtr->pos.m128_f32[0] - _dxengine->particles[i].pos.m128_f32[0], _dxengine->cameraPtr->pos.m128_f32[2] - _dxengine->particles[i].pos.m128_f32[2]))
+				* XMMatrixTranslation(_dxengine->particles[i].pos.m128_f32[0], _dxengine->particles[i].pos.m128_f32[1], _dxengine->particles[i].pos.m128_f32[2]));
 			XMMATRIX world = XMLoadFloat4x4(&_dxengine->_transform.world); //���� ��ȯ ���
 			XMStoreFloat4x4(&_dxengine->_transform.world, XMMatrixTranspose(world));
-			_dxengine->particle[i].curTime += 0.001;
-			if (_dxengine->particle[i].lifeTime < _dxengine->particle[i].curTime)
+			_dxengine->particles[i].curTime += 0.001;
+			if (_dxengine->particles[i].lifeTime < _dxengine->particles[i].curTime)
 			{
-				_dxengine->particle[i].alive = 0;
+				_dxengine->particles[i].alive = 0;
 			}
 
 			cmdList->SetPipelineState(_dxengine->psoPtr->_gsPipelineState.Get());

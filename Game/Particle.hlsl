@@ -81,11 +81,16 @@ void GS_Main(point VS_OUT gin[1], uint primID : SV_PrimitiveID, inout TriangleSt
 
 float4 PS_Main(GeoOut input) : SV_Target
 {
-	float4 color = tex_0.Sample(sam_0, input.uv);
+	float4 color = float4(0.f, 0.f, 0.f, 0.f);
+	float r = distance(input.uv, float2(0.5f, 0.5f));
+	if (r <= 0.5f) {
+		color = float4(1.f, 0.5f, 0.f, 1.f);
+	}
 	clip(color.a - 0.1f);
 	return color;
 }
 
+/*
 struct PaticleData
 {
 	float3  worldPos;
@@ -96,6 +101,7 @@ struct PaticleData
 	float3  padding;
 };
 
+
 RWStructuredBuffer<PaticleData> gOutput : register(u0);
 
 [numthreads(32, 1, 1)]
@@ -104,3 +110,4 @@ void CS(int3 dispatchThreadID : SV_DispatchThreadID) {
 	gOutput[dispatchThreadID.x].worldPos.y = 3.0f;
 	gOutput[dispatchThreadID.x].worldPos.z = 3.0f;
 }
+*/

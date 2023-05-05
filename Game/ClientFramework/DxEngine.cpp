@@ -569,8 +569,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
 	}
 
-	//��ƼŬ
-	if (pow(playerArr[0]._transform.x - npcArr[9]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[9]._transform.z, 2) <= 4.f) //�浹 ó��
+	// 파티클
+	if (pow(playerArr[0]._transform.x - npcArr[9]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[9]._transform.z, 2) <= 4.f) // 플레이어와 npc 충돌 체크
 	{
 		if (playerArr[0]._isCollision == false)
 			playerArr[0]._isFirstCollision = true;
@@ -582,31 +582,60 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		playerArr[0]._isCollision = false;
 	}
-	for (int i = 0; i < 100; i++) //��ƼŬ ����
+	for (int i = 0; i < 100; ++i) // 물리처리 및 렌더링
 	{
-		if (playerArr[0]._isFirstCollision == true && particle[i].alive == 0)
+		if (playerArr[0]._isFirstCollision == true && particles[i].alive == 0)
 		{
-			particle[i].lifeTime = (float)(rand() % 101) / 1000 + 0.1f; //0.1~0.2
-			particle[i].curTime = 0.0f;
-			particle[i].pos = XMVectorSet(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z, 1.f);
-			particle[i].moveSpeed = (float)(rand() % 101) / 50 + 2.f; //2~4
-			particle[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
-			XMVector3Normalize(particle[i].dir);
-			particle[i].alive = 1;
+			particles[i].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+			particles[i].curTime = 0.0f;
+			particles[i].pos = XMVectorSet(npcArr[9]._transform.x, npcArr[9]._transform.y + 0.5f, npcArr[9]._transform.z, 1.f);
+			particles[i].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+			particles[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+			XMVector3Normalize(particles[i].dir);
+			particles[i].velocity = XMVectorSet(particles[i].dir.m128_f32[0] * particles[i].moveSpeed, particles[i].dir.m128_f32[1] * particles[i].moveSpeed, particles[i].dir.m128_f32[2] * particles[i].moveSpeed, 1.f);
+			particles[i].alive = 1;
 		}
-		else if (particle[i].alive == 1)
+		else if (particles[i].alive == 1)
 		{
-			//���� ��ȯ
-			particle[i].pos = XMVectorAdd(particle[i].pos, particle[i].dir * particle[i].moveSpeed * timerPtr->_deltaTime);
-			XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - particle[i].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2], 2))))
-				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particle[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particle[i].pos.m128_f32[2]))
-				* XMMatrixTranslation(particle[i].pos.m128_f32[0], particle[i].pos.m128_f32[1], particle[i].pos.m128_f32[2]));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world); //���� ��ȯ ���
+			if (particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] < 0.f) {
+				// 비탄성 충돌
+				particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] * -coefficient_of_restitution;
+				particles[i].pos.m128_f32[1] = particles[i].bounding_box_half_size.m128_f32[1];
+			}
+
+			if (particles[i].velocity.m128_f32[1] <= 0.05f
+				&& particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] == 0.f) {
+				// 마찰력
+				if (fabs(particles[i].velocity.m128_f32[0]) > 0.1f) {
+					particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[0] * timerPtr->_deltaTime;
+				}
+				else {
+					particles[i].velocity.m128_f32[0] = 0.f;
+				}
+
+				if (fabs(particles[i].velocity.m128_f32[2]) > 0.1f) {
+					particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[2] * timerPtr->_deltaTime;
+				}
+				else {
+					particles[i].velocity.m128_f32[2] = 0.f;
+				}
+			}
+
+			particles[i].pos.m128_f32[0] = particles[i].pos.m128_f32[0] + particles[i].velocity.m128_f32[0] * timerPtr->_deltaTime; // x성분 이동
+			particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] - 5.f * timerPtr->_deltaTime; // 중력가속도에 의한 나중속도
+			particles[i].pos.m128_f32[1] = particles[i].pos.m128_f32[1] + particles[i].velocity.m128_f32[1] * timerPtr->_deltaTime; // y성분 이동
+			particles[i].pos.m128_f32[2] = particles[i].pos.m128_f32[2] + particles[i].velocity.m128_f32[2] * timerPtr->_deltaTime; // z성분 이동
+			XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - particles[i].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2], 2))))
+				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2]))
+				* XMMatrixTranslation(particles[i].pos.m128_f32[0], particles[i].pos.m128_f32[1], particles[i].pos.m128_f32[2])); // 파티클이 항상 카메라를 바라보기
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-			particle[i].curTime += 0.001;
-			if (particle[i].lifeTime < particle[i].curTime)
+
+			particles[i].curTime += 0.001f;
+
+			if (particles[i].lifeTime < particles[i].curTime)
 			{
-				particle[i].alive = 0;
+				particles[i].alive = 0;
 			}
 
 			cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
@@ -624,6 +653,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 		}
 	}
+
 	d11Ptr->RenderUI(i_now_render_index);
 
 	::WaitForSingleObject(_excuteEvent, INFINITE);

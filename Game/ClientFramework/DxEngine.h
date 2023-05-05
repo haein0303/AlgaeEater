@@ -66,11 +66,16 @@ public:
 
 	shared_ptr<d11on12> d11Ptr = make_shared<d11on12>();
 
-	//오브젝트 객체 생성
+	// 오브젝트 데이터 객체 생성
 	OBJECT playerArr[PLAYERMAX];
 	OBJECT npcArr[NPCMAX];
 	OBJECT cubeArr[CubeMax];
-	ParticleData particle[100];
+
+	// 파티클 데이터
+	ParticleData particles[100];
+	float coefficient_of_restitution = 0.3f;	// 반발계수
+	float friction_coefficient = 0.5f;			// 마찰계수
+	float gravitational_acceleration = -5.f;	// 중력가속도
 	
 	MESH_ASSET cube_asset;
 	MESH_ASSET player_asset;
@@ -81,7 +86,7 @@ public:
 	MESH_ASSET skybox;
 	MESH_ASSET hp_bar;
 
-	//상수버퍼로 넘길 데이터
+	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
 
 	HANDLE _renderEvent = INVALID_HANDLE_VALUE;
