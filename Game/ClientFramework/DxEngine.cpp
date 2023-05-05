@@ -113,15 +113,20 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
 
-	
-
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		playerArr[i]._final_transforms.resize(player_asset._animationPtr->mBoneHierarchy.size());
 	}
-	npcArr[0]._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
-	for (int i = 1; i < NPCMAX; ++i) {
-		npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
+	
+	for (int i = 0; i < NPCMAX; ++i) {
+		if (i == 9) {
+			npcArr[i]._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
+			npcArr[i]._transform.y += 1.f;
+		}
+		else {
+			npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
+			npcArr[i]._transform.y += 0.2f;
+		}
 	}
 
 	d11Ptr->LoadPipeline();
@@ -255,11 +260,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			player_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i]);
 		}
 	}
-	if (npcArr[0]._on == true) {
-		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[0]);
+	if (npcArr[9]._on == true) {
+		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[9]);
 	}
-	for (int i = 1; i < NPCMAX; ++i) {
-		if (npcArr[i]._on == true) {
+	for (int i = 0; i < NPCMAX; ++i) {
+		if (npcArr[i]._on == true && i != 9) {
 			npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i]);
 		}
 	}
@@ -333,17 +338,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(boss._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
 	cmdList->IASetIndexBuffer(&boss._indexBufferView);
-	if (npcArr[0]._on == true)
+	if (npcArr[9]._on == true)
 	{
 		{
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(600.f, 600.f, 600.f) * XMMatrixRotationX(-XM_PI / 2.f)
-				* XMMatrixRotationY(npcArr[0]._degree * XM_PI / 180.f)
-				* XMMatrixTranslation(npcArr[0]._transform.x, npcArr[0]._transform.y + 0.2f, npcArr[0]._transform.z));
+				* XMMatrixTranslation(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-			copy(begin(npcArr[0]._final_transforms), end(npcArr[0]._final_transforms), &_transform.BoneTransforms[0]);
+			copy(begin(npcArr[9]._final_transforms), end(npcArr[9]._final_transforms), &_transform.BoneTransforms[0]);
 
 			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
 
@@ -364,15 +368,15 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(npc_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
-	for (int i = 1; i < NPCMAX; i++) //npc ����
+	for (int i = 0; i < NPCMAX; i++) //npc ����
 	{
-		if (npcArr[i]._on == true)
+		if (npcArr[i]._on == true && i != 9)
 		{			
 			{
 				//���� ��ȯ
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(npcArr[i]._degree * XM_PI / 180.f)
-					* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y + 0.2f, npcArr[i]._transform.z));
+					* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y, npcArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
@@ -402,9 +406,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(hp_bar._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &hp_bar._vertexBufferView);
 	cmdList->IASetIndexBuffer(&hp_bar._indexBufferView);
-	for (int i = 1; i < NPCMAX; i++)
+	for (int i = 0; i < NPCMAX; i++)
 	{
-		if (npcArr[i]._on == true) {
+		if (npcArr[i]._on == true && i != 9) {
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
 				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._transform.y + 1.f),
 					sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._transform.z, 2))))
@@ -588,7 +592,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		{
 			particles[i].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 			particles[i].curTime = 0.0f;
-			particles[i].pos = XMVectorSet(npcArr[9]._transform.x, npcArr[9]._transform.y + 0.5f, npcArr[9]._transform.z, 1.f);
+			particles[i].pos = XMVectorSet(npcArr[9]._transform.x, npcArr[9]._transform.y + 0.3f, npcArr[9]._transform.z, 1.f);
 			particles[i].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
 			particles[i].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 			XMVector3Normalize(particles[i].dir);
