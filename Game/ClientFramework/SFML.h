@@ -176,34 +176,6 @@ public:
 				npcArr[id]._hp = my_packet->hp;
 				npcArr[id]._animation_state = my_packet->char_state;
 			}
-			
-			////얘가 뭐하는 코드인고?
-			//if (id < PLAYERMAX)
-			//{
-			//	playerArr[id]._hp = my_packet->hp;
-			//}
-			//if (id < PLAYERMAX && myClientId != id) {
-			//	playerArr[id]._transform.x = my_packet->x;
-			//	playerArr[id]._transform.y = my_packet->y;
-			//	playerArr[id]._transform.z = my_packet->z;
-			//	playerArr[id]._degree = my_packet->degree;
-			//	playerArr[id]._animation_state = my_packet->char_state;
-
-			//	if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
-			//		playerArr[id]._animation_time_pos = 0.f;
-			//		playerArr[id]._animation_state0 = playerArr[id]._animation_state;
-			//	}
-			//}
-			//else if (id >= PLAYERMAX)
-			//{
-			//	npcArr[id - PLAYERMAX]._transform.x = my_packet->x;
-			//	npcArr[id - PLAYERMAX]._transform.y = my_packet->y;
-			//	npcArr[id - PLAYERMAX]._transform.z = my_packet->z;
-			//	npcArr[id - PLAYERMAX]._degree = my_packet->degree;
-			//	npcArr[id - PLAYERMAX]._hp = my_packet->hp;
-			//	npcArr[id - PLAYERMAX]._animation_state = my_packet->char_state;
-			//}
-			
 			break;
 		}
 		case SC_REMOVE_OBJECT:

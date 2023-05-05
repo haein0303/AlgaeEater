@@ -35,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	cout << "create client" << endl;
 
 	thread logical_thread{ &Client::Logic,&client };
+
 	thread render_thread1{ &Client::Draw,&client };
 	thread render_thread2{ &Client::Draw,&client };
 

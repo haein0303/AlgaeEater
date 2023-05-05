@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "DxEngine.h"
 
 
@@ -11,8 +11,8 @@ class Client
 {
 public:
 	
-	DxEngine dxEngine; //DX¿£Áø
-	WindowInfo windowInfo; //È­¸é °ü·Ã Á¤º¸ °´Ã¼
+	DxEngine dxEngine; //DXì—”ì§„
+	WindowInfo windowInfo; //í™”ë©´ ê´€ë ¨ ì •ë³´ ê°ì²´
 	atomic<int> _render_thread_num = 0;
 	
 	void Init(HINSTANCE hInst, int nCmdShow)
@@ -20,7 +20,7 @@ public:
 
 		//cout << "Client INIT CALL" << endl;
 
-		//À©µµ¿ì °´Ã¼ ÃÊ±âÈ­
+		//ìœˆë„ìš° ê°ì²´ ì´ˆê¸°í™”
 		WNDCLASS WndClass;
 		WndClass.style = CS_HREDRAW | CS_VREDRAW;
 		WndClass.lpfnWndProc = WndProc;
@@ -39,12 +39,12 @@ public:
 		
 		
 		
-		//¿£Áø ÃÊ±âÈ­
+		//ì—”ì§„ ì´ˆê¸°í™”
 		dxEngine.Init(windowInfo);
 		dxEngine.late_Init(windowInfo);
 		
 
-		//¿ÀºêÁ§Æ® µ¥ÀÌÅÍ »ı¼º
+		//ì˜¤ë¸Œì íŠ¸ ë°ì´í„° ìƒì„±
 		vector<Point> pointVertexvec(1);
 		vector<UINT> pointIndexVec;
 		pointVertexvec[0].pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -53,7 +53,7 @@ public:
 		dxEngine.vertexBufferPtr->CreateVertexBuffer(dxEngine.vertexBufferPtr->_particleVertexBuffer, dxEngine.vertexBufferPtr->_particleVertexBufferView, pointVertexvec, dxEngine.devicePtr);
 		dxEngine.indexBufferPtr->CreateIndexBuffer(dxEngine.indexBufferPtr->_particleIndexBuffer, dxEngine.indexBufferPtr->_particleIndexBufferView, pointIndexVec, dxEngine.devicePtr, dxEngine.indexBufferPtr->_particleIndexCount);
 
-		//±âº»À¸·Î ÀÖ¾î¾ß µÇ´Â ¾Æ°¡µé
+		//ê¸°ë³¸ìœ¼ë¡œ ìˆì–´ì•¼ ë˜ëŠ” ì•„ê°€ë“¤
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShader(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndGSAndPSO(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
 		dxEngine.psoPtr->CreateInputLayoutAndPSOAndShaderOfAniamtion(dxEngine.devicePtr, dxEngine.rootSignaturePtr, dxEngine.dsvPtr);
@@ -76,6 +76,12 @@ public:
 	//fixed_update
 	void Logic()
 	{
+		cout << "try server connect" << endl;
+		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM)) {
+			cout << "SERVER CONNECT FAIL" << endl;
+			while (1);
+		}//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		cout << "complite server connect" << endl;
 		cout << "LOGIC CALL" << endl;
 		while (g_isLive) {
 			dxEngine.logicTimerPtr->fixed_update_tic();

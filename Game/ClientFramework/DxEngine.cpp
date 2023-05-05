@@ -5,12 +5,12 @@
 void DxEngine::Init(WindowInfo windowInfo)
 {
 	
-	cout << "try server connect" << endl;
-	if (-1 == networkPtr->ConnectServer(GAME_PORT_NUM)) {
-		cout << "SERVER CONNECT FAIL" << endl;
-		while (1);
-	}//������ ����
-	cout << "complite server connect" << endl;
+	//cout << "try server connect" << endl;
+	//if (-1 == networkPtr->ConnectServer(GAME_PORT_NUM)) {
+	//	cout << "SERVER CONNECT FAIL" << endl;
+	//	while (1);
+	//}//������ ����
+	//cout << "complite server connect" << endl;
 
 	//ȭ�� ũ�� ����
 	_viewport = { 0, 0, static_cast<FLOAT>(windowInfo.ClientWidth), static_cast<FLOAT>(windowInfo.ClientHeight), 0.0f, 1.0f };
@@ -125,7 +125,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	}
 
 	d11Ptr->LoadPipeline();
-	d11Ptr->addResource(L"..\\Resources\\Lobby\\button_1.png");
+	d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 	cout << "complite late init" << endl;
 }
 
