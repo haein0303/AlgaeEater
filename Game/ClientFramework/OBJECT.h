@@ -10,8 +10,8 @@ public:
 	bool		_on = false;
 	float		_degree;
 	XMFLOAT4	_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	bool		_isCollision = false;
-	bool		_isFirstCollision = false;
+	bool		_isCollision[NPCMAX]{ false };
+	bool		_isFirstCollision[NPCMAX]{ false };
 	int			_animation_state = 0;
 	int			_animation_state0 = 0;
 	float		_animation_time_pos = 0.f;
@@ -21,6 +21,8 @@ public:
 	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;
 	vector<XMFLOAT4X4> _final_transforms;
+
+	ParticleData particles[PLAYERMAX][PARTICLE_NUM];
 
 	shared_ptr<MESH_ASSET> _my_mesh;
 

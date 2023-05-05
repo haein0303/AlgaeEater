@@ -374,19 +374,19 @@ void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12Graph
 	// 파티클
 	if (pow(_dxengine->playerArr[0]._transform.x - _dxengine->npcArr[9]._transform.x, 2) + pow(_dxengine->playerArr[0]._transform.z - _dxengine->npcArr[9]._transform.z, 2) <= 4.f) //�浹 ó��
 	{
-		if (_dxengine->playerArr[0]._isCollision == false)
-			_dxengine->playerArr[0]._isFirstCollision = true;
+		if (_dxengine->playerArr[0]._isCollision[9] == false)
+			_dxengine->playerArr[0]._isFirstCollision[9] = true;
 		else
-			_dxengine->playerArr[0]._isFirstCollision = false;
-		_dxengine->playerArr[0]._isCollision = true;
+			_dxengine->playerArr[0]._isFirstCollision[9] = false;
+		_dxengine->playerArr[0]._isCollision[9] = true;
 	}
 	if (pow(_dxengine->playerArr[0]._transform.x - _dxengine->npcArr[9]._transform.x, 2) + pow(_dxengine->playerArr[0]._transform.z - _dxengine->npcArr[9]._transform.z, 2) > 4.f)
 	{
-		_dxengine->playerArr[0]._isCollision = false;
+		_dxengine->playerArr[0]._isCollision[9] = false;
 	}
 	for (int i = 0; i < 100; i++) //��ƼŬ ����
 	{
-		if (_dxengine->playerArr[0]._isFirstCollision == true && _dxengine->particles[i].alive == 0)
+		if (_dxengine->playerArr[0]._isFirstCollision[9] == true && _dxengine->particles[i].alive == 0)
 		{
 			_dxengine->particles[i].lifeTime = (float)(rand() % 101) / 1000 + 0.1f; //0.1~0.2
 			_dxengine->particles[i].curTime = 0.0f;

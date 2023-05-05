@@ -100,8 +100,8 @@ namespace fs = std::filesystem;
 #define DIRECTIONAL_LIGHT	3
 
 // 파티클 정보
-#define PARTICLE_NUM 200
-#define CONSTANT_COUNT 1000
+#define PARTICLE_NUM 50
+#define CONSTANT_COUNT 3000
 
 namespace COMUtil
 {
