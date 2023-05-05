@@ -14,9 +14,9 @@ void DxEngine::Init(WindowInfo windowInfo)
 	rtvPtr->CreateRTV(devicePtr, swapChainPtr);
 	cameraPtr->TransformProjection(windowInfo); //투영 변환
 	rootSignaturePtr->CreateRootSignature(devicePtr);
-	constantBufferPtr->CreateConstantBuffer(sizeof(Constants), 256, devicePtr);
+	constantBufferPtr->CreateConstantBuffer(CONSTANT_COUNT, CONSTANT_COUNT, devicePtr);
 	constantBufferPtr->CreateView(devicePtr);
-	descHeapPtr->CreateDescTable(256, devicePtr);
+	descHeapPtr->CreateDescTable(CONSTANT_COUNT, devicePtr);
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
 	timerPtr->InitTimer(windowInfo);
 	RECT rect = { 0, 0, windowInfo.ClientWidth, windowInfo.ClientHeight };

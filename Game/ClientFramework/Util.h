@@ -99,6 +99,10 @@ namespace fs = std::filesystem;
 #define SPOT_LIGHT			2
 #define DIRECTIONAL_LIGHT	3
 
+// 파티클 정보
+#define PARTICLE_NUM 200
+#define CONSTANT_COUNT 1000
+
 namespace COMUtil
 {
 	// Helper class for COM exceptions
@@ -234,7 +238,7 @@ struct ParticleData {
 	float lifeTime = 0.f;
 	float curTime = 0.f;
 	XMVECTOR velocity = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-	XMVECTOR bounding_box_half_size = XMVectorSet(0.05f, 0.05f, 0.05f, 0.f);
+	XMVECTOR bounding_box_half_size = XMVectorSet(0.014f, 0.014f, 0.014f, 0.f);
 };
 
 // 애니메이션

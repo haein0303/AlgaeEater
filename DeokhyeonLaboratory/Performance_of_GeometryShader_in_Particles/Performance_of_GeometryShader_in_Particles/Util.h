@@ -38,7 +38,8 @@ namespace fs = std::filesystem;
 #define CBV_REGISTER_COUNT 5
 #define SRV_REGISTER_COUNT 5
 #define REGISTER_COUNT 10
-#define PARTICLE_NUM 256
+#define PARTICLE_NUM 800
+#define CONSTANT_COUNT 1000
 
 //정점 구조체
 struct Vertex

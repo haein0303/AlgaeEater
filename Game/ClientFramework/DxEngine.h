@@ -72,7 +72,7 @@ public:
 	OBJECT cubeArr[CubeMax];
 
 	// 파티클 데이터
-	ParticleData particles[100];
+	ParticleData particles[PARTICLE_NUM];
 	float coefficient_of_restitution = 0.3f;	// 반발계수
 	float friction_coefficient = 0.5f;			// 마찰계수
 	float gravitational_acceleration = -5.f;	// 중력가속도

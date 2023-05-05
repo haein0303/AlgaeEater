@@ -23,9 +23,9 @@ void DxEngine::Init(WindowInfo windowInfo)
 	rtvPtr->CreateRTV(devicePtr, swapChainPtr);
 	cameraPtr->TransformProjection(windowInfo); //���� ��ȯ
 	rootSignaturePtr->CreateRootSignature(devicePtr);
-	constantBufferPtr->CreateConstantBuffer(sizeof(Constants), 256, devicePtr);
+	constantBufferPtr->CreateConstantBuffer(sizeof(Constants), CONSTANT_COUNT, devicePtr);
 	constantBufferPtr->CreateView(devicePtr);
-	descHeapPtr->CreateDescTable(256, devicePtr);
+	descHeapPtr->CreateDescTable(CONSTANT_COUNT, devicePtr);
 	
 	d11Ptr->init(this, windowInfo);
 
@@ -582,7 +582,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		playerArr[0]._isCollision = false;
 	}
-	for (int i = 0; i < 100; ++i) // 물리처리 및 렌더링
+	for (int i = 0; i < PARTICLE_NUM; ++i) // 물리처리 및 렌더링
 	{
 		if (playerArr[0]._isFirstCollision == true && particles[i].alive == 0)
 		{

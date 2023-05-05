@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4996)
 #include "DxEngine.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
@@ -28,6 +29,8 @@ public:
 		ShowWindow(windowInfo.hwnd, nCmdShow);
 		UpdateWindow(windowInfo.hwnd);
 		
+		freopen("CONOUT$", "wt", stdout);
+
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
 
@@ -99,6 +102,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (iMsg)
 	{
+	case WM_CLOSE:
+		FreeConsole();
+		break;
+	case WM_CREATE:
+		AllocConsole();
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

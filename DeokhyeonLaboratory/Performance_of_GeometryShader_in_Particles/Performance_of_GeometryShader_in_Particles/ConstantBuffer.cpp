@@ -1,8 +1,10 @@
 #include "Device.h"
 #include "ConstantBuffer.h"
+#include <iostream>
 void ConstantBuffer::CreateConstantBuffer(UINT size, UINT count, shared_ptr<Device> devicePtr)
 {
 	_elementSize = (size + 255) & ~255;
+	cout << _elementSize << endl;
 	_elementCount = count;
 
 	UINT64 bufferSize = _elementSize * _elementCount;
