@@ -109,6 +109,9 @@ void reset_lua(int c_id)
 	int npc_id = clients[c_id]._Room_Num * 10 + MAX_USER + 9;
 	lua_close(clients[npc_id].L);
 
+	clients[npc_id].x = clients[npc_id].start_x;
+	clients[npc_id].z = clients[npc_id].start_z;
+
 	clients[npc_id].L = luaL_newstate();
 
 	luaL_openlibs(clients[npc_id].L);
