@@ -138,13 +138,19 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr);
 
+	for (int i = 0; i < PLAYERMAX; ++i) {
+		if (playerArr[i]._on == true) {
+			if (playerArr[i]._animation_state == 0 || playerArr[i]._animation_state == 1) {
+				playerArr[i]._can_attack = true;
+			}
+		}
+	}
+
 	if (isActive)
 	{
 		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
-
-	
 
 	// 플레이어와 npc 공격에 대한 충돌 처리
 	for (int i = 0; i < PLAYERMAX; ++i) {
@@ -154,9 +160,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				if (npcArr[j]._on == true) {
 					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
 						if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
-							&& playerArr[i]._animation_time_pos >= player_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state / 2.f)
+							&& playerArr[i]._animation_time_pos >= player_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
 							&& playerArr[i]._can_attack) { // 플레이어가 공격중이고 애니메이션이 타격시점이고 공격기회가 있다면
+
 							playerArr[i]._can_attack = false;
+							npcArr[j]._particle_count += 50;
 
 							CS_COLLISION_PACKET p;
 							p.size = sizeof(p);
@@ -168,6 +176,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// 플레이어 hp 콘솔로 체크
 							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp 콘솔로 체크
+							cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
 						}
 						if (npcArr[j]._animation_state == 2
 							&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state / 2.f)
@@ -195,7 +204,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true && playerArr[i]._hp <= 0.f) {
 			playerArr[i]._animation_state = 4;
-			//playerArr[k]._on = false;
+			//playerArr[i]._on = false;
 
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
@@ -209,7 +218,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	for (int i = 0; i < NPCMAX; ++i) {
 		if (npcArr[i]._on == true && npcArr[i]._hp <= 0.f) {
 			npcArr[i]._animation_state = 3;
-			//npcArr[k]._on = false;
+			//npcArr[i]._on = false;
 
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
@@ -301,6 +310,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(player_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_asset._indexBufferView);
+
 	//����
 	for (int i = 0; i < PLAYERMAX; ++i) //�÷��̾� ����
 	{
@@ -573,101 +583,91 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
 	}
 
-	// 파티클
-	for (int i = 0; i < PLAYERMAX; ++i) {
-		if (playerArr[i]._on == true) {
-			for (int j = 0; j < NPCMAX; ++j)
+	// 파티클 시스템
+	int index = 0;
+	for (int i = 0; i < NPCMAX; ++i)
+	{
+		if (npcArr[i]._on == true) {
+			while (npcArr[i]._particle_count > 0)
 			{
-				if (npcArr[j]._on == true) {
-					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 4.f) // 플레이어와 npc 충돌 체크
-					{
-						if (playerArr[i]._isCollision[j] == false)
-							playerArr[i]._isFirstCollision[j] = true;
-						else
-							playerArr[i]._isFirstCollision[j] = false;
-						playerArr[i]._isCollision[j] = true;
-					}
-					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) > 4.f)
-					{
-						playerArr[i]._isCollision[j] = false;
-					}
-
-					for (int k = PARTICLE_NUM * i; k < PARTICLE_NUM * (i + 1); ++k) // 물리처리 및 렌더링
-					{
-						if (playerArr[i]._isFirstCollision[j] == true && npcArr[j].particles[i][k].alive == 0)
-						{
-							npcArr[j].particles[i][k].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
-							npcArr[j].particles[i][k].curTime = 0.0f;
-							npcArr[j].particles[i][k].pos = XMVectorSet(npcArr[j]._transform.x, npcArr[j]._transform.y + 0.3f, npcArr[j]._transform.z, 1.f);
-							npcArr[j].particles[i][k].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
-							npcArr[j].particles[i][k].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
-							XMVector3Normalize(npcArr[j].particles[i][k].dir);
-							npcArr[j].particles[i][k].velocity = XMVectorSet(npcArr[j].particles[i][k].dir.m128_f32[0] * npcArr[j].particles[i][k].moveSpeed,
-								npcArr[j].particles[i][k].dir.m128_f32[1] * npcArr[j].particles[i][k].moveSpeed, npcArr[j].particles[i][k].dir.m128_f32[2] * npcArr[j].particles[i][k].moveSpeed, 1.f);
-							npcArr[j].particles[i][k].alive = 1;
-						}
-						else if (npcArr[j].particles[i][k].alive == 1)
-						{
-							if (npcArr[j].particles[i][k].pos.m128_f32[1] - npcArr[j].particles[i][k].bounding_box_half_size.m128_f32[1] < 0.f) {
-								// 비탄성 충돌
-								npcArr[j].particles[i][k].velocity.m128_f32[1] = npcArr[j].particles[i][k].velocity.m128_f32[1] * -coefficient_of_restitution;
-								npcArr[j].particles[i][k].pos.m128_f32[1] = npcArr[j].particles[i][k].bounding_box_half_size.m128_f32[1];
-							}
-
-							if (npcArr[j].particles[i][k].velocity.m128_f32[1] <= 0.05f
-								&& npcArr[j].particles[i][k].pos.m128_f32[1] - npcArr[j].particles[i][k].bounding_box_half_size.m128_f32[1] == 0.f) {
-								// 마찰력
-								if (fabs(npcArr[j].particles[i][k].velocity.m128_f32[0]) > 0.1f) {
-									npcArr[j].particles[i][k].velocity.m128_f32[0] = npcArr[j].particles[i][k].velocity.m128_f32[0] + friction_coefficient * gravitational_acceleration * npcArr[j].particles[i][k].dir.m128_f32[0] * timerPtr->_deltaTime;
-								}
-								else {
-									npcArr[j].particles[i][k].velocity.m128_f32[0] = 0.f;
-								}
-
-								if (fabs(npcArr[j].particles[i][k].velocity.m128_f32[2]) > 0.1f) {
-									npcArr[j].particles[i][k].velocity.m128_f32[2] = npcArr[j].particles[i][k].velocity.m128_f32[2] + friction_coefficient * gravitational_acceleration * npcArr[j].particles[i][k].dir.m128_f32[2] * timerPtr->_deltaTime;
-								}
-								else {
-									npcArr[9].particles[i][k].velocity.m128_f32[2] = 0.f;
-								}
-							}
-
-							npcArr[j].particles[i][k].pos.m128_f32[0] = npcArr[j].particles[i][k].pos.m128_f32[0] + npcArr[j].particles[i][k].velocity.m128_f32[0] * timerPtr->_deltaTime; // x성분 이동
-							npcArr[j].particles[i][k].velocity.m128_f32[1] = npcArr[j].particles[i][k].velocity.m128_f32[1] - 5.f * timerPtr->_deltaTime; // 중력가속도에 의한 나중속도
-							npcArr[j].particles[i][k].pos.m128_f32[1] = npcArr[j].particles[i][k].pos.m128_f32[1] + npcArr[j].particles[i][k].velocity.m128_f32[1] * timerPtr->_deltaTime; // y성분 이동
-							npcArr[j].particles[i][k].pos.m128_f32[2] = npcArr[j].particles[i][k].pos.m128_f32[2] + npcArr[j].particles[i][k].velocity.m128_f32[2] * timerPtr->_deltaTime; // z성분 이동
-							XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - npcArr[j].particles[i][k].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[j].particles[i][k].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particles[k].pos.m128_f32[2], 2))))
-								* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[j].particles[i][k].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - npcArr[j].particles[i][k].pos.m128_f32[2]))
-								* XMMatrixTranslation(npcArr[j].particles[i][k].pos.m128_f32[0], npcArr[j].particles[i][k].pos.m128_f32[1], npcArr[j].particles[i][k].pos.m128_f32[2])); // 파티클이 항상 카메라를 바라보기
-							XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-							XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-							npcArr[j].particles[i][k].curTime += 0.001f;
-
-							if (npcArr[j].particles[i][k].lifeTime < npcArr[j].particles[i][k].curTime)
-							{
-								npcArr[j].particles[i][k].alive = 0;
-							}
-
-							cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
-							cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-							cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
-							cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
-							{
-								D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-								descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-								texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-								texturePtr->_srvHandle.Offset(6, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-								descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
-							}
-							descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-							cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
-						}
-					}
+				if (particles[index].alive == 0) // 파티클 초기화
+				{
+					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+					particles[index].curTime = 0.0f;
+					particles[index].pos = XMVectorSet(npcArr[i]._transform.x, npcArr[i]._transform.y + 0.3f, npcArr[i]._transform.z, 1.f);
+					particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+					particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+					XMVector3Normalize(particles[index].dir);
+					particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
+						particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
+					particles[index].alive = 1;
+					--npcArr[i]._particle_count;
+				}
+				else {
+					++index;
 				}
 			}
 			
+		}
+	}
+	for (int i = 0; i < PARTICLE_NUM; ++i) // 파티클 물리처리 및 렌더링
+	{
+		if (particles[i].alive == 1)
+		{
+			if (particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] < 0.f) {
+				// 비탄성 충돌
+				particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] * -coefficient_of_restitution;
+				particles[i].pos.m128_f32[1] = particles[i].bounding_box_half_size.m128_f32[1];
+			}
 
+			if (particles[i].velocity.m128_f32[1] <= 0.05f
+				&& particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] == 0.f) {
+				// 마찰력
+				if (fabs(particles[i].velocity.m128_f32[0]) > 0.1f) {
+					particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[0] * timerPtr->_deltaTime;
+				}
+				else {
+					particles[i].velocity.m128_f32[0] = 0.f;
+				}
+
+				if (fabs(particles[i].velocity.m128_f32[2]) > 0.1f) {
+					particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[2] * timerPtr->_deltaTime;
+				}
+				else {
+					particles[i].velocity.m128_f32[2] = 0.f;
+				}
+			}
+
+			particles[i].pos.m128_f32[0] = particles[i].pos.m128_f32[0] + particles[i].velocity.m128_f32[0] * timerPtr->_deltaTime; // x성분 이동
+			particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] - 5.f * timerPtr->_deltaTime; // 중력가속도에 의한 나중속도
+			particles[i].pos.m128_f32[1] = particles[i].pos.m128_f32[1] + particles[i].velocity.m128_f32[1] * timerPtr->_deltaTime; // y성분 이동
+			particles[i].pos.m128_f32[2] = particles[i].pos.m128_f32[2] + particles[i].velocity.m128_f32[2] * timerPtr->_deltaTime; // z성분 이동
+			XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - particles[i].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2], 2))))
+				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2]))
+				* XMMatrixTranslation(particles[i].pos.m128_f32[0], particles[i].pos.m128_f32[1], particles[i].pos.m128_f32[2])); // 파티클이 항상 카메라를 바라보기
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			particles[i].curTime += 0.001f;
+
+			if (particles[i].lifeTime < particles[i].curTime)
+			{
+				particles[i].alive = 0;
+			}
+
+			cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
+			cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+			cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
+			cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+				texturePtr->_srvHandle.Offset(6, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+			}
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 		}
 	}
 	

@@ -20,7 +20,6 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player)
 	if ((player._animation_state == 2 || player._animation_state == 3) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
 		player._animation_time_pos = 0.f;
 		player._animation_state = 0;
-		player._can_attack = true;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
