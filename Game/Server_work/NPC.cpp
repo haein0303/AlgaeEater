@@ -31,6 +31,7 @@ void initialize_npc()
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;
 		clients[i].stage = 0;
+		clients[i].room_list.clear();
 
 		clients[i].L = luaL_newstate();
 
@@ -148,6 +149,16 @@ void initialize_npc()
 		clients[i].start_x = clients[i].x;
 		clients[i].start_z = clients[i].z;
 	}
+
+	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
+		for (int j = i + 1; j < i + 10; ++j) {
+			if (clients[i]._Room_Num == clients[j]._Room_Num) {
+				clients[i].room_list.insert(j);
+				clients[j].room_list.insert(i);
+			}
+			else break;
+		}
+	}
 	cout << "npc 로딩 끝" << endl;
 }
 
@@ -259,24 +270,23 @@ void move_npc(int player_id, int c_id)
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
 
-	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.0f) {
+	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
+	float nde = de * 180 / PI;
+	clients[c_id].degree = nde;
+
+	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 2.0f) {
 		// 공격 처리 관련, 여기서 안 할 수도 있음
 		clients[c_id].char_state = 2;
+		return;
 	}
 	else clients[c_id].char_state = 1;
 
-	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
-	de = de * 180 / PI;
-	clients[c_id].degree = de;
+	for (auto& pl : clients[c_id].room_list) {
+		if (abs(x - clients[pl].x) + abs(z - clients[pl].z) <= 2.0f) return;
+	}
 
-	if (x > clients[player_id].x) x -= 0.5f;
-	else if (x < clients[player_id].x) x += 0.5f;
-
-	if (z > clients[player_id].z) z -= 0.5f;
-	else if (z < clients[player_id].z) z += 0.5f;
-
-	if (abs(x - clients[player_id].x) < 0.5f) x = clients[player_id].x;
-	if (abs(z - clients[player_id].z) < 0.5f) z = clients[player_id].z;
+	x += 0.5f * -sin(de);
+	z += 0.5f * -cos(de);
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;

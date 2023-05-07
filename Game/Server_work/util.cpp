@@ -81,7 +81,6 @@ void process_packet(int c_id, char* packet)
 		}
 
 		// npc 세팅 부분
-
 		if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
 			for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
 				switch (clients[c_id].stage)
@@ -146,6 +145,7 @@ void process_packet(int c_id, char* packet)
 			npc_id = clients[c_id]._Room_Num * 10 + (p->attacker_id - 4) + MAX_USER;
 
 			clients[c_id].hp -= 10;
+			Update_Player(c_id);
 		}
 		break;
 	}
