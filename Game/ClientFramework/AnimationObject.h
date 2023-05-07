@@ -21,7 +21,7 @@ public:
 	void CreateAnimationObject(vector<SkinnedVertex>& vertices, vector<UINT>& indices, const string& filePath);
 
 	// 매 프레임마다 애니메이션을 진행
-	void UpdateSkinnedAnimation(float dt, OBJECT& player);
+	void UpdateSkinnedAnimation(float dt, OBJECT& player, int i);
 
 	template<typename T>
 	static T Max(const T& a, const T& b) {

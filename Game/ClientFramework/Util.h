@@ -207,7 +207,7 @@ struct Constants
 	LightInfo lnghtInfo;
 	XMFLOAT4X4 TexTransform = Identity4x4();
 	XMFLOAT4X4 MatTransform = Identity4x4();
-	XMFLOAT4X4 BoneTransforms[140];
+	XMFLOAT4X4 BoneTransforms[96];
 	int obj_type = 0;
 	XMVECTOR camera_pos;
 	XMFLOAT4 hp_bar_start_pos;

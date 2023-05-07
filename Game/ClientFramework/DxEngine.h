@@ -79,10 +79,10 @@ public:
 	
 	MESH_ASSET cube_asset;
 	MESH_ASSET player_AKI_Body_asset;
-	//MESH_ASSET player_AKI_Astro_A_asset;
-	//MESH_ASSET player_AKI_Hair_A_asset;
-	//MESH_ASSET player_AKI_HeadPhone_asset;
-	//MESH_ASSET player_AKI_Sword_asset;
+	MESH_ASSET player_AKI_Astro_A_asset;
+	MESH_ASSET player_AKI_Hair_A_asset;
+	MESH_ASSET player_AKI_HeadPhone_asset;
+	MESH_ASSET player_AKI_Sword_asset;
 	MESH_ASSET npc_asset;
 	MESH_ASSET boss;
 	MESH_ASSET map_asset;

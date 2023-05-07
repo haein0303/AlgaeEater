@@ -21,6 +21,7 @@ public:
 	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;
 	vector<XMFLOAT4X4> _final_transforms;
+	vector<XMFLOAT4X4> _weapon_final_transforms;
 
 	int _particle_count = 0;
 

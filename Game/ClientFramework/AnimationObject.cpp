@@ -8,7 +8,7 @@ void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vec
 	ClipName = "SkinningAnimtion";
 }
 
-void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player)
+void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 {
 	player._animation_time_pos += dt;
 
@@ -23,7 +23,12 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player)
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
-	GetFinalTransforms(ClipName, player._animation_time_pos, player._final_transforms, player._animation_state);
+	if (i == 0) {
+		GetFinalTransforms(ClipName, player._animation_time_pos, player._final_transforms, player._animation_state);
+	}
+	else {
+		GetFinalTransforms(ClipName, player._animation_time_pos, player._weapon_final_transforms, player._animation_state);
+	}
 }
 
 float AnimationObject::GetClipEndTime(int state) {
