@@ -113,7 +113,7 @@ void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12Graph
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		if (_dxengine->playerArr[i]._on == true) {
-			_dxengine->player_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->playerArr[i]);
+			_dxengine->player_AKI_Body_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->playerArr[i]);
 		}
 	}
 	if (_dxengine->npcArr[0]._on == true) {
@@ -147,7 +147,7 @@ void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12Graph
 				}
 
 				_dxengine->descHeapPtr->CommitTable_multi(_dxengine->cmdQueuePtr, i_now_render_index);
-				cmdList->DrawIndexedInstanced(_dxengine->player_asset._indexCount, 1, 0, 0, 0);
+				cmdList->DrawIndexedInstanced(_dxengine->player_AKI_Body_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
 	}
