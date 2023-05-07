@@ -829,9 +829,25 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	d11Ptr->RenderUI(i_now_render_index);
 	d11Ptr->LateRenderUI(_test_ui_vector);
 
-	D2D1_RECT_F _tmp = D2D1::RectF(300.0f, 0.0f, 500.f, 100.f);
-	const WCHAR text[] = L"ÇÑ±Û?";
+	D2D1_RECT_F _tmp = D2D1::RectF(0, 620.0f, 1280.f, 720.f);
+	WCHAR text[128];
+	wsprintf(text, L"HP : %d", playerArr[0]._hp);
 	d11Ptr->draw_text(text, _tmp);
+	_tmp.left = 1100;
+	_tmp.right = 1280;
+	for (int i = 1; i < PLAYERMAX; ++i) {
+		if (playerArr[i]._on == true)
+		{
+			wsprintf(text, L"HP : %d", playerArr[i]._hp);
+		}
+		else {
+			wsprintf(text, L"WAIT PLAYER");
+		}
+		_tmp.bottom = 720 / 2 - 50 + 25 * i;
+		_tmp.top = _tmp.bottom - 25;
+		d11Ptr->draw_text(text, _tmp);
+	}
+
 
 	d11Ptr->ExcuteUI(i_now_render_index);
 	swapChainPtr->_swapChain->Present(0, 0);
