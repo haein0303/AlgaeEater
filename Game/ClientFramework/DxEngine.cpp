@@ -145,6 +145,13 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 		}
 	}
+	for (int i = 0; i < NPCMAX; ++i) {
+		if (npcArr[i]._on == true) {
+			if (npcArr[i]._animation_state == 0 || npcArr[i]._animation_state == 1) {
+				npcArr[i]._can_attack = true;
+			}
+		}
+	}
 
 	if (isActive)
 	{
@@ -179,8 +186,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
 						}
 						if (npcArr[j]._animation_state == 2
-							&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state / 2.f)
+							&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
 							&& npcArr[j]._can_attack) { // npc가 공격중이고 애니메이션이 타격시점이고 공격기회가 있다면
+
 							npcArr[j]._can_attack = false;
 
 							CS_COLLISION_PACKET p;
@@ -204,7 +212,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true && playerArr[i]._hp <= 0.f) {
 			playerArr[i]._animation_state = 4;
-			//playerArr[i]._on = false;
 
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
