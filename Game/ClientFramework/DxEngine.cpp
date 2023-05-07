@@ -189,67 +189,65 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
-	// ?”Œ? ˆ?´?–´??? npc ê³µê²©?— ????•œ ì¶©ëŒ ì²˜ë¦¬
-	for (int i = 0; i < PLAYERMAX; ++i) {
-		if (playerArr[i]._on == true ) {
-			for (int j = 0; j < NPCMAX; ++j)
-			{
-				if (npcArr[j]._on == true) {
-					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
-						if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
-							&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
-							&& playerArr[i]._can_attack) { // ?”Œ? ˆ?´?–´ê°? ê³µê²©ì¤‘ì´ê³? ?• ?‹ˆë©”ì´?…˜?´ ???ê²©ì‹œ? ?´ê³? ê³µê²©ê¸°íšŒê°? ?ˆ?‹¤ë©?
+	
+	
+	for (int j = 0; j < NPCMAX; ++j)
+	{
+		int i = 0;
+		if (npcArr[j]._on == true) {
+			if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
+				if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+					&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
+					&& playerArr[i]._can_attack) {
 
-							playerArr[i]._can_attack = false;
-							npcArr[j]._particle_count += 50;
+					playerArr[i]._can_attack = false;
+					npcArr[j]._particle_count += 50;
 
-							CS_COLLISION_PACKET p;
-							p.size = sizeof(p);
-							p.type = CS_COLLISION;
-							p.attack_type = 'a'; // ?˜ë¯? ?—†?Š” ê°?
-							p.attacker_id = i;
-							p.target_id = j;
-							networkPtr->send_packet(&p);
+					CS_COLLISION_PACKET p;
+					p.size = sizeof(p);
+					p.type = CS_COLLISION;
+					p.attack_type = 'a';
+					p.attacker_id = i;
+					p.target_id = j;
+					networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// ?”Œ? ˆ?´?–´ hp ì½˜ì†”ë¡? ì²´í¬
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp ì½˜ì†”ë¡? ì²´í¬
-							cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
-						}
-						if (npcArr[j]._animation_state == 2
-							&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
-							&& npcArr[j]._can_attack) { // npcê°? ê³µê²©ì¤‘ì´ê³? ?• ?‹ˆë©”ì´?…˜?´ ???ê²©ì‹œ? ?´ê³? ê³µê²©ê¸°íšŒê°? ?ˆ?‹¤ë©?
+					cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
+					cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
+					cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
+				}
+				if (npcArr[j]._animation_state == 2
+					&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
+					&& npcArr[j]._can_attack) {
 
-							npcArr[j]._can_attack = false;
+					npcArr[j]._can_attack = false;
 
-							CS_COLLISION_PACKET p;
-							p.size = sizeof(p);
-							p.type = CS_COLLISION;
-							p.attack_type = 'a'; // ?˜ë¯? ?—†?Š” ê°?
-							p.attacker_id = j;
-							p.target_id = i;
-							networkPtr->send_packet(&p);
+					CS_COLLISION_PACKET p;
+					p.size = sizeof(p);
+					p.type = CS_COLLISION;
+					p.attack_type = 'a';
+					p.attacker_id = j;
+					p.target_id = i;
+					networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// ?”Œ? ˆ?´?–´ hp ì½˜ì†”ë¡? ì²´í¬
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp ì½˜ì†”ë¡? ì²´í¬
-						}
-					}
+					cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
+					cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 				}
 			}
 		}
 	}
+		
 
-	// ?”Œ? ˆ?´?–´ ?‚¬ë§?
-	for (int i = 0; i < PLAYERMAX; ++i) {
-		if (playerArr[i]._on == true && playerArr[i]._hp <= 0.f) {
-			playerArr[i]._animation_state = 4;
+	
+	if (playerArr[0]._hp <= 0.f) {
+		playerArr[0]._animation_state = 4;
 
-			CS_MOVE_PACKET p;
-			p.size = sizeof(p);
-			p.type = CS_MOVE;
-			p.char_state = playerArr[i]._animation_state;
-			networkPtr->send_packet(&p);
-		}
+		CS_MOVE_PACKET p;
+		p.size = sizeof(p);
+		p.type = CS_MOVE;
+		p.char_state = playerArr[0]._animation_state;
+		networkPtr->send_packet(&p);
 	}
+	
 
 	// npc ?‚¬ë§?
 	for (int i = 0; i < NPCMAX; ++i) {
