@@ -85,11 +85,12 @@ void do_timer()
 					int dead_player = rd_id;
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl < MAX_USER) {
-							if (clients[pl].char_state == 4) continue;
-							rd_id = pl;
-							break;
+							if (clients[pl].char_state != 4) 
+							{
+								rd_id = pl;
+								break;
+							}
 						}
-						else if (pl >= MAX_USER) continue;
 					}
 					if (dead_player == rd_id) {
 						ex_over->_comp_type = OP_SET_NPC;
@@ -132,11 +133,12 @@ void do_timer()
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl < MAX_USER) {
-							if (clients[pl].char_state == 4) continue;
-							ev.target_id = pl;
-							break;
+							if (clients[pl].char_state != 4)
+							{
+								ev.target_id = pl;
+								break;
+							}
 						}
-						else if (pl >= MAX_USER) continue;
 					}
 					if (dead_player == ev.target_id) {
 						clients[ev.object_id].char_state =0;
