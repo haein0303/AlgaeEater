@@ -3,6 +3,8 @@
 
 class DxEngine;
 
+class UI_ASSET;
+
 class SCENE
 {
 public:
@@ -25,9 +27,14 @@ public:
 	virtual void Draw(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList, int i_now_render_index) = 0;
 	void Draw_excute(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12GraphicsCommandList> cmdList, int i_now_render_index);
 
+	void RenderUI(ComPtr<ID2D1DeviceContext2> Context);
+
 protected:
 	SceneTag _tag;
 	DxEngine* _dxengine;
+
+	vector<UI_ASSET> _ui_asset;
+
 
 };
 

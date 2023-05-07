@@ -27,3 +27,11 @@ void SCENE::Draw_excute(ComPtr<ID3D12CommandAllocator> cmdAlloc, ComPtr<ID3D12Gr
 	_dxengine->swapChainPtr->_backBufferIndex = (_dxengine->swapChainPtr->_backBufferIndex + 1) % SWAP_CHAIN_BUFFER_COUNT;
 
 }
+
+void SCENE::RenderUI(ComPtr<ID2D1DeviceContext2> Context)
+{
+	for (const auto& asset : _ui_asset) {
+		Context->DrawBitmap(asset._image, asset._rect);
+	}
+
+}

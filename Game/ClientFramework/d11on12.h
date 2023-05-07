@@ -10,10 +10,12 @@ class DxEngine;
 
 class UI_ASSET {
 public:
-	bool _is_image = false;
-	ID2D1Bitmap* test;
-	WCHAR text[256];
-	D2D1_RECT_F image_rect = D2D1::RectF(0.0f, 0.0f, 100.f, 100.f);
+	UI_ASSET() {};
+	UI_ASSET(const UI_ASSET& tmp):_image(tmp._image),_rect(tmp._rect) {}
+	UI_ASSET(ID2D1Bitmap* image, D2D1_RECT_F rect) :_image(image), _rect(rect) {}
+public:
+	ID2D1Bitmap* _image;
+	D2D1_RECT_F _rect = D2D1::RectF(0.0f, 0.0f, 100.f, 100.f);
 };
 
 class d11on12
@@ -58,8 +60,10 @@ public:
 	void init(DxEngine* engine, WindowInfo windowInfo);
 	void LoadPipeline();
 
-	void addResource(LPCWSTR path);
+	ID2D1Bitmap* addResource(LPCWSTR path);
 	void RenderUI(int mCurrBackbufferIndex);
+	void LateRenderUI(vector<UI_ASSET> scene_asset);
+	void draw_UI(const UI_ASSET& draw);
 	void ExcuteUI(int mCurrBackbufferIndex);
 };
 

@@ -164,7 +164,7 @@ void d11on12::LoadPipeline()
     mDWriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 
-void d11on12::addResource(LPCWSTR path)
+ID2D1Bitmap* d11on12::addResource(LPCWSTR path)
 {
 	ID2D1Bitmap *tmp;
 	// Create a decoder
@@ -202,6 +202,8 @@ void d11on12::addResource(LPCWSTR path)
 
 	_v_Resource.push_back(tmp);
 	test = tmp;
+
+	return tmp;
 }
 
 void d11on12::RenderUI(int mCurrBackbufferIndex)
@@ -217,7 +219,7 @@ void d11on12::RenderUI(int mCurrBackbufferIndex)
     m_d2dDeviceContext->BeginDraw();
     m_d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 
-    m_d2dDeviceContext->DrawTextW(text, _countof(text) - 1, mDWriteTextFormat.Get(), &textRect, mSolidColorBrush.Get());
+    //m_d2dDeviceContext->DrawTextW(text, _countof(text) - 1, mDWriteTextFormat.Get(), &textRect, mSolidColorBrush.Get());
 
 	
 	m_d2dDeviceContext->DrawBitmap(test, image_rect);
@@ -228,6 +230,18 @@ void d11on12::RenderUI(int mCurrBackbufferIndex)
 
     
 
+}
+
+void d11on12::LateRenderUI(vector<UI_ASSET> scene_asset)
+{
+	for (const auto& data : scene_asset) {
+		m_d2dDeviceContext->DrawBitmap(data._image, data._rect);
+	}
+}
+
+void d11on12::draw_UI(const UI_ASSET& draw)
+{
+	m_d2dDeviceContext->DrawBitmap(draw._image, draw._rect);
 }
 
 void d11on12::ExcuteUI(int mCurrBackbufferIndex)

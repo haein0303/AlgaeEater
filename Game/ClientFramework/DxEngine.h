@@ -96,6 +96,8 @@ public:
 	SCENE* arrScene[SCENE::SceneTag::Count];
 	SCENE* m_pCurrScene;
 
+	vector<UI_ASSET> _test_ui_vector;
+
 private:
 	//화면 크기 관련
 	D3D12_VIEWPORT	_viewport;

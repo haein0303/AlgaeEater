@@ -131,6 +131,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	d11Ptr->LoadPipeline();
 	d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
+
+	ID2D1Bitmap* _i_tmp;
+	_i_tmp = d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
+	D2D1_RECT_F _tmp = D2D1::RectF(100.0f, 0.0f, 200.f, 100.f);
+	_test_ui_vector.emplace_back(_i_tmp,_tmp);
+
 	cout << "complite late init" << endl;
 }
 
@@ -480,29 +486,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 
-	/*// �� ����
-	{
-		cmdList->SetPipelineState(map_asset._pipelineState.Get());
-		cmdList->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
-		cmdList->IASetIndexBuffer(&map_asset._indexBufferView);
-		//���� ��ȯ
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(3.0f, 3.0f, 3.0f)* XMMatrixTranslation(0.f, 0.f, 0.f));
-		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-		//����
-		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-
-			map_asset._tex._srvHandle = map_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-
-			descHeapPtr->CopyDescriptor(map_asset._tex._srvHandle, 5, devicePtr);
-		}
-
-		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-		cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
-	}*/
-
 	// map
 	float map_size = 100.f;
 
@@ -698,6 +681,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdQueuePtr->_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
 	d11Ptr->RenderUI(i_now_render_index);
+	d11Ptr->LateRenderUI(_test_ui_vector);
 	d11Ptr->ExcuteUI(i_now_render_index);
 	swapChainPtr->_swapChain->Present(0, 0);
 	
