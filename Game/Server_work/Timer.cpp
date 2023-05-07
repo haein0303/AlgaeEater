@@ -132,8 +132,8 @@ void do_timer()
 			case EV_NPC_CON:
 				if (clients[ev.target_id].char_state == 4) {
 					int dead_player = ev.target_id;
-					for (auto& pl : clients[ev.object_id].room_list) {
-						if (pl < MAX_USER && pl != ev.target_id) {
+					for (auto& pl : clients[ev.target_id].room_list) {
+						if (pl < MAX_USER) {
 							if (clients[pl].char_state != 4)
 							{
 								cout << "º¯°æ" << endl;
