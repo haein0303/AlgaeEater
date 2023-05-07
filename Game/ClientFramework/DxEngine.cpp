@@ -216,8 +216,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
 			p.type = CS_MOVE;
-			p.char_state = playerArr[networkPtr->myClientId]._animation_state;
-			//networkPtr->send_packet(&p);
+			p.char_state = playerArr[i]._animation_state;
+			networkPtr->send_packet(&p);
 		}
 	}
 
@@ -230,7 +230,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
 			p.type = CS_MOVE;
-			p.char_state = npcArr[networkPtr->myClientId]._animation_state;
+			p.char_state = npcArr[i]._animation_state;
 			//networkPtr->send_packet(&p);
 		}
 	}
