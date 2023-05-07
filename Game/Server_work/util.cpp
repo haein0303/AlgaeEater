@@ -203,9 +203,11 @@ void disconnect(int c_id)
 	clients[c_id]._s_state = ST_FREE;
 
 	if (clients[c_id].room_list.size() != 0) {
-
 		for (auto& pl : clients[c_id].room_list) {
-			if (pl > MAX_USER) continue;
+			if (pl > MAX_USER) {
+				clients[pl].room_list.erase(c_id);
+				continue;
+			}
 			clients[pl]._sl.lock();
 			if (clients[pl]._s_state != ST_INGAME) {
 				clients[pl]._sl.unlock();
@@ -320,6 +322,11 @@ void do_worker()
 		}
 		case OP_NPC_RETURN: {
 			return_npc(key);
+			delete ex_over;
+			break;
+		}
+		case OP_SET_NPC: {
+			close_lua(key);
 			delete ex_over;
 			break;
 		}

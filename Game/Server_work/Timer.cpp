@@ -92,7 +92,9 @@ void do_timer()
 						else if (pl >= MAX_USER) continue;
 					}
 					if (dead_player == rd_id) {
-						clients[ev.object_id].char_state = 0;
+						ex_over->_comp_type = OP_SET_NPC;
+						ex_over->target_id = ev.target_id;
+						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 						break;
 					}
 				}
@@ -137,7 +139,10 @@ void do_timer()
 						else if (pl >= MAX_USER) continue;
 					}
 					if (dead_player == ev.target_id) {
-						clients[ev.object_id].char_state = 0;
+						clients[ev.object_id].char_state =0;
+						ex_over->_comp_type = OP_SET_NPC;
+						ex_over->target_id = ev.target_id;
+						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 						break;
 					}
 				}
