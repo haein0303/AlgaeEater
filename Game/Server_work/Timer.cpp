@@ -84,9 +84,10 @@ void do_timer()
 				if (clients[rd_id].char_state == 4) {
 					int dead_player = rd_id;
 					for (auto& pl : clients[ev.object_id].room_list) {
-						if (pl < MAX_USER) {
-							if (clients[pl].char_state != 4) 
+						if (pl < MAX_USER && pl != ev.target_id) {
+							if (clients[pl].char_state != 4)
 							{
+								cout << "변경" << endl;
 								rd_id = pl;
 								break;
 							}
@@ -132,9 +133,10 @@ void do_timer()
 				if (clients[ev.target_id].char_state == 4) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.object_id].room_list) {
-						if (pl < MAX_USER) {
+						if (pl < MAX_USER && pl != ev.target_id) {
 							if (clients[pl].char_state != 4)
 							{
+								cout << "변경" << endl;
 								ev.target_id = pl;
 								break;
 							}

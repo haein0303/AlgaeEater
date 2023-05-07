@@ -233,6 +233,10 @@ void rush_npc(int c_id, float t_x, float t_z)
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
 
+	float de = atan2(x - t_x, z - t_z);
+	de = de * 180 / PI;
+	clients[c_id].degree = de;
+
 	if (abs(x - t_x) + abs(z - t_z) <= 2) {
 		add_timer(c_id, 10000, EV_CK, c_id);
 		return;
@@ -245,10 +249,6 @@ void rush_npc(int c_id, float t_x, float t_z)
 			return;
 		}
 	}
-
-	float de = atan2(x - t_x, z - t_z);
-	de = de * 180 / PI;
-	clients[c_id].degree = de;
 
 	if (x > t_x) x--;
 	else if (x < t_x) x++;

@@ -123,9 +123,9 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].degree = p->degree;
 		clients[c_id].char_state = p->char_state;
 		clients[c_id].client_time = p->client_time;
-		if (c_id == 0) {
-			cout << "RECV : " << p->client_time << endl;
-		}
+		//if (c_id == 0) {
+		//	cout << "RECV : " << p->client_time << endl;
+		//}
 		Update_Player(c_id);
 		break;
 	}
