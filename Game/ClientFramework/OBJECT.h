@@ -22,7 +22,7 @@ public:
 	chrono::milliseconds time;
 	vector<XMFLOAT4X4> _final_transforms;
 
-	ParticleData particles[PLAYERMAX][PARTICLE_NUM];
+	int _particle_count = 0;
 
 	shared_ptr<MESH_ASSET> _my_mesh;
 
