@@ -508,6 +508,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		{
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(600.f, 600.f, 600.f) * XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(npcArr[9]._degree * XM_PI / 180.f - XM_PI)
 				* XMMatrixTranslation(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -541,7 +542,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				//���� ��ȯ
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(npcArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixRotationY(npcArr[i]._degree * XM_PI / 180.f -  XM_PI / 2.f)
 					* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y, npcArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
