@@ -155,10 +155,10 @@ void d11on12::init(DxEngine* engine, WindowInfo windowInfo) {
 
 void d11on12::LoadPipeline()
 {
-    m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua), mSolidColorBrush.GetAddressOf());
+    m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), mSolidColorBrush.GetAddressOf());
     m_dWriteFactory->CreateTextFormat(L"Verdana", nullptr,
-        DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_ITALIC, DWRITE_FONT_STRETCH_NORMAL,
-        25, L"en-us", mDWriteTextFormat.GetAddressOf());
+        DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+        25, L"ko-kr", mDWriteTextFormat.GetAddressOf());
 
     mDWriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     mDWriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -242,6 +242,11 @@ void d11on12::LateRenderUI(vector<UI_ASSET> scene_asset)
 void d11on12::draw_UI(const UI_ASSET& draw)
 {
 	m_d2dDeviceContext->DrawBitmap(draw._image, draw._rect);
+}
+
+void d11on12::draw_text(const WCHAR text[], D2D1_RECT_F rect)
+{
+	m_d2dDeviceContext->DrawTextW(text, wcslen(text), mDWriteTextFormat.Get(), &rect, mSolidColorBrush.Get());
 }
 
 void d11on12::ExcuteUI(int mCurrBackbufferIndex)

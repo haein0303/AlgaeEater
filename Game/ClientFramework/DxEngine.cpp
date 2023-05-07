@@ -189,7 +189,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
-	// í”Œë ˆì´ì–´ì™€ npc ê³µê²©ì— ëŒ€í•œ ì¶©ëŒ ì²˜ë¦¬
+	// ?”Œ? ˆ?´?–´??? npc ê³µê²©?— ????•œ ì¶©ëŒ ì²˜ë¦¬
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true ) {
 			for (int j = 0; j < NPCMAX; ++j)
@@ -198,7 +198,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
 						if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
 							&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
-							&& playerArr[i]._can_attack) { // í”Œë ˆì´ì–´ê°€ ê³µê²©ì¤‘ì´ê³  ì• ë‹ˆë©”ì´ì…˜ì´ íƒ€ê²©ì‹œì ì´ê³  ê³µê²©ê¸°íšŒê°€ ìˆë‹¤ë©´
+							&& playerArr[i]._can_attack) { // ?”Œ? ˆ?´?–´ê°? ê³µê²©ì¤‘ì´ê³? ?• ?‹ˆë©”ì´?…˜?´ ???ê²©ì‹œ? ?´ê³? ê³µê²©ê¸°íšŒê°? ?ˆ?‹¤ë©?
 
 							playerArr[i]._can_attack = false;
 							npcArr[j]._particle_count += 50;
@@ -206,31 +206,31 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							CS_COLLISION_PACKET p;
 							p.size = sizeof(p);
 							p.type = CS_COLLISION;
-							p.attack_type = 'a'; // ì˜ë¯¸ ì—†ëŠ” ê°’
+							p.attack_type = 'a'; // ?˜ë¯? ?—†?Š” ê°?
 							p.attacker_id = i;
 							p.target_id = j;
 							networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// í”Œë ˆì´ì–´ hp ì½˜ì†”ë¡œ ì²´í¬
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp ì½˜ì†”ë¡œ ì²´í¬
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// ?”Œ? ˆ?´?–´ hp ì½˜ì†”ë¡? ì²´í¬
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp ì½˜ì†”ë¡? ì²´í¬
 							cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
 						}
 						if (npcArr[j]._animation_state == 2
 							&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
-							&& npcArr[j]._can_attack) { // npcê°€ ê³µê²©ì¤‘ì´ê³  ì• ë‹ˆë©”ì´ì…˜ì´ íƒ€ê²©ì‹œì ì´ê³  ê³µê²©ê¸°íšŒê°€ ìˆë‹¤ë©´
+							&& npcArr[j]._can_attack) { // npcê°? ê³µê²©ì¤‘ì´ê³? ?• ?‹ˆë©”ì´?…˜?´ ???ê²©ì‹œ? ?´ê³? ê³µê²©ê¸°íšŒê°? ?ˆ?‹¤ë©?
 
 							npcArr[j]._can_attack = false;
 
 							CS_COLLISION_PACKET p;
 							p.size = sizeof(p);
 							p.type = CS_COLLISION;
-							p.attack_type = 'a'; // ì˜ë¯¸ ì—†ëŠ” ê°’
+							p.attack_type = 'a'; // ?˜ë¯? ?—†?Š” ê°?
 							p.attacker_id = j;
 							p.target_id = i;
 							networkPtr->send_packet(&p);
 
-							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// í”Œë ˆì´ì–´ hp ì½˜ì†”ë¡œ ì²´í¬
-							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp ì½˜ì†”ë¡œ ì²´í¬
+							cout << "player" << i << " hp : " << playerArr[i]._hp << endl;	// ?”Œ? ˆ?´?–´ hp ì½˜ì†”ë¡? ì²´í¬
+							cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;		// npc hp ì½˜ì†”ë¡? ì²´í¬
 						}
 					}
 				}
@@ -238,7 +238,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 
-	// í”Œë ˆì´ì–´ ì‚¬ë§
+	// ?”Œ? ˆ?´?–´ ?‚¬ë§?
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true && playerArr[i]._hp <= 0.f) {
 			playerArr[i]._animation_state = 4;
@@ -251,7 +251,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 
-	// npc ì‚¬ë§
+	// npc ?‚¬ë§?
 	for (int i = 0; i < NPCMAX; ++i) {
 		if (npcArr[i]._on == true && npcArr[i]._hp <= 0.f) {
 			npcArr[i]._animation_state = 3;
@@ -274,10 +274,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		playerArr[networkPtr->myClientId]._transform.z,
 		playerArr[networkPtr->myClientId]._transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½
+	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
 	XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
 
-	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½
+	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
 	XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
 
 	//Light
@@ -365,7 +365,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-				// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+				// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
 				//ï¿½ï¿½ï¿½ï¿½
@@ -550,7 +550,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-				// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+				// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				copy(begin(npcArr[i]._final_transforms), end(npcArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
 				//ï¿½ï¿½ï¿½ï¿½
@@ -608,7 +608,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(cube_asset._pipelineState.Get());	
 	cmdList->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
-	for (int i = 0; i < CubeMax; i++) //ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	for (int i = 0; i < CubeMax; i++) //ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
 	{
 		if (cubeArr[i]._on == true)
 		{
@@ -719,14 +719,14 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
 	}
 
-	// íŒŒí‹°í´ ì‹œìŠ¤í…œ
+	// ?ŒŒ?‹°?´ ?‹œ?Š¤?…œ
 	int index = 0;
 	for (int i = 0; i < NPCMAX; ++i)
 	{
 		if (npcArr[i]._on == true) {
 			while (npcArr[i]._particle_count > 0)
 			{
-				if (particles[index].alive == 0) // íŒŒí‹°í´ ì´ˆê¸°í™”
+				if (particles[index].alive == 0) // ?ŒŒ?‹°?´ ì´ˆê¸°?™”
 				{
 					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 					particles[index].curTime = 0.0f;
@@ -746,19 +746,19 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			
 		}
 	}
-	for (int i = 0; i < PARTICLE_NUM; ++i) // íŒŒí‹°í´ ë¬¼ë¦¬ì²˜ë¦¬ ë° ë Œë”ë§
+	for (int i = 0; i < PARTICLE_NUM; ++i) // ?ŒŒ?‹°?´ ë¬¼ë¦¬ì²˜ë¦¬ ë°? ? Œ?”ë§?
 	{
 		if (particles[i].alive == 1)
 		{
 			if (particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] < 0.f) {
-				// ë¹„íƒ„ì„± ì¶©ëŒ
+				// ë¹„íƒ„?„± ì¶©ëŒ
 				particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] * -coefficient_of_restitution;
 				particles[i].pos.m128_f32[1] = particles[i].bounding_box_half_size.m128_f32[1];
 			}
 
 			if (particles[i].velocity.m128_f32[1] <= 0.05f
 				&& particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] == 0.f) {
-				// ë§ˆì°°ë ¥
+				// ë§ˆì°°? ¥
 				if (fabs(particles[i].velocity.m128_f32[0]) > 0.1f) {
 					particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[0] * timerPtr->_deltaTime;
 				}
@@ -774,13 +774,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 			}
 
-			particles[i].pos.m128_f32[0] = particles[i].pos.m128_f32[0] + particles[i].velocity.m128_f32[0] * timerPtr->_deltaTime; // xì„±ë¶„ ì´ë™
-			particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] - 5.f * timerPtr->_deltaTime; // ì¤‘ë ¥ê°€ì†ë„ì— ì˜í•œ ë‚˜ì¤‘ì†ë„
-			particles[i].pos.m128_f32[1] = particles[i].pos.m128_f32[1] + particles[i].velocity.m128_f32[1] * timerPtr->_deltaTime; // yì„±ë¶„ ì´ë™
-			particles[i].pos.m128_f32[2] = particles[i].pos.m128_f32[2] + particles[i].velocity.m128_f32[2] * timerPtr->_deltaTime; // zì„±ë¶„ ì´ë™
+			particles[i].pos.m128_f32[0] = particles[i].pos.m128_f32[0] + particles[i].velocity.m128_f32[0] * timerPtr->_deltaTime; // x?„±ë¶? ?´?™
+			particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] - 5.f * timerPtr->_deltaTime; // ì¤‘ë ¥ê°??†?„?— ?˜?•œ ?‚˜ì¤‘ì†?„
+			particles[i].pos.m128_f32[1] = particles[i].pos.m128_f32[1] + particles[i].velocity.m128_f32[1] * timerPtr->_deltaTime; // y?„±ë¶? ?´?™
+			particles[i].pos.m128_f32[2] = particles[i].pos.m128_f32[2] + particles[i].velocity.m128_f32[2] * timerPtr->_deltaTime; // z?„±ë¶? ?´?™
 			XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - particles[i].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2], 2))))
 				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2]))
-				* XMMatrixTranslation(particles[i].pos.m128_f32[0], particles[i].pos.m128_f32[1], particles[i].pos.m128_f32[2])); // íŒŒí‹°í´ì´ í•­ìƒ ì¹´ë©”ë¼ë¥¼ ë°”ë¼ë³´ê¸°
+				* XMMatrixTranslation(particles[i].pos.m128_f32[0], particles[i].pos.m128_f32[1], particles[i].pos.m128_f32[2])); // ?ŒŒ?‹°?´?´ ?•­?ƒ ì¹´ë©”?¼ë¥? ë°”ë¼ë³´ê¸°
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -816,7 +816,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	
 
 	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // È­ï¿½ï¿½ ï¿½ï¿½ï¿½
+	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // È­ï¿½ï¿½ ï¿½ï¿½ï¿?
 
 	cmdList->ResourceBarrier(1, &barrier2);
 	cmdList->Close();
@@ -828,6 +828,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 	d11Ptr->RenderUI(i_now_render_index);
 	d11Ptr->LateRenderUI(_test_ui_vector);
+
+	D2D1_RECT_F _tmp = D2D1::RectF(300.0f, 0.0f, 500.f, 100.f);
+	const WCHAR text[] = L"ÇÑ±Û?";
+	d11Ptr->draw_text(text, _tmp);
+
 	d11Ptr->ExcuteUI(i_now_render_index);
 	swapChainPtr->_swapChain->Present(0, 0);
 	
@@ -840,8 +845,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 void DxEngine::Make_Scene()
 {	
-	// arrScene[SceneTag::Title] = new TitleScene();	// ï¿½Ì·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
-	//ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Õ´Ï´ï¿½.
+	// arrScene[SceneTag::Title] = new TitleScene();	// ï¿½Ì·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+	//ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ß°ï¿½ï¿½Õ´Ï´ï¿½.
 	arrScene[SCENE::SceneTag::test_scene] = new TestScene(SCENE::SceneTag::test_scene, this);
 }
 

@@ -64,6 +64,7 @@ public:
 	void RenderUI(int mCurrBackbufferIndex);
 	void LateRenderUI(vector<UI_ASSET> scene_asset);
 	void draw_UI(const UI_ASSET& draw);
+	void draw_text(LPCWSTR text, D2D1_RECT_F rect);
 	void ExcuteUI(int mCurrBackbufferIndex);
 };
 
