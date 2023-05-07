@@ -267,8 +267,6 @@ void rush_npc(int c_id, float t_x, float t_z)
 
 void move_npc(int player_id, int c_id)
 {
-	// cout << player_id << ", " << c_id << endl;
-
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
 
@@ -301,14 +299,11 @@ void return_npc(int c_id)
 	clients[c_id].char_state = 1;
 
 	float de = atan2(x - clients[c_id].start_x, z - clients[c_id].start_z);
-	de = de * 180 / PI;
-	clients[c_id].degree = de;
+	float nde = de * 180 / PI;
+	clients[c_id].degree = nde;
 
-	if (x > clients[c_id].start_x) x -= 0.5f;
-	else if (x < clients[c_id].start_x) x += 0.5f;
-
-	if (z > clients[c_id].start_z) z -= 0.5f;
-	else if (z < clients[c_id].start_z) z += 0.5f;
+	x += 0.5f * -sin(de);
+	z += 0.5f * -cos(de);
 
 	if (abs(x - clients[c_id].start_x) < 0.5f) x = clients[c_id].start_x;
 	if (abs(z - clients[c_id].start_z) < 0.5f) z = clients[c_id].start_z;

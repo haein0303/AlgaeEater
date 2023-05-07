@@ -65,7 +65,6 @@ void do_timer()
 			{
 			case EV_MOVE:
 			{
-				//cout << "ev.obj : " << ev.object_id << ", ev.tar : " << ev.target_id << endl;
 				ex_over->_comp_type = OP_NPC_MOVE;
 				ex_over->target_id = ev.target_id;
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
@@ -80,8 +79,23 @@ void do_timer()
 			}
 			case EV_CK:
 			{
-				srand((unsigned int)time(NULL));
 				int rd_id = clients[ev.object_id]._Room_Num * 4;
+
+				if (clients[rd_id].char_state == 4) {
+					int dead_player = rd_id;
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl < MAX_USER) {
+							if (clients[pl].char_state == 4) continue;
+							rd_id = pl;
+							break;
+						}
+						else if (pl >= MAX_USER) continue;
+					}
+					if (dead_player == rd_id) {
+						clients[ev.object_id].char_state = 0;
+						break;
+					}
+				}
 
 				lua_getglobal(clients[ev.object_id].L, "event_rush");
 				lua_pushnumber(clients[ev.object_id].L, rd_id);
@@ -107,13 +121,26 @@ void do_timer()
 				break;
 			}
 			case EV_RETURN:
-				// cout << ev.target_id << ev.object_id << endl;
 				ex_over->_comp_type = OP_NPC_RETURN;
 				ex_over->target_id = ev.target_id;
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			case EV_NPC_CON:
-				//cout << ev.object_id << ", " << ev.target_id << endl;
+				if (clients[ev.target_id].char_state == 4) {
+					int dead_player = ev.target_id;
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl < MAX_USER) {
+							if (clients[pl].char_state == 4) continue;
+							ev.target_id = pl;
+							break;
+						}
+						else if (pl >= MAX_USER) continue;
+					}
+					if (dead_player == ev.target_id) {
+						clients[ev.object_id].char_state = 0;
+						break;
+					}
+				}
 
 				lua_getglobal(clients[ev.object_id].L, "tracking_player");
 				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
