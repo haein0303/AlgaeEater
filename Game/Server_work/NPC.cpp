@@ -152,11 +152,13 @@ void initialize_npc()
 
 	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
 		for (int j = i + 1; j < i + 10; ++j) {
-			if (clients[i]._Room_Num == clients[j]._Room_Num) {
+			if (j >= MAX_USER + NPC_NUM) continue;
+			if (clients[i]._Room_Num != clients[j]._Room_Num) continue;
+			else
+			{
 				clients[i].room_list.insert(j);
 				clients[j].room_list.insert(i);
-			}
-			else break;
+			};
 		}
 	}
 	cout << "npc ·Îµù ³¡" << endl;
