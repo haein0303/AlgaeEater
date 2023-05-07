@@ -128,10 +128,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 
 		if (playerArr->_animation_state != 4) {
 			if (_states[VK_RBUTTON] == 2) {
-				//playerArr[networkPtr->myClientId]._animation_state = 3;
+				playerArr[networkPtr->myClientId]._animation_state = 3;
 			}
 			else if (_states[VK_LBUTTON] == 2) {
-				//playerArr[networkPtr->myClientId]._animation_state = 2;
+				playerArr[networkPtr->myClientId]._animation_state = 2;
 			}
 			else if (!(w == false && a == false && s == false && d == false)
 				&& playerArr[networkPtr->myClientId]._animation_state != 2
@@ -193,7 +193,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 						playerArr[networkPtr->myClientId]._degree = -angle.x + 225.f;
 					}
 				}
-				//playerArr[networkPtr->myClientId]._animation_state = 1;
+				playerArr[networkPtr->myClientId]._animation_state = 1;
 			}
 			else if (playerArr[networkPtr->myClientId]._animation_state != 2 && playerArr[networkPtr->myClientId]._animation_state != 3) {
 				playerArr[networkPtr->myClientId]._animation_state = 0;

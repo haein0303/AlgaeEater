@@ -98,18 +98,18 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss.CreatePSO();
 
 	player_AKI_Body_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	player_AKI_Body_asset.Init("../Resources/AKI_Test2_(1).txt", ObjectType::AnimationObjects);
+	player_AKI_Body_asset.Init("../Resources/Character.txt", ObjectType::AnimationObjects);
 	player_AKI_Body_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_AKI_Body_asset.Make_SRV();
 	player_AKI_Body_asset.CreatePSO();
 
-	player_AKI_Astro_A_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	player_AKI_Astro_A_asset.Init("../Resources/AKI_Test2_(2).txt", ObjectType::AnimationObjects);
+	/*player_AKI_Astro_A_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	player_AKI_Astro_A_asset.Init("../Resources/AKI_Test8_(2).txt", ObjectType::AnimationObjects);
 	player_AKI_Astro_A_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_AKI_Astro_A_asset.Make_SRV();
 	player_AKI_Astro_A_asset.CreatePSO();
 
-	/*player_AKI_Hair_A_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	player_AKI_Hair_A_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_AKI_Hair_A_asset.Init("../Resources/AKI_Sword_Test_(2).txt", ObjectType::AnimationObjects);
 	player_AKI_Hair_A_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_AKI_Hair_A_asset.Make_SRV();
@@ -119,13 +119,13 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	player_AKI_HeadPhone_asset.Init("../Resources/AKI_Sword_Test_(2).txt", ObjectType::AnimationObjects);
 	player_AKI_HeadPhone_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_AKI_HeadPhone_asset.Make_SRV();
-	player_AKI_HeadPhone_asset.CreatePSO();*/
+	player_AKI_HeadPhone_asset.CreatePSO();
 
 	player_AKI_Sword_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	player_AKI_Sword_asset.Init("../Resources/AKI_Test2_(3).txt", ObjectType::AnimationObjects);
+	player_AKI_Sword_asset.Init("../Resources/AKI_Test8_(3).txt", ObjectType::AnimationObjects);
 	player_AKI_Sword_asset.Add_texture(L"..\\Resources\\Texture\\AnimeCharcter.dds");
 	player_AKI_Sword_asset.Make_SRV();
-	player_AKI_Sword_asset.CreatePSO();
+	player_AKI_Sword_asset.CreatePSO();*/
 
 	npc_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	npc_asset.Init("../Resources/OrangeSpider.txt", ObjectType::AnimationObjects);
@@ -358,8 +358,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			//�̰� ��ĥ �� �ִ� �۾� ���� ������?			
 			{
 				//���� ��ȯ
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
-					* XMMatrixRotationX(-XM_PI / 2.f)
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
@@ -381,7 +380,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 	}
-	// 
+	/*//
 	cmdList->SetPipelineState(player_AKI_Astro_A_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Astro_A_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_AKI_Astro_A_asset._indexBufferView);
@@ -411,7 +410,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 	}
-	/*// 
+	// 
 	cmdList->SetPipelineState(player_AKI_Hair_A_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Hair_A_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_AKI_Hair_A_asset._indexBufferView);
@@ -470,7 +469,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->DrawIndexedInstanced(player_AKI_HeadPhone_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}*/
+	}
 	// 
 	cmdList->SetPipelineState(player_AKI_Sword_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Sword_asset._vertexBufferView);
@@ -500,7 +499,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->DrawIndexedInstanced(player_AKI_Sword_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}
+	}*/
 	
 
 	// 보스
