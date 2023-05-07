@@ -274,7 +274,7 @@ void move_npc(int player_id, int c_id)
 	float nde = de * 180 / PI;
 	clients[c_id].degree = nde;
 
-	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 2.0f) {
+	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
 		// 공격 처리 관련, 여기서 안 할 수도 있음
 		clients[c_id].char_state = 2;
 		return;
@@ -282,7 +282,7 @@ void move_npc(int player_id, int c_id)
 	else clients[c_id].char_state = 1;
 
 	for (auto& pl : clients[c_id].room_list) {
-		if (abs(x - clients[pl].x) + abs(z - clients[pl].z) <= 2.0f) return;
+		if (abs(x - clients[pl].x) + abs(z - clients[pl].z) <= 1.5f) return;
 	}
 
 	x += 0.5f * -sin(de);
