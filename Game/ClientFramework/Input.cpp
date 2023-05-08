@@ -14,6 +14,7 @@ void Input::Init(WindowInfo windowInfo)
 }
 
 bool send_toggle = false;
+int counter_toggle = 0;
 void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr)
 {
 		HWND hwnd = GetActiveWindow();
@@ -222,6 +223,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 
 			//cout << key_toggle << endl;
 			if (key_toggle) {
+				counter_toggle++;
+			}
+			
+			if (counter_toggle > 3) {
 				if (send_toggle) {
 					send_toggle != send_toggle;
 					return;
@@ -237,7 +242,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 				p.client_time = timerPtr->_counter;
 				//cout << "SEND : " << timerPtr->_counter << endl;
 				networkPtr->send_packet(&p);
-
+				counter_toggle = 0;
 			}
 		}
 	
