@@ -273,24 +273,24 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 	
 
-	// npc ?‚¬ë§?
-	for (int i = 0; i < NPCMAX; ++i) {
-		if (npcArr[i]._on == true && npcArr[i]._hp <= 0.f) {
-			npcArr[i]._animation_state = 3;
-			//npcArr[i]._on = false;
+	//// npc ?‚¬ë§?
+	//for (int i = 0; i < NPCMAX; ++i) {
+	//	if (npcArr[i]._on == true && npcArr[i]._hp <= 0.f) {
+	//		npcArr[i]._animation_state = 3;
+	//		//npcArr[i]._on = false;
 
-			CS_MOVE_PACKET p;
-			p.size = sizeof(p);
-			p.type = CS_MOVE;
-			p.x = npcArr[networkPtr->myClientId]._transform.x;
-			p.y = npcArr[networkPtr->myClientId]._transform.y;
-			p.z = npcArr[networkPtr->myClientId]._transform.z;
-			p.degree = npcArr[networkPtr->myClientId]._degree;
-			p.char_state = npcArr[i]._animation_state;
-			//networkPtr->send_packet(&p);
-		}
-	}
-	
+	//		CS_MOVE_PACKET p;
+	//		p.size = sizeof(p);
+	//		p.type = CS_MOVE;
+	//		p.x = npcArr[networkPtr->myClientId]._transform.x;
+	//		p.y = npcArr[networkPtr->myClientId]._transform.y;
+	//		p.z = npcArr[networkPtr->myClientId]._transform.z;
+	//		p.degree = npcArr[networkPtr->myClientId]._degree;
+	//		p.char_state = npcArr[i]._animation_state;
+	//		//networkPtr->send_packet(&p);
+	//	}
+	//}
+	//
 
 	//VP ï¿½ï¿½È¯
 	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - 7 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
