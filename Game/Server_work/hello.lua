@@ -5,13 +5,10 @@ function set_object_id(id)
 end
 
 function event_rush( player_id )
-   state = API_get_state(player_id)
    t_x = API_get_x(player_id)
    t_z = API_get_z(player_id)
 
-   if (state == 2) then
-		API_Rush(my_id, t_x, t_z)
-   end
+	API_Rush(my_id, t_x, t_z)
 end
 
 function create_cube( target_id )

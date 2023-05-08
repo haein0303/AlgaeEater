@@ -372,7 +372,7 @@ void do_worker()
 			delete ex_over;
 			break;
 		case OP_UPDATE:
-			if (test_match_list.size() >= 1) {
+			if (test_match_list.size() >= 3) {
 				for (int i = 0; i < 1; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;
@@ -382,7 +382,7 @@ void do_worker()
 					test_match_list.pop_front();
 				}
 			}
-			if (stage1_match_list.size() >= 1) {
+			if (stage1_match_list.size() >= 3) {
 				for (int i = 0; i < 1; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;

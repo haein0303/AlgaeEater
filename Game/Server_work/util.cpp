@@ -93,10 +93,10 @@ void process_packet(int c_id, char* packet)
 						clients[i].start_z = -50 + (i - MAX_USER) * 20;
 					}
 					else {
-						clients[i].z = 40;
-						clients[i].start_z = 40;
 						clients[i].x = -150 + (i - MAX_USER) * 20;
 						clients[i].start_x = -150 + (i - MAX_USER) * 20;
+						clients[i].z = 40;
+						clients[i].start_z = 40;
 					}
 					break;
 				case 1:	// 스테이지 1
@@ -342,7 +342,6 @@ void do_worker()
 
 void Update_Player(int c_id)
 {
-	
 	clients[c_id]._sl.lock();
 	if (clients[c_id]._s_state != ST_INGAME) {
 		clients[c_id]._sl.unlock();
@@ -371,7 +370,6 @@ void Update_Player(int c_id)
 void Update_Npc()
 {
 	for (int i = 0; i < MAX_USER; i++) {
-
 		clients[i]._sl.lock();
 		if (clients[i]._s_state != ST_INGAME) {
 			clients[i]._sl.unlock();
