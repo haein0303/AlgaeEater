@@ -18,6 +18,7 @@ public:
 	float		_animation_time_pos = 0.f;
 	int			_hp = 100.f;
 	bool		_can_attack = true;
+	bool		_can_attack2 = true;
 
 	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;

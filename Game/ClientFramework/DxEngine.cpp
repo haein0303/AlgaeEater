@@ -173,6 +173,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		if (playerArr[i]._on == true) {
 			if (playerArr[i]._animation_state == 0 || playerArr[i]._animation_state == 1) {
 				playerArr[i]._can_attack = true;
+				playerArr[i]._can_attack2 = true;
 			}
 		}
 	}
@@ -189,12 +190,31 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
+	
+	// 파티클 동기화
+	for (int i = 0; i < PLAYERMAX; ++i)
+	{
+		if (playerArr[i]._on == true) {
+			for (int j = 0; j < NPCMAX; ++j)
+			{
+				if (npcArr[j]._on == true) {
+					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
+						if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+							&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
+							&& playerArr[i]._can_attack2) {
+							playerArr[i]._can_attack2 = false;
+							npcArr[j]._particle_count += 50;
+						}
+					}
+				}
+			}
+		}
+	}
 
-	
-	
+	// 공격 충돌 체크
 	for (int j = 0; j < NPCMAX; ++j)
 	{
-		int i = 0;
+		int i = networkPtr->myClientId;
 		if (npcArr[j]._on == true) {
 			if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
 				if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
@@ -202,7 +222,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					&& playerArr[i]._can_attack) {
 
 					playerArr[i]._can_attack = false;
-					npcArr[j]._particle_count += 50;
 
 					CS_COLLISION_PACKET p;
 					p.size = sizeof(p);
@@ -239,13 +258,17 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		
 
 	
-	if (playerArr[0]._hp <= 0.f) {
-		playerArr[0]._animation_state = 4;
+	if (playerArr[networkPtr->myClientId]._hp <= 0.f) {
+		playerArr[networkPtr->myClientId]._animation_state = 4;
 
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);
 		p.type = CS_MOVE;
-		p.char_state = playerArr[0]._animation_state;
+		p.x = playerArr[networkPtr->myClientId]._transform.x;
+		p.y = playerArr[networkPtr->myClientId]._transform.y;
+		p.z = playerArr[networkPtr->myClientId]._transform.z;
+		p.degree = playerArr[networkPtr->myClientId]._degree;
+		p.char_state = playerArr[networkPtr->myClientId]._animation_state;
 		networkPtr->send_packet(&p);
 	}
 	
@@ -259,6 +282,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			CS_MOVE_PACKET p;
 			p.size = sizeof(p);
 			p.type = CS_MOVE;
+			p.x = npcArr[networkPtr->myClientId]._transform.x;
+			p.y = npcArr[networkPtr->myClientId]._transform.y;
+			p.z = npcArr[networkPtr->myClientId]._transform.z;
+			p.degree = npcArr[networkPtr->myClientId]._degree;
 			p.char_state = npcArr[i]._animation_state;
 			//networkPtr->send_packet(&p);
 		}
