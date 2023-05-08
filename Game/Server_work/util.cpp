@@ -86,10 +86,18 @@ void process_packet(int c_id, char* packet)
 				switch (clients[c_id].stage)
 				{
 				case 0: // 테스트 스테이지
-					clients[i].x = 40;
-					clients[i].start_x = 40;
-					clients[i].z = -50 + (i - MAX_USER) * 10;
-					clients[i].start_z = -50 + (i - MAX_USER) * 10;
+					if ((i - MAX_USER) % 10 < 5) {
+						clients[i].x = 40;
+						clients[i].start_x = 40;
+						clients[i].z = -50 + (i - MAX_USER) * 20;
+						clients[i].start_z = -50 + (i - MAX_USER) * 20;
+					}
+					else {
+						clients[i].z = 40;
+						clients[i].start_z = 40;
+						clients[i].x = -150 + (i - MAX_USER) * 20;
+						clients[i].start_x = -150 + (i - MAX_USER) * 20;
+					}
 					break;
 				case 1:	// 스테이지 1
 					break;
@@ -142,8 +150,6 @@ void process_packet(int c_id, char* packet)
 			clients[npc_id].hp -= 10;
 		}
 		else {						// 공격자가 npc
-			npc_id = clients[c_id]._Room_Num * 10 + (p->attacker_id - 4) + MAX_USER;
-
 			clients[c_id].hp -= 10;
 			Update_Player(c_id);
 		}
