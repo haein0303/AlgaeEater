@@ -10,7 +10,12 @@ void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vec
 
 void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 {
-	player._animation_time_pos += dt;
+	if (player._animation_state != 0) {
+		player._animation_time_pos += dt;
+	}
+	else {
+		player._animation_time_pos += dt * 0.4f;
+	}
 
 	// 애니메이션이 끝나면 애니메이션 루프
 	if ((player._animation_state == 0 || player._animation_state == 1) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
