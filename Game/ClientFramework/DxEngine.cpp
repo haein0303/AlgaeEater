@@ -23,7 +23,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	rtvPtr->CreateRTV(devicePtr, swapChainPtr);
 	cameraPtr->TransformProjection(windowInfo); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	rootSignaturePtr->CreateRootSignature(devicePtr);
-	constantBufferPtr->CreateConstantBuffer(sizeof(Constants), CONSTANT_COUNT, devicePtr);
+	constantBufferPtr->CreateConstantBuffer(CONSTANT_COUNT, CONSTANT_COUNT, devicePtr);
 	constantBufferPtr->CreateView(devicePtr);
 	descHeapPtr->CreateDescTable(CONSTANT_COUNT, devicePtr);
 	
@@ -727,6 +727,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		if (npcArr[i]._on == true && i != 9) {
 			while (npcArr[i]._particle_count > 0)
 			{
+				if (index >= PARTICLE_NUM) { // ÆÄÆ¼Å¬ °³¼ö¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®
+					break;
+				}
+
 				if (particles[index].alive == 0) // ?ŒŒ?‹°?´ ì´ˆê¸°?™”
 				{
 					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
@@ -745,9 +749,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 			}
 		}
-		else if(npcArr[i]._on == true && i == 9) {
+		else if(npcArr[i]._on == true && i == 9 && index <= PARTICLE_NUM) {
 			while (npcArr[i]._particle_count > 0)
 			{
+				if (index >= PARTICLE_NUM) { // ÆÄÆ¼Å¬ °³¼ö¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®
+					break;
+				}
+
 				if (particles[index].alive == 0) // ?ŒŒ?‹°?´ ì´ˆê¸°?™”
 				{
 					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
