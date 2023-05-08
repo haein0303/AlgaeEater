@@ -724,7 +724,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	int index = 0;
 	for (int i = 0; i < NPCMAX; ++i)
 	{
-		if (npcArr[i]._on == true) {
+		if (npcArr[i]._on == true && i != 9) {
 			while (npcArr[i]._particle_count > 0)
 			{
 				if (particles[index].alive == 0) // ?åå?ã∞?Å¥ Ï¥àÍ∏∞?ôî
@@ -744,7 +744,27 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					++index;
 				}
 			}
-			
+		}
+		else if(npcArr[i]._on == true && i == 9) {
+			while (npcArr[i]._particle_count > 0)
+			{
+				if (particles[index].alive == 0) // ?åå?ã∞?Å¥ Ï¥àÍ∏∞?ôî
+				{
+					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+					particles[index].curTime = 0.0f;
+					particles[index].pos = XMVectorSet(npcArr[i]._transform.x + 0.5f, npcArr[i]._transform.y + 2.f, npcArr[i]._transform.z, 1.f);
+					particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+					particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+					XMVector3Normalize(particles[index].dir);
+					particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
+						particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
+					particles[index].alive = 1;
+					--npcArr[i]._particle_count;
+				}
+				else {
+					++index;
+				}
+			}
 		}
 	}
 	for (int i = 0; i < PARTICLE_NUM; ++i) // ?åå?ã∞?Å¥ Î¨ºÎ¶¨Ï≤òÎ¶¨ Î∞? ?†å?çîÎß?
