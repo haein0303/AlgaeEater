@@ -74,34 +74,38 @@ void do_timer()
 			{
 				ex_over->_comp_type = OP_NPC_RUSH;
 				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
 				break;
 			}
 			case EV_CK:
 			{
-				if (clients[ev.target_id].char_state == 4) {
-					int dead_player = ev.target_id;
-					for (auto& pl : clients[ev.target_id].room_list) {
+				int tar_id = 0;
+
+				if (clients[tar_id]._Room_Num == 999) tar_id = 1;
+
+				if (clients[tar_id].char_state == 4) {
+					int dead_player = tar_id;
+					for (auto& pl : clients[tar_id].room_list) {
 						if (pl < MAX_USER) {
 							if (clients[pl].char_state != 4)
 							{
 								cout << "º¯°æ" << endl;
-								ev.target_id = pl;
+								tar_id = pl;
 								break;
 							}
 						}
 					}
-					if (dead_player == ev.target_id) {
+					if (dead_player == tar_id) {
 						clients[ev.object_id].char_state = 0;
 						ex_over->_comp_type = OP_SET_NPC;
-						ex_over->target_id = ev.target_id;
+						ex_over->target_id = tar_id;
 						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 						break;
 					}
 				}
 
 				lua_getglobal(clients[ev.object_id].L, "event_rush");
-				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
+				lua_pushnumber(clients[ev.object_id].L, tar_id);
 				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 
 				lua_getglobal(clients[ev.object_id].L, "create_cube");

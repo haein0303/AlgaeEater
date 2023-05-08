@@ -81,36 +81,38 @@ void process_packet(int c_id, char* packet)
 		}
 
 		// npc 세팅 부분
-		if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
-			for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
-				switch (clients[c_id].stage)
-				{
-				case 0: // 테스트 스테이지
-					if ((i - MAX_USER) % 10 < 5) {
-						clients[i].x = 40;
-						clients[i].start_x = 40;
-						clients[i].z = -50 + (i - MAX_USER) * 20;
-						clients[i].start_z = -50 + (i - MAX_USER) * 20;
+		if (clients[c_id]._Room_Num != 999) {
+			if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
+				for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
+					switch (clients[c_id].stage)
+					{
+					case 0: // 테스트 스테이지
+						if ((i - MAX_USER) % 10 < 5) {
+							clients[i].x = 40;
+							clients[i].start_x = 40;
+							clients[i].z = -50 + (i - MAX_USER) * 20;
+							clients[i].start_z = -50 + (i - MAX_USER) * 20;
+						}
+						else {
+							clients[i].x = -150 + (i - MAX_USER) * 20;
+							clients[i].start_x = -150 + (i - MAX_USER) * 20;
+							clients[i].z = 40;
+							clients[i].start_z = 40;
+						}
+						break;
+					case 1:	// 스테이지 1
+						break;
+					default:
+						break;
 					}
-					else {
-						clients[i].x = -150 + (i - MAX_USER) * 20;
-						clients[i].start_x = -150 + (i - MAX_USER) * 20;
-						clients[i].z = 40;
-						clients[i].start_z = 40;
-					}
-					break;
-				case 1:	// 스테이지 1
-					break;
-				default:
-					break;
-				}
 
-				add_timer(i, 10000, EV_NPC_CON, c_id);
-				clients[i].Lua_on = true;
-				
+					add_timer(i, 10000, EV_NPC_CON, c_id);
+					clients[i].Lua_on = true;
+
+				}
+				add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, c_id);
+				clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
 			}
-			add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, c_id);
-			clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
 		}
 
 		for (int i = MAX_USER; i < MAX_USER + NPC_NUM; i++) {
@@ -175,6 +177,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._Room_Num = 999;
 		clients[c_id].room_list.clear();
+		clients[c_id].char_state = 4;
 		clients[c_id]._sl.unlock();
 		
 
@@ -309,6 +312,7 @@ void do_worker()
 		case OP_NPC_RUSH: {
 			float t_x = clients[key].start_x;
 			float t_z = clients[key].start_z;
+			cout << key << endl;
 			rush_npc(key, t_x, t_z);
 			delete ex_over;
 			break;
