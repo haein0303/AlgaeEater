@@ -144,10 +144,8 @@ void process_packet(int c_id, char* packet)
 	case CS_COLLISION: {
 		CS_COLLISION_PACKET* p = reinterpret_cast<CS_COLLISION_PACKET*>(packet);
 		int npc_id = 0;
-		if (p->attacker_id < 4) {	// 공격자가 플레이어
-			npc_id = clients[c_id]._Room_Num * 10 + (p->target_id - 4) + MAX_USER;
-
-			clients[npc_id].hp -= 10;
+		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
+			clients[p->target_id].hp -= 10;
 		}
 		else {						// 공격자가 npc
 			clients[c_id].hp -= 10;
