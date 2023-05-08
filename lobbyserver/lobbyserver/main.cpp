@@ -373,7 +373,7 @@ void do_worker()
 			break;
 		case OP_UPDATE:
 			if (test_match_list.size() >= 3) {
-				for (int i = 0; i < 1; ++i) {
+				for (int i = 0; i < 3; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;
 					p.size = sizeof(LSC_CONGAME_PACKET);
@@ -383,7 +383,7 @@ void do_worker()
 				}
 			}
 			if (stage1_match_list.size() >= 3) {
-				for (int i = 0; i < 1; ++i) {
+				for (int i = 0; i < 3; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;
 					p.size = sizeof(LSC_CONGAME_PACKET);
