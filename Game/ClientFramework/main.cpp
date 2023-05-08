@@ -1,8 +1,8 @@
 #include "Client.h"
 #include "lobby_client.h"
-
+#if _DEBUG
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
-
+#endif
 LOBBY_CLIENT lobby_client;
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nCmdShow)
 {
