@@ -123,6 +123,7 @@ public:
 				user_map.insert({ id,user_accept_counter });
 				cout << "id : " << id << " || user_accept_counter : " << user_accept_counter << " : " << user_map.count(id) << endl;
 				playerArr[user_accept_counter]._on = true;
+				playerArr[user_accept_counter]._my_server_id = id;
 				playerArr[user_accept_counter]._transform.x = my_packet->x;
 				playerArr[user_accept_counter]._transform.y = my_packet->y;
 				playerArr[user_accept_counter]._transform.z = my_packet->z;
@@ -134,6 +135,7 @@ public:
 				npc_map.insert({ id,npc_accept_counter });
 				cout << "id : " << id << " || npc_accept_counter : " << npc_accept_counter << " : " << npc_map.count(id) << endl;
 				npcArr[npc_accept_counter]._on = true;
+				npcArr[npc_accept_counter]._my_server_id = id;
 				npcArr[npc_accept_counter]._transform.x = my_packet->x;
 				npcArr[npc_accept_counter]._transform.y = my_packet->y;
 				npcArr[npc_accept_counter]._transform.z = my_packet->z;

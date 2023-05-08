@@ -208,8 +208,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					p.size = sizeof(p);
 					p.type = CS_COLLISION;
 					p.attack_type = 'a';
-					p.attacker_id = i;
-					p.target_id = j;
+					p.attacker_id = playerArr[i]._my_server_id;
+					p.target_id = npcArr[j]._my_server_id;
 					networkPtr->send_packet(&p);
 
 					cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
@@ -226,8 +226,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					p.size = sizeof(p);
 					p.type = CS_COLLISION;
 					p.attack_type = 'a';
-					p.attacker_id = j;
-					p.target_id = i;
+					p.attacker_id = npcArr[j]._my_server_id;
+					p.target_id = playerArr[i]._my_server_id;
 					networkPtr->send_packet(&p);
 
 					cout << "player" << i << " hp : " << playerArr[i]._hp << endl;

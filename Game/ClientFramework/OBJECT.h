@@ -8,6 +8,7 @@ class OBJECT
 {
 public:
 	bool		_on = false;
+	int			_my_server_id = 0;
 	float		_degree;
 	XMFLOAT4	_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	bool		_isCollision[NPCMAX]{ false };

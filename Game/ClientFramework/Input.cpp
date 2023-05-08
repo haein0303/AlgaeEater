@@ -214,7 +214,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 				p.degree = playerArr[networkPtr->myClientId]._degree;
 				p.char_state = playerArr[networkPtr->myClientId]._animation_state;
 				//p.client_time = timerPtr->_counter;
-				cout << "SEND : " << timerPtr->_counter << endl;
+				//cout << "SEND : " << timerPtr->_counter << endl;
 				networkPtr->send_packet(&p);
 
 				return;
@@ -235,7 +235,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 				p.degree = playerArr[networkPtr->myClientId]._degree;
 				p.char_state = playerArr[networkPtr->myClientId]._animation_state;
 				p.client_time = timerPtr->_counter;
-				cout << "SEND : " << timerPtr->_counter << endl;
+				//cout << "SEND : " << timerPtr->_counter << endl;
 				networkPtr->send_packet(&p);
 
 			}
