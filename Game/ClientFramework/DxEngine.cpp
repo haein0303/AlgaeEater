@@ -82,11 +82,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	boss.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	boss.Init("../Resources/mechanical_spider.txt", ObjectType::AnimationObjects);
-	boss.Add_texture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png");
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Gray_BaseColor_Wire.png");
 	boss.Make_SRV();
 	boss.CreatePSO();
 
@@ -539,18 +539,19 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 			copy(begin(npcArr[9]._final_transforms), end(npcArr[9]._final_transforms), &_transform.BoneTransforms[0]);
 
-			texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+			boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
 			int sum = 0;
 			for (Subset i : boss._animationPtr->mSubsets)
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+				descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 				cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
 				sum += i.FaceCount * 3;
+
+				boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 			}
 		}
 	}
