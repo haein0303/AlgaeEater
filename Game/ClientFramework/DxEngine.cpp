@@ -4,13 +4,6 @@
 
 void DxEngine::Init(WindowInfo windowInfo)
 {
-	
-	//cout << "try server connect" << endl;
-	//if (-1 == networkPtr->ConnectServer(GAME_PORT_NUM)) {
-	//	cout << "SERVER CONNECT FAIL" << endl;
-	//	while (1);
-	//}//������ ����
-	//cout << "complite server connect" << endl;
 
 	//ȭ�� ũ�� ����
 	_viewport = { 0, 0, static_cast<FLOAT>(windowInfo.ClientWidth), static_cast<FLOAT>(windowInfo.ClientHeight), 0.0f, 1.0f };
@@ -203,7 +196,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
 							&& playerArr[i]._can_attack2) {
 							playerArr[i]._can_attack2 = false;
-							npcArr[j]._particle_count += 50;
+							npcArr[j]._particle_count += 100;
 						}
 					}
 				}

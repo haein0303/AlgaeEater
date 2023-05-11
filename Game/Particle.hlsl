@@ -83,13 +83,13 @@ float4 PS_Main(GeoOut input) : SV_Target
 {
 	float4 color = float4(0.f, 0.f, 0.f, 0.f);
 	float r = distance(input.uv, float2(0.5f, 0.5f));
-	if (r <= 0.1f) {
+	if (r <= 0.3f) {
 		color = float4(1.0f, 1.0f, 0.5f, 1.f); // ¿¬³ë¶û
 	}
-	else if (r <= 0.12f) {
+	else if (r <= 0.36f) {
 		color = float4(1.0f, 0.5f, 0.f, 1.f); // ÁÖÈ²
 	}
-	else if (r <= 0.14f) {
+	else if (r <= 0.42f) {
 		color = float4(1.0f, 0.2f, 0.f, 1.f); // ÀÚÈ«
 	}
 	clip(color.a - 0.1f);
