@@ -85,6 +85,7 @@ public:
 	MESH_ASSET player_AKI_Sword_asset;
 	MESH_ASSET npc_asset;
 	MESH_ASSET boss;
+	MESH_ASSET boss2;
 	MESH_ASSET map_asset;
 	MESH_ASSET floor;
 	MESH_ASSET skybox;

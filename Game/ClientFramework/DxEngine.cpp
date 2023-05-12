@@ -90,6 +90,13 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss.Make_SRV();
 	boss.CreatePSO();
 
+	boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
+	boss2.Add_texture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png");
+	boss2.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
+	boss2.Make_SRV();
+	boss2.CreatePSO();
+
 	player_AKI_Body_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_AKI_Body_asset.Init("../Resources/AKI_Body.txt", ObjectType::AnimationObjects);
 	player_AKI_Body_asset.Add_texture(L"..\\Resources\\Texture\\P05re_skin_u1.png");
@@ -138,7 +145,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	
 	for (int i = 0; i < NPCMAX; ++i) {
 		if (i == 9) {
-			npcArr[i]._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
+			npcArr[i]._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
 			npcArr[i]._transform.y += 1.f;
 		}
 		else {
@@ -327,7 +334,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 	if (npcArr[9]._on == true) {
-		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[9], 0);
+		boss2.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[9], 0);
 	}
 	for (int i = 0; i < NPCMAX; ++i) {
 		if (npcArr[i]._on == true && i != 9) {
@@ -524,13 +531,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	
 
 	// 보스
-	cmdList->SetPipelineState(boss._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
-	cmdList->IASetIndexBuffer(&boss._indexBufferView);
+	cmdList->SetPipelineState(boss2._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &boss2._vertexBufferView);
+	cmdList->IASetIndexBuffer(&boss2._indexBufferView);
 	if (npcArr[9]._on == true)
 	{
 		{
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(600.f, 600.f, 600.f) * XMMatrixRotationX(-XM_PI / 2.f)
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.f, 1.f, 1.f)
 				* XMMatrixRotationY(npcArr[9]._degree * XM_PI / 180.f - XM_PI)
 				* XMMatrixTranslation(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
@@ -539,19 +546,21 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 			copy(begin(npcArr[9]._final_transforms), end(npcArr[9]._final_transforms), &_transform.BoneTransforms[0]);
 
-			boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			boss2._tex._srvHandle = boss2._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
 			int sum = 0;
-			for (Subset i : boss._animationPtr->mSubsets)
+			for (Subset i : boss2._animationPtr->mSubsets)
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
+				descHeapPtr->CopyDescriptor(boss2._tex._srvHandle, 5, devicePtr);
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 				cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
 				sum += i.FaceCount * 3;
 
-				boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				cout << "face ; " << i.FaceCount << endl;
+
+				boss2._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 			}
 		}
 	}
