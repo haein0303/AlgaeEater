@@ -639,7 +639,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(cube_asset._pipelineState.Get());	
 	cmdList->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
-	for (int i = 0; i < CubeMax; i++) //ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
+	for (int i = 0; i < CubeMax; ++i) //ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
 	{
 		if (cubeArr[i]._on == true)
 		{
