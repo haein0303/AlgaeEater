@@ -92,8 +92,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
-	boss2.Add_texture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png");
-	boss2.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
+	boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
+	boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
 	boss2.Make_SRV();
 	boss2.CreatePSO();
 
