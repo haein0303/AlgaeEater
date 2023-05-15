@@ -51,6 +51,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].z = 0;
 		clients[c_id].degree = 0;
 		clients[c_id].char_state = 0;
+		clients[c_id].color = 0;
 		clients[c_id].hp = 100;
 		clients[c_id].send_login_ok_packet(c_id, 0, 0, 0, 0, 100);
 		clients[c_id]._s_state = ST_INGAME;
@@ -83,7 +84,7 @@ void process_packet(int c_id, char* packet)
 		// npc 세팅 부분
 		if (clients[c_id]._Room_Num != 999) {
 			if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
-				for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 9; i++) {
+				for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 10; i++) {
 					switch (clients[c_id].stage)
 					{
 					case 0: // 테스트 스테이지
@@ -111,7 +112,7 @@ void process_packet(int c_id, char* packet)
 
 				}
 				add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, c_id);
-				clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
+				//clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
 			}
 		}
 
@@ -148,11 +149,22 @@ void process_packet(int c_id, char* packet)
 		int npc_id = 0;
 		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
 			clients[p->target_id].hp -= 10;
+			if (clients[p->target_id].hp == 0) {
+				clients[p->target_id].char_state = 4;
+				clients[p->target_id]._sl.lock();
+				clients[p->target_id]._s_state = ST_FREE;
+				clients[p->target_id]._sl.unlock();
+			}
 		}
 		else {						// 공격자가 npc
 			clients[c_id].hp -= 10;
 			Update_Player(c_id);
 		}
+		break;
+	}
+	case CS_COLOR: {
+		CS_COLOR_PACKET* p = reinterpret_cast<CS_COLOR_PACKET*>(packet);
+		clients[c_id].color = p->color;
 		break;
 	}
 	case SS_CONNECT_SERVER: {
@@ -310,8 +322,8 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_RUSH: {
-			float t_x = clients[key].start_x;
-			float t_z = clients[key].start_z;
+			float t_x = clients[key].target_x;
+			float t_z = clients[key].target_z;
 			//cout << key << endl;
 			rush_npc(key, t_x, t_z);
 			delete ex_over;

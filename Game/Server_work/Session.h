@@ -34,8 +34,12 @@ public:
 	int		stage;
 	unsigned int client_time;
 
+	// 스테이지 1 변수
+	int color;
+
 	// 임시 변수
 	float start_x, start_z;
+	float target_x, target_z;
 	int turn;
 	// 루아 사용 변수
 	lua_State* L;

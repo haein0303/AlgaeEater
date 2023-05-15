@@ -20,6 +20,7 @@ constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
 constexpr char CS_CONSOLE = 2;
 constexpr char CS_COLLISION = 3;
+constexpr char CS_COLOR = 4;
 
 constexpr char SC_LOGIN_OK = 11;
 constexpr char SC_ADD_OBJECT = 12;
@@ -70,6 +71,12 @@ struct CS_COLLISION_PACKET {
 	char	attack_type;
 	int		attacker_id;
 	int		target_id;
+};
+
+struct CS_COLOR_PACKET {
+	unsigned char size;
+	char	type;
+	int		color;
 };
 
 struct SC_LOGIN_OK_PACKET {

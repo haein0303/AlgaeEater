@@ -53,6 +53,10 @@ void initialize_npc()
 
 		lua_register(clients[i].L, "API_get_x", API_get_x);
 		lua_register(clients[i].L, "API_get_z", API_get_z);
+		lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+		lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+		lua_register(clients[i].L, "API_Tracking", API_Tracking);
+		lua_register(clients[i].L, "API_Return", API_Return);
 
 		int st = (i - MAX_USER - clients[i]._Room_Num * 10);
 
@@ -61,83 +65,38 @@ void initialize_npc()
 		case 0:
 			clients[i].x = -20;
 			clients[i].z = -20;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 1:
 			clients[i].x = -20;
 			clients[i].z = 0;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 2:
 			clients[i].x = -20;
 			clients[i].z = 20;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 3:
 			clients[i].x = 0;
 			clients[i].z = -20;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 4:
 			clients[i].x = 0;
 			clients[i].z = 0;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 5:
 			clients[i].x = 0;
 			clients[i].z = 20;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 6:
 			clients[i].x = 20;
 			clients[i].z = -20;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 7:
 			clients[i].x = 20;
 			clients[i].z = 0;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 8:
 			clients[i].x = 20;
 			clients[i].z = 20;
-
-			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 			break;
 		case 9: // 얘가 돌진하는 애
 		{

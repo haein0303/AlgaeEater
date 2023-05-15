@@ -67,8 +67,8 @@ int API_Rush(lua_State* L)
 	float t_z = lua_tonumber(L, -1);
 	lua_pop(L, 4);
 
-	clients[npc_id].start_x = t_x;
-	clients[npc_id].start_z = t_z;
+	clients[npc_id].target_x = t_x;
+	clients[npc_id].target_z = t_z;
 
 	add_timer(npc_id, 100, EV_RUSH, npc_id);
 	return 0;

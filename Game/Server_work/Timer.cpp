@@ -104,9 +104,9 @@ void do_timer()
 					}
 				}
 
-				/*lua_getglobal(clients[ev.object_id].L, "event_rush");
+				lua_getglobal(clients[ev.object_id].L, "event_rush");
 				lua_pushnumber(clients[ev.object_id].L, tar_id);
-				lua_pcall(clients[ev.object_id].L, 1, 0, 0);*/
+				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 
 				lua_getglobal(clients[ev.object_id].L, "create_cube");
 				lua_pushnumber(clients[ev.object_id].L, ev.object_id);
@@ -133,6 +133,12 @@ void do_timer()
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			case EV_NPC_CON:
+				clients[ev.object_id]._sl.lock();
+				if (clients[ev.object_id]._s_state == ST_FREE) {
+					clients[ev.object_id]._sl.unlock();
+					break;
+				}
+				clients[ev.object_id]._sl.unlock();
 				if (clients[ev.target_id].char_state == 4) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
