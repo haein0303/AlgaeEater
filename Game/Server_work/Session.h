@@ -36,10 +36,12 @@ public:
 
 	// 임시 변수
 	float start_x, start_z;
+	int turn;
 	// 루아 사용 변수
 	lua_State* L;
 	int		_Room_Num;
 	std::unordered_set <int> room_list;
+	std::unordered_set <int> object_list;
 	bool	Lua_on;
 
 public:

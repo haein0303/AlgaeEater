@@ -312,7 +312,7 @@ void do_worker()
 		case OP_NPC_RUSH: {
 			float t_x = clients[key].start_x;
 			float t_z = clients[key].start_z;
-			cout << key << endl;
+			//cout << key << endl;
 			rush_npc(key, t_x, t_z);
 			delete ex_over;
 			break;

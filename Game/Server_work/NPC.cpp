@@ -31,7 +31,14 @@ void initialize_npc()
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;
 		clients[i].stage = 0;
+		clients[i].turn = 0;
 		clients[i].room_list.clear();
+		clients[i].object_list.clear();
+
+		for (int j = 0; j < CUBE_NUM; j++) {
+			if (cubes[j]._Room_Num != clients[i]._Room_Num) continue;
+			else clients[i].object_list.insert(j);
+		}
 
 		clients[i].L = luaL_newstate();
 
@@ -167,11 +174,11 @@ void initialize_npc()
 void initialize_cube()
 {
 	for (int i = 0; i < CUBE_NUM; i++) {
-		cubes[i].x = 0;
+		cubes[i].x = 10.0f;
 		cubes[i].y = 0;
-		cubes[i].z = 0;
+		cubes[i].z = 30.0f;
 		cubes[i].degree = 0;
-		cubes[i]._Room_Num = i / 4;
+		cubes[i]._Room_Num = i / 5;
 	}
 	cout << "cube 로딩 끝" << endl;
 }
@@ -181,7 +188,7 @@ void send_cube(int c_id, float x, float y, float z)
 	int s_num = clients[c_id]._Room_Num * 4;
 	int cnt = 0;
 
-	for (int i = s_num; i < s_num + 4; i++) {
+	for (int i = s_num; i < s_num + 5; i++) {
 		switch (cnt)
 		{
 		case 0:
@@ -208,6 +215,12 @@ void send_cube(int c_id, float x, float y, float z)
 			cubes[i].z = z;
 			cubes[i].degree = 0;
 			break;
+		case 4:
+			cubes[i].x = 10.0f;
+			cubes[i].y = 0;
+			cubes[i].z = 30.0f;
+			cubes[i].degree = 0;
+			break;
 		}
 
 		for (auto& pl : clients[c_id].room_list) {
@@ -219,7 +232,7 @@ void send_cube(int c_id, float x, float y, float z)
 			}
 			clients[pl]._sl.unlock();
 
-			clients[pl].send_cube_add(i % 4, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
+			clients[pl].send_cube_add(i % 5, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
 		}
 
 		cnt++;
@@ -266,24 +279,181 @@ void move_npc(int player_id, int c_id)
 
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
 	float nde = de * 180 / PI;
-	clients[c_id].degree = nde;
 
 	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
 		// 공격 처리 관련, 여기서 안 할 수도 있음
 		clients[c_id].char_state = 2;
+		clients[c_id].degree = nde;
 		return;
 	}
 	else clients[c_id].char_state = 1;
 
-	for (auto& pl : clients[c_id].room_list) {
-		if (abs(x - clients[pl].x) + abs(z - clients[pl].z) <= 1.5f) return;
+	x += 0.3f * -sin(de);
+	z += 0.3f * -cos(de);
+
+	int tic = 0;
+
+	for (auto& pl : clients[c_id].object_list) {
+		if (abs(x - cubes[pl].x) + abs(z - cubes[pl].z) <= 2.5f) {
+			int f = 0;
+			int d = 0;
+			x = clients[c_id].x;
+			z = clients[c_id].z;
+			float f_nde = nde + 90;
+			float d_nde = nde - 90;
+
+			float f_de = f_nde / 180 * PI;
+			float d_de = d_nde / 180 * PI;
+
+			float f_x = x + 0.3f * -sin(f_de);
+			float f_z = z + 0.3f * -cos(f_de);
+
+			float d_x = x + 0.3f * -sin(d_de);
+			float d_z = z + 0.3f * -cos(d_de);
+
+			if (abs(f_x - cubes[pl].x) + abs(f_z - cubes[pl].z) <= 2.5f) f = 1;
+			if (abs(d_x - cubes[pl].x) + abs(d_z - cubes[pl].z) <= 2.5f) d = 1;
+
+			if (f == 1 && d == 1) {
+				int f = 0;
+				int d = 0;
+
+				float f_nde = nde + 120;
+				float d_nde = nde - 120;
+
+				float f_de = f_nde / 180 * PI;
+				float d_de = d_nde / 180 * PI;
+
+				float f_x = x + 0.3f * -sin(f_de);
+				float f_z = z + 0.3f * -cos(f_de);
+
+				float d_x = x + 0.3f * -sin(d_de);
+				float d_z = z + 0.3f * -cos(d_de);
+
+				if (abs(f_x - cubes[pl].x) + abs(f_z - cubes[pl].z) <= 2.5f) f = 1;
+				if (abs(d_x - cubes[pl].x) + abs(d_z - cubes[pl].z) <= 2.5f) d = 1;
+			}
+
+			if (f == 1 && d == 0) {
+				x = d_x;
+				z = d_z;
+				de = d_de;
+				nde = d_nde;
+			}
+			else if (f == 0 && d == 1) {
+				x = f_x;
+				z = f_z;
+				de = f_de;
+				nde = f_nde;
+			}
+			else if (f == 0 && d == 0) {
+				if (clients[c_id].turn == 0) {
+					float fabs = abs(f_x - clients[player_id].x) + abs(f_z - clients[player_id].z);
+					float dabs = abs(d_x - clients[player_id].x) + abs(d_z - clients[player_id].z);
+
+					if (fabs >= dabs) clients[c_id].turn = 1;
+					else clients[c_id].turn = -1;
+				}
+				if (clients[c_id].turn == -1) {
+					x = d_x;
+					z = d_z;
+					de = d_de;
+					nde = d_nde;
+				}
+				else {
+					x = f_x;
+					z = f_z;
+					de = f_de;
+					nde = f_nde;
+				}
+			}
+		}
+		else tic++;
 	}
 
-	x += 0.5f * -sin(de);
-	z += 0.5f * -cos(de);
+	for (auto& pl : clients[c_id].room_list) {
+		if (abs(x - cubes[pl].x) + abs(z - cubes[pl].z) <= 1.5f) {
+			int f = 0;
+			int d = 0;
+			x = clients[c_id].x;
+			z = clients[c_id].z;
+			float f_nde = nde + 90;
+			float d_nde = nde - 90;
+
+			float f_de = f_nde / 180 * PI;
+			float d_de = d_nde / 180 * PI;
+
+			float f_x = x + 0.3f * -sin(f_de);
+			float f_z = z + 0.3f * -cos(f_de);
+
+			float d_x = x + 0.3f * -sin(d_de);
+			float d_z = z + 0.3f * -cos(d_de);
+
+			if (abs(f_x - cubes[pl].x) + abs(f_z - cubes[pl].z) <= 1.5f) f = 1;
+			if (abs(d_x - cubes[pl].x) + abs(d_z - cubes[pl].z) <= 1.5f) d = 1;
+
+			if (f == 1 && d == 1) {
+				int f = 0;
+				int d = 0;
+
+				float f_nde = nde + 120;
+				float d_nde = nde - 120;
+
+				float f_de = f_nde / 180 * PI;
+				float d_de = d_nde / 180 * PI;
+
+				float f_x = x + 0.3f * -sin(f_de);
+				float f_z = z + 0.3f * -cos(f_de);
+
+				float d_x = x + 0.3f * -sin(d_de);
+				float d_z = z + 0.3f * -cos(d_de);
+
+				if (abs(f_x - cubes[pl].x) + abs(f_z - cubes[pl].z) <= 1.5f) f = 1;
+				if (abs(d_x - cubes[pl].x) + abs(d_z - cubes[pl].z) <= 1.5f) d = 1;
+			}
+
+			if (f == 1 && d == 0) {
+				x = d_x;
+				z = d_z;
+				de = d_de;
+				nde = d_nde;
+			}
+			else if (f == 0 && d == 1) {
+				x = f_x;
+				z = f_z;
+				de = f_de;
+				nde = f_nde;
+			}
+			else if (f == 0 && d == 0) {
+				if (clients[c_id].turn == 0) {
+					float fabs = abs(f_x - clients[player_id].x) + abs(f_z - clients[player_id].z);
+					float dabs = abs(d_x - clients[player_id].x) + abs(d_z - clients[player_id].z);
+
+					if (fabs >= dabs) clients[c_id].turn = 1;
+					else clients[c_id].turn = -1;
+				}
+				if (clients[c_id].turn == -1) {
+					x = d_x;
+					z = d_z;
+					de = d_de;
+					nde = d_nde;
+				}
+				else {
+					x = f_x;
+					z = f_z;
+					de = f_de;
+					nde = f_nde;
+				}
+			}
+		}
+		else tic++;
+	}
+
+	if (tic == clients[c_id].room_list.size() + clients[c_id].object_list.size()) clients[c_id].turn = 0;
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
+	clients[c_id].degree = nde;
 }
 
 void return_npc(int c_id)

@@ -104,9 +104,9 @@ void do_timer()
 					}
 				}
 
-				lua_getglobal(clients[ev.object_id].L, "event_rush");
+				/*lua_getglobal(clients[ev.object_id].L, "event_rush");
 				lua_pushnumber(clients[ev.object_id].L, tar_id);
-				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
+				lua_pcall(clients[ev.object_id].L, 1, 0, 0);*/
 
 				lua_getglobal(clients[ev.object_id].L, "create_cube");
 				lua_pushnumber(clients[ev.object_id].L, ev.object_id);

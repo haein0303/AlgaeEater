@@ -13,7 +13,7 @@ constexpr int LOBBY_SERVER_PORT_NUM = 4001;
 constexpr int ROOM_NUM = 100;
 constexpr int MAX_USER = ROOM_NUM * 4;
 constexpr int NPC_NUM = ROOM_NUM * 10;
-constexpr int CUBE_NUM = ROOM_NUM * 4;
+constexpr int CUBE_NUM = ROOM_NUM * 5;
 
 // Packet ID
 constexpr char CS_LOGIN = 0;
