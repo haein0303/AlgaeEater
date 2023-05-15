@@ -3,7 +3,7 @@
 		<Mesh>: 4 Plane
 			<Bounds>: 0 0 0 0.01 0.01 0
 			<Positions>: 4 -1 -1 0 1 -1 0 1 1 0 -1 1 0  
-			<TextureCoords0>: 4 1 1 0 1 0 0 1 0  
+			<TextureCoords0>: 4 100 100 0 100 0 0 100 0  
 			<TextureCoords1>: 0  
 			<Normals>: 4 0 0 1 0 0 1 0 0 1 0 0 1  
 			<SubMeshes>: 1
