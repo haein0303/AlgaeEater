@@ -166,6 +166,60 @@ void do_timer()
 
 				add_timer(ev.object_id, 100, EV_NPC_CON, ev.target_id);
 				break;
+			case EV_BOSS_CON:
+			{
+				clients[ev.object_id]._sl.lock();
+				if (clients[ev.object_id]._s_state == ST_FREE) {
+					clients[ev.object_id]._sl.unlock();
+					break;
+				}
+				clients[ev.object_id]._sl.unlock();
+				if (clients[ev.object_id].hp <= 50) {
+
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER) continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state != ST_INGAME) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						char msg[NAME_SIZE] = "돌진";
+
+						clients[pl].send_msg(msg);
+					}
+					add_timer(ev.object_id, 5000, EV_CK, ev.target_id);
+				}
+
+				if (clients[ev.target_id].char_state == 4) {
+					int dead_player = ev.target_id;
+					for (auto& pl : clients[ev.target_id].room_list) {
+						if (pl < MAX_USER) {
+							if (clients[pl].char_state != 4)
+							{
+								cout << "변경" << endl;
+								ev.target_id = pl;
+								break;
+							}
+						}
+					}
+					if (dead_player == ev.target_id) {
+						clients[ev.object_id].char_state = 0;
+						ex_over->_comp_type = OP_SET_NPC;
+						ex_over->target_id = ev.target_id;
+						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
+						break;
+					}
+				}
+
+				lua_getglobal(clients[ev.object_id].L, "tracking_player");
+				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
+				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
+
+				add_timer(ev.object_id, 100, EV_BOSS_CON, ev.target_id);
+				break;
+			}
 			default:
 				break;
 			}

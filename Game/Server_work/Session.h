@@ -60,6 +60,7 @@ public:
 	void send_cube_add(int c_id, float x, float y, float z, float degree);
 	void send_boss_add(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
 	void send_boss_move(int c_id, float x, float y, float z, float degree, int hp, int state, unsigned int client_time);
+	void send_msg(char* msg);
 };
 
 struct CUBE {
