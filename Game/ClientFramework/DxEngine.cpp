@@ -70,6 +70,15 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	hp_bar.Make_SRV();
 	hp_bar.CreatePSO(L"..\\HPBar.hlsl");
 
+	color_pattern.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	color_pattern.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+	color_pattern.Make_SRV();
+	color_pattern.CreatePSO(L"..\\ColorPattern.hlsl");
+
 	skybox.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	skybox.Init("../Resources/SkySphere.txt", ObjectType::SkyBox);
 	skybox.Add_texture(L"..\\Resources\\Texture\\Sky.jpg");
@@ -637,6 +646,35 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 			cmdList->DrawIndexedInstanced(hp_bar._indexCount, 1, 0, 0, 0);
+		}
+	}
+
+	// 머리 위 색깔 패턴
+	cmdList->SetPipelineState(color_pattern._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &color_pattern._vertexBufferView);
+	cmdList->IASetIndexBuffer(&color_pattern._indexBufferView);
+	for (int i = 0; i < PLAYERMAX; ++i)
+	{
+		if (playerArr[i]._on == true) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
+				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),
+					sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
+				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
+				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f, playerArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+				color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+				descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
 		}
 	}
 

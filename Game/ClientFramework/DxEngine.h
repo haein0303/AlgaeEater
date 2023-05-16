@@ -125,6 +125,7 @@ public:
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
 	MESH_ASSET hp_bar;
+	MESH_ASSET color_pattern;
 
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
