@@ -111,7 +111,7 @@ void process_packet(int c_id, char* packet)
 					clients[i].Lua_on = true;
 
 				}
-				add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, c_id);
+				//add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, c_id);
 				//clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
 			}
 		}
@@ -157,7 +157,7 @@ void process_packet(int c_id, char* packet)
 			}
 		}
 		else {						// 공격자가 npc
-			clients[c_id].hp -= 10;
+			clients[c_id].hp -= 1;
 			Update_Player(c_id);
 		}
 		break;
