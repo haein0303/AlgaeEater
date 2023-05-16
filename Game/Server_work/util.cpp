@@ -46,14 +46,14 @@ void process_packet(int c_id, char* packet)
 		}
 
 		strcpy_s(clients[c_id]._name, p->name);
-		clients[c_id].x = 0;
+		clients[c_id].x = 170;
 		clients[c_id].y = 0;
-		clients[c_id].z = 0;
-		clients[c_id].degree = 0;
+		clients[c_id].z = -230;
+		clients[c_id].degree = 30;
 		clients[c_id].char_state = 0;
 		clients[c_id].color = 0;
 		clients[c_id].hp = 100;
-		clients[c_id].send_login_ok_packet(c_id, 0, 0, 0, 0, 100);
+		clients[c_id].send_login_ok_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, 100);
 		clients[c_id]._s_state = ST_INGAME;
 		if (clients[0]._Room_Num != 999) clients[c_id]._Room_Num = c_id / 4;
 		else clients[c_id]._Room_Num = (c_id - 1) / 4;
@@ -88,17 +88,23 @@ void process_packet(int c_id, char* packet)
 					switch (clients[c_id].stage)
 					{
 					case 0: // 테스트 스테이지
-						if ((i - MAX_USER) % 10 < 5) {
-							clients[i].x = 40;
-							clients[i].start_x = 40;
-							clients[i].z = -50 + (i - MAX_USER) * 20;
-							clients[i].start_z = -50 + (i - MAX_USER) * 20;
+						if ((i - MAX_USER) % 10 < 3) {
+							clients[i].x = 130;
+							clients[i].start_x = 130;
+							clients[i].z = -240 + (i - MAX_USER) * 10;
+							clients[i].start_z = -240 + (i - MAX_USER) * 10;
+						}
+						else if ((i - MAX_USER) % 10 > 2 && (i - MAX_USER) % 10 < 6){
+							clients[i].x = 100;
+							clients[i].start_x = 100;
+							clients[i].z = -270 + (i - MAX_USER) * 10;
+							clients[i].start_z = -270 + (i - MAX_USER) * 10;
 						}
 						else {
-							clients[i].x = -150 + (i - MAX_USER) * 20;
-							clients[i].start_x = -150 + (i - MAX_USER) * 20;
-							clients[i].z = 40;
-							clients[i].start_z = 40;
+							clients[i].x = 70;
+							clients[i].start_x = 70;
+							clients[i].z = -300 + (i - MAX_USER) * 10;
+							clients[i].start_z = -300 + (i - MAX_USER) * 10;
 						}
 						break;
 					case 1:	// 스테이지 1
@@ -139,9 +145,8 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].degree = p->degree;
 		clients[c_id].char_state = p->char_state;
 		clients[c_id].client_time = p->client_time;
-		//if (c_id == 0) {
-		//	cout << "RECV : " << p->client_time << endl;
-		//}
+
+		//cout << p->x << ", " << p->z << endl;
 		Update_Player(c_id);
 		break;
 	}
