@@ -213,6 +213,12 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 			}
 			
 			break;
+		case VK_LEFT:
+
+			break;
+		case VK_RIGHT:
+			break;
+		
 		}		
 		break;
 	default:
