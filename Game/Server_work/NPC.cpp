@@ -196,8 +196,6 @@ void send_cube(int c_id, float x, float y, float z)
 
 		cnt++;
 	}
-
-	add_timer(0, 5000, EV_CB, c_id);
 }
 
 void rush_npc(int c_id, float t_x, float t_z)
@@ -210,14 +208,12 @@ void rush_npc(int c_id, float t_x, float t_z)
 	clients[c_id].degree = nde;
 
 	if (abs(x - t_x) + abs(z - t_z) <= 3) {
-		add_timer(c_id, 10000, EV_CK, c_id);
 		return;
 	}
 
 	for (int i = clients[c_id]._Room_Num * 4; i < clients[c_id]._Room_Num * 4 + 4; i++) {
 		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 2) {
 			cout << "±âµÕ Ãæµ¹" << endl;
-			add_timer(c_id, 10000, EV_CK, c_id);
 			return;
 		}
 	}

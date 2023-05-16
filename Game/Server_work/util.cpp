@@ -107,12 +107,13 @@ void process_packet(int c_id, char* packet)
 						break;
 					}
 
-					add_timer(i, 10000, EV_NPC_CON, c_id);
+					if (i % 10 != 9)
+						add_timer(i, 10000, EV_NPC_CON, c_id);
+					else
+						add_timer(i, 10000, EV_BOSS_CON, c_id);
 					clients[i].Lua_on = true;
 
 				}
-				//add_timer(clients[c_id]._Room_Num * 10 + MAX_USER + 9, 10000, EV_CK, c_id);
-				//clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on = true;
 			}
 		}
 

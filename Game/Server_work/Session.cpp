@@ -142,3 +142,12 @@ void SESSION::send_boss_move(int c_id, float x, float y, float z, float degree, 
 	p.client_time = client_time;
 	do_send(&p);
 }
+
+void SESSION::send_msg(char* msg)
+{
+	SC_MSG_PACKET p;
+	p.size = sizeof(SC_MSG_PACKET);
+	p.type = SC_MSG;
+	strcpy_s(p.msg, msg);
+	do_send(&p);
+}

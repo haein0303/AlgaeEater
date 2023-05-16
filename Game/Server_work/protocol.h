@@ -29,6 +29,7 @@ constexpr char SC_MOVE_OBJECT = 14;
 constexpr char SC_ADD_CUBE = 15;
 constexpr char SC_ADD_BOSS = 16;
 constexpr char SC_MOVE_BOSS = 17;
+constexpr char SC_MSG = 18;
 
 constexpr char SS_CONNECT_SERVER = 20;
 constexpr char SS_DATA_PASS = 21;
@@ -148,6 +149,12 @@ struct SC_MOVE_BOSS_PACKET {
 	int		hp;
 	int		char_state;
 	unsigned int client_time;
+};
+
+struct SC_MSG_PACKET {
+	unsigned char size;
+	char	type;
+	char	msg[NAME_SIZE];
 };
 
 struct SS_CONNECT_SERVER_PACKET {
