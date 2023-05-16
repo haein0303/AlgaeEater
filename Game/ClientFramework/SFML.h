@@ -37,7 +37,7 @@ public:
 		return 0;
 	}
 
-	void ReceiveServer(OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr) //서버에서 받는거, clientMain
+	void ReceiveServer(OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr, OBJECT& boss_obj) //서버에서 받는거, clientMain
 	{
 		char net_buf[BUF_SIZE];
 		size_t	received;
@@ -49,10 +49,10 @@ public:
 			while (true);
 		}
 		if (recv_result != sf::Socket::NotReady)
-			if (received > 0) process_data(net_buf, received, playerArr, npcArr, cubeArr);
+			if (received > 0) process_data(net_buf, received, playerArr, npcArr, cubeArr, boss_obj);
 	}
 
-	void process_data(char* net_buf, size_t io_byte, OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr)
+	void process_data(char* net_buf, size_t io_byte, OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr, OBJECT& boss_obj)
 	{
 		char* ptr = net_buf;
 		static size_t in_packet_size = 0;
@@ -63,7 +63,7 @@ public:
 			if (0 == in_packet_size) in_packet_size = ptr[0];
 			if (io_byte + saved_packet_size >= in_packet_size) {
 				memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
-				ProcessPacket(packet_buffer, playerArr, npcArr, cubeArr);
+				ProcessPacket(packet_buffer, playerArr, npcArr, cubeArr, boss_obj);
 				ptr += in_packet_size - saved_packet_size;
 				io_byte -= in_packet_size - saved_packet_size;
 				in_packet_size = 0;
@@ -95,7 +95,7 @@ public:
 
 
 	//서버에서 데이터 받을때(패킷종류별로 무슨 작업 할건지 ex: 이동 패킷, 로그인 패킷 how to 처리)
-	void ProcessPacket(char* ptr, OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr)
+	void ProcessPacket(char* ptr, OBJECT* playerArr, OBJECT* npcArr, OBJECT* cubeArr, OBJECT& boss_obj)
 	{
 		static bool first_time = true;
 		switch (ptr[1])
@@ -145,6 +145,34 @@ public:
 
 			break;
 		}
+		case SC_ADD_BOSS: {
+			SC_ADD_BOSS_PACKET* my_packet = reinterpret_cast<SC_ADD_BOSS_PACKET*>(ptr);
+			int id = my_packet->id;
+
+			boss_obj._on = true;
+			boss_obj._my_server_id = id;
+			boss_obj._transform.x = my_packet->x;
+			boss_obj._transform.y = my_packet->y;
+			boss_obj._transform.z = my_packet->z;
+			boss_obj._degree = my_packet->degree;
+			boss_obj._hp = my_packet->hp;
+		}
+			
+			break;
+		case SC_MOVE_BOSS: {
+			SC_MOVE_BOSS_PACKET* my_packet = reinterpret_cast<SC_MOVE_BOSS_PACKET*>(ptr);
+			int id = my_packet->id;
+
+			boss_obj._on = true;
+			boss_obj._my_server_id = id;
+			boss_obj._transform.x = my_packet->x;
+			boss_obj._transform.y = my_packet->y;
+			boss_obj._transform.z = my_packet->z;
+			boss_obj._degree = my_packet->degree;
+			boss_obj._hp = my_packet->hp;
+			boss_obj._animation_state = my_packet->char_state;
+		}
+			break;
 		case SC_MOVE_OBJECT:
 		{
 			SC_MOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(ptr);
