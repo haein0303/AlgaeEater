@@ -27,6 +27,8 @@ constexpr char SC_ADD_OBJECT = 12;
 constexpr char SC_REMOVE_OBJECT = 13;
 constexpr char SC_MOVE_OBJECT = 14;
 constexpr char SC_ADD_CUBE = 15;
+constexpr char SC_ADD_BOSS = 16;
+constexpr char SC_MOVE_BOSS = 17;
 
 constexpr char SS_CONNECT_SERVER = 20;
 constexpr char SS_DATA_PASS = 21;
@@ -99,6 +101,23 @@ struct SC_ADD_OBJECT_PACKET {
 	int		char_state;
 };
 
+struct SC_REMOVE_OBJECT_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+};
+
+struct SC_MOVE_OBJECT_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+	float	x, y, z;
+	float	degree;
+	int		hp;
+	int		char_state;
+	unsigned int client_time;
+};
+
 struct SC_ADD_CUBE_PACKET {
 	unsigned char size;
 	char	type;
@@ -109,13 +128,18 @@ struct SC_ADD_CUBE_PACKET {
 	int		hp;
 };
 
-struct SC_REMOVE_OBJECT_PACKET {
+struct SC_ADD_BOSS_PACKET {
 	unsigned char size;
 	char	type;
 	int		id;
+	float	x, y, z;
+	float	degree;
+	char	name[NAME_SIZE];
+	int		hp;
+	int		char_state;
 };
 
-struct SC_MOVE_OBJECT_PACKET {
+struct SC_MOVE_BOSS_PACKET {
 	unsigned char size;
 	char	type;
 	int		id;

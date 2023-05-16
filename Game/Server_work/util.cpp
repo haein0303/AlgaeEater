@@ -120,7 +120,11 @@ void process_packet(int c_id, char* packet)
 			if (clients[c_id]._Room_Num == clients[i]._Room_Num) {
 				clients[c_id].room_list.insert(i);
 				clients[i].room_list.insert(c_id);
-				clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
+				if (i % 10 != 9)
+					clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
+				else {
+					clients[c_id].send_boss_add(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
+				}
 			}
 		}
 
@@ -400,8 +404,12 @@ void Update_Npc()
 			}
 			clients[pl]._sl.unlock();
 
-			clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-				clients[pl].hp, clients[pl].char_state, 0);
+			if (pl % 10 != 9)
+				clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+					clients[pl].hp, clients[pl].char_state, 0);
+			else
+				clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+					clients[pl].hp, clients[pl].char_state, 0);
 		}
 	}
 }

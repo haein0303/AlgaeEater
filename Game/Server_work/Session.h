@@ -58,6 +58,8 @@ public:
 	void send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
 	void send_remove_object(int c_id);
 	void send_cube_add(int c_id, float x, float y, float z, float degree);
+	void send_boss_add(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
+	void send_boss_move(int c_id, float x, float y, float z, float degree, int hp, int state, unsigned int client_time);
 };
 
 struct CUBE {

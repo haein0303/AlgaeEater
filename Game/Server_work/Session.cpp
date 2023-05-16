@@ -110,3 +110,35 @@ void SESSION::send_cube_add(int c_id, float x, float y, float z, float degree)
 	p.degree = degree;
 	do_send(&p);
 }
+
+void SESSION::send_boss_add(int c_id, float x, float y, float z, float degree, char* name, int hp, int state)
+{
+	SC_ADD_BOSS_PACKET p;
+	p.id = c_id;
+	p.size = sizeof(SC_ADD_BOSS_PACKET);
+	p.type = SC_ADD_BOSS;
+	p.x = x;
+	p.y = y;
+	p.z = z;
+	p.degree = degree;
+	strcpy_s(p.name, name);
+	p.hp = hp;
+	p.char_state = state;
+	do_send(&p);
+}
+
+void SESSION::send_boss_move(int c_id, float x, float y, float z, float degree, int hp, int state, unsigned int client_time)
+{
+	SC_MOVE_BOSS_PACKET p;
+	p.id = c_id;
+	p.size = sizeof(SC_MOVE_BOSS_PACKET);
+	p.type = SC_MOVE_BOSS;
+	p.x = x;
+	p.y = y;
+	p.z = z;
+	p.degree = degree;
+	p.hp = hp;
+	p.char_state = state;
+	p.client_time = client_time;
+	do_send(&p);
+}
