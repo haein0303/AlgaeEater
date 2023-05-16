@@ -103,6 +103,7 @@ public:
 	// 오브젝트 데이터 객체 생성
 	OBJECT playerArr[PLAYERMAX];
 	OBJECT npcArr[NPCMAX];
+	OBJECT boss_obj;
 	OBJECT cubeArr[CubeMax];
 
 	// 파티클 데이터

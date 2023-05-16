@@ -166,7 +166,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr);
+	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr,boss_obj);
 
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true) {
@@ -526,7 +526,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	}
 	
 	// Boss
-	if (npcArr[9]._on == true) {
+	if (boss_obj._on == true) {
 		XMFLOAT3 boss_scale = XMFLOAT3(600.f, 600.f, 600.f);
 		float boss_default_rot_x = -XM_PI * 0.5f;
 		XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
