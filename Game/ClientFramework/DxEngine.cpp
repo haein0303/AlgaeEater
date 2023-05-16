@@ -70,6 +70,15 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	hp_bar.Make_SRV();
 	hp_bar.CreatePSO(L"..\\HPBar.hlsl");
 
+	color_pattern.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	color_pattern.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
+	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+	color_pattern.Make_SRV();
+	color_pattern.CreatePSO(L"..\\ColorPattern.hlsl");
+
 	skybox.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	skybox.Init("../Resources/SkySphere.txt", ObjectType::SkyBox);
 	skybox.Add_texture(L"..\\Resources\\Texture\\Sky.jpg");
@@ -143,15 +152,13 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	}
 	
 	for (int i = 0; i < NPCMAX; ++i) {
-		if (i == 9) {
-			npcArr[i]._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
-			npcArr[i]._transform.y += 1.f;
-		}
-		else {
+		
 			npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
 			npcArr[i]._transform.y += 0.2f;
-		}
+		
 	}
+	boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
+	boss_obj._transform.y += 1.f;
 
 	d11Ptr->LoadPipeline();
 	d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
@@ -184,6 +191,13 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 
+	if (boss_obj._on == true) {
+		if (boss_obj._animation_state == 0 || boss_obj._animation_state == 1) {
+			boss_obj._can_attack = true;
+		}
+	}
+
+
 	if (isActive)
 	{
 		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
@@ -204,6 +218,16 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 							playerArr[i]._can_attack2 = false;
 							npcArr[j]._particle_count += 100;
 						}
+					}
+				}
+			}
+			if (boss_obj._on == true) {
+				if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
+					if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+						&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
+						&& playerArr[i]._can_attack2) {
+						playerArr[i]._can_attack2 = false;
+						boss_obj._particle_count += 100;
 					}
 				}
 			}
@@ -255,7 +279,46 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 		
+	if (boss_obj._on == true) {
+		int i = networkPtr->myClientId;
+		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
+			if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+				&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
+				&& playerArr[i]._can_attack) {
 
+				playerArr[i]._can_attack = false;
+
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = 'a';
+				p.attacker_id = playerArr[i]._my_server_id;
+				p.target_id = boss_obj._my_server_id;
+				networkPtr->send_packet(&p);
+
+				cout << "player" << i << " hp : " << boss_obj._hp << endl;
+				cout << "BOSS hp : " << boss_obj._hp << endl;
+				cout << "BOSS particle : " << boss_obj._particle_count << endl;
+			}
+			if (boss_obj._animation_state == 2
+				&& boss_obj._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(boss_obj._animation_state) * 0.5f
+				&& boss_obj._can_attack) {
+
+				boss_obj._can_attack = false;
+
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = 'a';
+				p.attacker_id = boss_obj._my_server_id;
+				p.target_id = playerArr[i]._my_server_id;
+				networkPtr->send_packet(&p);
+
+				cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
+				cout << "BOSS hp : " << boss_obj._hp << endl;
+			}
+		}
+	}
 	
 	if (playerArr[networkPtr->myClientId]._hp <= 0.f) {
 		playerArr[networkPtr->myClientId]._animation_state = 4;
@@ -271,25 +334,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		networkPtr->send_packet(&p);
 	}
 	
-
-	//// npc ?‚¬ë§?
-	//for (int i = 0; i < NPCMAX; ++i) {
-	//	if (npcArr[i]._on == true && npcArr[i]._hp <= 0.f) {
-	//		npcArr[i]._animation_state = 3;
-	//		//npcArr[i]._on = false;
-
-	//		CS_MOVE_PACKET p;
-	//		p.size = sizeof(p);
-	//		p.type = CS_MOVE;
-	//		p.x = npcArr[networkPtr->myClientId]._transform.x;
-	//		p.y = npcArr[networkPtr->myClientId]._transform.y;
-	//		p.z = npcArr[networkPtr->myClientId]._transform.z;
-	//		p.degree = npcArr[networkPtr->myClientId]._degree;
-	//		p.char_state = npcArr[i]._animation_state;
-	//		//networkPtr->send_packet(&p);
-	//	}
-	//}
-	//
 
 	//VP ï¿½ï¿½È¯
 	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - 7 * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
@@ -527,7 +571,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	
 	// Boss
 	if (boss_obj._on == true) {
-		XMFLOAT3 boss_scale = XMFLOAT3(600.f, 600.f, 600.f);
+		XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
 		float boss_default_rot_x = -XM_PI * 0.5f;
 		XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
 		float boss2_default_rot_x = 0.f;
@@ -602,6 +646,35 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 			cmdList->DrawIndexedInstanced(hp_bar._indexCount, 1, 0, 0, 0);
+		}
+	}
+
+	// ¸Ó¸® À§ »ö±ò ÆÐÅÏ
+	cmdList->SetPipelineState(color_pattern._pipelineState.Get());
+	cmdList->IASetVertexBuffers(0, 1, &color_pattern._vertexBufferView);
+	cmdList->IASetIndexBuffer(&color_pattern._indexBufferView);
+	for (int i = 0; i < PLAYERMAX; ++i)
+	{
+		if (playerArr[i]._on == true) {
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
+				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),
+					sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
+				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
+				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f, playerArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+				color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+				descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
 		}
 	}
 

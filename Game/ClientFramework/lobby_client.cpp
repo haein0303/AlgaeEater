@@ -73,6 +73,7 @@ void LOBBY_CLIENT::draw_text(const wchar_t* input)
 
 CImage BG;
 CImage Icon[4];
+CImage i_stage_info[4];
 HFONT hFont;
 
 
@@ -107,6 +108,11 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 			wchar_t loading[40];
 			wsprintf(loading,L"..\\Resources\\Lobby\\button_%d.png", i);
 			Icon[i-1].Load(loading);
+		}
+		for (int i = 0; i < 4; ++i) {
+			wchar_t loading[40];
+			wsprintf(loading, L"..\\Resources\\Lobby\\stage%d.png", i);
+			i_stage_info[i].Load(loading);
 		}
 
 		AddFontResource(L"..\\Resources\\Lobby\\BusanBada.ttf");
@@ -160,7 +166,8 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
 
 		BG.Draw(memDC, 0, 0, 1280, 720);
-
+		i_stage_info[lobby_client._scene_select].Draw(memDC, 990, -40, 250, 250);
+		
 
 		SelectObject(memDC, hFont);
 		SetBkMode(memDC, TRANSPARENT);
@@ -213,6 +220,13 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 			}
 			
 			break;
+		case VK_LEFT:
+			lobby_client._scene_select = (lobby_client._scene_select + 3) % 4;
+			break;
+		case VK_RIGHT:
+			lobby_client._scene_select = (lobby_client._scene_select + 1) % 4;
+			break;
+		
 		}		
 		break;
 	default:

@@ -156,6 +156,7 @@ public:
 			boss_obj._transform.z = my_packet->z;
 			boss_obj._degree = my_packet->degree;
 			boss_obj._hp = my_packet->hp;
+			boss_obj._animation_state = my_packet->char_state;
 		}
 			
 			break;

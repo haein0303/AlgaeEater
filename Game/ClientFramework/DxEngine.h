@@ -27,7 +27,7 @@
 class DxEngine {
 public:
 	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x) {
-		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[9], 0);
+		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0);
 
 		cmdList->SetPipelineState(boss._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
@@ -35,13 +35,13 @@ public:
 		
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z)
 			* XMMatrixRotationX(default_rot_x)
-			* XMMatrixRotationY(npcArr[9]._degree * XM_PI / 180.f - XM_PI)
-			* XMMatrixTranslation(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z));
+			* XMMatrixRotationY(boss_obj._degree * XM_PI / 180.f - XM_PI)
+			* XMMatrixTranslation(boss_obj._transform.x, boss_obj._transform.y, boss_obj._transform.z));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 		XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-		copy(begin(npcArr[9]._final_transforms), end(npcArr[9]._final_transforms), &_transform.BoneTransforms[0]);
+		copy(begin(boss_obj._final_transforms), end(boss_obj._final_transforms), &_transform.BoneTransforms[0]);
 
 		boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
@@ -125,6 +125,7 @@ public:
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
 	MESH_ASSET hp_bar;
+	MESH_ASSET color_pattern;
 
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
