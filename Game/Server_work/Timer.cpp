@@ -22,6 +22,8 @@ extern array<CUBE, CUBE_NUM> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
+int spider_eye_color = 0;
+
 void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id)
 {
 	TIMER_EVENT ev;
@@ -218,6 +220,16 @@ void do_timer()
 				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 
 				add_timer(ev.object_id, 100, EV_BOSS_CON, ev.target_id);
+				break;
+			}
+			case EV_BOSS_EYE: {
+				int pl = ev.object_id;
+				clients[ev.target_id].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+					clients[pl].hp, clients[pl].char_state, spider_eye_color, 0);
+				spider_eye_color++;
+				if (spider_eye_color > 4) spider_eye_color = 0;
+
+				add_timer(ev.object_id, 3000, EV_BOSS_EYE, ev.target_id);
 				break;
 			}
 			default:

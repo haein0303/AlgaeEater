@@ -115,8 +115,10 @@ void process_packet(int c_id, char* packet)
 
 					if (i % 10 != 9)
 						add_timer(i, 10000, EV_NPC_CON, c_id);
-					else
+					else {
 						add_timer(i, 10000, EV_BOSS_CON, c_id);
+						add_timer(i, 3000, EV_BOSS_EYE, c_id);
+					}
 					clients[i].Lua_on = true;
 
 				}
@@ -415,7 +417,7 @@ void Update_Npc()
 					clients[pl].hp, clients[pl].char_state, 0);
 			else
 				clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl].hp, clients[pl].char_state, 0);
+					clients[pl].hp, clients[pl].char_state, 0, 0);
 		}
 	}
 }

@@ -148,6 +148,7 @@ struct SC_MOVE_BOSS_PACKET {
 	float	degree;
 	int		hp;
 	int		char_state;
+	int		eye_color;
 	unsigned int client_time;
 };
 

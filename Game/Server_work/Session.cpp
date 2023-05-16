@@ -127,7 +127,7 @@ void SESSION::send_boss_add(int c_id, float x, float y, float z, float degree, c
 	do_send(&p);
 }
 
-void SESSION::send_boss_move(int c_id, float x, float y, float z, float degree, int hp, int state, unsigned int client_time)
+void SESSION::send_boss_move(int c_id, float x, float y, float z, float degree, int hp, int state, int eye, unsigned int client_time)
 {
 	SC_MOVE_BOSS_PACKET p;
 	p.id = c_id;
@@ -139,6 +139,7 @@ void SESSION::send_boss_move(int c_id, float x, float y, float z, float degree, 
 	p.degree = degree;
 	p.hp = hp;
 	p.char_state = state;
+	p.eye_color = eye;
 	p.client_time = client_time;
 	do_send(&p);
 }
