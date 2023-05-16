@@ -26,6 +26,40 @@
 
 class DxEngine {
 public:
+	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x) {
+		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[9], 0);
+
+		cmdList->SetPipelineState(boss._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
+		cmdList->IASetIndexBuffer(&boss._indexBufferView);
+		
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z)
+			* XMMatrixRotationX(default_rot_x)
+			* XMMatrixRotationY(npcArr[9]._degree * XM_PI / 180.f - XM_PI)
+			* XMMatrixTranslation(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+		XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+
+		copy(begin(npcArr[9]._final_transforms), end(npcArr[9]._final_transforms), &_transform.BoneTransforms[0]);
+
+		boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+		int sum = 0;
+		for (Subset i : boss._animationPtr->mSubsets)
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+			sum += i.FaceCount * 3;
+
+			cout << "face ; " << i.FaceCount << endl;
+
+			boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+		}
+	}
 
 	//DX엔진 초기화
 	void Init(WindowInfo windowInfo);

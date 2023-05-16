@@ -83,6 +83,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Gray_BaseColor_Wire.png");
+	//boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
+	//boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
+	//boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
 	boss.Make_SRV();
 	boss.CreatePSO();
 
@@ -141,7 +144,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	
 	for (int i = 0; i < NPCMAX; ++i) {
 		if (i == 9) {
-			npcArr[i]._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
+			npcArr[i]._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 			npcArr[i]._transform.y += 1.f;
 		}
 		else {
@@ -328,9 +331,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			player_AKI_Body_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 0);
 			player_AKI_Sword_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 1);
 		}
-	}
-	if (npcArr[9]._on == true) {
-		boss2.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[9], 0);
 	}
 	for (int i = 0; i < NPCMAX; ++i) {
 		if (npcArr[i]._on == true && i != 9) {
@@ -525,40 +525,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 	
-
-	// 보스
-	cmdList->SetPipelineState(boss2._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &boss2._vertexBufferView);
-	cmdList->IASetIndexBuffer(&boss2._indexBufferView);
-	if (npcArr[9]._on == true)
-	{
-		{
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.f, 1.f, 1.f)
-				* XMMatrixRotationY(npcArr[9]._degree * XM_PI / 180.f - XM_PI)
-				* XMMatrixTranslation(npcArr[9]._transform.x, npcArr[9]._transform.y, npcArr[9]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-			XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
-
-			copy(begin(npcArr[9]._final_transforms), end(npcArr[9]._final_transforms), &_transform.BoneTransforms[0]);
-
-			boss2._tex._srvHandle = boss2._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-
-			int sum = 0;
-			for (Subset i : boss2._animationPtr->mSubsets)
-			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				descHeapPtr->CopyDescriptor(boss2._tex._srvHandle, 5, devicePtr);
-				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
-				sum += i.FaceCount * 3;
-
-				cout << "face ; " << i.FaceCount << endl;
-
-				boss2._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-			}
-		}
+	// Boss
+	if (npcArr[9]._on == true) {
+		XMFLOAT3 boss_scale = XMFLOAT3(600.f, 600.f, 600.f);
+		float boss_default_rot_x = -XM_PI * 0.5f;
+		XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
+		float boss2_default_rot_x = 0.f;
+		Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x);
 	}
 
 	cmdList->SetPipelineState(npc_asset._pipelineState.Get());
