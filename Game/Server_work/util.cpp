@@ -417,7 +417,7 @@ void Update_Npc()
 					clients[pl].hp, clients[pl].char_state, 0);
 			else
 				clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl].hp, clients[pl].char_state, 0, 0);
+					clients[pl].hp, clients[pl].char_state, clients[pl].eye_color, 0);
 		}
 	}
 }

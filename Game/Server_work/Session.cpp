@@ -21,6 +21,7 @@ SESSION::SESSION()
 	stage = 0;
 	turn = 0;
 	color = 0;
+	eye_color = 0;
 	Lua_on = false;
 }
 

@@ -102,6 +102,7 @@ void initialize_npc()
 		{
 			clients[i].x = 30;
 			clients[i].z = 30;
+			clients[i].eye_color = 0;
 
 			lua_register(clients[i].L, "API_Rush", API_Rush);
 			lua_register(clients[i].L, "API_Cube", API_Cube);

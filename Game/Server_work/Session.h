@@ -36,6 +36,7 @@ public:
 
 	// 스테이지 1 변수
 	int color;
+	int eye_color;
 
 	// 임시 변수
 	float start_x, start_z;
