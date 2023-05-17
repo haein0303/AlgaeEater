@@ -255,7 +255,7 @@ void Input::inputMouse(OBJECT* playerArr, shared_ptr<SFML> networkPtr)
 	bool key_toggle = false;
 
 	//상하각도제한
-	float yMin = -30.f;
+	float yMin = -20.f;
 	float yMax = 40.f;
 
 	float cxDelta = 0.0f, cyDelta = yMin;
