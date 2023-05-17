@@ -229,6 +229,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 						&& playerArr[i]._can_attack2) {
 						playerArr[i]._can_attack2 = false;
 						boss_obj._particle_count += 100;
+						cout << "test" << endl;
 					}
 				}
 			}
@@ -771,10 +772,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
 	}
 
-	// ?뙆?떚?겢 ?떆?뒪?뀥
+#pragma region Particle System
+	// 파티클 생성
 	int index = 0;
 	for (int i = 0; i < NPCMAX; ++i)
 	{
+		// npc
 		if (npcArr[i]._on == true && i != 9) {
 			while (npcArr[i]._particle_count > 0)
 			{
@@ -800,7 +803,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 			}
 		}
-		else if(npcArr[i]._on == true && i == 9 && index <= PARTICLE_NUM) {
+		else if (npcArr[i]._on == true && i == 9 && index <= PARTICLE_NUM) {
 			while (npcArr[i]._particle_count > 0)
 			{
 				if (index >= PARTICLE_NUM) { // 파티클 개수에 대한 예외처리
@@ -825,7 +828,61 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 			}
 		}
+
+
 	}
+	if (boss_obj._on == true) { // boss
+		while (boss_obj._particle_count > 0)
+		{
+			if (index >= PARTICLE_NUM) { // 파티클 개수에 대한 예외처리
+				break;
+			}
+
+			if (particles[index].alive == 0) // ?뙆?떚?겢 珥덇린?솕
+			{
+				particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+				particles[index].curTime = 0.0f;
+				particles[index].pos = XMVectorSet(boss_obj._transform.x, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
+				particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+				particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+				XMVector3Normalize(particles[index].dir);
+				particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
+					particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
+				particles[index].alive = 1;
+				--boss_obj._particle_count;
+			}
+			else {
+				++index;
+			}
+		}
+	}
+	else if (boss_obj._on == true && index <= PARTICLE_NUM) {
+		while (boss_obj._particle_count > 0)
+		{
+			if (index >= PARTICLE_NUM) { // 파티클 개수에 대한 예외처리
+				break;
+			}
+
+			if (particles[index].alive == 0) // ?뙆?떚?겢 珥덇린?솕
+			{
+				particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+				particles[index].curTime = 0.0f;
+				particles[index].pos = XMVectorSet(boss_obj._transform.x + 0.5f, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
+				particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+				particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+				XMVector3Normalize(particles[index].dir);
+				particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
+					particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
+				particles[index].alive = 1;
+				--boss_obj._particle_count;
+			}
+			else {
+				++index;
+			}
+		}
+	}
+
+	// 파티클 연산
 	for (int i = 0; i < PARTICLE_NUM; ++i) // ?뙆?떚?겢 臾쇰━泥섎━ 諛? ?젋?뜑留?
 	{
 		if (particles[i].alive == 1)
@@ -886,9 +943,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 		}
 	}
-	
-
-	
+#pragma endregion
 
 	::WaitForSingleObject(_excuteEvent, INFINITE);
 	SetEvent(_renderEvent);

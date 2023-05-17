@@ -173,7 +173,7 @@ public:
 			boss_obj._hp = my_packet->hp;
 			boss_obj._animation_state = my_packet->char_state;
 			boss_obj._eye_color = my_packet->eye_color; // 0,1,2,3,4
-			cout << boss_obj._eye_color << endl;
+			//cout << boss_obj._eye_color << endl;
 		}
 			break;
 		case SC_MOVE_OBJECT:
