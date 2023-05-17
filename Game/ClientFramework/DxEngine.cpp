@@ -90,11 +90,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png");
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");	// 0
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");	// 1
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");	// 2
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");// 3
+	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Black_Color_Eye.png");	// 4
 	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Gray_BaseColor_Wire.png");
-	//boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
-	//boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
-	//boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
 	boss.Make_SRV();
 	boss.CreatePSO();
 
@@ -411,6 +412,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
 	cmdList->SetDescriptorHeaps(1, &descHeap);
 
+#pragma region Player
 	cmdList->SetPipelineState(player_AKI_Body_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Body_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_AKI_Body_asset._indexBufferView);
@@ -568,6 +570,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 	}
+#pragma endregion
 	
 	// Boss
 	if (boss_obj._on == true) {
@@ -924,7 +927,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		_tmp.top = _tmp.bottom - 25;
 		d11Ptr->draw_text(text, _tmp);
 	}
-
 
 	d11Ptr->ExcuteUI(i_now_render_index);
 	swapChainPtr->_swapChain->Present(0, 0);

@@ -19,6 +19,7 @@ public:
 	int			_hp = 100.f;
 	bool		_can_attack = true;
 	bool		_can_attack2 = true;
+	int			_eye_color = 1;
 
 	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;

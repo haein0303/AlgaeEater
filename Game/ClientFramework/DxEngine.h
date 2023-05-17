@@ -46,6 +46,7 @@ public:
 		boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
 		int sum = 0;
+		int count = 0;
 		for (Subset i : boss._animationPtr->mSubsets)
 		{
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
@@ -54,10 +55,20 @@ public:
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 			cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
 			sum += i.FaceCount * 3;
-
-			cout << "face ; " << i.FaceCount << endl;
-
-			boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+			
+			if (count == 2) { // eye, 조건에 boss별 type추가 필요
+				boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				boss._tex._srvHandle.Offset(3 + boss_obj._eye_color, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+			}
+			else if (count == 3) { // wire
+				boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				boss._tex._srvHandle.Offset(8, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+			}
+			else {
+				boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+			}
+			
+			++count;
 		}
 	}
 
