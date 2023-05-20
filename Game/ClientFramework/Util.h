@@ -214,6 +214,7 @@ struct Constants
 	int current_hp;
 	float hp_bar_size;
 	int max_hp;
+	XMVECTOR color;
 };
 
 struct Point

@@ -80,10 +80,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	color_pattern.CreatePSO(L"..\\ColorPattern.hlsl");
 
 	key.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	key.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
+	key.Init("../Resources/rust_key.txt", ObjectType::GeneralObjects);
 	key.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
 	key.Make_SRV();
-	key.CreatePSO(L"..\\Bricks.hlsl");
+	key.CreatePSO(L"..\\Color.hlsl");
 
 	skybox.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	skybox.Init("../Resources/SkySphere.txt", ObjectType::SkyBox);
@@ -776,9 +776,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->IASetIndexBuffer(&key._indexBufferView);
 
 		_key_rotation_time += timerPtr->_deltaTime;
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(_key_rotation_time * 30.f * XM_PI / 180.f) * XMMatrixTranslation(key_data._transform.x, key_data._transform.y, key_data._transform.z));
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f) 
+			* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data._transform.x, key_data._transform.y, key_data._transform.z));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+		_transform.color = XMVectorSet(1.f, 1.f, 0.f, 1.f);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
