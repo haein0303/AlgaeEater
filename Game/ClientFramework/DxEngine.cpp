@@ -50,7 +50,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	cube_asset.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
 	cube_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	cube_asset.Make_SRV();
-	cube_asset.CreatePSO(L"..\\Bricks.hlsl");
+	cube_asset.CreatePSO(L"..\\Color.hlsl");
 
 	map_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	map_asset.Init("../Resources/Stage1_Wall_Test.txt", ObjectType::GeneralObjects);
@@ -709,10 +709,22 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		if (cubeArr[i]._on == true)
 		{
+			cout << "create pillar" << endl;
+
 			//���� ��ȯ
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i]._transform.x, cubeArr[i]._transform.y + 2.0f, cubeArr[i]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			if (i == 0)
+				_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+			else if (i == 1)
+				_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
+			else if (i == 2)
+				_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
+			else
+				_transform.color = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+			
 
 			//����
 			{
