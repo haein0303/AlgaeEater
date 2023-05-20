@@ -25,7 +25,7 @@ void initialize_npc()
 		clients[i].degree = 0;
 		clients[i].start_x = 0;
 		clients[i].start_z = 0;
-		clients[i].hp = 100;
+		clients[i].hp = 50;
 		clients[i].char_state = 0;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
@@ -138,6 +138,7 @@ void initialize_cube()
 		cubes[i].y = 0;
 		cubes[i].z = 30.0f;
 		cubes[i].degree = 0;
+		cubes[i].color = 0;
 		cubes[i]._Room_Num = i / 5;
 	}
 	cout << "cube ·Îµù ³¡" << endl;
@@ -156,30 +157,35 @@ void send_cube(int c_id, float x, float y, float z)
 			cubes[i].y = y;
 			cubes[i].z = z - 10.0f;
 			cubes[i].degree = 0;
+			cubes[i].color = cnt;
 			break;
 		case 1:
 			cubes[i].x = x - 10.0f;
 			cubes[i].y = y;
 			cubes[i].z = z;
 			cubes[i].degree = 0;
+			cubes[i].color = cnt;
 			break;
 		case 2:
 			cubes[i].x = x;
 			cubes[i].y = y;
 			cubes[i].z = z + 10.0f;
 			cubes[i].degree = 0;
+			cubes[i].color = cnt;
 			break;
 		case 3:
 			cubes[i].x = x + 10.0f;
 			cubes[i].y = y;
 			cubes[i].z = z;
 			cubes[i].degree = 0;
+			cubes[i].color = cnt;
 			break;
 		case 4:
 			cubes[i].x = 10.0f;
 			cubes[i].y = 0;
 			cubes[i].z = 30.0f;
 			cubes[i].degree = 0;
+			cubes[i].color = cnt;
 			break;
 		}
 
@@ -214,6 +220,12 @@ void rush_npc(int c_id, float t_x, float t_z)
 
 	for (int i = clients[c_id]._Room_Num * 4; i < clients[c_id]._Room_Num * 4 + 4; i++) {
 		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 2) {
+			if (clients[c_id].color == cubes[i].color) {
+				// ±âµÕ ºÎ¼ÅÁü
+			}
+			else {
+				// ±âµÕ ¼ø¼­ ¸ø¸ÂÃã
+			}
 			cout << "±âµÕ Ãæµ¹" << endl;
 			return;
 		}

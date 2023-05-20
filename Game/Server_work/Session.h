@@ -68,5 +68,6 @@ struct CUBE {
 public:
 	float x, y, z;
 	float degree;
+	int color;
 	int		_Room_Num;
 };
