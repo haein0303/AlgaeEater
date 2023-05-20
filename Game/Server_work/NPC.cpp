@@ -181,9 +181,9 @@ void send_cube(int c_id, float x, float y, float z)
 			cubes[i].color = cnt;
 			break;
 		case 4:
-			cubes[i].x = 10.0f;
+			cubes[i].x = 170.f;
 			cubes[i].y = 0;
-			cubes[i].z = 30.0f;
+			cubes[i].z = -220.f;
 			cubes[i].degree = 0;
 			cubes[i].color = cnt;
 			break;
