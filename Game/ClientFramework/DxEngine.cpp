@@ -79,6 +79,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	color_pattern.Make_SRV();
 	color_pattern.CreatePSO(L"..\\ColorPattern.hlsl");
 
+	key.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	key.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
+	key.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
+	key.Make_SRV();
+	key.CreatePSO(L"..\\Bricks.hlsl");
+
 	skybox.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	skybox.Init("../Resources/SkySphere.txt", ObjectType::SkyBox);
 	skybox.Add_texture(L"..\\Resources\\Texture\\Sky.jpg");
@@ -160,6 +166,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	}
 	boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 	boss_obj._transform.y += 1.f;
+
+	key_data._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
+	key_data._on = true;
 
 	d11Ptr->LoadPipeline();
 	d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
@@ -321,6 +330,16 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 		}
 	}
+
+	// key 충돌처리
+	for (int i = 0; i < PLAYERMAX; ++i)
+	{
+		if (pow(playerArr[i]._transform.x - key_data._transform.x, 2) + pow(playerArr[i]._transform.z - key_data._transform.z, 2) <= 1.f)
+		{
+			key_data._on = false;
+		}
+	}
+
 	
 	if (playerArr[networkPtr->myClientId]._hp <= 0.f) {
 		playerArr[networkPtr->myClientId]._animation_state = 4;
@@ -747,6 +766,27 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 	descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 	cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
+	}
+
+	// key
+	if (key_data._on == true)
+	{
+		cmdList->SetPipelineState(key._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &key._vertexBufferView);
+		cmdList->IASetIndexBuffer(&key._indexBufferView);
+
+		_key_rotation_time += timerPtr->_deltaTime;
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(_key_rotation_time * 30.f * XM_PI / 180.f) * XMMatrixTranslation(key_data._transform.x, key_data._transform.y, key_data._transform.z));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+		key._tex._srvHandle = key._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		descHeapPtr->CopyDescriptor(key._tex._srvHandle, 5, devicePtr);
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
 	}
 
 	// skybox

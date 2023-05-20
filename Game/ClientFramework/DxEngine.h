@@ -116,6 +116,8 @@ public:
 	OBJECT npcArr[NPCMAX];
 	OBJECT boss_obj;
 	OBJECT cubeArr[CubeMax];
+	float _key_rotation_time = 0.f;
+	OBJECT key_data;
 
 	// 파티클 데이터
 	ParticleData particles[PARTICLE_NUM];
@@ -137,6 +139,7 @@ public:
 	MESH_ASSET skybox;
 	MESH_ASSET hp_bar;
 	MESH_ASSET color_pattern;
+	MESH_ASSET key;
 
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
