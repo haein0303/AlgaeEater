@@ -168,6 +168,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss_obj._transform.y += 1.f;
 
 	key_data._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
+	key_data._key = 0;
 	key_data._on = true;
 
 	d11Ptr->LoadPipeline();
@@ -336,6 +337,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	{
 		if (pow(playerArr[i]._transform.x - key_data._transform.x, 2) + pow(playerArr[i]._transform.z - key_data._transform.z, 2) <= 1.f)
 		{
+			playerArr[i]._player_key = key_data._key;
 			key_data._on = false;
 		}
 	}
@@ -679,26 +681,30 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->IASetIndexBuffer(&color_pattern._indexBufferView);
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
-		if (playerArr[i]._on == true) {
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
-				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),
-					sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
-				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
-				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f, playerArr[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
+		if (playerArr[i]._on == true)
+		{
+			if (playerArr[i]._player_key == 0)
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
+					* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),
+						sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
+					* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
+					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f, playerArr[i]._transform.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-				color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				{
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-				descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
+					color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+					descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
+				}
+
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
 			}
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
 		}
 	}
 
@@ -709,8 +715,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		if (cubeArr[i]._on == true)
 		{
-			cout << "create pillar" << endl;
-
 			//���� ��ȯ
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i]._transform.x, cubeArr[i]._transform.y + 2.0f, cubeArr[i]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
