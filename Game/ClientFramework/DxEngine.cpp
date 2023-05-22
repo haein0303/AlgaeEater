@@ -637,7 +637,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
 	for (int i = 0; i < NPCMAX; i++) //npc ����
 	{
-		if (npcArr[i]._on == true && i != 9)
+		if (npcArr[i]._on == true)
 		{			
 			{
 				//���� ��ȯ
@@ -774,8 +774,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	}
 
 	// map
-	Map(cmdList, stage0_map, map_asset, i_now_render_index, 0);
-	//Map(cmdList, floor, map_asset, i_now_render_index, 1);
+	if(Scene_num == 0)
+		Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
+	else if(Scene_num == 1)
+	Map(cmdList, floor, map_asset, i_now_render_index, 1);
 
 	if (key_data._on == true)
 	{
