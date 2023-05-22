@@ -73,6 +73,10 @@ public:
 		dxEngine.cmdQueuePtr->WaitSync();
 	}
 
+	void in_scene(int data) {
+		dxEngine.Scene_num = data;
+	}
+
 	//fixed_update
 	void Logic()
 	{

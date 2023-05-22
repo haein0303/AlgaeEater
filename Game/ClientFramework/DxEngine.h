@@ -103,6 +103,7 @@ public:
 	HANDLE _excuteEvent = INVALID_HANDLE_VALUE;
 	int _render_thread_num = 0;
 
+	int Scene_num = 1;
 	SCENE* arrScene[SCENE::SceneTag::Count];
 	SCENE* m_pCurrScene;
 

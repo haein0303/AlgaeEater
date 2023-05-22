@@ -29,10 +29,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	cout << "EXIT lobby Msg Queue INIT CALL" << endl;
 
 	Client client;
+	client.in_scene(lobby_client._scene_select);
 	//클라이언트 초기화
 	client.Init(hInst, nCmdShow);
 	//매 프레임마다 업데이트
 	cout << "create client" << endl;
+	
 
 	thread logical_thread{ &Client::Logic,&client };
 
