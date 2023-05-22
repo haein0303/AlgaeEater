@@ -774,11 +774,18 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	}
 
 	// map
-	if(Scene_num == 0)
+	switch (Scene_num) {
+	case 0:
 		Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
-	else if(Scene_num == 1)
-	Map(cmdList, floor, map_asset, i_now_render_index, 1);
-
+		break;
+	case 1:
+		Map(cmdList, floor, map_asset, i_now_render_index, 1);
+		break;
+	default:
+		Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
+		break;
+	}
+	
 	if (key_data._on == true)
 	{
 		cmdList->SetPipelineState(key._pipelineState.Get());

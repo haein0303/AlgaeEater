@@ -42,24 +42,35 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
 {
     LightInfo color = (LightInfo)0.f;
 
-    float3 viewLightDir = (float3)0.f;
-
+    float3 viewLightDir;
+    float4 posi = float4(1.0f, 0.0f, 0.0f,1.0f);
     float diffuseRatio = 0.f;
     float specularRatio = 0.f;
     float distanceRatio = 1.f;
 
+    
+
     // Directional Light
-    viewLightDir = normalize(mul(float4(lightInfo.direction.xyz, 0.f), gView).xyz);
+    //viewLightDir = normalize(mul(float4(lightInfo.direction.xyz, 0.f), gView).xyz);
+    
+    viewLightDir = normalize(mul(gWorld, posi).xyz);
+    
+
+    //viewLightDir = normalize(mul(gWorld, float4(posi, 1.0f)).xyz);
+    //viewLightDir = gWorld;
+    
     diffuseRatio = saturate(dot(-viewLightDir, viewNormal));
+    
 
     float3 reflectionDir = normalize(viewLightDir + 2 * (saturate(dot(-viewLightDir, viewNormal)) * viewNormal));
     float3 eyeDir = normalize(viewPos);
+
     specularRatio = saturate(dot(-eyeDir, reflectionDir));
     specularRatio = pow(specularRatio, 2);
 
-    color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;
+    color.diffuse = ceil(lightInfo.diffuse * diffuseRatio * distanceRatio * 6.0) / 5.0f;
     color.ambient = lightInfo.ambient * distanceRatio;
-    color.specular = lightInfo.specular * specularRatio * distanceRatio;
+    color.specular = ceil(lightInfo.specular * specularRatio * distanceRatio * 1.5) / 2.0f;
 
     return color;
 }
@@ -100,9 +111,10 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 color = tex_0.Sample(sam_0, input.uv);
 
     LightInfo totalColor = (LightInfo)0.f;
-    LightInfo lightColor = CalculateLightColor(input.viewNormal, input.viewPos);
+    LightInfo lightColor = CalculateLightColor(input.viewNormal, input.viewNormal);
 
-    lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz) * 1.5) / 2.0f;
+    //lightColor.diffuse.xyz = ceil(saturate(lightColor.diffuse.xyz) * 1.5) / 2.0f;
+    lightColor.diffuse.xyz = saturate(lightColor.diffuse.xyz);
 
     totalColor.diffuse += lightColor.diffuse;
     totalColor.ambient += lightColor.ambient;
