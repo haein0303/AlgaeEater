@@ -213,7 +213,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				LCS_MATCH_PACKET p_MATCH;
 				p_MATCH.size = sizeof(p_MATCH);
 				p_MATCH.type = LCS_MATCH;
-				p_MATCH.stage = 0;
+				p_MATCH.stage = lobby_client._scene_select;
 				lobby_client.Lobby_network->send_packet(&p_MATCH);
 				lobby_client.draw_text(L"SEND MATCH PACKET");
 				lobby_client._ready_state = 0;
