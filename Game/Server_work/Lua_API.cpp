@@ -106,7 +106,7 @@ int API_Return(lua_State* L)
 
 void reset_lua(int c_id)
 {
-	int npc_id = clients[c_id]._Room_Num * 10 + MAX_USER + 9;
+	int npc_id = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1;
 	lua_close(clients[npc_id].L);
 
 	clients[npc_id].x = clients[npc_id].start_x;
@@ -139,7 +139,7 @@ void close_lua(int npc_id)
 	lua_close(clients[npc_id].L);
 
 	clients[npc_id]._s_state = ST_INGAME;
-	clients[npc_id]._Room_Num = (npc_id - MAX_USER) / 10;
+	clients[npc_id]._Room_Num = (npc_id - MAX_USER) / ROOM_NPC;
 	clients[npc_id].y = 0;
 	clients[npc_id].degree = 0;
 	clients[npc_id].start_x = 0;
@@ -166,7 +166,7 @@ void close_lua(int npc_id)
 	lua_register(clients[npc_id].L, "API_get_x", API_get_x);
 	lua_register(clients[npc_id].L, "API_get_z", API_get_z);
 
-	int st = (npc_id - MAX_USER - clients[npc_id]._Room_Num * 10);
+	int st = (npc_id - MAX_USER - clients[npc_id]._Room_Num * ROOM_NPC);
 
 	switch (st)
 		{

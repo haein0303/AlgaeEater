@@ -9,7 +9,7 @@ SESSION::SESSION()
 	z = 0;
 	degree = 0;
 	_name[0] = 0;
-	char_state = 0;
+	char_state = AN_IDLE;
 	hp = 0;
 	_s_state = ST_FREE;
 	_prev_remain = 0;
@@ -22,6 +22,7 @@ SESSION::SESSION()
 	turn = 0;
 	color = 0;
 	eye_color = 0;
+	_object_type = TY_PLAYER;
 	Lua_on = false;
 }
 

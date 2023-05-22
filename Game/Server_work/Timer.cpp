@@ -83,11 +83,11 @@ void do_timer()
 
 				if (clients[tar_id]._Room_Num == 999) tar_id = 1;
 
-				if (clients[tar_id].char_state == 4) {
+				if (clients[tar_id].char_state == AN_DEAD) {
 					int dead_player = tar_id;
 					for (auto& pl : clients[tar_id].room_list) {
 						if (pl < MAX_USER) {
-							if (clients[pl].char_state != 4)
+							if (clients[pl].char_state != AN_DEAD)
 							{
 								cout << "변경" << endl;
 								tar_id = pl;
@@ -96,7 +96,7 @@ void do_timer()
 						}
 					}
 					if (dead_player == tar_id) {
-						clients[ev.object_id].char_state = 0;
+						clients[ev.object_id].char_state = AN_IDLE;
 						ex_over->_comp_type = OP_SET_NPC;
 						ex_over->target_id = tar_id;
 						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
@@ -139,11 +139,11 @@ void do_timer()
 					break;
 				}
 				clients[ev.object_id]._sl.unlock();
-				if (clients[ev.target_id].char_state == 4) {
+				if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
 						if (pl < MAX_USER) {
-							if (clients[pl].char_state != 4)
+							if (clients[pl].char_state != AN_DEAD)
 							{
 								cout << "변경" << endl;
 								ev.target_id = pl;
@@ -152,7 +152,7 @@ void do_timer()
 						}
 					}
 					if (dead_player == ev.target_id) {
-						clients[ev.object_id].char_state =0;
+						clients[ev.object_id].char_state = AN_IDLE;
 						ex_over->_comp_type = OP_SET_NPC;
 						ex_over->target_id = ev.target_id;
 						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
@@ -192,11 +192,11 @@ void do_timer()
 					add_timer(ev.object_id, 5000, EV_CK, ev.target_id);
 				}
 
-				if (clients[ev.target_id].char_state == 4) {
+				if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
 						if (pl < MAX_USER) {
-							if (clients[pl].char_state != 4)
+							if (clients[pl].char_state != AN_DEAD)
 							{
 								cout << "변경" << endl;
 								ev.target_id = pl;
@@ -205,7 +205,7 @@ void do_timer()
 						}
 					}
 					if (dead_player == ev.target_id) {
-						clients[ev.object_id].char_state = 0;
+						clients[ev.object_id].char_state = AN_DEAD;
 						ex_over->_comp_type = OP_SET_NPC;
 						ex_over->target_id = ev.target_id;
 						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);

@@ -17,6 +17,10 @@ extern "C" {
 
 enum SESSION_STATE { ST_FREE, ST_ACCEPTED, ST_INGAME };
 
+enum SESSION_TYPE { TY_PLAYER, TY_MOVE_NPC, TY_HOLD_NPC };
+
+enum SESSION_ANIM_STATE { AN_IDLE, AN_WALK, AN_ATTACK, AN_DEAD };
+
 class SESSION {
 protected:
 	OVER_EXP _recv_over;
@@ -33,6 +37,7 @@ public:
 	int		char_state;
 	int		stage;
 	unsigned int client_time;
+	SESSION_TYPE _object_type;
 
 	// 스테이지 1 변수
 	int color;

@@ -50,13 +50,13 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].y = 0;
 		clients[c_id].z = -230;
 		clients[c_id].degree = 30;
-		clients[c_id].char_state = 0;
+		clients[c_id].char_state = AN_IDLE;
 		clients[c_id].color = 0;
 		clients[c_id].hp = 100;
-		clients[c_id].send_login_ok_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, 100);
+		clients[c_id].send_login_ok_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp);
 		clients[c_id]._s_state = ST_INGAME;
-		if (clients[0]._Room_Num != 999) clients[c_id]._Room_Num = c_id / 4;
-		else clients[c_id]._Room_Num = (c_id - 1) / 4;
+		if (clients[0]._Room_Num != 999) clients[c_id]._Room_Num = c_id / ROOM_USER;
+		else clients[c_id]._Room_Num = (c_id - 1) / ROOM_USER;
 		clients[c_id].room_list.clear();
 		//clients[c_id].stage = p->stage;
 		clients[c_id].stage = 0;
@@ -83,18 +83,18 @@ void process_packet(int c_id, char* packet)
 
 		// npc 세팅 부분
 		if (clients[c_id]._Room_Num != 999) {
-			if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * 10 + MAX_USER + 9].Lua_on == false) {
-				for (int i = clients[c_id]._Room_Num * 10 + MAX_USER; i < clients[c_id]._Room_Num * 10 + MAX_USER + 10; i++) {
+			if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1].Lua_on == false) {
+				for (int i = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER; i < clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC; i++) {
 					switch (clients[c_id].stage)
 					{
 					case 0: // 테스트 스테이지
-						if ((i - MAX_USER) % 10 < 3) {
+						if ((i - MAX_USER) % ROOM_NPC < 3) {
 							clients[i].x = 130;
 							clients[i].start_x = 130;
 							clients[i].z = -240 + (i - MAX_USER) * 10;
 							clients[i].start_z = -240 + (i - MAX_USER) * 10;
 						}
-						else if ((i - MAX_USER) % 10 > 2 && (i - MAX_USER) % 10 < 6){
+						else if ((i - MAX_USER) % ROOM_NPC > 2 && (i - MAX_USER) % 10 < 6){
 							clients[i].x = 100;
 							clients[i].start_x = 100;
 							clients[i].z = -270 + (i - MAX_USER) * 10;
@@ -113,7 +113,7 @@ void process_packet(int c_id, char* packet)
 						break;
 					}
 
-					if (i % 10 != 9)
+					if (i % ROOM_NPC != ROOM_NPC - 1)
 						add_timer(i, 10000, EV_NPC_CON, c_id);
 					else {
 						add_timer(i, 10000, EV_BOSS_CON, c_id);
@@ -129,7 +129,7 @@ void process_packet(int c_id, char* packet)
 			if (clients[c_id]._Room_Num == clients[i]._Room_Num) {
 				clients[c_id].room_list.insert(i);
 				clients[i].room_list.insert(c_id);
-				if (i % 10 != 9)
+				if (i % ROOM_NPC != ROOM_NPC - 1)
 					clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
 				else {
 					clients[c_id].send_boss_add(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
@@ -162,7 +162,7 @@ void process_packet(int c_id, char* packet)
 		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
 			clients[p->target_id].hp -= 10;
 			if (clients[p->target_id].hp == 0) {
-				clients[p->target_id].char_state = 4;
+				clients[p->target_id].char_state = AN_DEAD;
 				clients[p->target_id]._sl.lock();
 				clients[p->target_id]._s_state = ST_FREE;
 				clients[p->target_id]._sl.unlock();
@@ -201,7 +201,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id]._s_state = ST_INGAME;
 		clients[c_id]._Room_Num = 999;
 		clients[c_id].room_list.clear();
-		clients[c_id].char_state = 4;
+		clients[c_id].char_state = AN_DEAD;
 		clients[c_id]._sl.unlock();
 		
 
@@ -284,7 +284,7 @@ void do_worker()
 				clients[client_id].y = 0;
 				clients[client_id].z = 0;
 				clients[client_id].degree = 0;
-				clients[client_id].char_state = 0;
+				clients[client_id].char_state = AN_IDLE;
 				clients[client_id].hp = 100;
 				clients[client_id]._id = client_id;
 				clients[client_id]._name[0] = 0;
@@ -412,7 +412,7 @@ void Update_Npc()
 			}
 			clients[pl]._sl.unlock();
 
-			if (pl % 10 != 9)
+			if (pl % ROOM_NPC != ROOM_NPC - 1)
 				clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
 					clients[pl].hp, clients[pl].char_state, 0);
 			else

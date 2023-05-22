@@ -20,13 +20,13 @@ void initialize_npc()
 {
 	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
 		clients[i]._s_state = ST_INGAME;
-		clients[i]._Room_Num = (i - MAX_USER) / 10;
+		clients[i]._Room_Num = (i - MAX_USER) / ROOM_NPC;
 		clients[i].y = 0;
 		clients[i].degree = 0;
 		clients[i].start_x = 0;
 		clients[i].start_z = 0;
 		clients[i].hp = 50;
-		clients[i].char_state = 0;
+		clients[i].char_state = AN_IDLE;
 		clients[i]._name[0] = 0;
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;
@@ -58,47 +58,56 @@ void initialize_npc()
 		lua_register(clients[i].L, "API_Tracking", API_Tracking);
 		lua_register(clients[i].L, "API_Return", API_Return);
 
-		int st = (i - MAX_USER - clients[i]._Room_Num * 10);
+		int st = (i - MAX_USER - clients[i]._Room_Num * ROOM_NPC);
 
 		switch (st)
 		{
+		case 10:
 		case 0:
 			clients[i].x = -20;
 			clients[i].z = -20;
 			break;
+		case 11:
 		case 1:
 			clients[i].x = -20;
 			clients[i].z = 0;
 			break;
+		case 12:
 		case 2:
 			clients[i].x = -20;
 			clients[i].z = 20;
 			break;
+		case 13:
 		case 3:
 			clients[i].x = 0;
 			clients[i].z = -20;
 			break;
+		case 14:
 		case 4:
 			clients[i].x = 0;
 			clients[i].z = 0;
 			break;
+		case 15:
 		case 5:
 			clients[i].x = 0;
 			clients[i].z = 20;
 			break;
+		case 16:
 		case 6:
 			clients[i].x = 20;
 			clients[i].z = -20;
 			break;
+		case 17:
 		case 7:
 			clients[i].x = 20;
 			clients[i].z = 0;
 			break;
+		case 18:
 		case 8:
 			clients[i].x = 20;
 			clients[i].z = 20;
 			break;
-		case 9: // 얘가 돌진하는 애
+		case 19: // 얘가 돌진하는 애
 		{
 			clients[i].x = 30;
 			clients[i].z = 30;
@@ -118,7 +127,7 @@ void initialize_npc()
 	}
 
 	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
-		for (int j = i + 1; j < i + 10; ++j) {
+		for (int j = i + 1; j < i + ROOM_NPC; ++j) {
 			if (j >= MAX_USER + NPC_NUM) continue;
 			if (clients[i]._Room_Num != clients[j]._Room_Num) continue;
 			else
@@ -139,17 +148,17 @@ void initialize_cube()
 		cubes[i].z = 30.0f;
 		cubes[i].degree = 0;
 		cubes[i].color = 0;
-		cubes[i]._Room_Num = i / 5;
+		cubes[i]._Room_Num = i / ROOM_CUBE;
 	}
 	cout << "cube 로딩 끝" << endl;
 }
 
 void send_cube(int c_id, float x, float y, float z)
 {
-	int s_num = clients[c_id]._Room_Num * 4;
+	int s_num = clients[c_id]._Room_Num * ROOM_CUBE;
 	int cnt = 0;
 
-	for (int i = s_num; i < s_num + 5; i++) {
+	for (int i = s_num; i < s_num + ROOM_CUBE; i++) {
 		switch (cnt)
 		{
 		case 0:
@@ -198,7 +207,7 @@ void send_cube(int c_id, float x, float y, float z)
 			}
 			clients[pl]._sl.unlock();
 
-			clients[pl].send_cube_add(i % 5, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
+			clients[pl].send_cube_add(i % ROOM_CUBE, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
 		}
 
 		cnt++;
@@ -218,7 +227,7 @@ void rush_npc(int c_id, float t_x, float t_z)
 		return;
 	}
 
-	for (int i = clients[c_id]._Room_Num * 4; i < clients[c_id]._Room_Num * 4 + 4; i++) {
+	for (int i = clients[c_id]._Room_Num * ROOM_CUBE; i < clients[c_id]._Room_Num * ROOM_CUBE + ROOM_CUBE; i++) {
 		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 2) {
 			if (clients[c_id].color == cubes[i].color) {
 				// 기둥 부셔짐
@@ -250,11 +259,11 @@ void move_npc(int player_id, int c_id)
 
 	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
 		// 공격 처리 관련, 여기서 안 할 수도 있음
-		clients[c_id].char_state = 2;
+		clients[c_id].char_state = AN_ATTACK;
 		clients[c_id].degree = nde;
 		return;
 	}
-	else clients[c_id].char_state = 1;
+	else clients[c_id].char_state = AN_WALK;
 
 	x += 0.3f * -sin(de);
 	z += 0.3f * -cos(de);
@@ -428,7 +437,7 @@ void return_npc(int c_id)
 {
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
-	clients[c_id].char_state = 1;
+	clients[c_id].char_state = AN_WALK;
 
 	float de = atan2(x - clients[c_id].start_x, z - clients[c_id].start_z);
 	float nde = de * 180 / PI;
@@ -440,7 +449,7 @@ void return_npc(int c_id)
 	if (abs(x - clients[c_id].start_x) < 0.5f) x = clients[c_id].start_x;
 	if (abs(z - clients[c_id].start_z) < 0.5f) z = clients[c_id].start_z;
 
-	if (x == clients[c_id].start_x && z == clients[c_id].start_z) clients[c_id].char_state = 0;
+	if (x == clients[c_id].start_x && z == clients[c_id].start_z) clients[c_id].char_state = AN_IDLE;
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
