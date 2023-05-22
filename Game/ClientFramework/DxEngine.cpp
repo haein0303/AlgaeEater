@@ -136,7 +136,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	player_AKI_Hair_A_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_AKI_Hair_A_asset.Init("../Resources/AKI_Hair_A.txt", ObjectType::AnimationObjects);
-	player_AKI_Hair_A_asset.Add_texture(L"..\\Resources\\Texture\\P05re_hair_A_S0.png");
+	player_AKI_Hair_A_asset.Add_texture(L"..\\Resources\\Texture\\P05_hair_B_Flex_u1.png");
 	player_AKI_Hair_A_asset.Make_SRV();
 	player_AKI_Hair_A_asset.CreatePSO();
 
