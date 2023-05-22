@@ -191,6 +191,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			if (playerArr[i]._animation_state == 0 || playerArr[i]._animation_state == 1) {
 				playerArr[i]._can_attack = true;
 				playerArr[i]._can_attack2 = true;
+				playerArr[i]._can_attack3 = true;
 			}
 		}
 	}
@@ -337,8 +338,25 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	{
 		if (pow(playerArr[i]._transform.x - key_data._transform.x, 2) + pow(playerArr[i]._transform.z - key_data._transform.z, 2) <= 1.f)
 		{
-			playerArr[i]._player_key = key_data._key;
+			playerArr[i]._player_color = key_data._key;
 			key_data._on = false;
+		}
+	}
+
+	// 기둥 충돌처리
+	if (playerArr[networkPtr->myClientId]._on == true && cubeArr[4]._on == true)
+	{
+		if (pow(playerArr[networkPtr->myClientId]._transform.x - cubeArr[4]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - cubeArr[4]._transform.z, 2) <= 9.f
+			&& cubeArr[4]._pillar_color == playerArr[networkPtr->myClientId]._player_color)
+		{
+			if ((playerArr[networkPtr->myClientId]._animation_state == 2 || playerArr[networkPtr->myClientId]._animation_state == 3)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
+				&& playerArr[networkPtr->myClientId]._can_attack3)
+			{
+				playerArr[networkPtr->myClientId]._can_attack3 = false;
+				--cubeArr[4]._pillar_count;
+				cout << cubeArr[4]._pillar_count << endl;
+			}
 		}
 	}
 
@@ -683,7 +701,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		if (playerArr[i]._on == true)
 		{
-			if (playerArr[i]._player_key == 0)
+			if (playerArr[i]._player_color == 0)
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
 					* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),

@@ -19,9 +19,12 @@ public:
 	int			_hp = 100.f;
 	bool		_can_attack = true;
 	bool		_can_attack2 = true;
+	bool		_can_attack3 = true;
 	int			_eye_color = 1;
 	int			_key = -1;
-	int			_player_key = -1;
+	int			_player_color = -1;
+	int			_pillar_count = 5;
+	int			_pillar_color = 0;
 
 	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;
