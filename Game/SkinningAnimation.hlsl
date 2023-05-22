@@ -48,17 +48,24 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
     float specularRatio = 0.f;
     float distanceRatio = 1.f;
 
-    
+    float4x4 transformationMatrix = float4x4(
+        1.0, 0.0, 0.0, 0.0,   // X축 변환
+        0.0, 1.0, 0.0, 0.0,   // Y축 변환
+        0.0, 0.0, 1.0, 0.0,   // Z축 변환
+        0.3, 2.0, 0.0, 1.0    // 이동 변환
+        );
 
     // Directional Light
     //viewLightDir = normalize(mul(float4(lightInfo.direction.xyz, 0.f), gView).xyz);
     
-    viewLightDir = normalize(mul(gWorld, posi).xyz);
+    viewLightDir = normalize(mul(mul(transformationMatrix,gWorld) ,posi).xyz);
     
 
     //viewLightDir = normalize(mul(gWorld, float4(posi, 1.0f)).xyz);
     //viewLightDir = gWorld;
     
+   
+
     diffuseRatio = saturate(dot(-viewLightDir, viewNormal));
     
 
@@ -68,7 +75,7 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
     specularRatio = saturate(dot(-eyeDir, reflectionDir));
     specularRatio = pow(specularRatio, 2);
 
-    color.diffuse = ceil(lightInfo.diffuse * diffuseRatio * distanceRatio * 6.0) / 5.0f;
+    color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;
     color.ambient = lightInfo.ambient * distanceRatio;
     color.specular = ceil(lightInfo.specular * specularRatio * distanceRatio * 1.5) / 2.0f;
 
