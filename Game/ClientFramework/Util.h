@@ -55,7 +55,7 @@
 
 #define CHARACTERINDEX 0
 #define PLAYERMAX 4
-#define NPCMAX 10
+#define NPCMAX 20
 #define CubeMax 5
 #pragma endregion
 

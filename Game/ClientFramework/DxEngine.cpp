@@ -64,6 +64,16 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	floor.Make_SRV();
 	floor.CreatePSO(L"..\\Bricks.hlsl");
 
+	stage0_map.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	stage0_map.Init("../Resources/stage0_map.txt", ObjectType::GeneralObjects);
+	stage0_map.Add_texture(L"..\\Resources\\Texture\\sample.png");
+	stage0_map.Add_texture(L"..\\Resources\\Texture\\Back_wall.png");
+	stage0_map.Add_texture(L"..\\Resources\\Texture\\Front_wall.png");
+	stage0_map.Add_texture(L"..\\Resources\\Texture\\Right_wall.png");
+	stage0_map.Add_texture(L"..\\Resources\\Texture\\Left_wall.png");
+	stage0_map.Make_SRV();
+	stage0_map.CreatePSO(L"..\\Bricks.hlsl");
+
 	hp_bar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	hp_bar.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
 	hp_bar.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
@@ -763,46 +773,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 
-	// floor
-	float map_size = 100.f;
+	// map
+	Map(cmdList, stage0_map, map_asset, i_now_render_index, 0);
+	//Map(cmdList, floor, map_asset, i_now_render_index, 1);
 
-	cmdList->SetPipelineState(floor._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
-	cmdList->IASetIndexBuffer(&floor._indexBufferView);
-
-	XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size, 1.0f)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(0.f, 0.f, 0.f));
-	XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-	XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-	D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-	descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-	floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-	descHeapPtr->CopyDescriptor(floor._tex._srvHandle, 5, devicePtr);
-
-	descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-	cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
-
-	// wall
-	{
-	float map_size = 20.f;
-	cmdList->SetPipelineState(map_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&map_asset._indexBufferView);
-
-	XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.578f * map_size, 0.3f * map_size, 0.01f * map_size) * XMMatrixTranslation(0.f, 0.f, 0.f));
-	XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-	XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-	D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-	descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-	map_asset._tex._srvHandle = map_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-	descHeapPtr->CopyDescriptor(map_asset._tex._srvHandle, 5, devicePtr);
-
-	descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-	cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
-	}
-
-	// key
 	if (key_data._on == true)
 	{
 		cmdList->SetPipelineState(key._pipelineState.Get());
@@ -810,8 +784,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->IASetIndexBuffer(&key._indexBufferView);
 
 		_key_rotation_time += timerPtr->_deltaTime;
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f) 
-			* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data._transform.x, key_data._transform.y, key_data._transform.z));
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f)
+			* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data._transform.x, key_data._transform.y + 1.f, key_data._transform.z));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
