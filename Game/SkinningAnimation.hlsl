@@ -38,12 +38,16 @@ struct VS_OUT
     float3 viewPos : POSITION;
 };
 
+
+//TODO
+//라이트의 포지션을 머리위로 올리고 싶다
 LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
 {
+    //리턴을 위한 값이라네
     LightInfo color = (LightInfo)0.f;
 
     float3 viewLightDir;
-    float4 posi = float4(1.0f, 0.0f, 0.0f,1.0f);
+    float4 posi = float4(1.0f, 1.0f, 1.0f,1.0f);
     float diffuseRatio = 0.f;
     float specularRatio = 0.f;
     float distanceRatio = 1.f;
@@ -52,14 +56,15 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
         1.0, 0.0, 0.0, 0.0,   // X축 변환
         0.0, 1.0, 0.0, 0.0,   // Y축 변환
         0.0, 0.0, 1.0, 0.0,   // Z축 변환
-        0.3, 2.0, 0.0, 1.0    // 이동 변환
+        0.3, 5.0, 0.0, 1.0    // 이동 변환
         );
 
     // Directional Light
     //viewLightDir = normalize(mul(float4(lightInfo.direction.xyz, 0.f), gView).xyz);
     
     viewLightDir = normalize(mul(mul(transformationMatrix,gWorld) ,posi).xyz);
-    
+    //viewLightDir = normalize(mul(gWorld, posi).xyz);
+   
 
     //viewLightDir = normalize(mul(gWorld, float4(posi, 1.0f)).xyz);
     //viewLightDir = gWorld;
@@ -75,9 +80,17 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
     specularRatio = saturate(dot(-eyeDir, reflectionDir));
     specularRatio = pow(specularRatio, 2);
 
-    color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;
-    color.ambient = lightInfo.ambient * distanceRatio;
-    color.specular = ceil(lightInfo.specular * specularRatio * distanceRatio * 1.5) / 2.0f;
+    //디퓨즈가 강려크하게 적용이 되고, 나머지는 그닥? 적용이 덜되는데, 일단 디퓨즈를 조건부로 나눠서 장난을 해보자
+    if (0.98f < length(lightInfo.diffuse * diffuseRatio * distanceRatio)) {
+        color.diffuse = ceil(lightInfo.diffuse * diffuseRatio * distanceRatio * 2.5) / 1.0f;
+    }
+    else {
+        color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;
+    }
+
+    //color.diffuse = ceil(lightInfo.diffuse * diffuseRatio * distanceRatio * 2.5) / 1.0f;
+    color.ambient = ceil(lightInfo.ambient * distanceRatio * 2.5) / 2.0f;
+    color.specular = ceil(lightInfo.specular * specularRatio * distanceRatio * 2.5) / 2.0f;
 
     return color;
 }
