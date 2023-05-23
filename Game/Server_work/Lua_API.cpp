@@ -104,6 +104,15 @@ int API_Return(lua_State* L)
 	return 0;
 }
 
+int API_Wander(lua_State* L)
+{
+	int npc_id = lua_tonumber(L, -1);
+	lua_pop(L, 2);
+
+	add_timer(npc_id, 10, EV_WANDER, npc_id);
+	return 0;
+}
+
 void reset_lua(int c_id)
 {
 	int npc_id = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1;

@@ -12,6 +12,7 @@ extern default_random_engine dre;
 extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
+extern array<KEY, KEY_NUM> keys;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
@@ -46,9 +47,9 @@ void process_packet(int c_id, char* packet)
 		}
 
 		strcpy_s(clients[c_id]._name, p->name);
-		clients[c_id].x = 170;
+		clients[c_id].x = 0;
 		clients[c_id].y = 0;
-		clients[c_id].z = -230;
+		clients[c_id].z = 0;
 		clients[c_id].degree = 30;
 		clients[c_id].char_state = AN_IDLE;
 		clients[c_id].color = 0;
@@ -58,8 +59,8 @@ void process_packet(int c_id, char* packet)
 		if (clients[0]._Room_Num != 999) clients[c_id]._Room_Num = c_id / ROOM_USER;
 		else clients[c_id]._Room_Num = (c_id - 1) / ROOM_USER;
 		clients[c_id].room_list.clear();
-		//clients[c_id].stage = p->stage;
-		clients[c_id].stage = 0;
+		clients[c_id].stage = p->stage;
+		//clients[c_id].stage = 1;
 		clients[c_id]._sl.unlock();
 
 		// 다른 플레이어 업데이트 받는 부분
@@ -73,8 +74,8 @@ void process_packet(int c_id, char* packet)
 			}
 			if (pl._Room_Num == clients[c_id]._Room_Num) {
 				pl.send_add_object(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, 
-					clients[c_id]._name, clients[c_id].hp, clients[c_id].char_state);
-				clients[c_id].send_add_object(pl._id, pl.x, pl.y, pl.z, pl.degree, pl._name, pl.hp, pl.char_state);
+					clients[c_id]._name, clients[c_id].hp, clients[c_id].char_state, clients[i]._object_type);
+				clients[c_id].send_add_object(pl._id, pl.x, pl.y, pl.z, pl.degree, pl._name, pl.hp, pl.char_state, clients[i]._object_type);
 				pl.room_list.insert(c_id);
 				clients[c_id].room_list.insert(pl._id);
 			}
@@ -88,13 +89,15 @@ void process_packet(int c_id, char* packet)
 					switch (clients[c_id].stage)
 					{
 					case 0: // 테스트 스테이지
+						break;
+					case 1:	// 스테이지 1
 						if ((i - MAX_USER) % ROOM_NPC < 3) {
 							clients[i].x = 130;
 							clients[i].start_x = 130;
 							clients[i].z = -240 + (i - MAX_USER) * 10;
 							clients[i].start_z = -240 + (i - MAX_USER) * 10;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 2 && (i - MAX_USER) % 10 < 6){
+						else if ((i - MAX_USER) % ROOM_NPC > 2 && (i - MAX_USER) % 10 < 6) {
 							clients[i].x = 100;
 							clients[i].start_x = 100;
 							clients[i].z = -270 + (i - MAX_USER) * 10;
@@ -107,20 +110,23 @@ void process_packet(int c_id, char* packet)
 							clients[i].start_z = -300 + (i - MAX_USER) * 10;
 						}
 						break;
-					case 1:	// 스테이지 1
-						break;
 					default:
 						break;
 					}
 
-					if (i % ROOM_NPC != ROOM_NPC - 1)
+					if (i % ROOM_NPC != ROOM_NPC - 1) {
 						add_timer(i, 10000, EV_NPC_CON, c_id);
+						clients[i].y = 0.5f;
+					}
 					else {
 						add_timer(i, 10000, EV_BOSS_CON, c_id);
 						add_timer(i, 3000, EV_BOSS_EYE, c_id);
 					}
 					clients[i].Lua_on = true;
+				}
 
+				for (int i = clients[c_id]._Room_Num * ROOM_KEY; i < clients[c_id]._Room_Num * ROOM_KEY + ROOM_KEY; i++) {
+					clients[c_id].send_key(i, keys[i].x, keys[i].y, keys[i].z, keys[i].color);
 				}
 			}
 		}
@@ -130,7 +136,7 @@ void process_packet(int c_id, char* packet)
 				clients[c_id].room_list.insert(i);
 				clients[i].room_list.insert(c_id);
 				if (i % ROOM_NPC != ROOM_NPC - 1)
-					clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
+					clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state, clients[i]._object_type);
 				else {
 					clients[c_id].send_boss_add(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
 				}
@@ -359,6 +365,11 @@ void do_worker()
 		}
 		case OP_SET_NPC: {
 			close_lua(key);
+			delete ex_over;
+			break;
+		}
+		case OP_BOSS_WANDER: {
+			wander_boss(key);
 			delete ex_over;
 			break;
 		}

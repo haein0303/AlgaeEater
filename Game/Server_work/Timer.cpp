@@ -190,6 +190,8 @@ void do_timer()
 						clients[pl].send_msg(msg);
 					}
 					add_timer(ev.object_id, 5000, EV_CK, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
+					break;
 				}
 
 				if (clients[ev.target_id].char_state == AN_DEAD) {
@@ -213,7 +215,7 @@ void do_timer()
 					}
 				}
 
-				lua_getglobal(clients[ev.object_id].L, "tracking_player");
+				lua_getglobal(clients[ev.object_id].L, "wander_boss");
 				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
 				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 
@@ -229,6 +231,12 @@ void do_timer()
 				if (clients[pl].eye_color > 4) clients[pl].eye_color = 0;
 
 				add_timer(ev.object_id, 3000, EV_BOSS_EYE, ev.target_id);
+				break;
+			}
+			case EV_WANDER: {
+				ex_over->_comp_type = OP_BOSS_WANDER;
+				ex_over->target_id = ev.target_id;
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			}
 			default:

@@ -14,10 +14,12 @@ constexpr int ROOM_NUM = 100;
 constexpr int ROOM_USER = 4;
 constexpr int ROOM_NPC = 20;
 constexpr int ROOM_CUBE = 5;
+constexpr int ROOM_KEY = 4;
 
 constexpr int MAX_USER = ROOM_NUM * ROOM_USER;
 constexpr int NPC_NUM = ROOM_NUM * ROOM_NPC;
 constexpr int CUBE_NUM = ROOM_NUM * ROOM_CUBE;
+constexpr int KEY_NUM = ROOM_NUM * ROOM_KEY;
 
 // Packet ID
 constexpr char CS_LOGIN = 0;
@@ -25,6 +27,7 @@ constexpr char CS_MOVE = 1;
 constexpr char CS_CONSOLE = 2;
 constexpr char CS_COLLISION = 3;
 constexpr char CS_COLOR = 4;
+constexpr char CS_KEY = 5;
 
 constexpr char SC_LOGIN_OK = 11;
 constexpr char SC_ADD_OBJECT = 12;
@@ -34,6 +37,7 @@ constexpr char SC_ADD_CUBE = 15;
 constexpr char SC_ADD_BOSS = 16;
 constexpr char SC_MOVE_BOSS = 17;
 constexpr char SC_MSG = 18;
+constexpr char SC_KEY = 19;
 
 constexpr char SS_CONNECT_SERVER = 20;
 constexpr char SS_DATA_PASS = 21;
@@ -86,6 +90,12 @@ struct CS_COLOR_PACKET {
 	int		color;
 };
 
+struct CS_KEY_PACKET {
+	unsigned char size;
+	char	type;
+	int		key_id;
+};
+
 struct SC_LOGIN_OK_PACKET {
 	unsigned char size;
 	char	type;
@@ -104,6 +114,7 @@ struct SC_ADD_OBJECT_PACKET {
 	char	name[NAME_SIZE];
 	int		hp;
 	int		char_state;
+	int		object_type;
 };
 
 struct SC_REMOVE_OBJECT_PACKET {
@@ -160,6 +171,15 @@ struct SC_MSG_PACKET {
 	unsigned char size;
 	char	type;
 	char	msg[NAME_SIZE];
+};
+
+struct SC_KEY_PACKET {
+	unsigned char size;
+	char	type;
+	float	x;
+	float	y;
+	float	z;
+	int		color;
 };
 
 struct SS_CONNECT_SERVER_PACKET {

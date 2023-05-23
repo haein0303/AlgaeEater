@@ -13,6 +13,8 @@ array<SESSION, MAX_USER + NPC_NUM> clients;
 
 array<CUBE, CUBE_NUM> cubes;
 
+array<KEY, KEY_NUM> keys;
+
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 
@@ -24,6 +26,7 @@ mutex timer_l;
 
 int main()
 {
+	initialize_key();
 	initialize_cube();
 	initialize_npc();
 	add_timer(0, 500, EV_UP, 0);

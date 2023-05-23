@@ -13,6 +13,7 @@ extern default_random_engine dre;
 extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
+extern array<KEY, KEY_NUM> keys;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
@@ -59,6 +60,9 @@ void initialize_npc()
 		lua_register(clients[i].L, "API_Return", API_Return);
 
 		int st = (i - MAX_USER - clients[i]._Room_Num * ROOM_NPC);
+
+		if (st > 9) clients[i]._object_type = TY_HOLD_NPC;
+		else clients[i]._object_type = TY_MOVE_NPC;
 
 		switch (st)
 		{
@@ -112,7 +116,9 @@ void initialize_npc()
 			clients[i].x = 30;
 			clients[i].z = 30;
 			clients[i].eye_color = 0;
+			clients[i]._object_type = TY_BOSS;
 
+			lua_register(clients[i].L, "API_Wander", API_Wander);
 			lua_register(clients[i].L, "API_Rush", API_Rush);
 			lua_register(clients[i].L, "API_Cube", API_Cube);
 			lua_register(clients[i].L, "API_get_state", API_get_state);
@@ -151,6 +157,18 @@ void initialize_cube()
 		cubes[i]._Room_Num = i / ROOM_CUBE;
 	}
 	cout << "cube 로딩 끝" << endl;
+}
+
+void initialize_key()
+{
+	for (int i = 0; i < KEY_NUM; i++) {
+		keys[i].x = 170.f;
+		keys[i].y = 0.f;
+		keys[i].z = -230.f;
+		keys[i].color = i / ROOM_KEY;
+		keys[i]._Room_Num = i / ROOM_KEY;
+	}
+	cout << "key 로딩 끝" << endl;
 }
 
 void send_cube(int c_id, float x, float y, float z)
@@ -264,6 +282,11 @@ void move_npc(int player_id, int c_id)
 		return;
 	}
 	else clients[c_id].char_state = AN_WALK;
+
+	if (clients[c_id]._object_type == TY_HOLD_NPC) {
+		clients[c_id].char_state = AN_IDLE;
+		return;
+	}
 
 	x += 0.3f * -sin(de);
 	z += 0.3f * -cos(de);
@@ -453,4 +476,37 @@ void return_npc(int c_id)
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
+}
+
+void wander_boss(int c_id)
+{
+	if (clients[c_id].stack == 10) {
+		clients[c_id].stack = 0;
+
+		srand((unsigned int)time(NULL));
+
+		clients[c_id].degree = rand() % 360;
+	}
+	
+	float x = clients[c_id].x;
+	float z = clients[c_id].z;
+	clients[c_id].char_state = AN_WALK;
+
+	if (abs(x - clients[c_id].start_x) + abs(z - clients[c_id].start_z) > 30) {
+		float e = atan2(x - clients[c_id].start_x, z - clients[c_id].start_z);
+		float ne = e * 180 / PI;
+		clients[c_id].degree = ne;
+		clients[c_id].stack = 0;
+	}
+	float de = clients[c_id].degree / 180 * PI;
+
+	x += 0.3f * -sin(de);
+	z += 0.3f * -cos(de);
+
+	clients[c_id].stack++;
+
+	clients[c_id].x = x;
+	clients[c_id].z = z;
+	return;
+	
 }

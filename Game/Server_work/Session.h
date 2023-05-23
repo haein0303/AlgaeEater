@@ -17,7 +17,7 @@ extern "C" {
 
 enum SESSION_STATE { ST_FREE, ST_ACCEPTED, ST_INGAME };
 
-enum SESSION_TYPE { TY_PLAYER, TY_MOVE_NPC, TY_HOLD_NPC };
+enum SESSION_TYPE { TY_PLAYER, TY_MOVE_NPC, TY_HOLD_NPC, TY_BOSS };
 
 enum SESSION_ANIM_STATE { AN_IDLE, AN_WALK, AN_ATTACK, AN_DEAD };
 
@@ -47,6 +47,7 @@ public:
 	float start_x, start_z;
 	float target_x, target_z;
 	int turn;
+	int stack;
 	// 루아 사용 변수
 	lua_State* L;
 	int		_Room_Num;
@@ -61,18 +62,26 @@ public:
 	void do_send(void* packet);
 	void send_login_ok_packet(int c_id, float x, float y, float z, float degree, int hp);
 	void send_move_packet(int c_id, float x, float y, float z, float degree, int hp, int state, unsigned int client_time);
-	void send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
+	void send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state, int ob_type);
 	void send_remove_object(int c_id);
 	void send_cube_add(int c_id, float x, float y, float z, float degree);
 	void send_boss_add(int c_id, float x, float y, float z, float degree, char* name, int hp, int state);
 	void send_boss_move(int c_id, float x, float y, float z, float degree, int hp, int state, int eye, unsigned int client_time);
 	void send_msg(char* msg);
+	void send_key(int c_id, float x, float y, float z, int color);
 };
 
 struct CUBE {
 public:
 	float x, y, z;
 	float degree;
+	int color;
+	int		_Room_Num;
+};
+
+struct KEY {
+public:
+	float x, y, z;
 	int color;
 	int		_Room_Num;
 };

@@ -21,6 +21,7 @@ SESSION::SESSION()
 	stage = 0;
 	turn = 0;
 	color = 0;
+	stack = 0;
 	eye_color = 0;
 	_object_type = TY_PLAYER;
 	Lua_on = false;
@@ -75,7 +76,7 @@ void SESSION::send_move_packet(int c_id, float x, float y, float z, float degree
 	do_send(&p);
 }
 
-void SESSION::send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state)
+void SESSION::send_add_object(int c_id, float x, float y, float z, float degree, char* name, int hp, int state, int ob_type)
 {
 	SC_ADD_OBJECT_PACKET p;
 	p.id = c_id;
@@ -88,6 +89,7 @@ void SESSION::send_add_object(int c_id, float x, float y, float z, float degree,
 	strcpy_s(p.name, name);
 	p.hp = hp;
 	p.char_state = state;
+	p.object_type = ob_type;
 	do_send(&p);
 }
 
@@ -152,5 +154,17 @@ void SESSION::send_msg(char* msg)
 	p.size = sizeof(SC_MSG_PACKET);
 	p.type = SC_MSG;
 	strcpy_s(p.msg, msg);
+	do_send(&p);
+}
+
+void SESSION::send_key(int c_id, float x, float y, float z, int color)
+{
+	SC_KEY_PACKET p;
+	p.size = sizeof(SC_KEY_PACKET);
+	p.type = SC_KEY;
+	p.x = x;
+	p.y = y;
+	p.z = z;
+	p.color = color;
 	do_send(&p);
 }
