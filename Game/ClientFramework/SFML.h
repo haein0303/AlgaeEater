@@ -17,7 +17,7 @@ public:
 	unordered_map<int, int> npc_map;
 
 
-	int ConnectServer(int PortNum) //서버에 접속시 보내주는 부분
+	int ConnectServer(int PortNum,int Scene_select) //서버에 접속시 보내주는 부분
 	{
 		wcout.imbue(locale("korean"));
 		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum);
@@ -32,6 +32,7 @@ public:
 		CS_LOGIN_PACKET p;
 		p.size = sizeof(CS_LOGIN_PACKET);
 		p.type = CS_LOGIN;
+		p.stage = Scene_select;
 		strcpy_s(p.name, "a");
 		send_packet(&p);
 		return 0;
@@ -148,7 +149,7 @@ public:
 		case SC_ADD_BOSS: {
 			SC_ADD_BOSS_PACKET* my_packet = reinterpret_cast<SC_ADD_BOSS_PACKET*>(ptr);
 			int id = my_packet->id;
-
+			cout << "BOSS ID : " << id << endl;
 			boss_obj._on = true;
 			boss_obj._my_server_id = id;
 			boss_obj._transform.x = my_packet->x;
@@ -227,6 +228,13 @@ public:
 			cubeArr[id]._transform.y = my_packet->y;
 			cubeArr[id]._transform.z = my_packet->z;
 			cubeArr[id]._degree = my_packet->degree;
+
+			break;
+		}
+		case SC_KEY:
+		{
+			SC_KEY_PACKET* my_packet = reinterpret_cast<SC_KEY_PACKET*>(ptr);
+
 
 			break;
 		}
