@@ -71,7 +71,7 @@ public:
 	OBJECT boss_obj;
 	OBJECT cubeArr[CubeMax];
 	float _key_rotation_time = 0.f;
-	OBJECT key_data;
+	OBJECT key_data[KEYMAX];
 
 	// 파티클 데이터
 	ParticleData particles[PARTICLE_NUM];

@@ -177,9 +177,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 	boss_obj._transform.y += 1.f;
 
-	key_data._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
-	key_data._key = 0;
-	key_data._on = true;
+	key_data[0]._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
+	key_data[0]._key = 0;
+	key_data[0]._on = true;
 
 	d11Ptr->LoadPipeline();
 	d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
@@ -194,7 +194,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr,boss_obj);
+	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr,boss_obj,key_data);
 
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true) {
@@ -346,11 +346,14 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	// key 面倒贸府
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
-		if (pow(playerArr[i]._transform.x - key_data._transform.x, 2) + pow(playerArr[i]._transform.z - key_data._transform.z, 2) <= 1.f)
-		{
-			playerArr[i]._player_color = key_data._key;
-			key_data._on = false;
+		for (int j = 0; j < KEYMAX; ++j) {
+			if (pow(playerArr[i]._transform.x - key_data[j]._transform.x, 2) + pow(playerArr[i]._transform.z - key_data[j]._transform.z, 2) <= 1.f)
+			{
+				playerArr[i]._player_color = key_data[j]._key;
+				key_data[j]._on = false;
+			}
 		}
+		
 	}
 
 	// 扁嫡 面倒贸府
@@ -785,29 +788,45 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
 		break;
 	}
-	
-	if (key_data._on == true)
-	{
-		cmdList->SetPipelineState(key._pipelineState.Get());
-		cmdList->IASetVertexBuffers(0, 1, &key._vertexBufferView);
-		cmdList->IASetIndexBuffer(&key._indexBufferView);
+	for (int i = 0; i < KEYMAX; ++i) {
+		if (key_data[i]._on == true)
+		{
+			cmdList->SetPipelineState(key._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &key._vertexBufferView);
+			cmdList->IASetIndexBuffer(&key._indexBufferView);
 
-		_key_rotation_time += timerPtr->_deltaTime;
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f)
-			* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data._transform.x, key_data._transform.y + 1.f, key_data._transform.z));
-		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+			_key_rotation_time += timerPtr->_deltaTime;
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f)
+				* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data[i]._transform.x, key_data[i]._transform.y + 1.f, key_data[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-		_transform.color = XMVectorSet(1.f, 1.f, 0.f, 1.f);
+			switch (i) {
+			case 0:
+				_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+				break;
+			case 1:
+				_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
+				break;
+			case 2:
+				_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
+				break;
+			case 3:
+				_transform.color = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+				break;
+			}
+			
 
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-		key._tex._srvHandle = key._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-		descHeapPtr->CopyDescriptor(key._tex._srvHandle, 5, devicePtr);
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			key._tex._srvHandle = key._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(key._tex._srvHandle, 5, devicePtr);
 
-		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-		cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
+		}
 	}
+	
 
 	// skybox
 	{

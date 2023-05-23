@@ -57,6 +57,7 @@
 #define PLAYERMAX 4
 #define NPCMAX 20
 #define CubeMax 5
+#define KEYMAX 4
 #pragma endregion
 
 #ifdef _DEBUG
