@@ -84,8 +84,18 @@ public:
 		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM)) {
 			cout << "SERVER CONNECT FAIL" << endl;
 			while (1);
-		}//������ ����
+		}
 		cout << "complite server connect" << endl;
+
+		{
+			LCS_MATCH_PACKET p_MATCH;
+			p_MATCH.size = sizeof(p_MATCH);
+			p_MATCH.type = LCS_MATCH;
+			p_MATCH.stage = dxEngine.Scene_num;
+			dxEngine.networkPtr->send_packet(&p_MATCH);
+			cout << "Send Scene Select : " << p_MATCH.stage << endl;
+		}
+		
 		cout << "LOGIC CALL" << endl;
 		while (g_isLive) {
 			dxEngine.logicTimerPtr->fixed_update_tic();
