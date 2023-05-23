@@ -165,8 +165,9 @@ void ProcessPacket(int ci, unsigned char packet[])
 	break;
 	case SC_ADD_CUBE:
 		break;
-	default: MessageBox(hWnd, L"Unknown Packet Type", L"ERROR", 0);
-		while (true);
+	default: //MessageBox(hWnd, L"Unknown Packet Type", L"ERROR", 0);
+		//while (true);
+		break;
 	}
 }
 

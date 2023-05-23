@@ -372,7 +372,7 @@ void move_npc(int player_id, int c_id)
 	}
 
 	for (auto& pl : clients[c_id].room_list) {
-		if (abs(x - cubes[pl].x) + abs(z - cubes[pl].z) <= 1.5f) {
+		if (abs(x - clients[pl].x) + abs(z - clients[pl].z) <= 1.5f) {
 			int f = 0;
 			int d = 0;
 			x = clients[c_id].x;
@@ -389,8 +389,8 @@ void move_npc(int player_id, int c_id)
 			float d_x = x + 0.3f * -sin(d_de);
 			float d_z = z + 0.3f * -cos(d_de);
 
-			if (abs(f_x - cubes[pl].x) + abs(f_z - cubes[pl].z) <= 1.5f) f = 1;
-			if (abs(d_x - cubes[pl].x) + abs(d_z - cubes[pl].z) <= 1.5f) d = 1;
+			if (abs(f_x - clients[pl].x) + abs(f_z - clients[pl].z) <= 1.5f) f = 1;
+			if (abs(d_x - clients[pl].x) + abs(d_z - clients[pl].z) <= 1.5f) d = 1;
 
 			if (f == 1 && d == 1) {
 				int f = 0;
@@ -408,8 +408,8 @@ void move_npc(int player_id, int c_id)
 				float d_x = x + 0.3f * -sin(d_de);
 				float d_z = z + 0.3f * -cos(d_de);
 
-				if (abs(f_x - cubes[pl].x) + abs(f_z - cubes[pl].z) <= 1.5f) f = 1;
-				if (abs(d_x - cubes[pl].x) + abs(d_z - cubes[pl].z) <= 1.5f) d = 1;
+				if (abs(f_x - clients[pl].x) + abs(f_z - clients[pl].z) <= 1.5f) f = 1;
+				if (abs(d_x - clients[pl].x) + abs(d_z - clients[pl].z) <= 1.5f) d = 1;
 			}
 
 			if (f == 1 && d == 0) {
