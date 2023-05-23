@@ -116,7 +116,7 @@ void process_packet(int c_id, char* packet)
 
 					if (i % ROOM_NPC != ROOM_NPC - 1) {
 						add_timer(i, 10000, EV_NPC_CON, c_id);
-						clients[i].y = 0.5f;
+						clients[i].y = 0.3f;
 					}
 					else {
 						add_timer(i, 10000, EV_BOSS_CON, c_id);
