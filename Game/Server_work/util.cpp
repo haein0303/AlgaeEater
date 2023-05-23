@@ -47,9 +47,24 @@ void process_packet(int c_id, char* packet)
 		}
 
 		strcpy_s(clients[c_id]._name, p->name);
-		clients[c_id].x = 0;
-		clients[c_id].y = 0;
-		clients[c_id].z = 0;
+		clients[c_id].stage = p->stage;
+		switch (clients[c_id].stage)
+		{
+		case 0: {
+			clients[c_id].x = 0;
+			clients[c_id].y = 0;
+			clients[c_id].z = 0;
+			break;
+		}
+		case 1: {
+			clients[c_id].x = 170;
+			clients[c_id].y = 0;
+			clients[c_id].z = -230;
+			break;
+		}
+		default:
+			break;
+		}
 		clients[c_id].degree = 30;
 		clients[c_id].char_state = AN_IDLE;
 		clients[c_id].color = 0;
@@ -59,8 +74,6 @@ void process_packet(int c_id, char* packet)
 		if (clients[0]._Room_Num != 999) clients[c_id]._Room_Num = c_id / ROOM_USER;
 		else clients[c_id]._Room_Num = (c_id - 1) / ROOM_USER;
 		clients[c_id].room_list.clear();
-		clients[c_id].stage = p->stage;
-		//clients[c_id].stage = 1;
 		clients[c_id]._sl.unlock();
 
 		// 다른 플레이어 업데이트 받는 부분

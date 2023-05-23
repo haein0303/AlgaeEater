@@ -35,8 +35,6 @@ end
 function wander_boss( player_id )
 	player_x = API_get_x(player_id)
 	player_z = API_get_z(player_id)
-	npc_start_x = API_get_npc_x(my_id)
-	npc_start_z = API_get_npc_z(my_id)
 	npc_x = API_get_x(my_id)
 	npc_z = API_get_z(my_id)
 
