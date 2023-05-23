@@ -86,6 +86,7 @@ public:
 			while (1);
 		}
 		cout << "complite server connect" << endl;
+
 		
 		cout << "LOGIC CALL" << endl;
 		while (g_isLive) {

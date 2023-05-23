@@ -12,7 +12,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	cout << "WinMain INIT CALL" << endl;
 
 	lobby_client.init(hInst, nCmdShow);
-	lobby_client.connect_server(LOBBY_PORT_NUM,0);
+	lobby_client.connect_server(LOBBY_PORT_NUM);
 	while (msg.message != WM_QUIT)
 	{
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))

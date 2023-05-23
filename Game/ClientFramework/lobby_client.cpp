@@ -49,7 +49,7 @@ int LOBBY_CLIENT::connect_server(int port)
 		return 0;
 	}
 	draw_text(L"TRY CONNECT SERVER");
-	if (-1 == Lobby_network->ConnectServer(port)) {
+	if (-1 == Lobby_network->ConnectServer(port,0)) {
 		_ready_state = 2;
 		draw_text(L"SERVER CONNECTED FAIL");
 		return -1;
