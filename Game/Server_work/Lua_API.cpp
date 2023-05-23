@@ -56,7 +56,7 @@ int API_Cube(lua_State* L)
 	int target_id = lua_tonumber(L, -1);
 	lua_pop(L, 2);
 
-	add_timer(0, 5000, EV_CB, target_id);
+	add_timer(0, 100, EV_CB, target_id);
 	return 0;
 }
 

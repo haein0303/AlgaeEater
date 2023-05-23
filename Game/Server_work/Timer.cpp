@@ -189,8 +189,8 @@ void do_timer()
 
 						clients[pl].send_msg(msg);
 					}
-					add_timer(ev.object_id, 5000, EV_CK, ev.target_id);
-					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
+					add_timer(ev.object_id, 1000, EV_CK, ev.target_id);
+					add_timer(ev.object_id, 3000, EV_BOSS_CON, ev.target_id);
 					break;
 				}
 
