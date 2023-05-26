@@ -120,13 +120,6 @@ void do_timer()
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
 				break;
 			}
-			case EV_UP:
-			{
-				ex_over->_comp_type = OP_UPDATE;
-				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
-				break;
-			}
 			case EV_RETURN:
 				ex_over->_comp_type = OP_NPC_RETURN;
 				ex_over->target_id = ev.target_id;

@@ -365,12 +365,6 @@ void do_worker()
 			delete ex_over;
 			break;
 		}
-		case OP_UPDATE: {
-			Update_Npc();
-			add_timer(0, 33, EV_UP, 0);
-			delete ex_over;
-			break;
-		}
 		case OP_NPC_RETURN: {
 			return_npc(key);
 			delete ex_over;
@@ -415,33 +409,4 @@ void Update_Player(int c_id)
 			clients[c_id].hp, clients[c_id].char_state, 0);
 	}
 	
-}
-
-void Update_Npc()
-{
-	for (int i = 0; i < MAX_USER; i++) {
-		clients[i]._sl.lock();
-		if (clients[i]._s_state != ST_INGAME) {
-			clients[i]._sl.unlock();
-			continue;
-		}
-		clients[i]._sl.unlock();
-
-		for (auto& pl : clients[i].room_list) {
-			if (pl < MAX_USER) continue;
-			clients[pl]._sl.lock();
-			if (clients[pl]._s_state != ST_INGAME) {
-				clients[pl]._sl.unlock();
-				continue;
-			}
-			clients[pl]._sl.unlock();
-
-			if (pl % ROOM_NPC != ROOM_NPC - 1)
-				clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl].hp, clients[pl].char_state, 0);
-			else
-				clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl].hp, clients[pl].char_state, clients[pl].eye_color, 0);
-		}
-	}
 }

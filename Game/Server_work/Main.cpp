@@ -29,7 +29,6 @@ int main()
 	initialize_key();
 	initialize_cube();
 	initialize_npc();
-	add_timer(0, 500, EV_UP, 0);
 
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);

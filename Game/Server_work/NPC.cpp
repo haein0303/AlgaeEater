@@ -264,6 +264,18 @@ void rush_npc(int c_id, float t_x, float t_z)
 	clients[c_id].x = x;
 	clients[c_id].z = z;
 
+	for (auto& pl : clients[c_id].room_list) {
+		if (pl >= MAX_USER) continue;
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
+			continue;
+		}
+		clients[pl]._sl.unlock();
+
+		clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+	}
+
 	add_timer(c_id, 30, EV_RUSH, c_id);
 }
 
@@ -275,13 +287,50 @@ void move_npc(int player_id, int c_id)
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
 	float nde = de * 180 / PI;
 
-	if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
-		// 공격 처리 관련, 여기서 안 할 수도 있음
-		clients[c_id].char_state = AN_ATTACK;
-		clients[c_id].degree = nde;
-		return;
+	if (clients[c_id]._object_type != TY_BOSS) {
+		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
+			// 공격 처리 관련, 여기서 안 할 수도 있음
+			clients[c_id].char_state = AN_ATTACK;
+			clients[c_id].degree = nde;
+
+			for (auto& pl : clients[c_id].room_list) {
+				if (pl >= MAX_USER) continue;
+				clients[pl]._sl.lock();
+				if (clients[pl]._s_state != ST_INGAME) {
+					clients[pl]._sl.unlock();
+					continue;
+				}
+				clients[pl]._sl.unlock();
+
+				clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
+			}
+
+			return;
+		}
+		else clients[c_id].char_state = AN_WALK;
+
 	}
-	else clients[c_id].char_state = AN_WALK;
+	else {
+		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 5.f) {
+			// 공격 처리 관련, 여기서 안 할 수도 있음
+			clients[c_id].char_state = AN_ATTACK;
+			clients[c_id].degree = nde;
+
+			for (auto& pl : clients[c_id].room_list) {
+				if (pl >= MAX_USER) continue;
+				clients[pl]._sl.lock();
+				if (clients[pl]._s_state != ST_INGAME) {
+					clients[pl]._sl.unlock();
+					continue;
+				}
+				clients[pl]._sl.unlock();
+
+				clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+			}
+			return;
+		}
+		else clients[c_id].char_state = AN_WALK;
+	}
 
 	if (clients[c_id]._object_type == TY_HOLD_NPC) {
 		clients[c_id].char_state = AN_IDLE;
@@ -372,6 +421,7 @@ void move_npc(int player_id, int c_id)
 	}
 
 	for (auto& pl : clients[c_id].room_list) {
+		if (pl == player_id) continue;
 		if (abs(x - clients[pl].x) + abs(z - clients[pl].z) <= 1.5f) {
 			int f = 0;
 			int d = 0;
@@ -454,6 +504,21 @@ void move_npc(int player_id, int c_id)
 	clients[c_id].x = x;
 	clients[c_id].z = z;
 	clients[c_id].degree = nde;
+
+	for (auto& pl : clients[c_id].room_list) {
+		if (pl >= MAX_USER) continue;
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
+			continue;
+		}
+		clients[pl]._sl.unlock();
+
+		if (ROOM_NPC - 1 == c_id % ROOM_NPC)
+			clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+		else
+			clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
+	}
 }
 
 void return_npc(int c_id)
@@ -476,6 +541,18 @@ void return_npc(int c_id)
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
+
+	for (auto& pl : clients[c_id].room_list) {
+		if (pl >= MAX_USER) continue;
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
+			continue;
+		}
+		clients[pl]._sl.unlock();
+
+		clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
+	}
 }
 
 void wander_boss(int c_id)
@@ -496,7 +573,7 @@ void wander_boss(int c_id)
 		float e = atan2(x - clients[c_id].start_x, z - clients[c_id].start_z);
 		float ne = e * 180 / PI;
 		clients[c_id].degree = ne;
-		clients[c_id].stack = 0;
+		clients[c_id].stack = -10;
 	}
 	float de = clients[c_id].degree / 180 * PI;
 
@@ -507,6 +584,16 @@ void wander_boss(int c_id)
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
-	return;
-	
+
+	for (auto& pl : clients[c_id].room_list) {
+		if (pl >= MAX_USER) continue;
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
+			continue;
+		}
+		clients[pl]._sl.unlock();
+
+		clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+	}
 }
