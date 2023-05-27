@@ -291,141 +291,17 @@ struct FrameHierarchy
 };
 
 
-//#pragma once
 constexpr int GAME_PORT_NUM = 4000;
 constexpr int LOBBY_PORT_NUM = 4001;
-//constexpr int BUF_SIZE = 200;
-//constexpr int NAME_SIZE = 20;
-//
-//constexpr int MAX_USER = PLAYERMAX;
-//constexpr int NPC_NUM = NPCMAX;
-//
-//// Packet ID
-//constexpr char CS_LOGIN = 0;
-//constexpr char CS_MOVE = 1;
-//constexpr char CS_CONSOLE = 2;
-//constexpr char CS_COLLISION = 3;
-//
-//constexpr char SC_LOGIN_OK = 11;
-//constexpr char SC_ADD_OBJECT = 12;
-//constexpr char SC_REMOVE_OBJECT = 13;
-//constexpr char SC_MOVE_OBJECT = 14;
-//constexpr char SC_ADD_CUBE = 15;
-//
-//constexpr char SS_CONNECT_SERVER = 20;
-//constexpr char SS_DATA_PASS = 21;
-//
-//constexpr char LCS_LOGIN = 30;
-//constexpr char LCS_MATCH = 31;
-//constexpr char LCS_OUT = 32;
-//
-//constexpr char LSC_LOGIN_OK = 40;
-//constexpr char LSC_CONGAME = 41;
-//
-//
-//
-//#pragma pack (push, 1)
-//struct CS_LOGIN_PACKET {
-//	unsigned char size;
-//	char	type;
-//	char	name[NAME_SIZE];
-//};
-//
-//struct CS_MOVE_PACKET {
-//	unsigned char size;
-//	char	type;
-//	float	x;
-//	float	y;
-//	float	z;
-//	float	degree;
-//	int		char_state;
-//	unsigned int client_time;
-//};
-//
-//struct CS_CONSOLE_PACKET {
-//	unsigned char	size;
-//	char			type;
-//	int				console;
-//};
-//
-//struct CS_COLLISION_PACKET {
-//	unsigned char	size;
-//	char			type;
-//	char			attack_type;
-//	int				attacker_id;	// 공격자 
-//	int				target_id;		// 피격자
-//};
-//
-//struct SC_LOGIN_OK_PACKET {
-//	unsigned char size;
-//	char	type;
-//	int		id;
-//	float	x, y, z;
-//	float	degree;
-//	int		hp;
-//};
-//
-//struct SC_ADD_OBJECT_PACKET {
-//	unsigned char size;
-//	char	type;
-//	int		id;
-//	float	x, y, z;
-//	float	degree;
-//	char	name[NAME_SIZE];
-//	int		hp;
-//	int		char_state;
-//};
-//
-//struct SC_ADD_CUBE_PACKET {
-//	unsigned char size;
-//	char	type;
-//	int		id;
-//	float	x, y, z;
-//	float	degree;
-//	char	name[NAME_SIZE];
-//	int		hp;
-//};
-//
-//struct SC_REMOVE_OBJECT_PACKET {
-//	unsigned char size;
-//	char	type;
-//	int		id;
-//};
-//
-//struct SC_MOVE_OBJECT_PACKET {
-//	unsigned char size;
-//	char	type;
-//	int		id;
-//	float	x, y, z;
-//	float	degree;
-//	int		hp;
-//	int		char_state;
-//};
-//struct LCS_LOGIN_PACKET {
-//	unsigned char size;
-//	char	type;
-//};
-//
-//struct LCS_MATCH_PACKET {
-//	unsigned char size;
-//	char	type;
-//};
-//
-//struct LSC_LOGIN_OK_PACKET {
-//	unsigned char size;
-//	char	type;
-//	int		id;
-//};
-//
-//struct LSC_CONGAME_PACKET {
-//	unsigned char size;
-//	char	type;
-//	bool	connect;
-//};
-//
-//struct LCS_OUT_PACKET {
-//	unsigned char size;
-//	char	type;
-//};
-//
-//#pragma pack (pop)
+
+inline XMFLOAT4 operator-(const XMFLOAT4& a, const XMFLOAT4& b) {
+	return XMFLOAT4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+}
+
+inline XMFLOAT4 operator+=(const XMFLOAT4& a, const XMFLOAT4& b) {
+	return XMFLOAT4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+}
+
+inline XMFLOAT4 operator*=(const XMFLOAT4& a, const float& b) {
+	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
+}

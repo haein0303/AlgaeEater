@@ -112,6 +112,10 @@ public:
 
 	vector<UI_ASSET> _test_ui_vector;
 
+	float _logic_delta_time;
+	float _prev_delta_time;
+
+
 private:
 	//화면 크기 관련
 	D3D12_VIEWPORT	_viewport;

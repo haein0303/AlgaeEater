@@ -3,6 +3,9 @@
 
 struct WindowInfo;
 class MESH_ASSET;
+class Timer;
+
+
 
 class OBJECT
 {
@@ -11,6 +14,7 @@ public:
 	int			_my_server_id = 0;
 	float		_degree;
 	XMFLOAT4	_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	
 	bool		_isCollision[NPCMAX]{ false };
 	bool		_isFirstCollision[NPCMAX]{ false };
 	int			_animation_state = 0;
@@ -26,6 +30,16 @@ public:
 	int			_pillar_count = 5;
 	int			_pillar_color = 0;
 
+	XMFLOAT4	_prev_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	XMFLOAT4	_delta_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	float		_prev_degree;
+	//각 오브젝트마다 전송 간격이나 속도가 다를 수 있음으로, 각각 보간을 해줘야됨
+	//_delta_time은 간격을 구하기 위해서 사용하는 변수
+	float		_delta_time = 0.f;
+	//_prev_delta_time은 새로 전송을 받았을 때 최종적으로 환산된 델타 타임을 저장하는 공간
+	float		_prev_delta_time = 0.f;
+	double		_delta_percent = 0.f;
+
 	bool		_is_basic_attack_cool_ready = false;
 	chrono::milliseconds time;
 	vector<XMFLOAT4X4> _final_transforms;
@@ -34,6 +48,7 @@ public:
 	int _particle_count = 0;
 
 	shared_ptr<MESH_ASSET> _my_mesh;
+	shared_ptr<Timer> _logicTimerPtr;
 
 	
 public:

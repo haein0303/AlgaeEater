@@ -39,7 +39,13 @@ void DxEngine::Init(WindowInfo windowInfo)
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 
-	
+	for (OBJECT& p : playerArr) {
+		p._logicTimerPtr = logicTimerPtr;
+	}
+	for (OBJECT& p : npcArr) {
+		p._logicTimerPtr = logicTimerPtr;
+	}
+	boss_obj._logicTimerPtr = logicTimerPtr;
 
 	cout << "complite all init" << endl;
 }
@@ -203,6 +209,15 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr,boss_obj,key_data);
+
+	//º¸°£À» À§ÇØ¼­ »ç¿ëÇÏ´Â ÃÊ±â ¼¼ÆÃÀÌ¶õ´Ù
+	for (OBJECT& p : playerArr) {
+		p._delta_time += logicTimerPtr->_deltaTime;
+	}
+	for (OBJECT& p : npcArr) {
+		p._delta_time += logicTimerPtr->_deltaTime;
+	}
+	boss_obj._delta_time += logicTimerPtr->_deltaTime;
 
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true) {
@@ -431,6 +446,29 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	ComPtr<ID3D12CommandAllocator>		cmdAlloc = cmdQueuePtr->_arr_cmdAlloc[i_now_render_index];
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
 
+	//º¸°£À» À§ÇØ¼­ Å¸ÀÌ¸Ó¶û °¢Á¾ °ªµé ¼¼ÆÃÇÏ´Â ¿µ¿ª
+	//¿©±â¼­ À§ÇØ¼­ º°µµ·Î ¿ÀÆÛ·¹ÀÌÅÍ ¿À¹ö·Îµù ÁßÀÌ´Ï Âü°íÇÏ¼Í
+	for (OBJECT& p : playerArr) {
+		p._delta_percent = timerPtr->_deltaTime / p._prev_delta_time;
+		p._prev_delta_time -= timerPtr->_deltaTime;
+		p._delta_transform = p._transform - p._prev_transform;
+		p._delta_transform *= p._delta_percent;
+		p._prev_transform += p._delta_transform;
+	}
+	for (OBJECT& p : npcArr) {
+		p._delta_percent = timerPtr->_deltaTime / p._prev_delta_time;
+		p._prev_delta_time -= timerPtr->_deltaTime;
+		p._delta_transform = p._transform - p._prev_transform;
+		p._delta_transform *= p._delta_percent;
+		p._prev_transform += p._delta_transform;
+	}
+
+	boss_obj._delta_percent = timerPtr->_deltaTime / boss_obj._prev_delta_time;
+	boss_obj._prev_delta_time -= timerPtr->_deltaTime;
+	boss_obj._delta_transform = boss_obj._transform - boss_obj._prev_transform;
+	boss_obj._delta_transform *= boss_obj._delta_percent;
+	boss_obj._prev_transform += boss_obj._delta_transform;
+
 	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
@@ -480,7 +518,35 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->IASetIndexBuffer(&player_AKI_Body_asset._indexBufferView);
 
 	//ï¿½ï¿½ï¿½ï¿½
-	for (int i = 0; i < PLAYERMAX; ++i) //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
+	{
+		int i = 0;
+		{
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				* XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+			//ï¿½ï¿½ï¿½ï¿½
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				player_AKI_Body_asset._tex._srvHandle = player_AKI_Body_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(player_AKI_Body_asset._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(player_AKI_Body_asset._indexCount, 1, 0, 0, 0);
+		}
+	}
+
+
+	for (int i = 1; i < PLAYERMAX; ++i) //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 		if (playerArr[i]._on == true)
 		{
@@ -492,7 +558,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -516,7 +582,33 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(player_AKI_Astro_A_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Astro_A_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_AKI_Astro_A_asset._indexBufferView);
-	for (int i = 0; i < PLAYERMAX; ++i)
+
+	{
+		int i = 0;
+
+		{
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				* XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				player_AKI_Astro_A_asset._tex._srvHandle = player_AKI_Astro_A_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(player_AKI_Astro_A_asset._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(player_AKI_Astro_A_asset._indexCount, 1, 0, 0, 0);
+		}
+	}
+
+	for (int i = 1; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true)
 		{	
@@ -524,7 +616,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -546,7 +638,33 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(player_AKI_Hair_A_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Hair_A_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_AKI_Hair_A_asset._indexBufferView);
-	for (int i = 0; i < PLAYERMAX; ++i)
+
+	{
+		int i = 0;
+
+		{
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				* XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				player_AKI_Hair_A_asset._tex._srvHandle = player_AKI_Hair_A_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(player_AKI_Hair_A_asset._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(player_AKI_Hair_A_asset._indexCount, 1, 0, 0, 0);
+		}
+
+	}
+	for (int i = 1; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true)
 		{
@@ -554,7 +672,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -576,7 +694,32 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(player_AKI_HeadPhone_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_HeadPhone_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_AKI_HeadPhone_asset._indexBufferView);
-	for (int i = 0; i < PLAYERMAX; ++i)
+
+	{
+		int i = 0;
+
+		{
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				* XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				player_AKI_HeadPhone_asset._tex._srvHandle = player_AKI_HeadPhone_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(player_AKI_HeadPhone_asset._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(player_AKI_HeadPhone_asset._indexCount, 1, 0, 0, 0);
+		}
+	}
+	for (int i = 1; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true)
 		{
@@ -584,7 +727,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -606,7 +749,32 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	cmdList->SetPipelineState(player_AKI_Sword_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Sword_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&player_AKI_Sword_asset._indexBufferView);
-	for (int i = 0; i < PLAYERMAX; ++i)
+
+	{
+		int i = 0;
+		{
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				* XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			copy(begin(playerArr[i]._weapon_final_transforms), end(playerArr[i]._weapon_final_transforms), &_transform.BoneTransforms[0]);
+
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				player_AKI_Sword_asset._tex._srvHandle = player_AKI_Sword_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(player_AKI_Sword_asset._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(player_AKI_Sword_asset._indexCount, 1, 0, 0, 0);
+		}
+	}
+
+	for (int i = 1; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true)
 		{
@@ -614,7 +782,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 

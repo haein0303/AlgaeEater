@@ -36,7 +36,7 @@ void Timer::fixed_update_tic()
 	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
 
 	while ((1.f / (float)_lockFps) >= (currentCount - _prevCount) / static_cast<float>(_frequency)) {		
-		_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
+		//_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
 		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
 		_counter++;
 	}

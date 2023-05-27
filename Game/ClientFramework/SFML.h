@@ -165,6 +165,9 @@ public:
 			SC_MOVE_BOSS_PACKET* my_packet = reinterpret_cast<SC_MOVE_BOSS_PACKET*>(ptr);
 			int id = my_packet->id;
 
+			boss_obj._prev_degree = boss_obj._degree;
+			boss_obj._prev_transform = boss_obj._transform;
+
 			boss_obj._on = true;
 			boss_obj._my_server_id = id;
 			boss_obj._transform.x = my_packet->x;
@@ -187,6 +190,13 @@ public:
 				playerArr[id]._hp = my_packet->hp;
 
 				if (myClientId != id) {
+					//이전꺼 저장중
+					playerArr[id]._prev_degree = playerArr[id]._degree;
+					playerArr[id]._prev_transform = playerArr[id]._transform;
+					playerArr[id]._prev_delta_time = playerArr[id]._delta_time;
+					//델타타임은 초기화를 합시다.
+					playerArr[id]._delta_time = 0.f;
+
 					playerArr[id]._transform.x = my_packet->x;
 					playerArr[id]._transform.y = my_packet->y;
 					playerArr[id]._transform.z = my_packet->z;
