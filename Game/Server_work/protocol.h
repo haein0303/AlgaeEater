@@ -26,18 +26,18 @@ constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
 constexpr char CS_CONSOLE = 2;
 constexpr char CS_COLLISION = 3;
-constexpr char CS_COLOR = 4;
-constexpr char CS_KEY = 5;
+constexpr char CS_KEY = 4;
 
-constexpr char SC_LOGIN_OK = 11;
-constexpr char SC_ADD_OBJECT = 12;
-constexpr char SC_REMOVE_OBJECT = 13;
-constexpr char SC_MOVE_OBJECT = 14;
-constexpr char SC_ADD_CUBE = 15;
-constexpr char SC_ADD_BOSS = 16;
-constexpr char SC_MOVE_BOSS = 17;
-constexpr char SC_MSG = 18;
-constexpr char SC_KEY = 19;
+constexpr char SC_LOGIN_OK = 10;
+constexpr char SC_ADD_OBJECT = 11;
+constexpr char SC_REMOVE_OBJECT = 12;
+constexpr char SC_MOVE_OBJECT = 13;
+constexpr char SC_ADD_CUBE = 14;
+constexpr char SC_ADD_BOSS = 15;
+constexpr char SC_MOVE_BOSS = 16;
+constexpr char SC_MSG = 17;
+constexpr char SC_KEY = 18;
+constexpr char SC_DOOR = 19;
 
 constexpr char SS_CONNECT_SERVER = 20;
 constexpr char SS_DATA_PASS = 21;
@@ -84,15 +84,10 @@ struct CS_COLLISION_PACKET {
 	int		target_id;
 };
 
-struct CS_COLOR_PACKET {
-	unsigned char size;
-	char	type;
-	int		color;
-};
-
 struct CS_KEY_PACKET {
 	unsigned char size;
 	char	type;
+	int		color;
 	int		key_id;
 };
 
@@ -179,7 +174,13 @@ struct SC_KEY_PACKET {
 	float	x;
 	float	y;
 	float	z;
+	int		id;
 	int		color;
+};
+
+struct SC_DOOR_PACKET {
+	unsigned char size;
+	char	type;
 };
 
 struct SS_CONNECT_SERVER_PACKET {

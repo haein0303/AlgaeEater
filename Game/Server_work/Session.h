@@ -83,5 +83,6 @@ struct KEY {
 public:
 	float x, y, z;
 	int color;
+	bool on_field;
 	int		_Room_Num;
 };

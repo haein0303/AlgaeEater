@@ -167,6 +167,7 @@ void initialize_key()
 		keys[i].z = -230.f;
 		keys[i].color = i / ROOM_KEY;
 		keys[i]._Room_Num = i / ROOM_KEY;
+		keys[i].on_field = true;
 	}
 	cout << "key ·Îµù ³¡" << endl;
 }

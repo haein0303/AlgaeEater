@@ -165,6 +165,7 @@ void SESSION::send_key(int c_id, float x, float y, float z, int color)
 	p.x = x;
 	p.y = y;
 	p.z = z;
+	p.id = c_id;
 	p.color = color;
 	do_send(&p);
 }

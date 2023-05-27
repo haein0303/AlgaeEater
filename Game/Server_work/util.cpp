@@ -193,9 +193,26 @@ void process_packet(int c_id, char* packet)
 		}
 		break;
 	}
-	case CS_COLOR: {
-		CS_COLOR_PACKET* p = reinterpret_cast<CS_COLOR_PACKET*>(packet);
+	case CS_KEY: {
+		int cnt = 0;
+		CS_KEY_PACKET* p = reinterpret_cast<CS_KEY_PACKET*>(packet);
 		clients[c_id].color = p->color;
+		keys[p->key_id].on_field = false;
+
+		for (int i = clients[c_id]._Room_Num * ROOM_KEY; i < clients[c_id]._Room_Num * 4 + ROOM_KEY; ++i) {
+			if (keys[i].on_field == true) break;
+			else cnt++;
+		}
+
+		if (cnt == ROOM_KEY) {
+			SC_DOOR_PACKET p;
+			p.size = sizeof(SC_DOOR_PACKET);
+			p.type = SC_DOOR;
+
+			for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * 4 + ROOM_USER; ++i) {
+				clients[i].do_send(&p);
+			}
+		}
 		break;
 	}
 	case SS_CONNECT_SERVER: {
