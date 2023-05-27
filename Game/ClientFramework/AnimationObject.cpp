@@ -8,6 +8,14 @@ void AnimationObject::CreateAnimationObject(vector<SkinnedVertex>& vertices, vec
 	ClipName = "SkinningAnimtion";
 }
 
+void AnimationObject::CreateVertexAnimationObject(vector<Vertex>& vertices, vector<UINT>& indices, const string& filePath)
+{
+	AnimationObjectLoader animationObjectLoader;
+	animationObjectLoader.LoadVertexAnimationObject(filePath, vertices, indices, mSubsets, mBoneHierarchy, mBoneOffsets, animations);
+
+	ClipName = "VertexAnimtion";
+}
+
 void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 {
 	if (player._animation_state != 0) {
@@ -33,6 +41,30 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 	}
 	else {
 		GetFinalTransforms(ClipName, player._animation_time_pos, player._weapon_final_transforms, player._animation_state);
+	}
+}
+
+void AnimationObject::UpdateVertexAnimation(float dt, OBJECT& obj)
+{
+	obj._animation_time_pos += dt;
+
+	// 현재 프레임에 대해 최종행렬 연산
+	GetFinalTransforms_VertexAnimation(ClipName, obj._animation_time_pos, obj._final_transforms, obj._animation_state);
+}
+
+void AnimationObject::GetFinalTransforms_VertexAnimation(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms, int state)
+{
+	vector<XMFLOAT4X4> toParentTransforms{1};
+
+	for (UINT i = 0; i < animations[state].size(); ++i)
+	{
+		Interpolate(animations[state][i], timePos, toParentTransforms[i]);
+	}
+
+	for (UINT i = 0; i < toParentTransforms.size(); ++i)
+	{
+		XMMATRIX finalMatrix = XMLoadFloat4x4(&toParentTransforms[i]);
+		XMStoreFloat4x4(&finalTransforms[i], XMMatrixTranspose(finalMatrix));
 	}
 }
 

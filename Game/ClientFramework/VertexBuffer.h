@@ -58,4 +58,24 @@ public:
 		vertexBufferView.StrideInBytes = sizeof(SkinnedVertex);
 		vertexBufferView.SizeInBytes = bufferSize;
 	}
+
+	void CreateVertexAnimationVertexBuffer(ComPtr<ID3D12Resource>& vertexBuffer, D3D12_VERTEX_BUFFER_VIEW& vertexBufferView, const vector<Vertex>& buffer, shared_ptr<Device> devicePtr)
+	{
+		UINT bufferSize = static_cast<UINT>(buffer.size()) * sizeof(Vertex);
+
+		D3D12_HEAP_PROPERTIES heapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+		D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+
+		devicePtr->_device->CreateCommittedResource(&heapProperty, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexBuffer));
+
+		void* vertexDataBuffer = nullptr;
+		CD3DX12_RANGE readRange(0, 0);
+		vertexBuffer->Map(0, &readRange, &vertexDataBuffer);
+		::memcpy(vertexDataBuffer, &buffer[0], bufferSize);
+		vertexBuffer->Unmap(0, nullptr);
+
+		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+		vertexBufferView.StrideInBytes = sizeof(Vertex);
+		vertexBufferView.SizeInBytes = bufferSize;
+	}
 };

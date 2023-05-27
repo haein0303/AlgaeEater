@@ -162,6 +162,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
 
+	test_pillar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	test_pillar.Init("../Resources/pillar1.txt", ObjectType::VertexAnimationObjects);
+	test_pillar.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	test_pillar.Make_SRV();
+	test_pillar.CreatePSO(L"..\\Bricks.hlsl");
+
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		playerArr[i]._final_transforms.resize(player_AKI_Body_asset._animationPtr->mBoneHierarchy.size());
@@ -176,6 +182,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	}
 	boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 	boss_obj._transform.y += 1.f;
+
+	test_pillar_data._final_transforms.resize(1);
 
 	key_data[0]._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
 	key_data[0]._key = 0;
@@ -826,7 +834,39 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
 		}
 	}
-	
+
+	// test_pillar
+	//test_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, test_pillar_data);
+	{
+		float scale = 1.f;
+
+		cmdList->SetPipelineState(test_pillar._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &test_pillar._vertexBufferView);
+		cmdList->IASetIndexBuffer(&test_pillar._indexBufferView);
+
+		XMVECTOR quat = XMLoadFloat4(&test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].RotationQuat);
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
+			* XMMatrixRotationX(-XM_PI / 2.f)
+			* XMMatrixRotationQuaternion(quat)
+			* XMMatrixTranslation(test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].Translation.x, test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].Translation.y, test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].Translation.z));
+		++vertex_animtion_frame;
+		if (vertex_animtion_frame >= 60)
+		{
+			vertex_animtion_frame = 0;
+		}
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+		//copy(begin(test_pillar_data._final_transforms), end(test_pillar_data._final_transforms), &_transform.BoneTransforms[0]);
+
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+		test_pillar._tex._srvHandle = test_pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		descHeapPtr->CopyDescriptor(test_pillar._tex._srvHandle, 5, devicePtr);
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(test_pillar._indexCount, 1, 0, 0, 0);
+	}
 
 	// skybox
 	{

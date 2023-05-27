@@ -142,7 +142,8 @@ namespace COMUtil
 enum ObjectType
 {
 	GeneralObjects, // 일반 오브젝트
-	AnimationObjects, // 애니메이션 오브젝트, Skinned Mesh
+	AnimationObjects, // 스키닝 애니메이션 오브젝트, Skinned Mesh
+	VertexAnimationObjects, // 정점 애니메이션 오브젝트
 	SkyBox // 스카이 박스
 };
 

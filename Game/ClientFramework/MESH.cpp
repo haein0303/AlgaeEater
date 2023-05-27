@@ -28,11 +28,18 @@ void MESH_ASSET::Init(const char* path, ObjectType obj_type)
 {
 	_obj_type = obj_type;
 	
-	if (obj_type == ObjectType::AnimationObjects) {
+	if (obj_type == ObjectType::AnimationObjects)
+	{
 		_animationPtr->CreateAnimationObject(_AniVertexVec, _IndexVec, path);
 		_vertexBufferPtr->CreateAnimationVertexBuffer(_vertexBuffer, _vertexBufferView, _AniVertexVec, _devicePtr);
 	}
-	else {
+	else if (obj_type == ObjectType::VertexAnimationObjects)
+	{
+		_animationPtr->CreateVertexAnimationObject(_VertexVec, _IndexVec, path);
+		_vertexBufferPtr->CreateVertexAnimationVertexBuffer(_vertexBuffer, _vertexBufferView, _VertexVec, _devicePtr);
+	}
+	else
+	{
 		_fbxLoaderPtr->LoadObject(_VertexVec, _IndexVec, path);
 		_vertexBufferPtr->CreateVertexBuffer(_vertexBuffer, _vertexBufferView, _VertexVec, _devicePtr);
 	}	
@@ -136,6 +143,11 @@ void MESH_ASSET::CreatePSO()
 void MESH_ASSET::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 {
 	_animationPtr->UpdateSkinnedAnimation(dt, player, i);
+}
+
+void MESH_ASSET::UpdateVertexAnimation(float dt, OBJECT& player)
+{
+	_animationPtr->UpdateVertexAnimation(dt, player);
 }
 
 void MESH_ASSET::CreatePSO(const wchar_t* shader)

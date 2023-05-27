@@ -81,7 +81,7 @@ void GS_Main(point VS_OUT gin[1], uint primID : SV_PrimitiveID, inout TriangleSt
 
 float4 PS_Main(GeoOut input) : SV_Target
 {
-	float4 color = float4(0.f, 0.f, 0.f, 0.f);
+	float4 color = tex_0.Sample(sam_0, input.uv);
 	float r = distance(input.uv, float2(0.5f, 0.5f));
 	if (r <= 0.3f) {
 		color = float4(1.0f, 1.0f, 0.5f, 1.f); // ¿¬³ë¶û

@@ -50,6 +50,7 @@ public:
 	void CreatePSO();
 	void CreatePSO(const wchar_t* shader);
 	void UpdateSkinnedAnimation(float dt, OBJECT& player, int i);
+	void UpdateVertexAnimation(float dt, OBJECT& player);
 
 };
 
