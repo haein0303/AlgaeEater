@@ -836,7 +836,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	}
 
 	// test_pillar
-	//test_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, test_pillar_data);
+	XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	test_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, test_pillar_data, P, Q);
 	{
 		float scale = 1.f;
 
@@ -844,20 +846,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->IASetVertexBuffers(0, 1, &test_pillar._vertexBufferView);
 		cmdList->IASetIndexBuffer(&test_pillar._indexBufferView);
 
-		XMVECTOR quat = XMLoadFloat4(&test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].RotationQuat);
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
 			* XMMatrixRotationX(-XM_PI / 2.f)
-			* XMMatrixRotationQuaternion(quat)
-			* XMMatrixTranslation(test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].Translation.x, test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].Translation.y, test_pillar._animationPtr->animations[0][0][vertex_animtion_frame].Translation.z));
-		++vertex_animtion_frame;
-		if (vertex_animtion_frame >= 60)
-		{
-			vertex_animtion_frame = 0;
-		}
+			* XMMatrixRotationQuaternion(Q)
+			* XMMatrixTranslation(P.m128_f32[0], P.m128_f32[1], P.m128_f32[2]));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-		//copy(begin(test_pillar_data._final_transforms), end(test_pillar_data._final_transforms), &_transform.BoneTransforms[0]);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);

@@ -44,27 +44,58 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 	}
 }
 
-void AnimationObject::UpdateVertexAnimation(float dt, OBJECT& obj)
+void AnimationObject::UpdateVertexAnimation(float dt, OBJECT& obj, XMVECTOR& P, XMVECTOR& Q)
 {
 	obj._animation_time_pos += dt;
 
-	// 현재 프레임에 대해 최종행렬 연산
-	GetFinalTransforms_VertexAnimation(ClipName, obj._animation_time_pos, obj._final_transforms, obj._animation_state);
-}
-
-void AnimationObject::GetFinalTransforms_VertexAnimation(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms, int state)
-{
-	vector<XMFLOAT4X4> toParentTransforms{1};
-
-	for (UINT i = 0; i < animations[state].size(); ++i)
-	{
-		Interpolate(animations[state][i], timePos, toParentTransforms[i]);
+	// 애니메이션이 끝나면 애니메이션 루프
+	if ((obj._animation_state == 0) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state)) {
+		obj._animation_time_pos = 0.f;
 	}
 
-	for (UINT i = 0; i < toParentTransforms.size(); ++i)
+	// 현재 프레임에 대해 최종행렬 연산
+	GetFinalTransforms_VertexAnimation(ClipName, obj._animation_time_pos, obj._animation_state, P, Q);
+}
+
+void AnimationObject::GetFinalTransforms_VertexAnimation(const string& clipName, float timePos, int state, XMVECTOR& P, XMVECTOR& Q)
+{
+	for (UINT i = 0; i < animations[state].size(); ++i)
 	{
-		XMMATRIX finalMatrix = XMLoadFloat4x4(&toParentTransforms[i]);
-		XMStoreFloat4x4(&finalTransforms[i], XMMatrixTranspose(finalMatrix));
+		Interpolate_VertexAnimation(animations[state][i], timePos, P, Q);
+	}
+}
+
+void AnimationObject::Interpolate_VertexAnimation(vector<Keyframe> keyframeVec, float t, XMVECTOR& P, XMVECTOR& Q) {
+	if (t <= keyframeVec.front().TimePos)
+	{
+		P = XMLoadFloat3(&keyframeVec.front().Translation);
+		Q = XMLoadFloat4(&keyframeVec.front().RotationQuat);
+	}
+	else if (t >= keyframeVec.back().TimePos)
+	{
+		P = XMLoadFloat3(&keyframeVec.back().Translation);
+		Q = XMLoadFloat4(&keyframeVec.back().RotationQuat);
+	}
+	else
+	{
+		for (UINT i = 0; i < keyframeVec.size() - 1; ++i)
+		{
+			if (t >= keyframeVec[i].TimePos && t <= keyframeVec[i + 1].TimePos)
+			{
+				float lerpPercent = (t - keyframeVec[i].TimePos) / (keyframeVec[i + 1].TimePos - keyframeVec[i].TimePos);
+
+				XMVECTOR p0 = XMLoadFloat3(&keyframeVec[i].Translation);
+				XMVECTOR p1 = XMLoadFloat3(&keyframeVec[i + 1].Translation);
+
+				XMVECTOR q0 = XMLoadFloat4(&keyframeVec[i].RotationQuat);
+				XMVECTOR q1 = XMLoadFloat4(&keyframeVec[i + 1].RotationQuat);
+
+				P = XMVectorLerp(p0, p1, lerpPercent);
+				Q = XMQuaternionSlerp(q0, q1, lerpPercent);
+
+				break;
+			}
+		}
 	}
 }
 

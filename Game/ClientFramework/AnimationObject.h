@@ -35,10 +35,12 @@ public:
 
 #pragma region 정점 애니메이션
 	// 매 프레임마다 정점 애니메이션을 진행
-	void UpdateVertexAnimation(float dt, OBJECT& player);
+	void UpdateVertexAnimation(float dt, OBJECT& player, XMVECTOR& P, XMVECTOR& Q);
 
 	// 보간된 애니메이션 행렬들에 대해서 최종 행렬 연산
-	void GetFinalTransforms_VertexAnimation(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms, int state);
+	void GetFinalTransforms_VertexAnimation(const string& clipName, float timePos, int state, XMVECTOR& P, XMVECTOR& Q);
+
+	void Interpolate_VertexAnimation(vector<Keyframe> keyframeVec, float t, XMVECTOR& P, XMVECTOR& Q);
 #pragma endregion
 
 	template<typename T>
