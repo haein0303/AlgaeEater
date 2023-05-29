@@ -69,7 +69,7 @@ public:
 	OBJECT playerArr[PLAYERMAX];
 	OBJECT npcArr[NPCMAX];
 	OBJECT boss_obj;
-	OBJECT cubeArr[CubeMax];
+	OBJECT pillars_data[CubeMax];
 	float _key_rotation_time = 0.f;
 	OBJECT key_data[KEYMAX];
 
@@ -95,7 +95,7 @@ public:
 	MESH_ASSET hp_bar;
 	MESH_ASSET color_pattern;
 	MESH_ASSET key;
-	array <MESH_ASSET, 20> test_pillar;
+	array <MESH_ASSET, 20> pillar;
 
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};

@@ -52,12 +52,6 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::late_Init(WindowInfo windowInfo)
 {
-	/*cube_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	cube_asset.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
-	cube_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-	cube_asset.Make_SRV();
-	cube_asset.CreatePSO(L"..\\Color.hlsl");*/
-
 	map_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	map_asset.Init("../Resources/Stage1_Wall_Test.txt", ObjectType::GeneralObjects);
 	map_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
@@ -171,21 +165,21 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	char a[] = "../Resources/pillar0.txt";
 	for (int i = 0; i < 10; ++i)
 	{
-		test_pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		test_pillar[i].Init(a, ObjectType::VertexAnimationObjects);
-		test_pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-		test_pillar[i].Make_SRV();
-		test_pillar[i].CreatePSO(L"..\\Bricks.hlsl");
+		pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		pillar[i].Init(a, ObjectType::VertexAnimationObjects);
+		pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+		pillar[i].Make_SRV();
+		pillar[i].CreatePSO(L"..\\Color.hlsl");
 		++a[19];
 	}
 	char b[] = "../Resources/pillar10.txt";
 	for (int i = 10; i < 20; ++i)
 	{
-		test_pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		test_pillar[i].Init(b, ObjectType::VertexAnimationObjects);
-		test_pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-		test_pillar[i].Make_SRV();
-		test_pillar[i].CreatePSO(L"..\\Bricks.hlsl");
+		pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		pillar[i].Init(b, ObjectType::VertexAnimationObjects);
+		pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+		pillar[i].Make_SRV();
+		pillar[i].CreatePSO(L"..\\Color.hlsl");
 		++b[20];
 	}
 
@@ -221,7 +215,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr, boss_obj, key_data);
+	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, key_data);
 
 	//º¸°£À» À§ÇØ¼­ »ç¿ëÇÏ´Â ÃÊ±â ¼¼ÆÃÀÌ¶õ´Ù
 	for (OBJECT& p : playerArr) {
@@ -393,18 +387,18 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	// ±âµÕ Ãæµ¹Ã³¸®
-	if (playerArr[networkPtr->myClientId]._on == true && cubeArr[4]._on == true)
+	if (playerArr[networkPtr->myClientId]._on == true && pillars_data[4]._on == true)
 	{
-		if (pow(playerArr[networkPtr->myClientId]._transform.x - cubeArr[4]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - cubeArr[4]._transform.z, 2) <= 9.f
-			&& cubeArr[4]._pillar_color == playerArr[networkPtr->myClientId]._player_color)
+		if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[4]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[4]._transform.z, 2) <= 9.f
+			&& pillars_data[4]._pillar_color == playerArr[networkPtr->myClientId]._player_color)
 		{
 			if ((playerArr[networkPtr->myClientId]._animation_state == 2 || playerArr[networkPtr->myClientId]._animation_state == 3)
 				&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
 				&& playerArr[networkPtr->myClientId]._can_attack3)
 			{
 				playerArr[networkPtr->myClientId]._can_attack3 = false;
-				--cubeArr[4]._pillar_count;
-				cout << "pillar : " << cubeArr[4]._pillar_count << endl;
+				--pillars_data[4]._pillar_count;
+				cout << "pillar : " << pillars_data[4]._pillar_count << endl;
 			}
 		}
 	}
@@ -941,43 +935,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 
-	/*cmdList->SetPipelineState(cube_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
-	for (int i = 0; i < CubeMax; ++i) //ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
-	{
-		if (cubeArr[i]._on == true)
-		{
-			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(cubeArr[i]._transform.x, cubeArr[i]._transform.y + 2.0f, cubeArr[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			if (i == 0)
-				_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
-			else if (i == 1)
-				_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
-			else if (i == 2)
-				_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
-			else
-				_transform.color = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-			
-
-			//ï¿½ï¿½ï¿½ï¿½
-			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);		
-
-				cube_asset._tex._srvHandle = cube_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				
-				descHeapPtr->CopyDescriptor(cube_asset._tex._srvHandle, 5, devicePtr);
-			}
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(cube_asset._indexCount, 1, 0, 0, 0);
-		}
-	}*/
-
 	// map
 	switch (Scene_num) {
 	case 0:
@@ -1029,57 +986,68 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 
-	// test_pillar
+	// pillar
 	for (int i = 0; i < CubeMax; ++i)
 	{
-		if (cubeArr[i]._on == true)
+		if (pillars_data[i]._on == true)
 		{
 			XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 			XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-			switch (cubeArr[i]._pillar_count)
+			switch (pillars_data[i]._pillar_count)
 			{
 			case 5:
-				cubeArr[i]._animation_time_pos = 0.f;
+				pillars_data[i]._animation_time_pos = 0.f;
 				break;
 			case 4:
-				cubeArr[i]._animation_time_pos = 0.034f;
+				pillars_data[i]._animation_time_pos = 0.034f;
 				break;
 			case 3:
-				cubeArr[i]._animation_time_pos = 0.68f;
+				pillars_data[i]._animation_time_pos = 0.068f;
 				break;
 			case 2:
-				cubeArr[i]._animation_time_pos = 0.102f;
+				pillars_data[i]._animation_time_pos = 0.102f;
 				break;
 			case 1:
-				cubeArr[i]._animation_time_pos = 0.136f;
+				pillars_data[i]._animation_time_pos = 0.136f;
 				break;
 			default:
-				cubeArr[i]._animation_time_pos += timerPtr->_deltaTime;
+				pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
 				break;
 			}
-			for (MESH_ASSET& pillar : test_pillar)
+			for (MESH_ASSET& piece_of_pillar : pillar)
 			{
 				float scale = 1.f;
 
-				pillar.UpdateVertexAnimation(timerPtr->_deltaTime, cubeArr[i], P, Q);
+				piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
 
-				cmdList->SetPipelineState(pillar._pipelineState.Get());
-				cmdList->IASetVertexBuffers(0, 1, &pillar._vertexBufferView);
-				cmdList->IASetIndexBuffer(&pillar._indexBufferView);
+				cmdList->SetPipelineState(piece_of_pillar._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &piece_of_pillar._vertexBufferView);
+				cmdList->IASetIndexBuffer(&piece_of_pillar._indexBufferView);
 
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
 					* XMMatrixRotationQuaternion(Q)
-					* XMMatrixTranslation(cubeArr[i]._transform.x + P.m128_f32[0], cubeArr[i]._transform.y + P.m128_f32[1], cubeArr[i]._transform.z + P.m128_f32[2]));
+					* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0], pillars_data[i]._transform.y + P.m128_f32[1], pillars_data[i]._transform.z + P.m128_f32[2]));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
+				if (i == 0)
+					_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+				else if (i == 1)
+					_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
+				else if (i == 2)
+					_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
+				else if (i == 3)
+					_transform.color = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				else
+					_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				pillar._tex._srvHandle = pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(pillar._tex._srvHandle, 5, devicePtr);
+				piece_of_pillar._tex._srvHandle = piece_of_pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(piece_of_pillar._tex._srvHandle, 5, devicePtr);
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdList->DrawIndexedInstanced(pillar._indexCount, 1, 0, 0, 0);
+				cmdList->DrawIndexedInstanced(piece_of_pillar._indexCount, 1, 0, 0, 0);
 			}
 		}
 	}

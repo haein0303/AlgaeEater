@@ -262,10 +262,10 @@ void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12Graph
 	cmdList->IASetIndexBuffer(&_dxengine->cube_asset._indexBufferView);
 	for (int i = 0; i < CubeMax; i++) //��� ����
 	{
-		if (_dxengine->cubeArr[i]._on == true)
+		if (_dxengine->pillars_data[i]._on == true)
 		{
 			//���� ��ȯ
-			XMStoreFloat4x4(&_dxengine->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(_dxengine->cubeArr[i]._transform.x, _dxengine->cubeArr[i]._transform.y + 2.0f, _dxengine->cubeArr[i]._transform.z));
+			XMStoreFloat4x4(&_dxengine->_transform.world, XMMatrixScaling(1.0f, 2.0f, 1.0f) * XMMatrixTranslation(_dxengine->pillars_data[i]._transform.x, _dxengine->pillars_data[i]._transform.y + 2.0f, _dxengine->pillars_data[i]._transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_dxengine->_transform.world);
 			XMStoreFloat4x4(&_dxengine->_transform.world, XMMatrixTranspose(world));
 
