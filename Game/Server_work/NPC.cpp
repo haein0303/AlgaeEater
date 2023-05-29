@@ -14,6 +14,7 @@ extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
 extern array<KEY, KEY_NUM> keys;
+extern array<FIELD, FIELD_NUM> fields;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
@@ -116,7 +117,7 @@ void initialize_npc()
 			clients[i].x = 30;
 			clients[i].z = 30;
 			clients[i].eye_color = 0;
-			clients[i]._object_type = TY_BOSS;
+			clients[i]._object_type = TY_BOSS_1;
 
 			lua_register(clients[i].L, "API_Wander", API_Wander);
 			lua_register(clients[i].L, "API_Rush", API_Rush);
@@ -170,6 +171,18 @@ void initialize_key()
 		keys[i].on_field = true;
 	}
 	cout << "key 로딩 끝" << endl;
+}
+
+void initialize_field()
+{
+	for (int i = 0; i < FIELD_NUM; i++) {
+		fields[i].x = 0.f;
+		fields[i].y = 0.f;
+		fields[i].z = 0.f;
+		fields[i].type = FD_REC;
+		fields[i]._Room_Num = i / ROOM_FIELD;
+	}
+	cout << "field 로딩 끝" << endl;
 }
 
 void send_cube(int c_id, float x, float y, float z)
@@ -288,7 +301,7 @@ void move_npc(int player_id, int c_id)
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
 	float nde = de * 180 / PI;
 
-	if (clients[c_id]._object_type != TY_BOSS) {
+	if (clients[c_id]._object_type == TY_MOVE_NPC || clients[c_id]._object_type == TY_HOLD_NPC) {
 		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
 			// 공격 처리 관련, 여기서 안 할 수도 있음
 			clients[c_id].char_state = AN_ATTACK;

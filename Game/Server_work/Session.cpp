@@ -169,3 +169,23 @@ void SESSION::send_key(int c_id, float x, float y, float z, int color)
 	p.color = color;
 	do_send(&p);
 }
+
+void SESSION::send_door()
+{
+	SC_DOOR_PACKET p;
+	p.size = sizeof(SC_DOOR_PACKET);
+	p.type = SC_DOOR;
+	do_send(&p);
+}
+
+void SESSION::send_field_add(int c_id, float x, float y, float z, int type)
+{
+	SC_FIELD_PACKET p;
+	p.size = sizeof(SC_FIELD_PACKET);
+	p.type = SC_KEY;
+	p.x = x;
+	p.y = y;
+	p.z = z;
+	p.FD_type = type;
+	do_send(&p);
+}

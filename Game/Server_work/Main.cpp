@@ -15,6 +15,8 @@ array<CUBE, CUBE_NUM> cubes;
 
 array<KEY, KEY_NUM> keys;
 
+array<FIELD, FIELD_NUM> fields;
+
 HANDLE g_h_iocp;
 SOCKET g_s_socket;
 
@@ -29,6 +31,7 @@ int main()
 	initialize_key();
 	initialize_cube();
 	initialize_npc();
+	initialize_field();
 
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 2), &WSAData);

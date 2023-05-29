@@ -17,7 +17,9 @@ extern "C" {
 
 enum SESSION_STATE { ST_FREE, ST_ACCEPTED, ST_INGAME };
 
-enum SESSION_TYPE { TY_PLAYER, TY_MOVE_NPC, TY_HOLD_NPC, TY_BOSS };
+enum SESSION_TYPE { TY_PLAYER, TY_MOVE_NPC, TY_HOLD_NPC, TY_BOSS_1, TY_BOSS_2, TY_BOSS_3 };
+
+enum FIELD_TYPE { FD_REC, FD_HEAL_CIR, FD_POI_CIR };
 
 enum SESSION_ANIM_STATE { AN_IDLE, AN_WALK, AN_ATTACK, AN_DEAD };
 
@@ -69,6 +71,8 @@ public:
 	void send_boss_move(int c_id, float x, float y, float z, float degree, int hp, int state, int eye, unsigned int client_time);
 	void send_msg(char* msg);
 	void send_key(int c_id, float x, float y, float z, int color);
+	void send_door();
+	void send_field_add(int c_id, float x, float y, float z, int type);
 };
 
 struct CUBE {
@@ -81,8 +85,15 @@ public:
 
 struct KEY {
 public:
-	float x, y, z;
-	int color;
-	bool on_field;
+	float	x, y, z;
+	int		color;
+	bool	on_field;
+	int		_Room_Num;
+};
+
+struct FIELD {
+public:
+	float	x, y, z;
+	int		type;
 	int		_Room_Num;
 };

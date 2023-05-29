@@ -205,12 +205,9 @@ void process_packet(int c_id, char* packet)
 		}
 
 		if (cnt == ROOM_KEY) {
-			SC_DOOR_PACKET p;
-			p.size = sizeof(SC_DOOR_PACKET);
-			p.type = SC_DOOR;
 
 			for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * 4 + ROOM_USER; ++i) {
-				clients[i].do_send(&p);
+				clients[i].send_door();
 			}
 		}
 		break;

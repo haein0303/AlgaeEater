@@ -15,11 +15,13 @@ constexpr int ROOM_USER = 4;
 constexpr int ROOM_NPC = 20;
 constexpr int ROOM_CUBE = 5;
 constexpr int ROOM_KEY = 4;
+constexpr int ROOM_FIELD = 10;
 
 constexpr int MAX_USER = ROOM_NUM * ROOM_USER;
 constexpr int NPC_NUM = ROOM_NUM * ROOM_NPC;
 constexpr int CUBE_NUM = ROOM_NUM * ROOM_CUBE;
 constexpr int KEY_NUM = ROOM_NUM * ROOM_KEY;
+constexpr int FIELD_NUM = ROOM_NUM * ROOM_FIELD;
 
 // Packet ID
 constexpr char CS_LOGIN = 0;
@@ -38,9 +40,11 @@ constexpr char SC_MOVE_BOSS = 16;
 constexpr char SC_MSG = 17;
 constexpr char SC_KEY = 18;
 constexpr char SC_DOOR = 19;
+///////////////////////////////
+constexpr char SC_ADD_FIELD = 20;
 
-constexpr char SS_CONNECT_SERVER = 20;
-constexpr char SS_DATA_PASS = 21;
+constexpr char SS_CONNECT_SERVER = 28;
+constexpr char SS_DATA_PASS = 29;
 
 constexpr char LCS_LOGIN = 30;
 constexpr char LCS_MATCH = 31;
@@ -181,6 +185,15 @@ struct SC_KEY_PACKET {
 struct SC_DOOR_PACKET {
 	unsigned char size;
 	char	type;
+};
+
+struct SC_FIELD_PACKET {
+	unsigned char size;
+	char	type;
+	float	x;
+	float	y;
+	float	z;
+	int		FD_type;
 };
 
 struct SS_CONNECT_SERVER_PACKET {
