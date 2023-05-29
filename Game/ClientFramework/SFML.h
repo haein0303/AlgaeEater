@@ -167,6 +167,9 @@ public:
 
 			boss_obj._prev_degree = boss_obj._degree;
 			boss_obj._prev_transform = boss_obj._transform;
+			boss_obj._prev_delta_time = boss_obj._delta_time;
+			//델타타임은 초기화를 합시다.
+			boss_obj._delta_time = 0.f;
 
 			boss_obj._on = true;
 			boss_obj._my_server_id = id;
@@ -213,6 +216,13 @@ public:
 			}
 			else {
 				id = getNPCid(my_packet->id);
+
+				npcArr[id]._prev_degree = npcArr[id]._degree;
+				npcArr[id]._prev_transform = npcArr[id]._transform;
+				npcArr[id]._prev_delta_time = npcArr[id]._delta_time;
+				//델타타임은 초기화를 합시다.
+				npcArr[id]._delta_time = 0.f;
+
 
 				npcArr[id]._transform.x = my_packet->x;
 				npcArr[id]._transform.y = my_packet->y;

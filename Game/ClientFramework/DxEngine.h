@@ -129,8 +129,8 @@ public:
 
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z)
 			* XMMatrixRotationX(default_rot_x)
-			* XMMatrixRotationY(boss_obj._degree * XM_PI / 180.f - XM_PI)
-			* XMMatrixTranslation(boss_obj._transform.x, boss_obj._transform.y, boss_obj._transform.z));
+			* XMMatrixRotationY(boss_obj._prev_degree * XM_PI / 180.f - XM_PI)
+			* XMMatrixTranslation(boss_obj._prev_transform.x, boss_obj._prev_transform.y, boss_obj._prev_transform.z));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 		XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));

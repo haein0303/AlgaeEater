@@ -462,6 +462,9 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 			playerArr[i]._delta_transform = playerArr[i]._delta_transform * playerArr[i]._delta_percent;
 			
 			playerArr[i]._prev_transform = playerArr[i]._prev_transform + playerArr[i]._delta_transform;
+			//ÃßÈÄ Àû¿ë ÇÊ¿ä
+			//playerArr[i]._prev_degree = playerArr[i]._prev_degree + (playerArr[i]._prev_degree - playerArr[i]._degree) * playerArr[i]._delta_percent;
+			playerArr[i]._prev_degree = playerArr[i]._degree;
 		}
 
 	}
@@ -469,19 +472,47 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 		if (p._on) {
 			float dt = timerPtr->_deltaTime;
 			p._delta_percent = dt / p._prev_delta_time;
-			p._prev_delta_time -= dt;
+
+			if (p._prev_delta_time > 0) {
+				p._prev_delta_time -= dt;
+			}
+			else {
+				p._prev_delta_time = 0;
+				p._delta_percent = 0;
+			}
+
+
 			p._delta_transform = p._transform - p._prev_transform;
-			p._delta_transform *= p._delta_percent;
-			p._prev_transform += p._delta_transform;
+
+			p._delta_transform = p._delta_transform * p._delta_percent;
+
+			p._prev_transform = p._prev_transform + p._delta_transform;
+			//ÃßÈÄ Àû¿ë ÇÊ¿ä
+			//p._prev_degree = p._prev_degree + (p._prev_degree - p._degree) * p._delta_percent;
+			p._prev_degree = p._degree;
 		}
 	}
 	{
 		float dt = timerPtr->_deltaTime;
 		boss_obj._delta_percent = dt / boss_obj._prev_delta_time;
-		boss_obj._prev_delta_time -= dt;
+
+		if (boss_obj._prev_delta_time > 0) {
+			boss_obj._prev_delta_time -= dt;
+		}
+		else {
+			boss_obj._prev_delta_time = 0;
+			boss_obj._delta_percent = 0;
+		}
+
+
 		boss_obj._delta_transform = boss_obj._transform - boss_obj._prev_transform;
-		boss_obj._delta_transform *= boss_obj._delta_percent;
-		boss_obj._prev_transform += boss_obj._delta_transform;
+
+		boss_obj._delta_transform = boss_obj._delta_transform * boss_obj._delta_percent;
+
+		boss_obj._prev_transform = boss_obj._prev_transform + boss_obj._delta_transform;
+		//ÃßÈÄ Àû¿ë ÇÊ¿ä
+		//boss_obj._prev_degree = boss_obj._prev_degree + (boss_obj._prev_degree - boss_obj._degree) * boss_obj._delta_percent;
+		boss_obj._prev_degree = boss_obj._degree;
 	}
 }
 
@@ -583,7 +614,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -641,7 +672,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -697,7 +728,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixRotationY(playerArr[i]._prev_degree* XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -752,7 +783,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixRotationY(playerArr[i]._prev_degree* XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -807,7 +838,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixRotationY(playerArr[i]._prev_degree* XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -847,8 +878,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(npcArr[i]._degree * XM_PI / 180.f -  XM_PI / 2.f)
-					* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y, npcArr[i]._transform.z));
+					* XMMatrixRotationY(npcArr[i]._prev_degree* XM_PI / 180.f -  XM_PI / 2.f)
+					* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y, npcArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
@@ -882,10 +913,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	{
 		if (npcArr[i]._on == true && i != 9) {
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
-				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._transform.y + 1.f),
-					sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._transform.z, 2))))
-				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._transform.z))
-				* XMMatrixTranslation(npcArr[i]._transform.x, npcArr[i]._transform.y + 1.f, npcArr[i]._transform.z));
+				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._prev_transform.y + 1.f),
+					sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z, 2))))
+				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z))
+				* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y + 1.f, npcArr[i]._prev_transform.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			_transform.hp_bar_size = 2.f;
