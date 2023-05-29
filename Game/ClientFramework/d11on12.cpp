@@ -201,7 +201,7 @@ ID2D1Bitmap* d11on12::addResource(LPCWSTR path)
 
 
 	_v_Resource.push_back(tmp);
-	test = tmp;
+	
 
 	return tmp;
 }
@@ -211,7 +211,7 @@ void d11on12::RenderUI(int mCurrBackbufferIndex)
     D2D1_SIZE_F rtSize = m_d2dRenderTargets[mCurrBackbufferIndex]->GetSize();
     D2D1_RECT_F textRect = D2D1::RectF(0.0f, 0.0f, rtSize.width, rtSize.height);
 	D2D1_RECT_F image_rect = D2D1::RectF(0.0f, 0.0f, 100.f, 100.f);
-    static const WCHAR text[] = L"ÇØÄ¡¿ü³ª?";
+    
 
     m_d3d11On12Device->AcquireWrappedResources(m_wrappedBackBuffers[mCurrBackbufferIndex].GetAddressOf(), 1);
 
@@ -219,14 +219,9 @@ void d11on12::RenderUI(int mCurrBackbufferIndex)
     m_d2dDeviceContext->BeginDraw();
     m_d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 
-    //m_d2dDeviceContext->DrawTextW(text, _countof(text) - 1, mDWriteTextFormat.Get(), &textRect, mSolidColorBrush.Get());
-
+    
 	
-	m_d2dDeviceContext->DrawBitmap(test, image_rect);
-
-
 	
-
 
     
 
