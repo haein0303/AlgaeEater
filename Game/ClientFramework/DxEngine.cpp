@@ -445,45 +445,51 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 	//여기서 위해서 별도로 오퍼레이터 오버로딩 중이니 참고하셩
 	for (int i = 1; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on) {
-			playerArr[i]._delta_percent = timerPtr->_deltaTime / playerArr[i]._prev_delta_time;
-			playerArr[i]._prev_delta_time -= timerPtr->_deltaTime;
-			cout << "p._delta_percent :" << playerArr[i]._delta_percent << endl;
-			cout << "p._prev_delta_time :" << playerArr[i]._prev_delta_time << endl;
-
+			float dt = timerPtr->_deltaTime;
+			playerArr[i]._delta_percent = dt / playerArr[i]._prev_delta_time;
+			
+			if (playerArr[i]._prev_delta_time > 0) {
+				playerArr[i]._prev_delta_time -= dt;
+			}
+			else {
+				playerArr[i]._prev_delta_time = 0;
+				playerArr[i]._delta_percent = 0;
+			}
+			
+			
 			playerArr[i]._delta_transform = playerArr[i]._transform - playerArr[i]._prev_transform;
-			cout << i << "]1 :p._delta_transform :";
-			XMFLOAT4_print(playerArr[i]._delta_transform);
-			playerArr[i]._delta_transform *= playerArr[i]._delta_percent;
-			cout << "\n2 :p._delta_transform :";
-			XMFLOAT4_print(playerArr[i]._delta_transform);
-			cout << endl;
-			playerArr[i]._prev_transform += playerArr[i]._delta_transform;
+			
+			playerArr[i]._delta_transform = playerArr[i]._delta_transform * playerArr[i]._delta_percent;
+			
+			playerArr[i]._prev_transform = playerArr[i]._prev_transform + playerArr[i]._delta_transform;
 		}
 
 	}
 	for (OBJECT& p : npcArr) {
 		if (p._on) {
-			p._delta_percent = timerPtr->_deltaTime / p._prev_delta_time;
-			p._prev_delta_time -= timerPtr->_deltaTime;
+			float dt = timerPtr->_deltaTime;
+			p._delta_percent = dt / p._prev_delta_time;
+			p._prev_delta_time -= dt;
 			p._delta_transform = p._transform - p._prev_transform;
 			p._delta_transform *= p._delta_percent;
 			p._prev_transform += p._delta_transform;
 		}
 	}
-
-	boss_obj._delta_percent = timerPtr->_deltaTime / boss_obj._prev_delta_time;
-	boss_obj._prev_delta_time -= timerPtr->_deltaTime;
-	boss_obj._delta_transform = boss_obj._transform - boss_obj._prev_transform;
-	boss_obj._delta_transform *= boss_obj._delta_percent;
-	boss_obj._prev_transform += boss_obj._delta_transform;
-
+	{
+		float dt = timerPtr->_deltaTime;
+		boss_obj._delta_percent = dt / boss_obj._prev_delta_time;
+		boss_obj._prev_delta_time -= dt;
+		boss_obj._delta_transform = boss_obj._transform - boss_obj._prev_transform;
+		boss_obj._delta_transform *= boss_obj._delta_percent;
+		boss_obj._prev_transform += boss_obj._delta_transform;
+	}
 }
 
 
 
 void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 {
-	::WaitForSingleObject(_renderEvent, INFINITE);
+	
 	ComPtr<ID3D12CommandAllocator>		cmdAlloc = cmdQueuePtr->_arr_cmdAlloc[i_now_render_index];
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
 

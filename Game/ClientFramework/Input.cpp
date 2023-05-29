@@ -226,7 +226,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 				counter_toggle++;
 			}
 			
-			if (counter_toggle > 3) {
+			if (counter_toggle > 10) {
 				if (send_toggle) {
 					send_toggle != send_toggle;
 					return;

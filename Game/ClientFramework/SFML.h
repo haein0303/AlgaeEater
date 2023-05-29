@@ -203,6 +203,7 @@ public:
 					playerArr[id]._degree = my_packet->degree;
 					playerArr[id]._animation_state = my_packet->char_state;
 
+					
 					if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
 						playerArr[id]._animation_time_pos = 0.f;
 						playerArr[id]._animation_state0 = playerArr[id]._animation_state;

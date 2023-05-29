@@ -299,14 +299,21 @@ inline XMFLOAT4 operator-(const XMFLOAT4& a, const XMFLOAT4& b) {
 	return XMFLOAT4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
 }
 
+
 inline XMFLOAT4 operator+=(const XMFLOAT4& a, const XMFLOAT4& b) {
+	return XMFLOAT4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+}
+
+inline XMFLOAT4 operator+(const XMFLOAT4& a, const XMFLOAT4& b) {
 	return XMFLOAT4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
 }
 
 inline XMFLOAT4 operator*=(const XMFLOAT4& a, const float& b) {
 	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
 }
-
+inline XMFLOAT4 operator*(const XMFLOAT4& a, const float& b) {
+	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
+}
 inline void XMFLOAT4_print(const XMFLOAT4& a) {
 	cout << "[X : " << a.x << " Y :" << a.y << " Z : " << a.z << " W : " << a.w << "]";
 }

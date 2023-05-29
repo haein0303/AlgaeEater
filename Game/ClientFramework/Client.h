@@ -109,7 +109,8 @@ public:
 			_render_thread_num = 0;
 		}
 		while (g_isLive) {
-			
+			::WaitForSingleObject(dxEngine._renderEvent, INFINITE);
+
 			dxEngine.timerPtr->TimerUpdate();
 			
 
