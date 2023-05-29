@@ -461,19 +461,32 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 	//보간을 위해서 타이머랑 각종 값들 세팅하는 영역
 	//여기서 위해서 별도로 오퍼레이터 오버로딩 중이니 참고하셩
-	for (OBJECT& p : playerArr) {
-		p._delta_percent = timerPtr->_deltaTime / p._prev_delta_time;
-		p._prev_delta_time -= timerPtr->_deltaTime;
-		p._delta_transform = p._transform - p._prev_transform;
-		p._delta_transform *= p._delta_percent;
-		p._prev_transform += p._delta_transform;
+	for (int i = 1; i < PLAYERMAX;++i) {
+		if (playerArr[i]._on) {
+			playerArr[i]._delta_percent = timerPtr->_deltaTime / playerArr[i]._prev_delta_time;
+			playerArr[i]._prev_delta_time -= timerPtr->_deltaTime;
+			cout << "p._delta_percent :" << playerArr[i]._delta_percent << endl;
+			cout << "p._prev_delta_time :" << playerArr[i]._prev_delta_time << endl;
+
+			playerArr[i]._delta_transform = playerArr[i]._transform - playerArr[i]._prev_transform;
+			cout << i <<"]1 :p._delta_transform :";
+			XMFLOAT4_print(playerArr[i]._delta_transform);
+			playerArr[i]._delta_transform *= playerArr[i]._delta_percent;
+			cout << "\n2 :p._delta_transform :";
+			XMFLOAT4_print(playerArr[i]._delta_transform);
+			cout << endl;
+			playerArr[i]._prev_transform += playerArr[i]._delta_transform;
+		}
+		
 	}
 	for (OBJECT& p : npcArr) {
-		p._delta_percent = timerPtr->_deltaTime / p._prev_delta_time;
-		p._prev_delta_time -= timerPtr->_deltaTime;
-		p._delta_transform = p._transform - p._prev_transform;
-		p._delta_transform *= p._delta_percent;
-		p._prev_transform += p._delta_transform;
+		if (p._on) {
+			p._delta_percent = timerPtr->_deltaTime / p._prev_delta_time;
+			p._prev_delta_time -= timerPtr->_deltaTime;
+			p._delta_transform = p._transform - p._prev_transform;
+			p._delta_transform *= p._delta_percent;
+			p._prev_transform += p._delta_transform;
+		}
 	}
 
 	boss_obj._delta_percent = timerPtr->_deltaTime / boss_obj._prev_delta_time;
