@@ -52,11 +52,11 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::late_Init(WindowInfo windowInfo)
 {
-	cube_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr,cmdQueuePtr,rootSignaturePtr,dsvPtr);
+	/*cube_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	cube_asset.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
 	cube_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 	cube_asset.Make_SRV();
-	cube_asset.CreatePSO(L"..\\Color.hlsl");
+	cube_asset.CreatePSO(L"..\\Color.hlsl");*/
 
 	map_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	map_asset.Init("../Resources/Stage1_Wall_Test.txt", ObjectType::GeneralObjects);
@@ -168,11 +168,26 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
 
-	test_pillar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	test_pillar.Init("../Resources/pillar1.txt", ObjectType::VertexAnimationObjects);
-	test_pillar.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-	test_pillar.Make_SRV();
-	test_pillar.CreatePSO(L"..\\Bricks.hlsl");
+	char a[] = "../Resources/pillar0.txt";
+	for (int i = 0; i < 10; ++i)
+	{
+		test_pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		test_pillar[i].Init(a, ObjectType::VertexAnimationObjects);
+		test_pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+		test_pillar[i].Make_SRV();
+		test_pillar[i].CreatePSO(L"..\\Bricks.hlsl");
+		++a[19];
+	}
+	char b[] = "../Resources/pillar10.txt";
+	for (int i = 10; i < 20; ++i)
+	{
+		test_pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		test_pillar[i].Init(b, ObjectType::VertexAnimationObjects);
+		test_pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+		test_pillar[i].Make_SRV();
+		test_pillar[i].CreatePSO(L"..\\Bricks.hlsl");
+		++b[20];
+	}
 
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
@@ -188,8 +203,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	}
 	boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 	boss_obj._transform.y += 1.f;
-
-	test_pillar_data._final_transforms.resize(1);
 
 	key_data[0]._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
 	key_data[0]._key = 0;
@@ -208,7 +221,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr,boss_obj,key_data);
+	networkPtr->ReceiveServer(playerArr, npcArr, cubeArr, boss_obj, key_data);
 
 	//º¸°£À» À§ÇØ¼­ »ç¿ëÇÏ´Â ÃÊ±â ¼¼ÆÃÀÌ¶õ´Ù
 	for (OBJECT& p : playerArr) {
@@ -391,7 +404,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				playerArr[networkPtr->myClientId]._can_attack3 = false;
 				--cubeArr[4]._pillar_count;
-				cout << cubeArr[4]._pillar_count << endl;
+				cout << "pillar : " << cubeArr[4]._pillar_count << endl;
 			}
 		}
 	}
@@ -915,7 +928,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 	}
 
-	cmdList->SetPipelineState(cube_asset._pipelineState.Get());	
+	/*cmdList->SetPipelineState(cube_asset._pipelineState.Get());
 	cmdList->IASetVertexBuffers(0, 1, &cube_asset._vertexBufferView);
 	cmdList->IASetIndexBuffer(&cube_asset._indexBufferView);
 	for (int i = 0; i < CubeMax; ++i) //ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
@@ -950,7 +963,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 			cmdList->DrawIndexedInstanced(cube_asset._indexCount, 1, 0, 0, 0);
 		}
-	}
+	}*/
 
 	// map
 	switch (Scene_num) {
@@ -1004,30 +1017,58 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	}
 
 	// test_pillar
-	XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-	XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-	test_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, test_pillar_data, P, Q);
+	for (int i = 0; i < CubeMax; ++i)
 	{
-		float scale = 1.f;
+		if (cubeArr[i]._on == true)
+		{
+			XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+			XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+			switch (cubeArr[i]._pillar_count)
+			{
+			case 5:
+				cubeArr[i]._animation_time_pos = 0.f;
+				break;
+			case 4:
+				cubeArr[i]._animation_time_pos = 0.034f;
+				break;
+			case 3:
+				cubeArr[i]._animation_time_pos = 0.68f;
+				break;
+			case 2:
+				cubeArr[i]._animation_time_pos = 0.102f;
+				break;
+			case 1:
+				cubeArr[i]._animation_time_pos = 0.136f;
+				break;
+			default:
+				cubeArr[i]._animation_time_pos += timerPtr->_deltaTime;
+				break;
+			}
+			for (MESH_ASSET& pillar : test_pillar)
+			{
+				float scale = 1.f;
 
-		cmdList->SetPipelineState(test_pillar._pipelineState.Get());
-		cmdList->IASetVertexBuffers(0, 1, &test_pillar._vertexBufferView);
-		cmdList->IASetIndexBuffer(&test_pillar._indexBufferView);
+				pillar.UpdateVertexAnimation(timerPtr->_deltaTime, cubeArr[i], P, Q);
 
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
-			* XMMatrixRotationX(-XM_PI / 2.f)
-			* XMMatrixRotationQuaternion(Q)
-			* XMMatrixTranslation(P.m128_f32[0], P.m128_f32[1], P.m128_f32[2]));
-		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+				cmdList->SetPipelineState(pillar._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &pillar._vertexBufferView);
+				cmdList->IASetIndexBuffer(&pillar._indexBufferView);
 
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-		test_pillar._tex._srvHandle = test_pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-		descHeapPtr->CopyDescriptor(test_pillar._tex._srvHandle, 5, devicePtr);
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
+					* XMMatrixRotationQuaternion(Q)
+					* XMMatrixTranslation(cubeArr[i]._transform.x + P.m128_f32[0], cubeArr[i]._transform.y + P.m128_f32[1], cubeArr[i]._transform.z + P.m128_f32[2]));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-		cmdList->DrawIndexedInstanced(test_pillar._indexCount, 1, 0, 0, 0);
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				pillar._tex._srvHandle = pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(pillar._tex._srvHandle, 5, devicePtr);
+
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(pillar._indexCount, 1, 0, 0, 0);
+			}
+		}
 	}
 
 	// skybox

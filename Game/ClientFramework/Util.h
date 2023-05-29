@@ -21,6 +21,7 @@
 #include <fstream>
 #include <iostream>
 #include <pix.h>
+#include <array>
 
 #include <string>
 #include <shellapi.h>

@@ -46,8 +46,6 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 
 void AnimationObject::UpdateVertexAnimation(float dt, OBJECT& obj, XMVECTOR& P, XMVECTOR& Q)
 {
-	obj._animation_time_pos += dt;
-
 	// 애니메이션이 끝나면 애니메이션 루프
 	if ((obj._animation_state == 0) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state)) {
 		obj._animation_time_pos = 0.f;
