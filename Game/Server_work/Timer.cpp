@@ -167,6 +167,33 @@ void do_timer()
 					break;
 				}
 				clients[ev.object_id]._sl.unlock();
+
+				clients[ev.target_id]._sl.lock();
+				if (clients[ev.target_id]._s_state == ST_FREE) {
+					clients[ev.target_id]._sl.unlock();
+					int dead_player = ev.target_id;
+					for (auto& pl : clients[ev.target_id].room_list) {
+						if (pl < MAX_USER) {
+							clients[pl]._sl.lock();
+							if (clients[pl]._s_state == ST_INGAME)
+							{
+								clients[pl]._sl.unlock();
+								cout << "º¯°æ" << endl;
+								ev.target_id = pl;
+								break;
+							}
+						}
+					}
+					if (dead_player == ev.target_id) {
+						clients[ev.object_id].char_state = AN_DEAD;
+						ex_over->_comp_type = OP_SET_NPC;
+						ex_over->target_id = ev.target_id;
+						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
+						break;
+					}
+				}
+				clients[ev.target_id]._sl.unlock();
+
 				if (clients[ev.object_id].hp <= 50) {
 
 					for (auto& pl : clients[ev.object_id].room_list) {

@@ -258,6 +258,7 @@ void process_packet(int c_id, char* packet)
 
 void disconnect(int c_id)
 {
+	cout << "disconnect" << endl;
 	clients[c_id]._sl.lock();
 	if (clients[c_id]._s_state == ST_FREE) {
 		clients[c_id]._sl.unlock();
@@ -265,6 +266,7 @@ void disconnect(int c_id)
 	}
 	closesocket(clients[c_id]._socket);
 	clients[c_id]._s_state = ST_FREE;
+	clients[c_id]._sl.unlock();
 
 	if (clients[c_id].room_list.size() != 0) {
 		for (auto& pl : clients[c_id].room_list) {
@@ -286,7 +288,6 @@ void disconnect(int c_id)
 			clients[pl].room_list.erase(c_id);
 		}
 	}
-	clients[c_id]._sl.unlock();
 }
 
 void do_worker()
