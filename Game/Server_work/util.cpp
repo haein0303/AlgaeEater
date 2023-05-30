@@ -212,6 +212,19 @@ void process_packet(int c_id, char* packet)
 		}
 		break;
 	}
+	case CS_OBJECT_COLLISION: {
+		CS_OBJECT_COLLISION_PACKET* p = reinterpret_cast<CS_OBJECT_COLLISION_PACKET*>(packet);
+		switch (p->object_type)
+		{
+		case 0:
+			break;
+		case 1:
+			break;
+		default:
+			break;
+		}
+		break;
+	}
 	case SS_CONNECT_SERVER: {
 		cout << "SS_CONNECT_SERVER 로비 서버 커넥트" << endl;
 		SS_CONNECT_SERVER_PACKET* p = reinterpret_cast<SS_CONNECT_SERVER_PACKET*>(packet);

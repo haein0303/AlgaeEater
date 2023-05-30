@@ -96,12 +96,12 @@ struct CS_KEY_PACKET {
 	int		key_id;
 };
 
-struct CS_OBJECT_COLLISION {
+struct CS_OBJECT_COLLISION_PACKET {
 	unsigned char size;
 	char	type;
-	char	attack_type;
 	int		attacker_id;
 	int		target_id;
+	int		object_type; // 0은 큐브 1은 장판
 };
 
 struct SC_LOGIN_OK_PACKET {
