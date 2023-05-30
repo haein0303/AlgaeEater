@@ -23,6 +23,8 @@ SESSION::SESSION()
 	color = 0;
 	stack = 0;
 	eye_color = 0;
+	first_pattern = false;
+	second_pattern = false;
 	_object_type = TY_PLAYER;
 	Lua_on = false;
 }
