@@ -34,6 +34,8 @@ void initialize_npc()
 		clients[i].Lua_on = false;
 		clients[i].stage = 0;
 		clients[i].turn = 0;
+		clients[i].first_pattern = false;
+		clients[i].second_pattern = false;
 		clients[i].room_list.clear();
 		clients[i].object_list.clear();
 

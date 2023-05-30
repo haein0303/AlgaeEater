@@ -194,8 +194,7 @@ void do_timer()
 				}
 				clients[ev.target_id]._sl.unlock();
 
-				if (clients[ev.object_id].hp <= 50) {
-
+				if (clients[ev.object_id].hp <= 50 && clients[ev.object_id].first_pattern == false) {
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl >= MAX_USER) continue;
 						clients[pl]._sl.lock();
@@ -209,8 +208,10 @@ void do_timer()
 
 						clients[pl].send_msg(msg);
 					}
+
 					add_timer(ev.object_id, 1000, EV_CK, ev.target_id);
 					add_timer(ev.object_id, 3000, EV_BOSS_CON, ev.target_id);
+					clients[ev.object_id].first_pattern = true;
 					break;
 				}
 

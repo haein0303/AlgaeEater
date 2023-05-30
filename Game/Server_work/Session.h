@@ -41,6 +41,10 @@ public:
 	unsigned int client_time;
 	SESSION_TYPE _object_type;
 
+	// 보스용 변수
+	bool first_pattern;		// 전멸기 수행 여부
+	bool second_pattern;
+
 	// 스테이지 1 변수
 	int color;
 	int eye_color;
