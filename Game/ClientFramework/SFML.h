@@ -129,6 +129,13 @@ public:
 				playerArr[user_accept_counter]._transform.y = my_packet->y;
 				playerArr[user_accept_counter]._transform.z = my_packet->z;
 				playerArr[user_accept_counter]._degree = my_packet->degree;
+
+				playerArr[user_accept_counter]._prev_degree = playerArr[user_accept_counter]._degree;
+				playerArr[user_accept_counter]._prev_transform = playerArr[user_accept_counter]._transform;
+				playerArr[user_accept_counter]._prev_delta_time = playerArr[user_accept_counter]._delta_time;
+				//델타타임은 초기화를 합시다.
+				playerArr[user_accept_counter]._delta_time = 0.f;
+
 				user_accept_counter++;
 			}
 			else
@@ -141,6 +148,13 @@ public:
 				npcArr[npc_accept_counter]._transform.y = my_packet->y;
 				npcArr[npc_accept_counter]._transform.z = my_packet->z;
 				npcArr[npc_accept_counter]._degree = my_packet->degree;
+
+				npcArr[npc_accept_counter]._prev_degree = npcArr[npc_accept_counter]._degree;
+				npcArr[npc_accept_counter]._prev_transform = npcArr[npc_accept_counter]._transform;
+				npcArr[npc_accept_counter]._prev_delta_time = npcArr[npc_accept_counter]._delta_time;
+				//델타타임은 초기화를 합시다.
+				npcArr[npc_accept_counter]._delta_time = 0.f;
+
 				npc_accept_counter++;
 			}
 
@@ -158,6 +172,14 @@ public:
 			boss_obj._degree = my_packet->degree;
 			boss_obj._hp = my_packet->hp;
 			boss_obj._animation_state = my_packet->char_state;
+
+			boss_obj._prev_degree = boss_obj._degree;
+			boss_obj._prev_transform = boss_obj._transform;
+			boss_obj._prev_delta_time = boss_obj._delta_time;
+			//델타타임은 초기화를 합시다.
+			boss_obj._delta_time = 0.f;
+
+
 		}
 			
 			break;
