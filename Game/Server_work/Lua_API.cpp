@@ -146,9 +146,9 @@ void reset_lua(int c_id)
 void close_lua(int npc_id)
 {
 	cout << "아무도 없음" << endl;
-	lua_close(clients[npc_id].L);
 
 	for (int i = MAX_USER; i < MAX_USER + NPC_NUM; ++i) {
+		lua_close(clients[i].L);
 		clients[i]._s_state = ST_INGAME;
 		clients[i]._Room_Num = (i - MAX_USER) / ROOM_NPC;
 		clients[i].y = 0;

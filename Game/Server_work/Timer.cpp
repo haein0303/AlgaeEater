@@ -126,6 +126,7 @@ void do_timer()
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			case EV_NPC_CON:
+				cout << ev.target_id << endl;
 				clients[ev.object_id]._sl.lock();
 				if (clients[ev.object_id]._s_state == ST_FREE) {
 					clients[ev.object_id]._sl.unlock();

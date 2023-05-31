@@ -167,7 +167,6 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].char_state = p->char_state;
 		clients[c_id].client_time = p->client_time;
 
-		//cout << p->x << ", " << p->z << endl;
 		Update_Player(c_id);
 		break;
 	}
