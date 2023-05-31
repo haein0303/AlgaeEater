@@ -387,21 +387,23 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	// 기둥 충돌처리
-	if (playerArr[networkPtr->myClientId]._on == true && pillars_data[4]._on == true)
-	{
-		if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[4]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[4]._transform.z, 2) <= 9.f
-			&& pillars_data[4]._pillar_color == playerArr[networkPtr->myClientId]._player_color)
+	for (int i = 0; i < CubeMax; ++i) {
+		if (playerArr[networkPtr->myClientId]._on == true && pillars_data[i]._on == true)
 		{
-			if ((playerArr[networkPtr->myClientId]._animation_state == 2 || playerArr[networkPtr->myClientId]._animation_state == 3)
-				&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
-				&& playerArr[networkPtr->myClientId]._can_attack3)
+			if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f
+				&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color)
 			{
-				playerArr[networkPtr->myClientId]._can_attack3 = false;
-				--pillars_data[4]._pillar_count;
-				cout << "pillar : " << pillars_data[4]._pillar_count << endl;
+				if ((playerArr[networkPtr->myClientId]._animation_state == 2 || playerArr[networkPtr->myClientId]._animation_state == 3)
+					&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
+					&& playerArr[networkPtr->myClientId]._can_attack3)
+				{
+					playerArr[networkPtr->myClientId]._can_attack3 = false;
+					--pillars_data[i]._pillar_count;
+					cout << "pillar : " << pillars_data[i]._pillar_count << endl;
+				}
 			}
 		}
-	}
+	}	
 
 	
 	if (playerArr[networkPtr->myClientId]._hp <= 0.f) {
@@ -1036,16 +1038,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				pillars_data[i]._animation_time_pos = 0.f;
 				break;
 			case 4:
-				pillars_data[i]._animation_time_pos = 0.034f;
+				pillars_data[i]._animation_time_pos = 0.025f;
 				break;
 			case 3:
-				pillars_data[i]._animation_time_pos = 0.068f;
+				pillars_data[i]._animation_time_pos = 0.050f;
 				break;
 			case 2:
-				pillars_data[i]._animation_time_pos = 0.102f;
+				pillars_data[i]._animation_time_pos = 0.075f;
 				break;
 			case 1:
-				pillars_data[i]._animation_time_pos = 0.136f;
+				pillars_data[i]._animation_time_pos = 0.100f;
 				break;
 			default:
 				pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;

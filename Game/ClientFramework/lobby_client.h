@@ -12,7 +12,7 @@ public:
 	wchar_t _state_msg[4][100];
 	int _ready_state = 3;
 	
-	int _scene_select = 0;
+	int _scene_select = 1;
 
 
 	HWND init(HINSTANCE hInst, int nCmdShow);
