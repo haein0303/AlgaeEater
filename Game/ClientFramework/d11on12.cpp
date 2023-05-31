@@ -162,6 +162,18 @@ void d11on12::LoadPipeline()
 
     mDWriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     mDWriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
+	m_dWriteFactory->CreateTextFormat(L"Verdana", nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		25, L"ko-kr", m_boss_font.GetAddressOf());
+	m_boss_font->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
+	m_boss_font->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+
+	
+	
+	
+	
+
 }
 
 ID2D1Bitmap* d11on12::addResource(LPCWSTR path)
@@ -239,7 +251,7 @@ void d11on12::draw_UI(const UI_ASSET& draw)
 	m_d2dDeviceContext->DrawBitmap(draw._image, draw._rect);
 }
 
-void d11on12::draw_text(const WCHAR text[], D2D1_RECT_F rect)
+void d11on12::draw_text(LPCWSTR text, D2D1_RECT_F rect)
 {
 	m_d2dDeviceContext->DrawTextW(text, wcslen(text), mDWriteTextFormat.Get(), &rect, mSolidColorBrush.Get());
 }
@@ -250,5 +262,10 @@ void d11on12::ExcuteUI(int mCurrBackbufferIndex)
 
 	m_d3d11On12Device->ReleaseWrappedResources(m_wrappedBackBuffers[mCurrBackbufferIndex].GetAddressOf(), 1);
 	m_d3d11DeviceContext->Flush();
+}
+
+void d11on12::draw_boss_info(int num, float hp)
+{
+
 }
 

@@ -21,6 +21,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	descHeapPtr->CreateDescTable(CONSTANT_COUNT, devicePtr);
 	
 	d11Ptr->init(this, windowInfo);
+	d11Ptr->LoadPipeline();
 
 	cout << "complite Init ptr" << endl;
 
@@ -46,6 +47,8 @@ void DxEngine::Init(WindowInfo windowInfo)
 		p._logicTimerPtr = logicTimerPtr;
 	}
 	boss_obj._logicTimerPtr = logicTimerPtr;
+
+	
 
 	cout << "complite all init" << endl;
 }
@@ -202,7 +205,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	key_data[0]._key = 0;
 	key_data[0]._on = true;
 
-	d11Ptr->LoadPipeline();
+	
 	d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
 	ID2D1Bitmap* _i_tmp;
@@ -211,6 +214,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	_test_ui_vector.emplace_back(_i_tmp,_tmp);
 
 	cout << "complite late init" << endl;
+	_is_loading = true;
 }
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
@@ -443,6 +447,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 {
+	if (_is_loading) {
+
+	
 	//∫∏∞£¿ª ¿ß«ÿº≠ ≈∏¿Ã∏”∂˚ ∞¢¡æ ∞™µÈ ºº∆√«œ¥¬ øµø™
 	//ø©±‚º≠ ¿ß«ÿº≠ ∫∞µµ∑Œ ø¿∆€∑π¿Ã≈Õ ø¿πˆ∑Œµ˘ ¡ﬂ¿Ã¥œ ¬¸∞Ì«œºÕ
 	for (int i = 1; i < PLAYERMAX; ++i) {
@@ -516,6 +523,7 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 		//boss_obj._prev_degree = boss_obj._prev_degree + (boss_obj._prev_degree - boss_obj._degree) * boss_obj._delta_percent;
 		boss_obj._prev_degree = boss_obj._degree;
 	}
+	}
 }
 
 
@@ -525,99 +533,68 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	
 	ComPtr<ID3D12CommandAllocator>		cmdAlloc = cmdQueuePtr->_arr_cmdAlloc[i_now_render_index];
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
-
 	
 
-	//ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩ
-	for (int i = 0; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._on == true) {
-			player_AKI_Body_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 0);
-			player_AKI_Sword_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 1);
-		}
-	}
-	for (int i = 0; i < NPCMAX; ++i) {
-		if (npcArr[i]._on == true && i != 9) {
-			npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0);
-		}
-	}
-
-	cmdAlloc->Reset();
-	cmdList->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
-
-	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	cmdList->ResourceBarrier(1, &barrier);
-
-	cmdList->RSSetViewports(1, &_viewport);
-	cmdList->RSSetScissorRects(1, &_scissorRect);
-
-
-	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = rtvPtr->_rtvHandle[i_now_render_index];
-
-	cmdList->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
-	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dsvPtr->_dsvHandle;
-	cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
-
-
-	cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	cmdList->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
-	constantBufferPtr->_currentIndex = 0;
-	descHeapPtr->_currentGroupIndex = 0;
-
-	ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
-	cmdList->SetDescriptorHeaps(1, &descHeap);
-
-#pragma region Player
-	cmdList->SetPipelineState(player_AKI_Body_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Body_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&player_AKI_Body_asset._indexBufferView);
-
-	//ÔøΩÔøΩÔøΩÔøΩ
-	{
-		int i = 0;
+	if (_is_loading) {
+		//ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩ
+		for (int i = 0; i < PLAYERMAX; ++i)
 		{
-			//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ»Ø
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
-				* XMMatrixRotationX(-XM_PI / 2.f)
-				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			// ÔøΩÔøΩ≈∞ÔøΩÔøΩ ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩ ÔøΩÔøΩÔø? ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
-			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
-
-			//ÔøΩÔøΩÔøΩÔøΩ
-			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				player_AKI_Body_asset._tex._srvHandle = player_AKI_Body_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(player_AKI_Body_asset._tex._srvHandle, 5, devicePtr);
+			if (playerArr[i]._on == true) {
+				player_AKI_Body_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 0);
+				player_AKI_Sword_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 1);
 			}
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(player_AKI_Body_asset._indexCount, 1, 0, 0, 0);
 		}
+		for (int i = 0; i < NPCMAX; ++i) {
+			if (npcArr[i]._on == true && i != 9) {
+				npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0);
+			}
+		}
+
 	}
+		cmdAlloc->Reset();
+		cmdList->Reset(cmdQueuePtr->_arr_cmdAlloc[i_now_render_index].Get(), nullptr);
+
+		D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+		cmdList->ResourceBarrier(1, &barrier);
+
+		cmdList->RSSetViewports(1, &_viewport);
+		cmdList->RSSetScissorRects(1, &_scissorRect);
 
 
-	for (int i = 1; i < PLAYERMAX; ++i) //ÔøΩ√∑ÔøΩÔøΩÃæÔøΩ ÔøΩÔøΩÔøΩÔøΩ
-	{
-		if (playerArr[i]._on == true)
+		D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = rtvPtr->_rtvHandle[i_now_render_index];
+
+		cmdList->ClearRenderTargetView(backBufferView, Colors::Lavender, 0, nullptr);
+		D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dsvPtr->_dsvHandle;
+		cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
+
+
+		cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		cmdList->SetGraphicsRootSignature(rootSignaturePtr->_signature.Get());
+		constantBufferPtr->_currentIndex = 0;
+		descHeapPtr->_currentGroupIndex = 0;
+
+		ID3D12DescriptorHeap* descHeap = descHeapPtr->_descHeap.Get();
+		cmdList->SetDescriptorHeaps(1, &descHeap);
+	if (_is_loading) {
+	
+#pragma region Player
+		cmdList->SetPipelineState(player_AKI_Body_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &player_AKI_Body_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&player_AKI_Body_asset._indexBufferView);
+	
+		//ÔøΩÔøΩÔøΩÔøΩ
 		{
-			//ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ : ÔøΩœπÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ÷∂ÔøΩ ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩÔøΩÃ∂ÔøΩ ÔøΩﬁ∂ÔøΩ ÔøΩ◊∑ÔøΩ
-			//ÔøΩÔøΩÔøΩ¬∞ÔøΩ ÔøΩŸ≤ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ∆Æ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ∆ÆÔøΩÔøΩ ÔøΩ“∑ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ÷¥¬∞ÔøΩ
-			//ÔøΩÃ∞ÔøΩ ÔøΩÔøΩƒ• ÔøΩÔøΩ ÔøΩ÷¥ÔøΩ ÔøΩ€æÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ?			
+			int i = 0;
 			{
 				//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ»Ø
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -636,46 +613,53 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->DrawIndexedInstanced(player_AKI_Body_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}
-	//
-	cmdList->SetPipelineState(player_AKI_Astro_A_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Astro_A_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&player_AKI_Astro_A_asset._indexBufferView);
 
-	{
-		int i = 0;
+
+		for (int i = 1; i < PLAYERMAX; ++i) //ÔøΩ√∑ÔøΩÔøΩÃæÔøΩ ÔøΩÔøΩÔøΩÔøΩ
+		{
+			if (playerArr[i]._on == true)
+			{
+				//ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ : ÔøΩœπÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ÷∂ÔøΩ ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩÔøΩÃ∂ÔøΩ ÔøΩﬁ∂ÔøΩ ÔøΩ◊∑ÔøΩ
+				//ÔøΩÔøΩÔøΩ¬∞ÔøΩ ÔøΩŸ≤ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ∆Æ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ∆ÆÔøΩÔøΩ ÔøΩ“∑ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ÷¥¬∞ÔøΩ
+				//ÔøΩÃ∞ÔøΩ ÔøΩÔøΩƒ• ÔøΩÔøΩ ÔøΩ÷¥ÔøΩ ÔøΩ€æÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ?			
+				{
+					//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ»Ø
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+						* XMMatrixRotationX(-XM_PI / 2.f)
+						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
+						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					// ÔøΩÔøΩ≈∞ÔøΩÔøΩ ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩ ÔøΩÔøΩÔø? ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
+					copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+					//ÔøΩÔøΩÔøΩÔøΩ
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						player_AKI_Body_asset._tex._srvHandle = player_AKI_Body_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+						descHeapPtr->CopyDescriptor(player_AKI_Body_asset._tex._srvHandle, 5, devicePtr);
+					}
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(player_AKI_Body_asset._indexCount, 1, 0, 0, 0);
+				}
+			}
+		}
+		//
+		cmdList->SetPipelineState(player_AKI_Astro_A_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &player_AKI_Astro_A_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&player_AKI_Astro_A_asset._indexBufferView);
 
 		{
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
-				* XMMatrixRotationX(-XM_PI / 2.f)
-				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+			int i = 0;
 
-			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
-
-			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				player_AKI_Astro_A_asset._tex._srvHandle = player_AKI_Astro_A_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(player_AKI_Astro_A_asset._tex._srvHandle, 5, devicePtr);
-			}
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(player_AKI_Astro_A_asset._indexCount, 1, 0, 0, 0);
-		}
-	}
-
-	for (int i = 1; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._on == true)
-		{	
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -692,46 +676,46 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->DrawIndexedInstanced(player_AKI_Astro_A_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}
-	// 
-	cmdList->SetPipelineState(player_AKI_Hair_A_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Hair_A_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&player_AKI_Hair_A_asset._indexBufferView);
 
-	{
-		int i = 0;
-
+		for (int i = 1; i < PLAYERMAX; ++i)
 		{
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
-				* XMMatrixRotationX(-XM_PI / 2.f)
-				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
-
+			if (playerArr[i]._on == true)
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				player_AKI_Hair_A_asset._tex._srvHandle = player_AKI_Hair_A_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(player_AKI_Hair_A_asset._tex._srvHandle, 5, devicePtr);
+				{
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+						* XMMatrixRotationX(-XM_PI / 2.f)
+						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
+						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						player_AKI_Astro_A_asset._tex._srvHandle = player_AKI_Astro_A_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+						descHeapPtr->CopyDescriptor(player_AKI_Astro_A_asset._tex._srvHandle, 5, devicePtr);
+					}
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(player_AKI_Astro_A_asset._indexCount, 1, 0, 0, 0);
+				}
 			}
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(player_AKI_Hair_A_asset._indexCount, 1, 0, 0, 0);
 		}
+		// 
+		cmdList->SetPipelineState(player_AKI_Hair_A_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &player_AKI_Hair_A_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&player_AKI_Hair_A_asset._indexBufferView);
 
-	}
-	for (int i = 1; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._on == true)
 		{
+			int i = 0;
+
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._prev_degree* XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -747,46 +731,47 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 				cmdList->DrawIndexedInstanced(player_AKI_Hair_A_asset._indexCount, 1, 0, 0, 0);
 			}
+
 		}
-	}
-	// 
-	cmdList->SetPipelineState(player_AKI_HeadPhone_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &player_AKI_HeadPhone_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&player_AKI_HeadPhone_asset._indexBufferView);
-
-	{
-		int i = 0;
-
+		for (int i = 1; i < PLAYERMAX; ++i)
 		{
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
-				* XMMatrixRotationX(-XM_PI / 2.f)
-				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
-
+			if (playerArr[i]._on == true)
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				player_AKI_HeadPhone_asset._tex._srvHandle = player_AKI_HeadPhone_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(player_AKI_HeadPhone_asset._tex._srvHandle, 5, devicePtr);
-			}
+				{
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+						* XMMatrixRotationX(-XM_PI / 2.f)
+						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
+						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(player_AKI_HeadPhone_asset._indexCount, 1, 0, 0, 0);
+					copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						player_AKI_Hair_A_asset._tex._srvHandle = player_AKI_Hair_A_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+						descHeapPtr->CopyDescriptor(player_AKI_Hair_A_asset._tex._srvHandle, 5, devicePtr);
+					}
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(player_AKI_Hair_A_asset._indexCount, 1, 0, 0, 0);
+				}
+			}
 		}
-	}
-	for (int i = 1; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._on == true)
+		// 
+		cmdList->SetPipelineState(player_AKI_HeadPhone_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &player_AKI_HeadPhone_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&player_AKI_HeadPhone_asset._indexBufferView);
+
 		{
+			int i = 0;
+
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._prev_degree* XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -803,45 +788,44 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->DrawIndexedInstanced(player_AKI_HeadPhone_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}
-	// 
-	cmdList->SetPipelineState(player_AKI_Sword_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &player_AKI_Sword_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&player_AKI_Sword_asset._indexBufferView);
-
-	{
-		int i = 0;
+		for (int i = 1; i < PLAYERMAX; ++i)
 		{
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
-				* XMMatrixRotationX(-XM_PI / 2.f)
-				* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
-				* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			copy(begin(playerArr[i]._weapon_final_transforms), end(playerArr[i]._weapon_final_transforms), &_transform.BoneTransforms[0]);
-
+			if (playerArr[i]._on == true)
 			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				player_AKI_Sword_asset._tex._srvHandle = player_AKI_Sword_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(player_AKI_Sword_asset._tex._srvHandle, 5, devicePtr);
+				{
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+						* XMMatrixRotationX(-XM_PI / 2.f)
+						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
+						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						player_AKI_HeadPhone_asset._tex._srvHandle = player_AKI_HeadPhone_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+						descHeapPtr->CopyDescriptor(player_AKI_HeadPhone_asset._tex._srvHandle, 5, devicePtr);
+					}
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(player_AKI_HeadPhone_asset._indexCount, 1, 0, 0, 0);
+				}
 			}
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(player_AKI_Sword_asset._indexCount, 1, 0, 0, 0);
 		}
-	}
+		// 
+		cmdList->SetPipelineState(player_AKI_Sword_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &player_AKI_Sword_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&player_AKI_Sword_asset._indexBufferView);
 
-	for (int i = 1; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._on == true)
 		{
+			int i = 0;
 			{
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
 					* XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(playerArr[i]._prev_degree* XM_PI / 180.f)
-					* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -858,271 +842,350 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->DrawIndexedInstanced(player_AKI_Sword_asset._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}
-#pragma endregion
-	
-	// Boss
-	if (boss_obj._on == true) {
-		XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
-		float boss_default_rot_x = -XM_PI * 0.5f;
-		XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
-		float boss2_default_rot_x = 0.f;
-		Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x);
-	}
 
-	cmdList->SetPipelineState(npc_asset._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
-	cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
-	for (int i = 0; i < NPCMAX; i++) //npc ÔøΩÔøΩÔøΩÔøΩ
-	{
-		if (npcArr[i]._on == true)
-		{			
+		for (int i = 1; i < PLAYERMAX; ++i)
+		{
+			if (playerArr[i]._on == true)
 			{
-				//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ»Ø
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
-					* XMMatrixRotationY(npcArr[i]._prev_degree* XM_PI / 180.f -  XM_PI / 2.f)
-					* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y, npcArr[i]._prev_transform.z));
-				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
-
-				// ÔøΩÔøΩ≈∞ÔøΩÔøΩ ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩ ÔøΩÔøΩÔø? ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
-				copy(begin(npcArr[i]._final_transforms), end(npcArr[i]._final_transforms), &_transform.BoneTransforms[0]);
-
-				//ÔøΩÔøΩÔøΩÔøΩ
-				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-				
-				int sum = 0;
-				for (Subset i : npc_asset._animationPtr->mSubsets)
 				{
-					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+						* XMMatrixRotationX(-XM_PI / 2.f)
+						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
+						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					copy(begin(playerArr[i]._weapon_final_transforms), end(playerArr[i]._weapon_final_transforms), &_transform.BoneTransforms[0]);
+
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						player_AKI_Sword_asset._tex._srvHandle = player_AKI_Sword_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+						descHeapPtr->CopyDescriptor(player_AKI_Sword_asset._tex._srvHandle, 5, devicePtr);
+					}
+
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
-					sum += i.FaceCount * 3;
+					cmdList->DrawIndexedInstanced(player_AKI_Sword_asset._indexCount, 1, 0, 0, 0);
 				}
 			}
 		}
-	}
+#pragma endregion
 
-	// npc hp bar
-	cmdList->SetPipelineState(hp_bar._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &hp_bar._vertexBufferView);
-	cmdList->IASetIndexBuffer(&hp_bar._indexBufferView);
-	for (int i = 0; i < NPCMAX; i++)
-	{
-		if (npcArr[i]._on == true && i != 9) {
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
-				* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._prev_transform.y + 1.f),
-					sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z, 2))))
-				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z))
-				* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y + 1.f, npcArr[i]._prev_transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-			_transform.hp_bar_size = 2.f;
-			_transform.hp_bar_start_pos = npcArr[i]._transform;
-			_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f ;
-			_transform.current_hp = npcArr[i]._hp;
-			_transform.max_hp = 100;
-
-			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-
-				hp_bar._tex._srvHandle = hp_bar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-
-				descHeapPtr->CopyDescriptor(hp_bar._tex._srvHandle, 5, devicePtr);
-			}
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(hp_bar._indexCount, 1, 0, 0, 0);
+		// Boss
+		if (boss_obj._on == true) {
+			XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
+			float boss_default_rot_x = -XM_PI * 0.5f;
+			XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
+			float boss2_default_rot_x = 0.f;
+			Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x);
 		}
-	}
 
-	// ∏”∏Æ ¿ß ªˆ±Ú ∆–≈œ
-	cmdList->SetPipelineState(color_pattern._pipelineState.Get());
-	cmdList->IASetVertexBuffers(0, 1, &color_pattern._vertexBufferView);
-	cmdList->IASetIndexBuffer(&color_pattern._indexBufferView);
-	for (int i = 0; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._on == true)
+		cmdList->SetPipelineState(npc_asset._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
+		cmdList->IASetIndexBuffer(&npc_asset._indexBufferView);
+		for (int i = 0; i < NPCMAX; i++) //npc ÔøΩÔøΩÔøΩÔøΩ
 		{
-			if (playerArr[i]._player_color == 0)
+			if (npcArr[i]._on == true)
 			{
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
-					* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),
-						sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
-					* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
-					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f, playerArr[i]._transform.z));
+				{
+					//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ»Ø
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
+						* XMMatrixRotationY(npcArr[i]._prev_degree * XM_PI / 180.f - XM_PI / 2.f)
+						* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y, npcArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+					XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+
+					// ÔøΩÔøΩ≈∞ÔøΩÔøΩ ÔøΩ÷¥œ∏ÔøΩÔøΩÃºÔøΩ ÔøΩÔøΩÔø? ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
+					copy(begin(npcArr[i]._final_transforms), end(npcArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+					//ÔøΩÔøΩÔøΩÔøΩ
+					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+					int sum = 0;
+					for (Subset i : npc_asset._animationPtr->mSubsets)
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						texturePtr->_srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+						descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+						descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+						cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+						sum += i.FaceCount * 3;
+					}
+				}
+			}
+		}
+
+		// npc hp bar
+		cmdList->SetPipelineState(hp_bar._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &hp_bar._vertexBufferView);
+		cmdList->IASetIndexBuffer(&hp_bar._indexBufferView);
+		for (int i = 0; i < NPCMAX; i++)
+		{
+			if (npcArr[i]._on == true && i != 9) {
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
+					* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._prev_transform.y + 1.f),
+						sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z, 2))))
+					* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z))
+					* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y + 1.f, npcArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+				_transform.hp_bar_size = 2.f;
+				_transform.hp_bar_start_pos = npcArr[i]._transform;
+				_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f;
+				_transform.current_hp = npcArr[i]._hp;
+				_transform.max_hp = 100;
 
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-					color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					hp_bar._tex._srvHandle = hp_bar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
-					descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
+					descHeapPtr->CopyDescriptor(hp_bar._tex._srvHandle, 5, devicePtr);
 				}
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
+				cmdList->DrawIndexedInstanced(hp_bar._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}
 
-	// map
-	switch (Scene_num) {
-	case 0:
-		Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
-		break;
-	case 1:
-		Map(cmdList, floor, map_asset, i_now_render_index, 1);
-		break;
-	default:
-		Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
-		break;
-	}
-	for (int i = 0; i < KEYMAX; ++i) {
-		if (key_data[i]._on == true)
+		// ∏”∏Æ ¿ß ªˆ±Ú ∆–≈œ
+		cmdList->SetPipelineState(color_pattern._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &color_pattern._vertexBufferView);
+		cmdList->IASetIndexBuffer(&color_pattern._indexBufferView);
+		for (int i = 0; i < PLAYERMAX; ++i)
 		{
-			cmdList->SetPipelineState(key._pipelineState.Get());
-			cmdList->IASetVertexBuffers(0, 1, &key._vertexBufferView);
-			cmdList->IASetIndexBuffer(&key._indexBufferView);
+			if (playerArr[i]._on == true)
+			{
+				if (playerArr[i]._player_color == 0)
+				{
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
+						* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),
+							sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
+						* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
+						* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f, playerArr[i]._transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-			_key_rotation_time += timerPtr->_deltaTime;
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f)
-				* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data[i]._transform.x, key_data[i]._transform.y + 1.f, key_data[i]._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-			switch (i) {
-			case 0:
-				_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
-				break;
-			case 1:
-				_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
-				break;
-			case 2:
-				_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
-				break;
-			case 3:
-				_transform.color = XMVectorSet(1.f, 1.f, 1.f, 1.f);
-				break;
+						color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+						descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
+					}
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
+				}
 			}
-			
-
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			key._tex._srvHandle = key._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-			descHeapPtr->CopyDescriptor(key._tex._srvHandle, 5, devicePtr);
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
 		}
-	}
 
-	// pillar
-	for (int i = 0; i < CubeMax; ++i)
-	{
-		if (pillars_data[i]._on == true)
-		{
-			XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-			XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-			switch (pillars_data[i]._pillar_count)
+		// map
+		switch (Scene_num) {
+		case 0:
+			Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
+			break;
+		case 1:
+			Map(cmdList, floor, map_asset, i_now_render_index, 1);
+			break;
+		default:
+			Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
+			break;
+		}
+		for (int i = 0; i < KEYMAX; ++i) {
+			if (key_data[i]._on == true)
 			{
-			case 5:
-				pillars_data[i]._animation_time_pos = 0.f;
-				break;
-			case 4:
-				pillars_data[i]._animation_time_pos = 0.025f;
-				break;
-			case 3:
-				pillars_data[i]._animation_time_pos = 0.050f;
-				break;
-			case 2:
-				pillars_data[i]._animation_time_pos = 0.075f;
-				break;
-			case 1:
-				pillars_data[i]._animation_time_pos = 0.100f;
-				break;
-			default:
-				pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
-				break;
-			}
-			for (MESH_ASSET& piece_of_pillar : pillar)
-			{
-				float scale = 1.f;
+				cmdList->SetPipelineState(key._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &key._vertexBufferView);
+				cmdList->IASetIndexBuffer(&key._indexBufferView);
 
-				piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
-
-				cmdList->SetPipelineState(piece_of_pillar._pipelineState.Get());
-				cmdList->IASetVertexBuffers(0, 1, &piece_of_pillar._vertexBufferView);
-				cmdList->IASetIndexBuffer(&piece_of_pillar._indexBufferView);
-
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
-					* XMMatrixRotationQuaternion(Q)
-					* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0], pillars_data[i]._transform.y + P.m128_f32[1], pillars_data[i]._transform.z + P.m128_f32[2]));
+				_key_rotation_time += timerPtr->_deltaTime;
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f)
+					* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data[i]._transform.x, key_data[i]._transform.y + 1.f, key_data[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-				if (i == 0)
+				switch (i) {
+				case 0:
 					_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
-				else if (i == 1)
+					break;
+				case 1:
 					_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
-				else if (i == 2)
+					break;
+				case 2:
 					_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
-				else if (i == 3)
-					_transform.color = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				else
-					_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+					break;
+				case 3:
+					_transform.color = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+					break;
+				}
+
 
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				piece_of_pillar._tex._srvHandle = piece_of_pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(piece_of_pillar._tex._srvHandle, 5, devicePtr);
+				key._tex._srvHandle = key._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(key._tex._srvHandle, 5, devicePtr);
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdList->DrawIndexedInstanced(piece_of_pillar._indexCount, 1, 0, 0, 0);
+				cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
 			}
 		}
-	}
 
-	// skybox
-	{
-		cmdList->SetPipelineState(skybox._pipelineState.Get());
-		cmdList->IASetVertexBuffers(0, 1, &skybox._vertexBufferView);
-		cmdList->IASetIndexBuffer(&skybox._indexBufferView);
-		//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ»Ø
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(0.f, 2.f, 0.f));
-		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-		_transform.camera_pos = cameraPtr->pos;
-		//ÔøΩÔøΩÔøΩÔøΩ
+		// pillar
+		for (int i = 0; i < CubeMax; ++i)
 		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			if (pillars_data[i]._on == true)
+			{
+				XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				switch (pillars_data[i]._pillar_count)
+				{
+				case 5:
+					pillars_data[i]._animation_time_pos = 0.f;
+					break;
+				case 4:
+					pillars_data[i]._animation_time_pos = 0.025f;
+					break;
+				case 3:
+					pillars_data[i]._animation_time_pos = 0.050f;
+					break;
+				case 2:
+					pillars_data[i]._animation_time_pos = 0.075f;
+					break;
+				case 1:
+					pillars_data[i]._animation_time_pos = 0.100f;
+					break;
+				default:
+					pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
+					break;
+				}
+				for (MESH_ASSET& piece_of_pillar : pillar)
+				{
+					float scale = 1.f;
 
-			skybox._tex._srvHandle = skybox._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
 
-			descHeapPtr->CopyDescriptor(skybox._tex._srvHandle, 5, devicePtr);
+					cmdList->SetPipelineState(piece_of_pillar._pipelineState.Get());
+					cmdList->IASetVertexBuffers(0, 1, &piece_of_pillar._vertexBufferView);
+					cmdList->IASetIndexBuffer(&piece_of_pillar._indexBufferView);
+
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
+						* XMMatrixRotationQuaternion(Q)
+						* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0], pillars_data[i]._transform.y + P.m128_f32[1], pillars_data[i]._transform.z + P.m128_f32[2]));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					if (i == 0)
+						_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+					else if (i == 1)
+						_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
+					else if (i == 2)
+						_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
+					else if (i == 3)
+						_transform.color = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					else
+						_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+					piece_of_pillar._tex._srvHandle = piece_of_pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					descHeapPtr->CopyDescriptor(piece_of_pillar._tex._srvHandle, 5, devicePtr);
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(piece_of_pillar._indexCount, 1, 0, 0, 0);
+				}
+			}
 		}
 
-		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-		cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
-	}
+		// skybox
+		{
+			cmdList->SetPipelineState(skybox._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &skybox._vertexBufferView);
+			cmdList->IASetIndexBuffer(&skybox._indexBufferView);
+			//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ»Ø
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(0.f, 2.f, 0.f));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+			_transform.camera_pos = cameraPtr->pos;
+			//ÔøΩÔøΩÔøΩÔøΩ
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+				skybox._tex._srvHandle = skybox._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+				descHeapPtr->CopyDescriptor(skybox._tex._srvHandle, 5, devicePtr);
+			}
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(skybox._indexCount, 1, 0, 0, 0);
+		}
 
 #pragma region Particle System
-	// ∆ƒ∆º≈¨ ª˝º∫
-	int index = 0;
-	for (int i = 0; i < NPCMAX; ++i)
-	{
-		// npc
-		if (npcArr[i]._on == true && i != 9) {
-			while (npcArr[i]._particle_count > 0)
+		// ∆ƒ∆º≈¨ ª˝º∫
+		int index = 0;
+		for (int i = 0; i < NPCMAX; ++i)
+		{
+			// npc
+			if (npcArr[i]._on == true && i != 9) {
+				while (npcArr[i]._particle_count > 0)
+				{
+					if (index >= PARTICLE_NUM) { // ∆ƒ∆º≈¨ ∞≥ºˆø° ¥Î«— øπø‹√≥∏Æ
+						break;
+					}
+
+					if (particles[index].alive == 0) // ?åå?ã∞?Å¥ Ï¥àÍ∏∞?ôî
+					{
+						particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+						particles[index].curTime = 0.0f;
+						particles[index].pos = XMVectorSet(npcArr[i]._transform.x, npcArr[i]._transform.y + 0.3f, npcArr[i]._transform.z, 1.f);
+						particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+						particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+						XMVector3Normalize(particles[index].dir);
+						particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
+							particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
+						particles[index].alive = 1;
+						--npcArr[i]._particle_count;
+					}
+					else {
+						++index;
+					}
+				}
+			}
+			else if (npcArr[i]._on == true && i == 9 && index <= PARTICLE_NUM) {
+				while (npcArr[i]._particle_count > 0)
+				{
+					if (index >= PARTICLE_NUM) { // ∆ƒ∆º≈¨ ∞≥ºˆø° ¥Î«— øπø‹√≥∏Æ
+						break;
+					}
+
+					if (particles[index].alive == 0) // ?åå?ã∞?Å¥ Ï¥àÍ∏∞?ôî
+					{
+						particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+						particles[index].curTime = 0.0f;
+						particles[index].pos = XMVectorSet(npcArr[i]._transform.x + 0.5f, npcArr[i]._transform.y + 2.f, npcArr[i]._transform.z, 1.f);
+						particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+						particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+						XMVector3Normalize(particles[index].dir);
+						particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
+							particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
+						particles[index].alive = 1;
+						--npcArr[i]._particle_count;
+					}
+					else {
+						++index;
+					}
+				}
+			}
+
+
+		}
+		if (boss_obj._on == true) { // boss
+			while (boss_obj._particle_count > 0)
 			{
 				if (index >= PARTICLE_NUM) { // ∆ƒ∆º≈¨ ∞≥ºˆø° ¥Î«— øπø‹√≥∏Æ
 					break;
@@ -1132,22 +1195,22 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				{
 					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 					particles[index].curTime = 0.0f;
-					particles[index].pos = XMVectorSet(npcArr[i]._transform.x, npcArr[i]._transform.y + 0.3f, npcArr[i]._transform.z, 1.f);
+					particles[index].pos = XMVectorSet(boss_obj._transform.x, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
 					particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
 					particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 					XMVector3Normalize(particles[index].dir);
 					particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
 						particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
 					particles[index].alive = 1;
-					--npcArr[i]._particle_count;
+					--boss_obj._particle_count;
 				}
 				else {
 					++index;
 				}
 			}
 		}
-		else if (npcArr[i]._on == true && i == 9 && index <= PARTICLE_NUM) {
-			while (npcArr[i]._particle_count > 0)
+		else if (boss_obj._on == true && index <= PARTICLE_NUM) {
+			while (boss_obj._particle_count > 0)
 			{
 				if (index >= PARTICLE_NUM) { // ∆ƒ∆º≈¨ ∞≥ºˆø° ¥Î«— øπø‹√≥∏Æ
 					break;
@@ -1157,14 +1220,14 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				{
 					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 					particles[index].curTime = 0.0f;
-					particles[index].pos = XMVectorSet(npcArr[i]._transform.x + 0.5f, npcArr[i]._transform.y + 2.f, npcArr[i]._transform.z, 1.f);
+					particles[index].pos = XMVectorSet(boss_obj._transform.x + 0.5f, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
 					particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
 					particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 					XMVector3Normalize(particles[index].dir);
 					particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
 						particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
 					particles[index].alive = 1;
-					--npcArr[i]._particle_count;
+					--boss_obj._particle_count;
 				}
 				else {
 					++index;
@@ -1172,122 +1235,69 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 
-
-	}
-	if (boss_obj._on == true) { // boss
-		while (boss_obj._particle_count > 0)
+		// ∆ƒ∆º≈¨ ø¨ªÍ
+		for (int i = 0; i < PARTICLE_NUM; ++i) // ?åå?ã∞?Å¥ Î¨ºÎ¶¨Ï≤òÎ¶¨ Î∞? ?†å?çîÎß?
 		{
-			if (index >= PARTICLE_NUM) { // ∆ƒ∆º≈¨ ∞≥ºˆø° ¥Î«— øπø‹√≥∏Æ
-				break;
-			}
-
-			if (particles[index].alive == 0) // ?åå?ã∞?Å¥ Ï¥àÍ∏∞?ôî
+			if (particles[i].alive == 1)
 			{
-				particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
-				particles[index].curTime = 0.0f;
-				particles[index].pos = XMVectorSet(boss_obj._transform.x, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
-				particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
-				particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
-				XMVector3Normalize(particles[index].dir);
-				particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
-					particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
-				particles[index].alive = 1;
-				--boss_obj._particle_count;
-			}
-			else {
-				++index;
+				if (particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] < 0.f) {
+					// ÎπÑÌÉÑ?Ñ± Ï∂©Îèå
+					particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] * -coefficient_of_restitution;
+					particles[i].pos.m128_f32[1] = particles[i].bounding_box_half_size.m128_f32[1];
+				}
+
+				if (particles[i].velocity.m128_f32[1] <= 0.05f
+					&& particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] == 0.f) {
+					// ÎßàÏ∞∞?†•
+					if (fabs(particles[i].velocity.m128_f32[0]) > 0.1f) {
+						particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[0] * timerPtr->_deltaTime;
+					}
+					else {
+						particles[i].velocity.m128_f32[0] = 0.f;
+					}
+
+					if (fabs(particles[i].velocity.m128_f32[2]) > 0.1f) {
+						particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[2] * timerPtr->_deltaTime;
+					}
+					else {
+						particles[i].velocity.m128_f32[2] = 0.f;
+					}
+				}
+
+				particles[i].pos.m128_f32[0] = particles[i].pos.m128_f32[0] + particles[i].velocity.m128_f32[0] * timerPtr->_deltaTime; // x?Ñ±Î∂? ?ù¥?èô
+				particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] - 5.f * timerPtr->_deltaTime; // Ï§ëÎ†•Í∞??Üç?èÑ?óê ?ùò?ïú ?ÇòÏ§ëÏÜç?èÑ
+				particles[i].pos.m128_f32[1] = particles[i].pos.m128_f32[1] + particles[i].velocity.m128_f32[1] * timerPtr->_deltaTime; // y?Ñ±Î∂? ?ù¥?èô
+				particles[i].pos.m128_f32[2] = particles[i].pos.m128_f32[2] + particles[i].velocity.m128_f32[2] * timerPtr->_deltaTime; // z?Ñ±Î∂? ?ù¥?èô
+				XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - particles[i].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2], 2))))
+					* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2]))
+					* XMMatrixTranslation(particles[i].pos.m128_f32[0], particles[i].pos.m128_f32[1], particles[i].pos.m128_f32[2])); // ?åå?ã∞?Å¥?ù¥ ?ï≠?ÉÅ Ïπ¥Î©î?ùºÎ•? Î∞îÎùºÎ≥¥Í∏∞
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+				particles[i].curTime += 0.001f;
+
+				if (particles[i].lifeTime < particles[i].curTime)
+				{
+					particles[i].alive = 0;
+				}
+
+				cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
+				cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+				cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
+				cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
+				{
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+					texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
+					texturePtr->_srvHandle.Offset(6, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+					descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
+				}
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
 			}
 		}
-	}
-	else if (boss_obj._on == true && index <= PARTICLE_NUM) {
-		while (boss_obj._particle_count > 0)
-		{
-			if (index >= PARTICLE_NUM) { // ∆ƒ∆º≈¨ ∞≥ºˆø° ¥Î«— øπø‹√≥∏Æ
-				break;
-			}
-
-			if (particles[index].alive == 0) // ?åå?ã∞?Å¥ Ï¥àÍ∏∞?ôî
-			{
-				particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
-				particles[index].curTime = 0.0f;
-				particles[index].pos = XMVectorSet(boss_obj._transform.x + 0.5f, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
-				particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
-				particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
-				XMVector3Normalize(particles[index].dir);
-				particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
-					particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
-				particles[index].alive = 1;
-				--boss_obj._particle_count;
-			}
-			else {
-				++index;
-			}
-		}
-	}
-
-	// ∆ƒ∆º≈¨ ø¨ªÍ
-	for (int i = 0; i < PARTICLE_NUM; ++i) // ?åå?ã∞?Å¥ Î¨ºÎ¶¨Ï≤òÎ¶¨ Î∞? ?†å?çîÎß?
-	{
-		if (particles[i].alive == 1)
-		{
-			if (particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] < 0.f) {
-				// ÎπÑÌÉÑ?Ñ± Ï∂©Îèå
-				particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] * -coefficient_of_restitution;
-				particles[i].pos.m128_f32[1] = particles[i].bounding_box_half_size.m128_f32[1];
-			}
-
-			if (particles[i].velocity.m128_f32[1] <= 0.05f
-				&& particles[i].pos.m128_f32[1] - particles[i].bounding_box_half_size.m128_f32[1] == 0.f) {
-				// ÎßàÏ∞∞?†•
-				if (fabs(particles[i].velocity.m128_f32[0]) > 0.1f) {
-					particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[0] * timerPtr->_deltaTime;
-				}
-				else {
-					particles[i].velocity.m128_f32[0] = 0.f;
-				}
-
-				if (fabs(particles[i].velocity.m128_f32[2]) > 0.1f) {
-					particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] + friction_coefficient * gravitational_acceleration * particles[i].dir.m128_f32[2] * timerPtr->_deltaTime;
-				}
-				else {
-					particles[i].velocity.m128_f32[2] = 0.f;
-				}
-			}
-
-			particles[i].pos.m128_f32[0] = particles[i].pos.m128_f32[0] + particles[i].velocity.m128_f32[0] * timerPtr->_deltaTime; // x?Ñ±Î∂? ?ù¥?èô
-			particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] - 5.f * timerPtr->_deltaTime; // Ï§ëÎ†•Í∞??Üç?èÑ?óê ?ùò?ïú ?ÇòÏ§ëÏÜç?èÑ
-			particles[i].pos.m128_f32[1] = particles[i].pos.m128_f32[1] + particles[i].velocity.m128_f32[1] * timerPtr->_deltaTime; // y?Ñ±Î∂? ?ù¥?èô
-			particles[i].pos.m128_f32[2] = particles[i].pos.m128_f32[2] + particles[i].velocity.m128_f32[2] * timerPtr->_deltaTime; // z?Ñ±Î∂? ?ù¥?èô
-			XMStoreFloat4x4(&_transform.world, XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - particles[i].pos.m128_f32[1], sqrt(pow(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], 2) + pow(cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2], 2))))
-				* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - particles[i].pos.m128_f32[0], cameraPtr->pos.m128_f32[2] - particles[i].pos.m128_f32[2]))
-				* XMMatrixTranslation(particles[i].pos.m128_f32[0], particles[i].pos.m128_f32[1], particles[i].pos.m128_f32[2])); // ?åå?ã∞?Å¥?ù¥ ?ï≠?ÉÅ Ïπ¥Î©î?ùºÎ•? Î∞îÎùºÎ≥¥Í∏∞
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			particles[i].curTime += 0.001f;
-
-			if (particles[i].lifeTime < particles[i].curTime)
-			{
-				particles[i].alive = 0;
-			}
-
-			cmdList->SetPipelineState(psoPtr->_gsPipelineState.Get());
-			cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-			cmdList->IASetVertexBuffers(0, 1, &vertexBufferPtr->_particleVertexBufferView);
-			cmdList->IASetIndexBuffer(&indexBufferPtr->_particleIndexBufferView);
-			{
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				texturePtr->_srvHandle = texturePtr->_srvHeap->GetCPUDescriptorHandleForHeapStart();
-				texturePtr->_srvHandle.Offset(6, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-				descHeapPtr->CopyDescriptor(texturePtr->_srvHandle, 5, devicePtr);
-			}
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(indexBufferPtr->_particleIndexCount, 1, 0, 0, 0);
-		}
-	}
 #pragma endregion
-
+	}
 	::WaitForSingleObject(_excuteEvent, INFINITE);
 	SetEvent(_renderEvent);
 

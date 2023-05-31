@@ -29,7 +29,7 @@ private:
 	ComPtr<ID2D1Device2> m_d2dDevice;
 	ComPtr<ID3D11On12Device> m_d3d11On12Device;
 	ComPtr<ID2D1DeviceContext2> m_d2dDeviceContext;
-	ComPtr<IDWriteFactory> m_dWriteFactory;
+	ComPtr<IDWriteFactory3> m_dWriteFactory;
 
 	ComPtr<ID3D12Resource> m_renderTargets[SWAP_CHAIN_BUFFER_COUNT];
 	ComPtr<ID3D11Resource> m_wrappedBackBuffers[SWAP_CHAIN_BUFFER_COUNT];
@@ -42,6 +42,9 @@ private:
 
 	ComPtr<ID2D1SolidColorBrush> mSolidColorBrush = nullptr;
 	ComPtr<IDWriteTextFormat> mDWriteTextFormat = nullptr;
+	ComPtr<IDWriteTextFormat> m_boss_font = nullptr;
+
+
 
 	//이미지용으로 따로 만들어야댕
 	IWICImagingFactory* m_pWICFactory;
@@ -66,6 +69,8 @@ public:
 	void draw_UI(const UI_ASSET& draw);
 	void draw_text(LPCWSTR text, D2D1_RECT_F rect);
 	void ExcuteUI(int mCurrBackbufferIndex);
+
+	void draw_boss_info(int num, float hp);
 };
 
 template<class Interface>

@@ -113,6 +113,7 @@ public:
 	float _logic_delta_time;
 	float _prev_delta_time;
 
+	bool _is_loading = false;
 
 private:
 	//화면 크기 관련

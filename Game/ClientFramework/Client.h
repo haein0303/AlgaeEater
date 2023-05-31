@@ -41,7 +41,7 @@ public:
 		
 		//엔진 초기화
 		dxEngine.Init(windowInfo);
-		dxEngine.late_Init(windowInfo);
+		//
 		
 
 		//오브젝트 데이터 생성
@@ -87,6 +87,9 @@ public:
 		}
 		cout << "complite server connect" << endl;
 
+		cout << "Loading Model data" << endl;
+		dxEngine.late_Init(windowInfo); 
+		cout << "Complite Model data Loading" << endl;
 		
 		cout << "LOGIC CALL" << endl;
 		while (g_isLive) {
