@@ -23,6 +23,8 @@ void DxEngine::Init(WindowInfo windowInfo)
 	d11Ptr->init(this, windowInfo);
 	d11Ptr->LoadPipeline();
 
+	d11Ptr->Loading_info();
+
 	cout << "complite Init ptr" << endl;
 
 	timerPtr->InitTimer();
@@ -206,7 +208,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	key_data[0]._on = true;
 
 	
-	d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
+	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
 	ID2D1Bitmap* _i_tmp;
 	_i_tmp = d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
@@ -1313,33 +1315,41 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 	ID3D12CommandList* cmdListArr[] = { cmdList.Get() };
 	cmdQueuePtr->_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
-
 	d11Ptr->RenderUI(i_now_render_index);
-	d11Ptr->LateRenderUI(_test_ui_vector);
+	
+	
+	
+	if (_is_loading) {
+		d11Ptr->LateRenderUI(_test_ui_vector);
 
-	D2D1_RECT_F _tmp = D2D1::RectF(0, 620.0f, 1280.f, 720.f);
-	WCHAR text[128];
-	wsprintf(text, L"HP : %d", playerArr[0]._hp);
-	d11Ptr->draw_text(text, _tmp);
-	_tmp.left = 1100;
-	_tmp.right = 1280;
-	for (int i = 1; i < PLAYERMAX; ++i) {
-		if (playerArr[i]._on == true)
-		{
-			wsprintf(text, L"HP : %d", playerArr[i]._hp);
+		D2D1_RECT_F _tmp = D2D1::RectF(0, 620.0f, 1280.f, 720.f);
+		WCHAR text[128];
+		wsprintf(text, L"HP : %d", playerArr[0]._hp);
+		d11Ptr->draw_text(text, _tmp);
+		_tmp.left = 1100;
+		_tmp.right = 1280;
+		for (int i = 1; i < PLAYERMAX; ++i) {
+			if (playerArr[i]._on == true)
+			{
+				wsprintf(text, L"HP : %d", playerArr[i]._hp);
+			}
+			else {
+				wsprintf(text, L"WAIT PLAYER");
+			}
+			_tmp.bottom = 720 / 2 - 50 + 25 * i;
+			_tmp.top = _tmp.bottom - 25;
+			d11Ptr->draw_text(text, _tmp);
 		}
-		else {
-			wsprintf(text, L"WAIT PLAYER");
-		}
-		_tmp.bottom = 720 / 2 - 50 + 25 * i;
-		_tmp.top = _tmp.bottom - 25;
+
+
+		_tmp = D2D1::RectF(0.f, 0.f, 1280.f, 100.f);
+		wsprintf(text, L"BOSS HP : %d", boss_obj._hp);
 		d11Ptr->draw_text(text, _tmp);
 	}
-
-
-	_tmp = D2D1::RectF(0.f, 0.f, 1280.f, 100.f);
-	wsprintf(text, L"BOSS HP : %d", boss_obj._hp);
-	d11Ptr->draw_text(text, _tmp);
+	else {
+		d11Ptr->Loading_draw(timerPtr->_deltaTime);
+	}
+	
 
 	d11Ptr->ExcuteUI(i_now_render_index);
 	swapChainPtr->_swapChain->Present(0, 0);

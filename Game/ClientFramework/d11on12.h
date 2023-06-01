@@ -52,8 +52,13 @@ private:
 
 	UINT m_rtvDescriptorSize;
 
-	ID2D1Bitmap* test;
-
+	
+	vector<ID2D1Bitmap*> _loading_Resource;
+	vector<LPCWSTR> _loading_msg;
+	float loading_counter = 0;
+	int now_img = 0;
+	D2D1_RECT_F _loading_rect;
+	D2D1_RECT_F _loading_msg_rect;
 public:
 	vector<ID2D1Bitmap*> _v_Resource;
 	~d11on12() {
@@ -62,6 +67,8 @@ public:
 
 	void init(DxEngine* engine, WindowInfo windowInfo);
 	void LoadPipeline();
+	void Loading_info();
+	void Loading_draw(const float& time);
 
 	ID2D1Bitmap* addResource(LPCWSTR path);
 	void RenderUI(int mCurrBackbufferIndex);
