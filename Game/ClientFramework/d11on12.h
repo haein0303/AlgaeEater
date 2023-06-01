@@ -41,8 +41,12 @@ private:
 	
 
 	ComPtr<ID2D1SolidColorBrush> mSolidColorBrush = nullptr;
+	ID2D1SolidColorBrush* mGrayBrush = nullptr;
+	ID2D1SolidColorBrush* mRedBrush = nullptr;
 	ComPtr<IDWriteTextFormat> mDWriteTextFormat = nullptr;
+	ComPtr<IDWriteTextFormat> m_mini_boss_font = nullptr;
 	ComPtr<IDWriteTextFormat> m_boss_font = nullptr;
+	ComPtr<IDWriteTextFormat> m_info_font = nullptr;
 
 
 
@@ -62,7 +66,10 @@ private:
 	float loading_frame = 0.1f;
 	D2D1_RECT_F _loading_rect;
 	D2D1_RECT_F _loading_msg_rect;
+	
 public:
+	ID2D1Bitmap* _boss_bg;
+
 	vector<ID2D1Bitmap*> _v_Resource;
 	~d11on12() {
 		m_d2dFactory->Release();
@@ -78,6 +85,10 @@ public:
 	void LateRenderUI(vector<UI_ASSET> scene_asset);
 	void draw_UI(const UI_ASSET& draw);
 	void draw_text(LPCWSTR text, D2D1_RECT_F rect);
+
+	void draw_bossUI(int hp,int stage);
+
+	void draw_infotext(LPCWSTR text, D2D1_RECT_F rect);
 	void ExcuteUI(int mCurrBackbufferIndex);
 
 	void draw_boss_info(int num, float hp);

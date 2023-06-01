@@ -215,6 +215,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	D2D1_RECT_F _tmp = D2D1::RectF(100.0f, 0.0f, 200.f, 100.f);
 	_test_ui_vector.emplace_back(_i_tmp,_tmp);
 
+	d11Ptr->_boss_bg = d11Ptr->addResource(L"..\\Resources\\UserInterface\\Boss_bg.png");
+
 	cout << "complite late init" << endl;
 	_is_loading = true;
 }
@@ -1344,14 +1346,41 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 		_tmp = D2D1::RectF(0.f, 0.f, 1280.f, 100.f);
 		wsprintf(text, L"BOSS HP : %d", boss_obj._hp);
-		d11Ptr->draw_text(text, _tmp);
+		//d11Ptr->draw_text(text, _tmp);
 
+
+
+
+
+		float height = 0.f;
 		if (inputPtr->_show_info) {
-			_tmp = D2D1::RectF(900.f, 0.f, 1280.f, 50.f);
-			wsprintf(text, L"X : %d  Y : %d Z : %d", (int)playerArr[0]._transform.x, (int)playerArr[0]._transform.y, (int)playerArr[0]._transform.z);
-			d11Ptr->draw_text(text, _tmp);
-		}
+			for (int i = 0; i < PLAYERMAX; ++i) {
+				if (playerArr[i]._on) {
+					_tmp = D2D1::RectF(500.f, height, 1280.f, height + 15.f);
+					_swprintf(text, L"PLAYER[%d] X : %f  Y : %f Z : %f", i, playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z);
+					d11Ptr->draw_infotext(text, _tmp);
+					height += 15.f;
+				}
+			}
 
+			if (boss_obj._on) {
+				_tmp = D2D1::RectF(500.f, height, 1280.f, height + 15.f);
+				_swprintf(text, L"BOSS X : %f  Y : %f Z : %f", boss_obj._transform.x, boss_obj._transform.y, boss_obj._transform.z);
+				d11Ptr->draw_infotext(text, _tmp);
+				height += 15.f;
+			}
+
+			for (int i = 0; i < NPCMAX; ++i) {
+				if (npcArr[i]._on) {
+					_tmp = D2D1::RectF(500.f, height, 1280.f, height + 15.f);
+					_swprintf(text, L"NPC[%d] X : %f  Y : %f Z : %f", i, npcArr[i]._transform.x, npcArr[i]._transform.y, npcArr[i]._transform.z);
+					d11Ptr->draw_infotext(text, _tmp);
+					height += 15.f;
+				}
+			}
+			
+		}
+		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num);
 	}
 	else {
 		d11Ptr->Loading_draw(timerPtr->_deltaTime);

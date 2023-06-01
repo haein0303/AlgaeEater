@@ -156,18 +156,33 @@ void d11on12::init(DxEngine* engine, WindowInfo windowInfo) {
 void d11on12::LoadPipeline()
 {
     m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), mSolidColorBrush.GetAddressOf());
-    m_dWriteFactory->CreateTextFormat(L"Verdana", nullptr,
+	m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Gray), &mGrayBrush);
+	m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &mRedBrush);
+
+    m_dWriteFactory->CreateTextFormat(L"Microsoft GothicNeo", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         25, L"ko-kr", mDWriteTextFormat.GetAddressOf());
 
     mDWriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     mDWriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
-	m_dWriteFactory->CreateTextFormat(L"Verdana", nullptr,
+	m_dWriteFactory->CreateTextFormat(L"Microsoft GothicNeo Light", nullptr,
 		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-		25, L"ko-kr", m_boss_font.GetAddressOf());
-	m_boss_font->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
+		20, L"ko-kr", m_mini_boss_font.GetAddressOf());
+	m_mini_boss_font->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	m_mini_boss_font->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+
+	m_dWriteFactory->CreateTextFormat(L"Microsoft GothicNeo", nullptr,
+		DWRITE_FONT_WEIGHT_EXTRA_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		30, L"ko-kr", m_boss_font.GetAddressOf());
+	m_boss_font->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	m_boss_font->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+
+	m_dWriteFactory->CreateTextFormat(L"Microsoft GothicNeo", nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		15, L"ko-kr", m_info_font.GetAddressOf());
+	m_info_font->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+	m_info_font->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 }
 
@@ -317,6 +332,33 @@ void d11on12::draw_UI(const UI_ASSET& draw)
 void d11on12::draw_text(LPCWSTR text, D2D1_RECT_F rect)
 {
 	m_d2dDeviceContext->DrawTextW(text, wcslen(text), mDWriteTextFormat.Get(), &rect, mSolidColorBrush.Get());
+}
+
+void d11on12::draw_bossUI(int hp,int stage)
+{
+	float xs = 240.f;
+	float ys = 50.f;
+	D2D1_RECT_F title_rect{ 640.f - 120.f, 40.f, 640.f + 120.f, 70.f };
+	D2D1_RECT_F minititle_rect{ 640.f - 120.f, 20.f, 640.f + 120.f, 40.f };
+	m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f+xs, 30.f + ys });
+
+	m_d2dDeviceContext->DrawTextW(L"MINI", wcslen(L"MINI"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
+	m_d2dDeviceContext->DrawTextW(L"Å¸¶õÆ«¶ó", wcslen(L"Å¸¶õÆ«¶ó"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
+
+
+	float startx = 640.f - xs * 1.3f;
+	float width = xs * 1.3f * 2;
+
+	D2D1_RECT_F backgroundRect = D2D1::RectF(startx, 85.0f, startx + width, 90.f);
+	m_d2dDeviceContext->FillRectangle(backgroundRect, mGrayBrush);
+
+	D2D1_RECT_F progressRect = D2D1::RectF(640.f - xs * 1.3f, 85.0f, startx + (width*((float)hp/100.f)), 90.f);
+	m_d2dDeviceContext->FillRectangle(progressRect, mRedBrush);
+}
+
+void d11on12::draw_infotext(LPCWSTR text, D2D1_RECT_F rect)
+{
+	m_d2dDeviceContext->DrawTextW(text, wcslen(text), m_info_font.Get(), &rect, mSolidColorBrush.Get());
 }
 
 void d11on12::ExcuteUI(int mCurrBackbufferIndex)

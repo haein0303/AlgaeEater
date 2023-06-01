@@ -111,7 +111,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 			cout << "QUIT" << endl;
 			ExitProcess(0);
 		}
-		if (_states[VK_F2] == 1) {
+		if (_states[VK_F2] == 2) {
 			_show_info = !_show_info;
 		}
 		if (_states[VK_TAB] == 2) {
