@@ -192,6 +192,16 @@ void d11on12::Loading_info()
 
 
 	_loading_msg.push_back(L"LOADING...");
+	_loading_msg.push_back(L"기다리다가 지친다~");
+	_loading_msg.push_back(L"교수님 감사합니다.");
+	_loading_msg.push_back(L"우리팀 최고 미남 김덕현");
+	_loading_msg.push_back(L"저희의 지도교수님은 정내훈 교수님입니다.");
+	_loading_msg.push_back(L"팀원은 클라 1.3명 서버 1.3명 기획 0.2명 아트 0.2명으로 구성되었습니다.");
+	_loading_msg.push_back(L"고양이는 귀엽습니다.");
+	_loading_msg.push_back(L"덕현이는 찍먹파입니다.");
+	_loading_msg.push_back(L"팀원 중 김경욱 학생만 흡연을 합니다.");
+	_loading_msg.push_back(L"덕현이는 최근 장트러블에 고생하고 있습니다.");
+	_loading_msg.push_back(L"해인이의 자취방에서 개발을 자주 진행합니다.");
 
 	_loading_rect.top = 360.f - 250.0f;
 	_loading_rect.left = 640.f - 250.0f;
@@ -208,13 +218,29 @@ void d11on12::Loading_info()
 void d11on12::Loading_draw(const float& time)
 {
 	loading_counter += time;
-	if (loading_counter > 0.1f) {
+	loading_msg_counter += time;
+	if (loading_counter > loading_frame) {
 		loading_counter = 0;
 		now_img = (now_img + 1) % _loading_Resource.size();
+		if (now_img == 12) {
+			loading_frame = 1.f;
+		}else if (now_img == 0) {
+			loading_frame = 0.5f;
+		}
+		else {
+			loading_frame = 0.1f;
+		}
 	}
+
+	if (loading_msg_counter > 4.f) {
+		loading_msg_counter = 0;
+		now_msg = rand() % _loading_msg.size();
+	}
+
+	
 	m_d2dDeviceContext->DrawBitmap(_loading_bg, { 0.f, 0.f, 1280.f, 720.f });
 	m_d2dDeviceContext->DrawBitmap(_loading_Resource[now_img], _loading_rect);
-	m_d2dDeviceContext->DrawTextW(_loading_msg[0], wcslen(_loading_msg[0]), mDWriteTextFormat.Get(), &_loading_msg_rect, mSolidColorBrush.Get());
+	m_d2dDeviceContext->DrawTextW(_loading_msg[now_msg], wcslen(_loading_msg[now_msg]), mDWriteTextFormat.Get(), &_loading_msg_rect, mSolidColorBrush.Get());
 
 }
 

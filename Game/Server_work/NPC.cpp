@@ -165,9 +165,9 @@ void initialize_cube()
 void initialize_key()
 {
 	for (int i = 0; i < KEY_NUM; i++) {
-		keys[i].x = 170.f;
+		keys[i].x = 165.f;
 		keys[i].y = 0.f;
-		keys[i].z = -230.f;
+		keys[i].z = -225.f + i * 5;
 		keys[i].color = i / ROOM_KEY;
 		keys[i]._Room_Num = i / ROOM_KEY;
 		keys[i].on_field = true;

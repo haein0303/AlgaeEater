@@ -55,8 +55,11 @@ private:
 	ID2D1Bitmap* _loading_bg;
 	vector<ID2D1Bitmap*> _loading_Resource;
 	vector<LPCWSTR> _loading_msg;
-	float loading_counter = 0;
+	float loading_counter = 0.f;
+	float loading_msg_counter = 0.f;
 	int now_img = 0;
+	int now_msg = 0;
+	float loading_frame = 0.1f;
 	D2D1_RECT_F _loading_rect;
 	D2D1_RECT_F _loading_msg_rect;
 public:

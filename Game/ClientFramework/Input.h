@@ -18,6 +18,10 @@ public:
 
 	bool _mouse_enable = false;
 	bool _mouse_chaged = false;
+
+
+	bool _show_info = false;
+
 	//벡터 사이즈 초기화
 	void Init(WindowInfo windowInfo);
 
