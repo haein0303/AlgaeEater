@@ -173,22 +173,23 @@ void d11on12::LoadPipeline()
 
 void d11on12::Loading_info()
 {
-	ID2D1Bitmap* tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00000.png");
-	_loading_Resource.push_back(tmp);
-	tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00001.png");
-	_loading_Resource.push_back(tmp);
-	tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00002.png");
-	_loading_Resource.push_back(tmp);
-	tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00003.png");
-	_loading_Resource.push_back(tmp);
-	tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00004.png");
-	_loading_Resource.push_back(tmp);
-	tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00005.png");
-	_loading_Resource.push_back(tmp);
-	tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00006.png");
-	_loading_Resource.push_back(tmp);
-	tmp = addResource(L"..\\Resources\\UserInterface\\loading_logo_00007.png");
-	_loading_Resource.push_back(tmp);
+	_loading_bg = addResource(L"..\\Resources\\UserInterface\\title_back.png");
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0000.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0001.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0002.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0003.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0004.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0005.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0006.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0007.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0008.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0009.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0010.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0011.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0012.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0013.png"));
+	_loading_Resource.push_back(addResource(L"..\\Resources\\UserInterface\\Comp 1_0014.png"));
+
 
 	_loading_msg.push_back(L"LOADING...");
 
@@ -201,17 +202,17 @@ void d11on12::Loading_info()
 	_loading_msg_rect.left = _loading_rect.left;
 	_loading_msg_rect.right = _loading_rect.right;
 	_loading_msg_rect.bottom = _loading_rect.bottom + 40.f;
-
+	
 }
 
 void d11on12::Loading_draw(const float& time)
 {
 	loading_counter += time;
-	if (loading_counter > 0.2f) {
+	if (loading_counter > 0.1f) {
 		loading_counter = 0;
-		now_img = (now_img + 1) % 8;
+		now_img = (now_img + 1) % _loading_Resource.size();
 	}
-
+	m_d2dDeviceContext->DrawBitmap(_loading_bg, { 0.f, 0.f, 1280.f, 720.f });
 	m_d2dDeviceContext->DrawBitmap(_loading_Resource[now_img], _loading_rect);
 	m_d2dDeviceContext->DrawTextW(_loading_msg[0], wcslen(_loading_msg[0]), mDWriteTextFormat.Get(), &_loading_msg_rect, mSolidColorBrush.Get());
 
@@ -250,7 +251,7 @@ ID2D1Bitmap* d11on12::addResource(LPCWSTR path)
 		}
 		pDecoder->Release();     // 압축을 해제하기 위해 생성한 객체 제거
 	}
-	if(m_pWICFactory != nullptr) m_pWICFactory->Release();     // WIC를 사용하기 위해 만들었던 Factory 객체 제거
+	//if(m_pWICFactory->Release()) m_pWICFactory->Release();     // WIC를 사용하기 위해 만들었던 Factory 객체 제거
 
 	if (result == 1) {
 		cout << path << " is Loading Good" << endl;

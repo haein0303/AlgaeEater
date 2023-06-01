@@ -52,7 +52,7 @@ private:
 
 	UINT m_rtvDescriptorSize;
 
-	
+	ID2D1Bitmap* _loading_bg;
 	vector<ID2D1Bitmap*> _loading_Resource;
 	vector<LPCWSTR> _loading_msg;
 	float loading_counter = 0;
