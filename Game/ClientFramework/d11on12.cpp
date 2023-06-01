@@ -250,7 +250,7 @@ ID2D1Bitmap* d11on12::addResource(LPCWSTR path)
 		}
 		pDecoder->Release();     // 압축을 해제하기 위해 생성한 객체 제거
 	}
-	//m_pWICFactory->Release();     // WIC를 사용하기 위해 만들었던 Factory 객체 제거
+	if(m_pWICFactory != nullptr) m_pWICFactory->Release();     // WIC를 사용하기 위해 만들었던 Factory 객체 제거
 
 	if (result == 1) {
 		cout << path << " is Loading Good" << endl;
