@@ -224,9 +224,11 @@ void d11on12::Loading_info()
 	_loading_rect.bottom = 360.f + 250.0f;
 
 	_loading_msg_rect.top = _loading_rect.bottom + 20.f;
-	_loading_msg_rect.left = _loading_rect.left;
-	_loading_msg_rect.right = _loading_rect.right;
+	_loading_msg_rect.left = 0.f;
+	_loading_msg_rect.right = 1280.f;
 	_loading_msg_rect.bottom = _loading_rect.bottom + 40.f;
+
+	srand((unsigned int)time(NULL));
 	
 }
 
@@ -246,8 +248,8 @@ void d11on12::Loading_draw(const float& time)
 			loading_frame = 0.1f;
 		}
 	}
-
-	if (loading_msg_counter > 4.f) {
+	
+	if (loading_msg_counter > 3.f) {
 		loading_msg_counter = 0;
 		now_msg = rand() % _loading_msg.size();
 	}
@@ -342,7 +344,7 @@ void d11on12::draw_bossUI(int hp,int stage)
 	D2D1_RECT_F minititle_rect{ 640.f - 120.f, 20.f, 640.f + 120.f, 40.f };
 	m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f+xs, 30.f + ys });
 
-	m_d2dDeviceContext->DrawTextW(L"MINI", wcslen(L"MINI"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
+	m_d2dDeviceContext->DrawTextW(L"전구 공장의 BOSS", wcslen(L"전구 공장의 BOSS"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
 	m_d2dDeviceContext->DrawTextW(L"타란튤라", wcslen(L"타란튤라"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
 
