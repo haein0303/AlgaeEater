@@ -291,6 +291,15 @@ struct FrameHierarchy
 	int boneIndexToParentIndex;
 };
 
+// ∏ µ•¿Ã≈Õ
+struct MapData
+{
+	string mesh_type;
+	XMFLOAT3 pos;
+	XMFLOAT3 scale;
+	XMFLOAT3 rotation;
+};
+
 
 constexpr int GAME_PORT_NUM = 4000;
 constexpr int LOBBY_PORT_NUM = 4001;

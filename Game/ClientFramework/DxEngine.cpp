@@ -79,6 +79,48 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	stage0_map.Make_SRV();
 	stage0_map.CreatePSO(L"..\\Bricks.hlsl");
 
+	Tube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	Tube.Init("../Resources/Tube.txt", ObjectType::GeneralObjects);
+	Tube.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Tube.Make_SRV();
+	Tube.CreatePSO(L"..\\Bricks.hlsl");
+
+	barrel.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	barrel.Init("../Resources/barrel.txt", ObjectType::GeneralObjects);
+	barrel.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	barrel.Make_SRV();
+	barrel.CreatePSO(L"..\\Bricks.hlsl");
+
+	Box.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	Box.Init("../Resources/Box.txt", ObjectType::GeneralObjects);
+	Box.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Box.Make_SRV();
+	Box.CreatePSO(L"..\\Bricks.hlsl");
+
+	Clotch.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	Clotch.Init("../Resources/Clotch.txt", ObjectType::GeneralObjects);
+	Clotch.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Clotch.Make_SRV();
+	Clotch.CreatePSO(L"..\\Bricks.hlsl");
+
+	tank.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	tank.Init("../Resources/tank.txt", ObjectType::GeneralObjects);
+	tank.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	tank.Make_SRV();
+	tank.CreatePSO(L"..\\Bricks.hlsl");
+
+	Plane002.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	Plane002.Init("../Resources/Plane002.txt", ObjectType::GeneralObjects);
+	Plane002.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Plane002.Make_SRV();
+	Plane002.CreatePSO(L"..\\Bricks.hlsl");
+
+	Grid_Metal_tile.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	Grid_Metal_tile.Init("../Resources/Grid_Metal_tile.txt", ObjectType::GeneralObjects);
+	Grid_Metal_tile.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Grid_Metal_tile.Make_SRV();
+	Grid_Metal_tile.CreatePSO(L"..\\Bricks.hlsl");
+
 	hp_bar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	hp_bar.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
 	hp_bar.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
@@ -206,6 +248,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	key_data[0]._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
 	key_data[0]._key = 0;
 	key_data[0]._on = true;
+
+	ImportMapdata("../Resources/MapData.txt");
 
 	
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
@@ -430,11 +474,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	
 
 	//VP ��ȯ
-	float zoom = 3.f;
+	float zoom = 3.f * _scale / 100.f;
 	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - zoom * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
-		playerArr[networkPtr->myClientId]._transform.y + 1.35f + zoom * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+		playerArr[networkPtr->myClientId]._transform.y + 1.35f * _scale / 100.f + zoom * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
 		playerArr[networkPtr->myClientId]._transform.z - zoom * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
-	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x, playerArr[networkPtr->myClientId]._transform.y + 1.35f,
+	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x, playerArr[networkPtr->myClientId]._transform.y + 1.35f * _scale / 100.f,
 		playerArr[networkPtr->myClientId]._transform.z,
 		playerArr[networkPtr->myClientId]._transform.w);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -595,7 +639,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			int i = 0;
 			{
 				//���� ��ȯ
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
@@ -628,7 +672,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				//�̰� ��ĥ �� �ִ� �۾� ���� ������?			
 				{
 					//���� ��ȯ
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 						* XMMatrixRotationX(-XM_PI / 2.f)
 						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
 						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
@@ -660,7 +704,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			int i = 0;
 
 			{
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
@@ -686,7 +730,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			if (playerArr[i]._on == true)
 			{
 				{
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 						* XMMatrixRotationX(-XM_PI / 2.f)
 						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
 						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
@@ -716,7 +760,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			int i = 0;
 
 			{
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
@@ -742,7 +786,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			if (playerArr[i]._on == true)
 			{
 				{
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 						* XMMatrixRotationX(-XM_PI / 2.f)
 						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
 						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
@@ -772,7 +816,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			int i = 0;
 
 			{
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
@@ -797,7 +841,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			if (playerArr[i]._on == true)
 			{
 				{
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 						* XMMatrixRotationX(-XM_PI / 2.f)
 						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
 						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
@@ -826,7 +870,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		{
 			int i = 0;
 			{
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 					* XMMatrixRotationX(-XM_PI / 2.f)
 					* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
 					* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
@@ -852,7 +896,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			if (playerArr[i]._on == true)
 			{
 				{
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(100.0f, 100.0f, 100.0f)
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 						* XMMatrixRotationX(-XM_PI / 2.f)
 						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
 						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
@@ -893,7 +937,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				{
 					//���� ��ȯ
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(200.f, 200.f, 200.f) * XMMatrixRotationX(-XM_PI / 2.f)
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2 * _scale, 2 * _scale, 2 * _scale) * XMMatrixRotationX(-XM_PI / 2.f)
 						* XMMatrixRotationY(npcArr[i]._prev_degree * XM_PI / 180.f - XM_PI / 2.f)
 						* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y, npcArr[i]._prev_transform.z));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
@@ -928,11 +972,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		for (int i = 0; i < NPCMAX; i++)
 		{
 			if (npcArr[i]._on == true && i != 9) {
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5f, 0.1f, 0.1f)
-					* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._prev_transform.y + 1.f),
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.5 * 0.01f, _scale * 0.001f, _scale * 0.001f)
+					* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._prev_transform.y + 0.01f),
 						sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z, 2))))
 					* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z))
-					* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y + 1.f, npcArr[i]._prev_transform.z));
+					* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y + _scale / 100.f, npcArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				_transform.hp_bar_size = 2.f;
@@ -965,11 +1009,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				if (playerArr[i]._player_color == 0)
 				{
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.1f, 0.1f, 0.1f)
-						* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f),
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.001f, _scale * 0.001f, _scale * 0.001f)
+						* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f * _scale / 100.f),
 							sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
 						* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
-						* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f, playerArr[i]._transform.z));
+						* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f * _scale / 100.f, playerArr[i]._transform.z));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -1008,8 +1052,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->IASetIndexBuffer(&key._indexBufferView);
 
 				_key_rotation_time += timerPtr->_deltaTime;
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixRotationX(XM_PI * 0.5f)
-					* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data[i]._transform.x, key_data[i]._transform.y + 1.f, key_data[i]._transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.02f, _scale * 0.02f, _scale * 0.02f) * XMMatrixRotationX(XM_PI * 0.5f)
+					* XMMatrixRotationY(_key_rotation_time * 60.f * XM_PI / 180.f) * XMMatrixTranslation(key_data[i]._transform.x, key_data[i]._transform.y + _scale / 100.f, key_data[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -1111,7 +1155,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			cmdList->IASetVertexBuffers(0, 1, &skybox._vertexBufferView);
 			cmdList->IASetIndexBuffer(&skybox._indexBufferView);
 			//���� ��ȯ
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(0.f, 2.f, 0.f));
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.01f, _scale * 0.01f, _scale * 0.01f) * XMMatrixTranslation(0.f, _scale / 50.f, 0.f));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 			_transform.camera_pos = cameraPtr->pos;

@@ -23,7 +23,6 @@
 #include "OBJECT.h"
 #include "d11on12.h"
 
-
 class DxEngine {
 public:
 	//DX엔진 초기화
@@ -78,8 +77,8 @@ public:
 	float coefficient_of_restitution = 0.3f;	// 반발계수
 	float friction_coefficient = 0.9f;			// 마찰계수
 	float gravitational_acceleration = -5.f;	// 중력가속도
-	
-	MESH_ASSET cube_asset;
+
+	// 플레이어와 npc 관련
 	MESH_ASSET player_AKI_Body_asset;
 	MESH_ASSET player_AKI_Astro_A_asset;
 	MESH_ASSET player_AKI_Hair_A_asset;
@@ -88,14 +87,26 @@ public:
 	MESH_ASSET npc_asset;
 	MESH_ASSET boss;
 	MESH_ASSET boss2;
-	MESH_ASSET map_asset;
-	MESH_ASSET stage0_map;
-	MESH_ASSET floor;
-	MESH_ASSET skybox;
 	MESH_ASSET hp_bar;
 	MESH_ASSET color_pattern;
-	MESH_ASSET key;
 	array <MESH_ASSET, 20> pillar;
+
+	// map관련
+	MESH_ASSET key;
+	MESH_ASSET Tube;
+	MESH_ASSET barrel;
+	MESH_ASSET Box;
+	MESH_ASSET Clotch;
+	MESH_ASSET tank;
+	MESH_ASSET Plane002;
+	MESH_ASSET Grid_Metal_tile;
+
+	MESH_ASSET floor;
+	MESH_ASSET skybox;
+	MESH_ASSET map_asset;
+	MESH_ASSET stage0_map;
+
+	MESH_ASSET cube_asset;
 
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
@@ -116,6 +127,10 @@ public:
 	bool _is_loading = false;
 	
 
+	float _scale = 100.f; // 게임 세계 단위
+
+	vector<MapData> _map_data;
+
 private:
 	//화면 크기 관련
 	D3D12_VIEWPORT	_viewport;
@@ -129,7 +144,7 @@ public:
 		cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
 		cmdList->IASetIndexBuffer(&boss._indexBufferView);
 
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z)
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x * _scale / 100.f, scale.y * _scale / 100.f, scale.z * _scale / 100.f)
 			* XMMatrixRotationX(default_rot_x)
 			* XMMatrixRotationY(boss_obj._prev_degree * XM_PI / 180.f - XM_PI)
 			* XMMatrixTranslation(boss_obj._prev_transform.x, boss_obj._prev_transform.y, boss_obj._prev_transform.z));
@@ -173,15 +188,13 @@ public:
 		if (stage == 0)
 		{
 			// map
-			float map_size = 100.f;
-
 			cmdList->SetPipelineState(floor._pipelineState.Get());
 			cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
 			cmdList->IASetIndexBuffer(&floor._indexBufferView);
 			for (int i = 0; i < 5; ++i)
 			{
 				if (i == 0) {
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size, 1.0f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, 0.f, 0.f));
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, 1.0f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, 0.f, 0.f));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -191,7 +204,7 @@ public:
 
 				}
 				if (i == 1) {
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f) * XMMatrixRotationX(0.f) * XMMatrixTranslation(0.f, map_size / 4.f, -map_size));
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale / 4.f, 1.0f) * XMMatrixRotationX(0.f) * XMMatrixTranslation(0.f, _scale / 4.f, -_scale));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -201,7 +214,7 @@ public:
 
 				}
 				else if (i == 2) {
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f) * XMMatrixRotationX(XM_PI) * XMMatrixRotationZ(XM_PI) * XMMatrixTranslation(0.f, map_size / 4.f, map_size));
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale / 4.f, 1.0f) * XMMatrixRotationX(XM_PI) * XMMatrixRotationZ(XM_PI) * XMMatrixTranslation(0.f, _scale / 4.f, _scale));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -210,7 +223,7 @@ public:
 					floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 				}
 				else if (i == 3) {
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f) * XMMatrixRotationY(-XM_PI / 2.f) * XMMatrixTranslation(map_size, map_size / 4.f, 0.f));
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale / 4.f, 1.0f) * XMMatrixRotationY(-XM_PI / 2.f) * XMMatrixTranslation(_scale, _scale / 4.f, 0.f));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -219,7 +232,7 @@ public:
 					floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 				}
 				else if (i == 4) {
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size / 4.f, 1.0f) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(-map_size, map_size / 4.f, 0.f));
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale / 4.f, 1.0f) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(-_scale, _scale / 4.f, 0.f));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -240,13 +253,11 @@ public:
 		{
 			// floor
 			{
-				float map_size = 1000.f;
-
 				cmdList->SetPipelineState(floor._pipelineState.Get());
 				cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
 				cmdList->IASetIndexBuffer(&floor._indexBufferView);
 
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(map_size, map_size, 1.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, 0.f, 0.f));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 10.f, _scale * 10.f, _scale / 100.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, 0.f, 0.f));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -259,24 +270,73 @@ public:
 				cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
 			}
 
-			// wall
+			// map
+			for (MapData data : _map_data)
 			{
-				float map_size = 20.f;
-				cmdList->SetPipelineState(map_asset._pipelineState.Get());
-				cmdList->IASetVertexBuffers(0, 1, &map_asset._vertexBufferView);
-				cmdList->IASetIndexBuffer(&map_asset._indexBufferView);
+				if(data.mesh_type.compare("tube") == 0)
+					DrawMapObject(cmdList, Tube, i_now_render_index, data.pos, data.scale, data.rotation, 0.f);
+				else if (data.mesh_type.compare("Barrel") == 0)
+					DrawMapObject(cmdList, barrel, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Box") == 0)
+					DrawMapObject(cmdList, Box, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Clotch") == 0)
+					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("tank") == 0)
+					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Plane002") == 0)
+					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Grid_Metal_tile") == 0)
+					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+			}
+		}
+	}
 
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.578f * map_size, 0.3f * map_size, 0.01f * map_size) * XMMatrixTranslation(0.f, 0.f, 0.f));
-				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+	void DrawMapObject(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& obj,  const int i_now_render_index, XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation, float rot = -XM_PI * 0.5f)
+	{
+		cmdList->SetPipelineState(obj._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &obj._vertexBufferView);
+		cmdList->IASetIndexBuffer(&obj._indexBufferView);
 
-				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-				map_asset._tex._srvHandle = map_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				descHeapPtr->CopyDescriptor(map_asset._tex._srvHandle, 5, devicePtr);
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * scale.x / 50.f, _scale * scale.y / 50.f, _scale * scale.z / 50.f) * XMMatrixRotationX(rot) * XMMatrixRotationY(rotation.y * XM_PI / 180.f) * XMMatrixTranslation(pos.x * 2.f, pos.y * 2.f, pos.z * 2.f));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-				cmdList->DrawIndexedInstanced(map_asset._indexCount, 1, 0, 0, 0);
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+		obj._tex._srvHandle = obj._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		descHeapPtr->CopyDescriptor(obj._tex._srvHandle, 5, devicePtr);
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(obj._indexCount, 1, 0, 0, 0);
+	}
+
+	void ImportMapdata(const string& file_path)
+	{
+		ifstream in{ file_path };
+
+		if (!in)
+		{
+			exit(0);
+		}
+
+		string ignore;
+		string str = "\n";
+		MapData data;
+
+		while (in >> str)
+		{
+			if (str.compare("num:") == 0)
+			{
+				int num;
+				in >> num;
+				_map_data.reserve(num);
+			}
+			else if (str.compare("Mesh:") == 0)
+			{
+				in >> data.mesh_type >> ignore >> ignore >> data.pos.x >> data.pos.y >> data.pos.z
+					>> ignore >> data.scale.x >> data.scale.y >> data.scale.z
+					>> ignore >> data.rotation.x >> data.rotation.y >> data.rotation.z;
+				_map_data.push_back(data);
 			}
 		}
 	}
