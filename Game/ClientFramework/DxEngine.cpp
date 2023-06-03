@@ -117,9 +117,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	Grid_Metal_tile.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Grid_Metal_tile.Init("../Resources/Grid_Metal_tile.txt", ObjectType::GeneralObjects);
-	Grid_Metal_tile.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Grid_Metal_tile.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
 	Grid_Metal_tile.Make_SRV();
-	Grid_Metal_tile.CreatePSO(L"..\\Bricks.hlsl");
+	Grid_Metal_tile.CreatePSO(L"..\\Wall.hlsl");
 
 	hp_bar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	hp_bar.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
