@@ -100,6 +100,7 @@ public:
 	MESH_ASSET tank;
 	MESH_ASSET Plane002;
 	MESH_ASSET Grid_Metal_tile;
+	MESH_ASSET Cube;
 
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
@@ -277,7 +278,7 @@ public:
 					DrawMapObject(cmdList, Tube, i_now_render_index, data.pos, data.scale, data.rotation, 0.f);
 				else if (data.mesh_type.compare("Barrel") == 0)
 					DrawMapObject(cmdList, barrel, i_now_render_index, data.pos, data.scale, data.rotation);
-				else if (data.mesh_type.compare("Box") == 0)
+				else if (data.mesh_type.compare("Sci-fi-BOX") == 0)
 					DrawMapObject(cmdList, Box, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Clotch") == 0)
 					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
@@ -287,6 +288,8 @@ public:
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Grid_Metal_tile") == 0)
 					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Cube") == 0)
+					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
 		}
 	}
@@ -297,7 +300,7 @@ public:
 		cmdList->IASetVertexBuffers(0, 1, &obj._vertexBufferView);
 		cmdList->IASetIndexBuffer(&obj._indexBufferView);
 
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * scale.x / 50.f, _scale * scale.y / 50.f, _scale * scale.z / 50.f) * XMMatrixRotationX(rot) * XMMatrixRotationY(rotation.y * XM_PI / 180.f) * XMMatrixTranslation(pos.x * 2.f, pos.y * 2.f, pos.z * 2.f));
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * scale.x / 50.f, _scale * scale.y / 50.f, _scale * scale.z / 50.f) * XMMatrixRotationX(rotation.x * XM_PI / 180.f) * XMMatrixRotationY(rotation.y * XM_PI / 180.f) * XMMatrixRotationZ(rotation.z * XM_PI / 180.f) * XMMatrixTranslation(pos.x * 2.f, pos.y * 2.f, pos.z * 2.f));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 

@@ -81,7 +81,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	Tube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube.Init("../Resources/Tube.txt", ObjectType::GeneralObjects);
-	Tube.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Tube.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
 	Tube.Make_SRV();
 	Tube.CreatePSO(L"..\\Bricks.hlsl");
 
@@ -93,13 +93,13 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	Box.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Box.Init("../Resources/Box.txt", ObjectType::GeneralObjects);
-	Box.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Box.Add_texture(L"..\\Resources\\Texture\\Box_Sci-fi_box_mat_AlbedoTransparency.tga");
 	Box.Make_SRV();
 	Box.CreatePSO(L"..\\Bricks.hlsl");
 
 	Clotch.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Clotch.Init("../Resources/Clotch.txt", ObjectType::GeneralObjects);
-	Clotch.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Clotch.Add_texture(L"..\\Resources\\Texture\\diff.png");
 	Clotch.Make_SRV();
 	Clotch.CreatePSO(L"..\\Bricks.hlsl");
 
@@ -111,7 +111,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	Plane002.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Plane002.Init("../Resources/Plane002.txt", ObjectType::GeneralObjects);
-	Plane002.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	Plane002.Add_texture(L"..\\Resources\\Texture\\mettile1_diff.png");
 	Plane002.Make_SRV();
 	Plane002.CreatePSO(L"..\\Bricks.hlsl");
 
@@ -120,6 +120,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	Grid_Metal_tile.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
 	Grid_Metal_tile.Make_SRV();
 	Grid_Metal_tile.CreatePSO(L"..\\Wall.hlsl");
+
+	Cube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	Cube.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
+	Cube.Add_texture(L"..\\Resources\\Texture\\mettile1_diff.png");
+	Cube.Make_SRV();
+	Cube.CreatePSO(L"..\\Bricks.hlsl");
 
 	hp_bar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	hp_bar.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
