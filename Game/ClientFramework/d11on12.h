@@ -66,6 +66,8 @@ private:
 	float loading_frame = 0.1f;
 	D2D1_RECT_F _loading_rect;
 	D2D1_RECT_F _loading_msg_rect;
+
+	vector<ID2D1Bitmap*> stage1_boss_bg;
 	
 public:
 	ID2D1Bitmap* _boss_bg;
@@ -80,13 +82,15 @@ public:
 	void Loading_info();
 	void Loading_draw(const float& time);
 
+	void Late_load();
+
 	ID2D1Bitmap* addResource(LPCWSTR path);
 	void RenderUI(int mCurrBackbufferIndex);
 	void LateRenderUI(vector<UI_ASSET> scene_asset);
 	void draw_UI(const UI_ASSET& draw);
 	void draw_text(LPCWSTR text, D2D1_RECT_F rect);
 
-	void draw_bossUI(int hp,int stage);
+	void draw_bossUI(int hp,int stage,const OBJECT& boss_obj);
 
 	void draw_infotext(LPCWSTR text, D2D1_RECT_F rect);
 	void ExcuteUI(int mCurrBackbufferIndex);

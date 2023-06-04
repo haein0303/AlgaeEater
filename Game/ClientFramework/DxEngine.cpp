@@ -256,10 +256,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	ID2D1Bitmap* _i_tmp;
 	_i_tmp = d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
-	D2D1_RECT_F _tmp = D2D1::RectF(100.0f, 0.0f, 200.f, 100.f);
+	D2D1_RECT_F _tmp = D2D1::RectF(0, 0.0f, 100.f, 100.f);
 	_test_ui_vector.emplace_back(_i_tmp,_tmp);
 
-	d11Ptr->_boss_bg = d11Ptr->addResource(L"..\\Resources\\UserInterface\\Boss_bg.png");
+	
+	d11Ptr->Late_load();
 
 	cout << "complite late init" << endl;
 	_is_loading = true;
@@ -1430,7 +1431,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 			
 		}
-		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num);
+		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num,boss_obj);
 	}
 	else {
 		d11Ptr->Loading_draw(timerPtr->_deltaTime);

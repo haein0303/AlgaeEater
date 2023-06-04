@@ -263,6 +263,20 @@ void d11on12::Loading_draw(const float& time)
 
 }
 
+void d11on12::Late_load()
+{
+	
+	_boss_bg = addResource(L"..\\Resources\\UserInterface\\Boss_bg.png");
+	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_white.png"));
+	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_blue.png"));
+	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_green.png"));
+	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_red.png"));
+	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_black.png"));
+	
+
+
+}
+
 ID2D1Bitmap* d11on12::addResource(LPCWSTR path)
 {
 	ID2D1Bitmap *tmp = nullptr;
@@ -338,25 +352,29 @@ void d11on12::draw_text(LPCWSTR text, D2D1_RECT_F rect)
 	m_d2dDeviceContext->DrawTextW(text, wcslen(text), mDWriteTextFormat.Get(), &rect, mSolidColorBrush.Get());
 }
 
-void d11on12::draw_bossUI(int hp,int stage = 1)
+void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 {
 	float xs = 240.f;
 	float ys = 50.f;
 	D2D1_RECT_F title_rect{ 640.f - 120.f, 40.f, 640.f + 120.f, 70.f };
 	D2D1_RECT_F minititle_rect{ 640.f - 120.f, 20.f, 640.f + 120.f, 40.f };
-	m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f+xs, 30.f + ys });
+	
 	switch (stage) {
 	case 0:
 	case 1:
+		m_d2dDeviceContext->DrawBitmap(stage1_boss_bg[boss_obj._eye_color], {640.f - xs, 30.f, 640.f + xs, 30.f + ys});
+
 		m_d2dDeviceContext->DrawTextW(L"Àü±¸ °øÀåÀÇ º¸½º", wcslen(L"Àü±¸ °øÀåÀÇ º¸½º"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
 		m_d2dDeviceContext->DrawTextW(L"Å¸¶õÆ«¶ó", wcslen(L"Å¸¶õÆ«¶ó"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 		break;
 	case 2:
+		m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f + xs, 30.f + ys });
 		m_d2dDeviceContext->DrawTextW(L"È­ÇÐ °øÀåÀÇ º¸½º", wcslen(L"È­ÇÐ °øÀåÀÇ º¸½º"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
 		m_d2dDeviceContext->DrawTextW(L"±è°í¾ç¾¾", wcslen(L"±è°í¾ç¾¾"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
 		break;
 	case 3:
+		m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f + xs, 30.f + ys });
 		m_d2dDeviceContext->DrawTextW(L"ÃÖÁ¾ º¸½º", wcslen(L"ÃÖÁ¾ º¸½º"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
 		m_d2dDeviceContext->DrawTextW(L"±è¸Ø¹«¾¾", wcslen(L"±è¸Ø¹«¾¾"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
