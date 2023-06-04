@@ -5,6 +5,16 @@ constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
 
+enum BOSS_NUM {
+	TEST,
+	STAGE1,
+	STAGE2,
+	STAGE3,
+	COUNT
+};
+constexpr int BOSS_HP[4] = { 200000,200000,200000,200000 };
+
+
 #define LOBBY_SERVER_IP "127.0.0.1"
 #define GAME_SERVER_IP "127.0.0.1"
 constexpr int GAME_SERVER_PORT_NUM = 4000;

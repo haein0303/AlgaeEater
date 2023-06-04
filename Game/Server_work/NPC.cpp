@@ -128,7 +128,7 @@ void initialize_npc()
 			break;
 		case 19: // º¸½º
 		{
-			clients[i].hp = 200000;
+			clients[i].hp = BOSS_HP[0];
 			clients[i].atk = 5;
 			clients[i].x = 30;
 			clients[i].z = 30;

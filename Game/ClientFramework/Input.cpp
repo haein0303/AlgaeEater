@@ -114,6 +114,13 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 		if (_states[VK_F2] == 2) {
 			_show_info = !_show_info;
 		}
+		if (_states[VK_F3] == 2) {
+			_god_mod_on = !_god_mod_on;
+			CS_GOD_MOD_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_GOD_MOD;
+			networkPtr->send_packet(&p);
+		}
 		if (_states[VK_TAB] == 2) {
 			cout << "TAP" << endl;
 			_mouse_enable = !_mouse_enable;

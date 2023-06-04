@@ -217,6 +217,8 @@ void d11on12::Loading_info()
 	_loading_msg.push_back(L"팀원 중 김경욱 학생만 흡연을 합니다.");
 	_loading_msg.push_back(L"덕현이는 최근 장트러블에 고생하고 있습니다.");
 	_loading_msg.push_back(L"해인이의 자취방에서 개발을 자주 진행합니다.");
+	_loading_msg.push_back(L"상남자 특 로딩 잘 기다림");
+	_loading_msg.push_back(L"상여자 특 로딩 잘 기다림");
 
 	_loading_rect.top = 360.f - 250.0f;
 	_loading_rect.left = 640.f - 250.0f;
@@ -336,17 +338,31 @@ void d11on12::draw_text(LPCWSTR text, D2D1_RECT_F rect)
 	m_d2dDeviceContext->DrawTextW(text, wcslen(text), mDWriteTextFormat.Get(), &rect, mSolidColorBrush.Get());
 }
 
-void d11on12::draw_bossUI(int hp,int stage)
+void d11on12::draw_bossUI(int hp,int stage = 1)
 {
 	float xs = 240.f;
 	float ys = 50.f;
 	D2D1_RECT_F title_rect{ 640.f - 120.f, 40.f, 640.f + 120.f, 70.f };
 	D2D1_RECT_F minititle_rect{ 640.f - 120.f, 20.f, 640.f + 120.f, 40.f };
 	m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f+xs, 30.f + ys });
+	switch (stage) {
+	case 0:
+	case 1:
+		m_d2dDeviceContext->DrawTextW(L"전구 공장의 보스", wcslen(L"전구 공장의 보스"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
+		m_d2dDeviceContext->DrawTextW(L"타란튤라", wcslen(L"타란튤라"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
+		break;
+	case 2:
+		m_d2dDeviceContext->DrawTextW(L"화학 공장의 보스", wcslen(L"화학 공장의 보스"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
+		m_d2dDeviceContext->DrawTextW(L"김고양씨", wcslen(L"김고양씨"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
-	m_d2dDeviceContext->DrawTextW(L"전구 공장의 BOSS", wcslen(L"전구 공장의 BOSS"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
-	m_d2dDeviceContext->DrawTextW(L"타란튤라", wcslen(L"타란튤라"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
+		break;
+	case 3:
+		m_d2dDeviceContext->DrawTextW(L"최종 보스", wcslen(L"최종 보스"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
+		m_d2dDeviceContext->DrawTextW(L"김멈무씨", wcslen(L"김멈무씨"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
+		break;
+	}
+	
 
 	float startx = 640.f - xs * 1.3f;
 	float width = xs * 1.3f * 2;
@@ -354,7 +370,7 @@ void d11on12::draw_bossUI(int hp,int stage)
 	D2D1_RECT_F backgroundRect = D2D1::RectF(startx, 85.0f, startx + width, 90.f);
 	m_d2dDeviceContext->FillRectangle(backgroundRect, mGrayBrush);
 
-	D2D1_RECT_F progressRect = D2D1::RectF(640.f - xs * 1.3f, 85.0f, startx + (width*((float)hp/100.f)), 90.f);
+	D2D1_RECT_F progressRect = D2D1::RectF(640.f - xs * 1.3f, 85.0f, startx + (width*((float)hp/ BOSS_HP[stage])), 90.f);
 	m_d2dDeviceContext->FillRectangle(progressRect, mRedBrush);
 }
 

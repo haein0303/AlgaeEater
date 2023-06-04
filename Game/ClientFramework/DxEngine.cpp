@@ -1391,12 +1391,18 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		_tmp = D2D1::RectF(0.f, 0.f, 1280.f, 100.f);
 		wsprintf(text, L"BOSS HP : %d", boss_obj._hp);
 		//d11Ptr->draw_text(text, _tmp);
-
-
-
-
-
 		float height = 0.f;
+		if (inputPtr->_god_mod_on) {
+			_tmp = D2D1::RectF(500.f, 0.f, 1280.f, 15.f);
+			_swprintf(text, L"[GOD(DEV) MODE ON]  ");
+			d11Ptr->draw_infotext(text, _tmp);
+			height = 15.f;
+		}
+
+
+
+
+		
 		if (inputPtr->_show_info) {
 			for (int i = 0; i < PLAYERMAX; ++i) {
 				if (playerArr[i]._on) {
