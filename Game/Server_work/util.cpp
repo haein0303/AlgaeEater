@@ -68,6 +68,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].degree = 30;
 		clients[c_id].char_state = AN_IDLE;
 		clients[c_id].color = 0;
+		clients[c_id].god_mod = false;
 		clients[c_id].hp = 100;
 		clients[c_id].send_login_ok_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp);
 		clients[c_id]._s_state = ST_INGAME;
@@ -133,7 +134,6 @@ void process_packet(int c_id, char* packet)
 					}
 					else {
 						add_timer(i, 10000, EV_BOSS_CON, c_id);
-						add_timer(i, 3000, EV_BOSS_EYE, c_id);
 					}
 					clients[i].Lua_on = true;
 				}
@@ -176,18 +176,48 @@ void process_packet(int c_id, char* packet)
 	}
 	case CS_COLLISION: {
 		CS_COLLISION_PACKET* p = reinterpret_cast<CS_COLLISION_PACKET*>(packet);
-		int npc_id = 0;
 		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
-			clients[p->target_id].hp -= 10;
-			if (clients[p->target_id].hp == 0) {
-				clients[p->target_id].char_state = AN_DEAD;
-				clients[p->target_id]._sl.lock();
-				clients[p->target_id]._s_state = ST_FREE;
-				clients[p->target_id]._sl.unlock();
+			if (p->attack_type = 0) { // 일반 공격
+				if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
+					clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
+					if (clients[p->target_id].boss_shield <= 0) {
+						clients[p->target_id].crash_sequence[3] = 0;
+					}
+				}
+
+				else { // 일반
+					clients[p->target_id].hp -= clients[p->attacker_id].atk;
+					if (clients[p->target_id].hp == 0) {
+						clients[p->target_id].char_state = AN_DEAD;
+						clients[p->target_id]._sl.lock();
+						clients[p->target_id]._s_state = ST_FREE;
+						clients[p->target_id]._sl.unlock();
+					}
+				}
+			}
+			else { // 스킬 공격
+				if (p->attack_type = 0) { // 일반 공격
+					if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
+						clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
+						if (clients[p->target_id].boss_shield <= 0) {
+							clients[p->target_id].crash_sequence[3] = 0;
+						}
+					}
+
+					else { // 일반
+						clients[p->target_id].hp -= clients[p->attacker_id].skill_atk;
+						if (clients[p->target_id].hp == 0) {
+							clients[p->target_id].char_state = AN_DEAD;
+							clients[p->target_id]._sl.lock();
+							clients[p->target_id]._s_state = ST_FREE;
+							clients[p->target_id]._sl.unlock();
+						}
+					}
+				}
 			}
 		}
 		else {						// 공격자가 npc
-			clients[c_id].hp -= 1;
+			clients[c_id].hp -= clients[p->target_id].atk;
 			Update_Player(c_id);
 		}
 		break;
@@ -213,14 +243,31 @@ void process_packet(int c_id, char* packet)
 	}
 	case CS_OBJECT_COLLISION: {
 		CS_OBJECT_COLLISION_PACKET* p = reinterpret_cast<CS_OBJECT_COLLISION_PACKET*>(packet);
+		int boss_num = clients[c_id]._Room_Num * ROOM_NPC - 1 + MAX_USER;
 		switch (p->object_type)
 		{
-		case 0:
+		case 0: // 1스테이지 큐브, 기둥
+			// 플레이어가 첫번째 전멸기 기둥 부실때 트리거
+			clients[boss_num].crash_sequence[clients[boss_num].crash_count] = cubes[p->target_id].color;
+			clients[boss_num].crash_count++;
 			break;
-		case 1:
+		case 1: // 2스테이지 장판
 			break;
 		default:
 			break;
+		}
+		break;
+	}
+	case CS_GOD_MOD: {
+		if (clients[c_id].god_mod = false) {
+			clients[c_id].atk *= 100;
+			clients[c_id].skill_atk *= 100;
+			clients[c_id].god_mod = true;
+		}
+		else {
+			clients[c_id].atk /= 100;
+			clients[c_id].skill_atk /= 100;
+			clients[c_id].god_mod = false;
 		}
 		break;
 	}

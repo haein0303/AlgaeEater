@@ -27,15 +27,17 @@ void initialize_npc()
 		clients[i].degree = 0;
 		clients[i].start_x = 0;
 		clients[i].start_z = 0;
-		clients[i].hp = 100;
+		clients[i].atk = 1;
 		clients[i].char_state = AN_IDLE;
 		clients[i]._name[0] = 0;
+		clients[i].god_mod = false;
 		clients[i]._prev_remain = 0;
 		clients[i].Lua_on = false;
 		clients[i].stage = 0;
 		clients[i].turn = 0;
 		clients[i].first_pattern = false;
 		clients[i].second_pattern = false;
+		clients[i].boss_shield_trigger = false;
 		clients[i].room_list.clear();
 		clients[i].object_list.clear();
 
@@ -71,51 +73,63 @@ void initialize_npc()
 		{
 		case 10:
 		case 0:
+			srand((unsigned int)time(NULL));
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = -20;
 			clients[i].z = -20;
 			break;
 		case 11:
 		case 1:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = -20;
 			clients[i].z = 0;
 			break;
 		case 12:
 		case 2:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = -20;
 			clients[i].z = 20;
 			break;
 		case 13:
 		case 3:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 0;
 			clients[i].z = -20;
 			break;
 		case 14:
 		case 4:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 0;
 			clients[i].z = 0;
 			break;
 		case 15:
 		case 5:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 0;
 			clients[i].z = 20;
 			break;
 		case 16:
 		case 6:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 20;
 			clients[i].z = -20;
 			break;
 		case 17:
 		case 7:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 20;
 			clients[i].z = 0;
 			break;
 		case 18:
 		case 8:
+			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 20;
 			clients[i].z = 20;
 			break;
-		case 19: // ¾ê°¡ µ¹ÁøÇÏ´Â ¾Ö
+		case 19: // º¸½º
 		{
+			clients[i].hp = 200000;
+			clients[i].atk = 5;
 			clients[i].x = 30;
 			clients[i].z = 30;
 			clients[i].eye_color = 0;
@@ -192,7 +206,7 @@ void send_cube(int c_id, float x, float y, float z)
 	int s_num = clients[c_id]._Room_Num * ROOM_CUBE;
 	int cnt = 0;
 
-	for (int i = s_num; i < s_num + ROOM_CUBE; i++) {
+	for (int i = s_num; i < s_num + ROOM_CUBE - 1; i++) {
 		switch (cnt)
 		{
 		case 0:
@@ -216,22 +230,7 @@ void send_cube(int c_id, float x, float y, float z)
 			cubes[i].degree = 0;
 			cubes[i].color = cnt;
 			break;
-		case 3:
-			cubes[i].x = x + 10.0f;
-			cubes[i].y = y;
-			cubes[i].z = z;
-			cubes[i].degree = 0;
-			cubes[i].color = cnt;
-			break;
-		case 4:
-			cubes[i].x = 170.f;
-			cubes[i].y = 0;
-			cubes[i].z = -220.f;
-			cubes[i].degree = 0;
-			cubes[i].color = cnt;
-			break;
 		}
-
 		for (auto& pl : clients[c_id].room_list) {
 			if (pl >= MAX_USER) continue;
 			clients[pl]._sl.lock();
@@ -257,21 +256,18 @@ void rush_npc(int c_id, float t_x, float t_z)
 	float nde = de * 180 / PI;
 	clients[c_id].degree = nde;
 
-	if (abs(x - t_x) + abs(z - t_z) <= 3) {
+	// Å¥ºê¶û Ãæµ¹ ¸øÇßÀ½ -> ±â¹Í ½ÇÆĞ
+	if (x == t_x && z == t_z) {
 		return;
 	}
 
-	for (int i = clients[c_id]._Room_Num * ROOM_CUBE; i < clients[c_id]._Room_Num * ROOM_CUBE + ROOM_CUBE; i++) {
-		if (abs(x - cubes[i].x) + abs(z - cubes[i].z) <= 2) {
-			if (clients[c_id].color == cubes[i].color) {
-				// ±âµÕ ºÎ¼ÅÁü
-			}
-			else {
-				// ±âµÕ ¼ø¼­ ¸ø¸ÂÃã
-			}
-			cout << "±âµÕ Ãæµ¹" << endl;
-			return;
-		}
+	// Å¥ºê¶û Ãæµ¹ ÇÔ -> ±â¹Í ¼º°ø
+	int cube_num = clients[c_id]._Room_Num * ROOM_CUBE - 1;
+	if (abs(x - cubes[cube_num].x) + abs(z - cubes[cube_num].z) <= 2) {
+		// Å¥ºê¶û Ãæµ¹, ±×·Î±â »óÅÂ ¸¸µé±â
+		// Å¸°Ù ¾ÆÀÌµğ ¼³Á¤ ÇØÁà¾ß ÇÔ ¤·¤·
+		add_timer(c_id, 10000, EV_BOSS_CON, 0);
+		return;
 	}
 
 	x += 0.5f * -sin(de);
@@ -611,5 +607,28 @@ void wander_boss(int c_id)
 		clients[pl]._sl.unlock();
 
 		clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+	}
+}
+
+void send_second_cube(int c_id, float x, float y, float z)
+{
+	int s_num = clients[c_id]._Room_Num * ROOM_CUBE - 1;
+
+	cubes[s_num].x = x;
+	cubes[s_num].y = y;
+	cubes[s_num].z = z - 10.0f;
+	cubes[s_num].degree = 0;
+	cubes[s_num].color = 0;
+		
+	for (auto& pl : clients[c_id].room_list) {
+		if (pl >= MAX_USER) continue;
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
+			continue;
+		}
+		clients[pl]._sl.unlock();
+
+		clients[pl].send_cube_add(s_num % ROOM_CUBE, cubes[s_num].x, cubes[s_num].y, cubes[s_num].z, cubes[s_num].degree);
 	}
 }

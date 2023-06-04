@@ -13,7 +13,7 @@ constexpr int LOBBY_SERVER_PORT_NUM = 4001;
 constexpr int ROOM_NUM = 100;
 constexpr int ROOM_USER = 4;
 constexpr int ROOM_NPC = 20;
-constexpr int ROOM_CUBE = 5;
+constexpr int ROOM_CUBE = 4;
 constexpr int ROOM_KEY = 4;
 constexpr int ROOM_FIELD = 10;
 
@@ -30,6 +30,7 @@ constexpr char CS_CONSOLE = 2;
 constexpr char CS_COLLISION = 3;
 constexpr char CS_KEY = 4;
 constexpr char CS_OBJECT_COLLISION = 5;
+constexpr char CS_GOD_MOD = 9;
 
 constexpr char SC_LOGIN_OK = 10;
 constexpr char SC_ADD_OBJECT = 11;
@@ -102,6 +103,11 @@ struct CS_OBJECT_COLLISION_PACKET {
 	int		attacker_id;
 	int		target_id;
 	int		object_type; // 0은 큐브 1은 장판
+};
+
+struct CS_GOD_MOD_PACKET {
+	unsigned char size;
+	char type;
 };
 
 struct SC_LOGIN_OK_PACKET {

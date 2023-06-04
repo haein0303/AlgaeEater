@@ -38,8 +38,13 @@ public:
 	int		hp;
 	int		char_state;
 	int		stage;
+	int		atk;
+	int		skill_atk;
 	unsigned int client_time;
 	SESSION_TYPE _object_type;
+
+	// 갓모드 변수
+	bool god_mod;
 
 	// 보스용 변수
 	bool first_pattern;		// 전멸기 수행 여부
@@ -48,6 +53,11 @@ public:
 	// 스테이지 1 변수
 	int color;
 	int eye_color;
+	int color_sequence[4];
+	int crash_sequence[4];
+	int crash_count;
+	int boss_shield;
+	bool boss_shield_trigger;
 
 	// 임시 변수
 	float start_x, start_z;

@@ -10,3 +10,4 @@ void rush_npc(int c_id, float t_x, float t_y);
 void move_npc(int player_id, int c_id);
 void return_npc(int c_id);
 void wander_boss(int c_id);
+void send_second_cube(int c_id, float x, float y, float z);

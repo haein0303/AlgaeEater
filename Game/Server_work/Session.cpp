@@ -11,6 +11,9 @@ SESSION::SESSION()
 	_name[0] = 0;
 	char_state = AN_IDLE;
 	hp = 0;
+	atk = 0;
+	skill_atk = 0;
+	god_mod = false;
 	_s_state = ST_FREE;
 	_prev_remain = 0;
 	_Room_Num = 0;
@@ -23,6 +26,11 @@ SESSION::SESSION()
 	color = 0;
 	stack = 0;
 	eye_color = 0;
+	color_sequence[0] = 0;
+	crash_sequence[0] = 0;
+	crash_count = 0;
+	boss_shield = 0;
+	boss_shield_trigger = false;
 	first_pattern = false;
 	second_pattern = false;
 	_object_type = TY_PLAYER;

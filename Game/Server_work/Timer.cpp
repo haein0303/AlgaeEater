@@ -77,8 +77,51 @@ void do_timer()
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
 				break;
 			}
-			case EV_CK:
+			case EV_STAGE1_FIRST_BOSS:
 			{
+				int cnt_ck = 0;
+				for (int i = 0; i < 4; i++) {
+					if (clients[ev.object_id].color_sequence[i] == clients[ev.object_id].crash_sequence[i]) {
+						cnt_ck++;
+					}
+				}
+
+				if (cnt_ck == 4) { // 보스 기믹 성공
+					int pl_num = 0;
+					if (clients[0]._Room_Num != 999)
+						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER;
+					else
+						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER + 1;
+					for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
+						char msg[NAME_SIZE] = "기믹 성공";
+
+						clients[i].send_msg(msg);
+					}
+
+					// 보스 그로기
+					//clients[ev.object_id].char_state = 4?
+					clients[ev.object_id].boss_shield_trigger = false;
+					
+					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
+				}
+				else { // 보스 기믹 실패
+					int pl_num = 0;
+					if (clients[0]._Room_Num != 999)
+						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER;
+					else
+						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER + 1;
+
+					for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
+						char msg[NAME_SIZE] = "기믹 실패";
+
+						clients[i].send_msg(msg);
+					}
+				}
+				break;
+			}
+			case EV_STAGE1_SECOND_BOSS:
+			{
+				// 타겟 랜덤으로 돌려야 함
 				int tar_id = 0;
 
 				if (clients[tar_id]._Room_Num == 999) tar_id = 1;
@@ -106,10 +149,6 @@ void do_timer()
 
 				lua_getglobal(clients[ev.object_id].L, "event_rush");
 				lua_pushnumber(clients[ev.object_id].L, tar_id);
-				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
-
-				lua_getglobal(clients[ev.object_id].L, "create_cube");
-				lua_pushnumber(clients[ev.object_id].L, ev.object_id);
 				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 				break;
 			}
@@ -195,7 +234,7 @@ void do_timer()
 				}
 				clients[ev.target_id]._sl.unlock();
 
-				if (clients[ev.object_id].hp <= 50 && clients[ev.object_id].first_pattern == false) {
+				if (clients[ev.object_id].hp <= 150000 && clients[ev.object_id].first_pattern == false) { // 첫번째 전멸기
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl >= MAX_USER) continue;
 						clients[pl]._sl.lock();
@@ -205,15 +244,35 @@ void do_timer()
 						}
 						clients[pl]._sl.unlock();
 
-						char msg[NAME_SIZE] = "돌진";
+						char msg[NAME_SIZE] = "기둥 파괴";
 
 						clients[pl].send_msg(msg);
 					}
 
-					add_timer(ev.object_id, 5000, EV_CK, ev.target_id);
-					add_timer(ev.object_id, 8000, EV_BOSS_CON, ev.target_id);
+					add_timer(ev.object_id, 1000, EV_BOSS_EYE, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_STAGE1_FIRST_BOSS, ev.target_id);
 					clients[ev.object_id].first_pattern = true;
 					break;
+				}
+
+				if (clients[ev.object_id].hp <= 50000 && clients[ev.object_id].second_pattern == false) { // 두번째 전멸기
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER) continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state != ST_INGAME) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						char msg[NAME_SIZE] = "기둥 돌진";
+
+						clients[pl].send_msg(msg);
+					}
+
+					send_second_cube(ev.object_id, clients[ev.object_id].x, clients[ev.object_id].y, clients[ev.object_id].z);
+					add_timer(ev.object_id, 10000, EV_STAGE1_SECOND_BOSS, ev.target_id);
+					clients[ev.object_id].second_pattern = true;
 				}
 
 				if (clients[ev.target_id].char_state == AN_DEAD) {
@@ -246,11 +305,35 @@ void do_timer()
 			}
 			case EV_BOSS_EYE: {
 				int pl = ev.object_id;
+
+				// 여기에서 보스가 중간으로 텔포 하도록 해줘야 함, 근데 보스방 센터 위치를 몰?루
+				// 보스 텔포 시켜주고 큐브 만들어 줘야 함
+				// 보스 쉴드 트리거 on 시켜줘야 함
+
+				srand((unsigned int)time(NULL));
+
+				for (int i = 0; i < 4; i++) {
+					clients[ev.object_id].color_sequence[i] = rand() % 3 + 1;
+					if (i != 0) {
+						for (int j = i - 1; j >= 0; j--) {
+							if (clients[ev.object_id].color_sequence[i] == clients[ev.object_id].color_sequence[j]) {
+								i--;
+								break;
+							}
+						}
+					}
+				}
+
+				clients[ev.object_id].color_sequence[3] = 0;
+
 				clients[ev.target_id].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl].hp, clients[pl].char_state, clients[pl].eye_color, 0);
+					clients[pl].hp, clients[pl].char_state, clients[pl].color_sequence[clients[pl].eye_color], 0);
 
 				clients[pl].eye_color++;
-				if (clients[pl].eye_color > 4) clients[pl].eye_color = 0;
+				if (clients[pl].eye_color > 4) {
+					clients[pl].eye_color = 0;
+					break;
+				}
 
 				add_timer(ev.object_id, 3000, EV_BOSS_EYE, ev.target_id);
 				break;
