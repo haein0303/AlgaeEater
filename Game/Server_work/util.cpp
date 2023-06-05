@@ -199,7 +199,7 @@ void process_packet(int c_id, char* packet)
 				}
 			}
 			else { // 스킬 공격
-				if (p->attack_type = 1) { // 일반 공격
+				if (p->attack_type = 1) { // 스킬 공격
 					if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
 						clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
 						if (clients[p->target_id].boss_shield <= 0) {
@@ -223,7 +223,6 @@ void process_packet(int c_id, char* packet)
 			if (clients[c_id].god_mod == true) break;
 			else {
 				clients[c_id].hp -= clients[p->attacker_id].atk;
-				cout << clients[c_id].hp;
 			}
 			Update_Player(c_id);
 		}
@@ -270,11 +269,13 @@ void process_packet(int c_id, char* packet)
 			clients[c_id].atk *= 100;
 			clients[c_id].skill_atk *= 100;
 			clients[c_id].god_mod = true;
+			cout << "갓모드 on" << endl;
 		}
 		else {
 			clients[c_id].atk /= 100;
 			clients[c_id].skill_atk /= 100;
 			clients[c_id].god_mod = false;
+			cout << "갓모드 off" << endl;
 		}
 		break;
 	}
