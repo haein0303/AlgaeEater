@@ -151,6 +151,8 @@ void d11on12::init(DxEngine* engine, WindowInfo windowInfo) {
 		&m_pRenderTarget
 		);
 
+	_win_info = windowInfo;
+
 }
 
 void d11on12::LoadPipeline()
@@ -220,14 +222,14 @@ void d11on12::Loading_info()
 	_loading_msg.push_back(L"상남자 특 로딩 잘 기다림");
 	_loading_msg.push_back(L"상여자 특 로딩 잘 기다림");
 
-	_loading_rect.top = 360.f - 250.0f;
-	_loading_rect.left = 640.f - 250.0f;
-	_loading_rect.right = 640.f + 250.0f;
-	_loading_rect.bottom = 360.f + 250.0f;
+	_loading_rect.top = (_win_info.ClientHeight/2.f) - 250.0f;
+	_loading_rect.left = (_win_info.ClientWidth / 2.f) - 250.0f;
+	_loading_rect.right = (_win_info.ClientWidth / 2.f) + 250.0f;
+	_loading_rect.bottom = (_win_info.ClientHeight / 2.f) + 250.0f;
 
 	_loading_msg_rect.top = _loading_rect.bottom + 20.f;
 	_loading_msg_rect.left = 0.f;
-	_loading_msg_rect.right = 1280.f;
+	_loading_msg_rect.right = _win_info.ClientWidth;
 	_loading_msg_rect.bottom = _loading_rect.bottom + 40.f;
 
 	srand((unsigned int)time(NULL));
@@ -257,7 +259,7 @@ void d11on12::Loading_draw(const float& time)
 	}
 
 	
-	m_d2dDeviceContext->DrawBitmap(_loading_bg, { 0.f, 0.f, 1280.f, 720.f });
+	m_d2dDeviceContext->DrawBitmap(_loading_bg, { 0.f, 0.f, (float)_win_info.ClientWidth ,(float)_win_info.ClientHeight });
 	m_d2dDeviceContext->DrawBitmap(_loading_Resource[now_img], _loading_rect);
 	m_d2dDeviceContext->DrawTextW(_loading_msg[now_msg], wcslen(_loading_msg[now_msg]), mDWriteTextFormat.Get(), &_loading_msg_rect, mSolidColorBrush.Get());
 
@@ -267,12 +269,15 @@ void d11on12::Late_load()
 {
 	
 	_boss_bg = addResource(L"..\\Resources\\UserInterface\\Boss_bg.png");
+
 	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_white.png"));
 	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_blue.png"));
 	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_green.png"));
 	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_red.png"));
 	stage1_boss_bg.push_back(addResource(L"..\\Resources\\UserInterface\\Boss_bg_black.png"));
 	
+	user_icon.push_back(addResource(L"..\\Resources\\UserInterface\\AKI.png"));
+	user_icon.push_back(addResource(L"..\\Resources\\UserInterface\\MIKA.png"));
 
 
 }
@@ -405,8 +410,29 @@ void d11on12::ExcuteUI(int mCurrBackbufferIndex)
 	m_d3d11DeviceContext->Flush();
 }
 
-void d11on12::draw_boss_info(int num, float hp)
+void d11on12::draw_player_info(LPCWSTR text, int hp_max, int hp, int type = 0)
 {
+	if (hp < 0) {
+		hp = 0;
+	}
+	float img_width = 50.f;
+	float xs = _win_info.ClientWidth / 4 - img_width;
+	float ys = _win_info.ClientHeight / 2;
+	
+	float half_x = _win_info.ClientWidth / 2;
+	float width = _win_info.ClientWidth / 3;
+	float height_loaction = _win_info.ClientHeight - 100.f;
+	float startx = half_x - xs + img_width;
 
+	D2D1_RECT_F rect{ half_x - xs + img_width,height_loaction - img_width, half_x - xs + img_width + 100.f,height_loaction };
+
+	m_d2dDeviceContext->DrawBitmap(user_icon[type], { half_x - xs - img_width, height_loaction - img_width , half_x - xs + img_width, height_loaction + img_width });
+	m_d2dDeviceContext->DrawTextW(text, wcslen(text), m_boss_font.Get(), &rect, mSolidColorBrush.Get());
+
+	D2D1_RECT_F backgroundRect = D2D1::RectF(startx, height_loaction+10.f, startx + width, height_loaction + 25.f);
+	m_d2dDeviceContext->FillRectangle(backgroundRect, mGrayBrush);
+
+	D2D1_RECT_F progressRect = D2D1::RectF(startx, height_loaction+ 10.f, startx + (width * ((float)hp / hp_max)), height_loaction + 25.f);
+	m_d2dDeviceContext->FillRectangle(progressRect, mRedBrush);
 }
 

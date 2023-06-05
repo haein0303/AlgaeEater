@@ -361,7 +361,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					CS_COLLISION_PACKET p;
 					p.size = sizeof(p);
 					p.type = CS_COLLISION;
-					p.attack_type = 'a';
+					p.attack_type = playerArr[i]._animation_state-1;
 					p.attacker_id = playerArr[i]._my_server_id;
 					p.target_id = npcArr[j]._my_server_id;
 					networkPtr->send_packet(&p);
@@ -379,7 +379,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					CS_COLLISION_PACKET p;
 					p.size = sizeof(p);
 					p.type = CS_COLLISION;
-					p.attack_type = 'a';
+					p.attack_type = 0;
 					p.attacker_id = npcArr[j]._my_server_id;
 					p.target_id = playerArr[i]._my_server_id;
 					networkPtr->send_packet(&p);
@@ -403,7 +403,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
 				p.type = CS_COLLISION;
-				p.attack_type = 'a';
+				p.attack_type = playerArr[i]._animation_state-1;
 				p.attacker_id = playerArr[i]._my_server_id;
 				p.target_id = boss_obj._my_server_id;
 				networkPtr->send_packet(&p);
@@ -421,7 +421,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
 				p.type = CS_COLLISION;
-				p.attack_type = 'a';
+				p.attack_type = 1;
 				p.attacker_id = boss_obj._my_server_id;
 				p.target_id = playerArr[i]._my_server_id;
 				networkPtr->send_packet(&p);
@@ -1382,22 +1382,25 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		_tmp.left = 1100;
 		_tmp.right = 1280;
 		for (int i = 1; i < PLAYERMAX; ++i) {
+			_tmp.bottom = 720 / 2 - 50 + 25 * i;
+			_tmp.top = _tmp.bottom - 25;
 			if (playerArr[i]._on == true)
 			{
 				wsprintf(text, L"HP : %d", playerArr[i]._hp);
+				d11Ptr->draw_text(text, _tmp);
 			}
 			else {
 				wsprintf(text, L"WAIT PLAYER");
+				
+				d11Ptr->draw_text(text, _tmp);
 			}
-			_tmp.bottom = 720 / 2 - 50 + 25 * i;
-			_tmp.top = _tmp.bottom - 25;
-			d11Ptr->draw_text(text, _tmp);
+			
+			
 		}
 
 
-		_tmp = D2D1::RectF(0.f, 0.f, 1280.f, 100.f);
+		//°« ¸ðµå ¿Â
 		wsprintf(text, L"BOSS HP : %d", boss_obj._hp);
-		//d11Ptr->draw_text(text, _tmp);
 		float height = 0.f;
 		if (inputPtr->_god_mod_on) {
 			_tmp = D2D1::RectF(500.f, 0.f, 1280.f, 15.f);
@@ -1437,6 +1440,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 			
 		}
+		d11Ptr->draw_player_info(L"AKI", 100, playerArr[0]._hp, 0);
 		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num,boss_obj);
 	}
 	else {

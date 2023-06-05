@@ -56,8 +56,11 @@ private:
 
 	UINT m_rtvDescriptorSize;
 
+	WindowInfo _win_info;
+
 	ID2D1Bitmap* _loading_bg;
 	vector<ID2D1Bitmap*> _loading_Resource;
+	
 	vector<LPCWSTR> _loading_msg;
 	float loading_counter = 0.f;
 	float loading_msg_counter = 0.f;
@@ -68,6 +71,7 @@ private:
 	D2D1_RECT_F _loading_msg_rect;
 
 	vector<ID2D1Bitmap*> stage1_boss_bg;
+	vector<ID2D1Bitmap*> user_icon;
 	
 public:
 	ID2D1Bitmap* _boss_bg;
@@ -95,7 +99,8 @@ public:
 	void draw_infotext(LPCWSTR text, D2D1_RECT_F rect);
 	void ExcuteUI(int mCurrBackbufferIndex);
 
-	void draw_boss_info(int num, float hp);
+
+	void draw_player_info(LPCWSTR text, int hp_max, int hp, int type);
 };
 
 template<class Interface>
