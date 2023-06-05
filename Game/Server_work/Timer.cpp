@@ -126,7 +126,7 @@ void do_timer()
 
 				if (clients[tar_id]._Room_Num == 999) tar_id = 1;
 
-				if (clients[tar_id].char_state == AN_DEAD) {
+				/*if (clients[tar_id].char_state == AN_DEAD) {
 					int dead_player = tar_id;
 					for (auto& pl : clients[tar_id].room_list) {
 						if (pl < MAX_USER) {
@@ -145,7 +145,7 @@ void do_timer()
 						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 						break;
 					}
-				}
+				}*/
 
 				lua_getglobal(clients[ev.object_id].L, "event_rush");
 				lua_pushnumber(clients[ev.object_id].L, tar_id);
@@ -172,7 +172,7 @@ void do_timer()
 					break;
 				}
 				clients[ev.object_id]._sl.unlock();
-				if (clients[ev.target_id].char_state == AN_DEAD) {
+				/*if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
 						if (pl < MAX_USER) {
@@ -191,7 +191,7 @@ void do_timer()
 						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 						break;
 					}
-				}
+				}*/
 
 				lua_getglobal(clients[ev.object_id].L, "tracking_player");
 				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
@@ -208,7 +208,7 @@ void do_timer()
 				}
 				clients[ev.object_id]._sl.unlock();
 
-				clients[ev.target_id]._sl.lock();
+				/*clients[ev.target_id]._sl.lock();
 				if (clients[ev.target_id]._s_state == ST_FREE) {
 					clients[ev.target_id]._sl.unlock();
 					int dead_player = ev.target_id;
@@ -232,7 +232,7 @@ void do_timer()
 						break;
 					}
 				}
-				clients[ev.target_id]._sl.unlock();
+				clients[ev.target_id]._sl.unlock();*/
 
 				if (clients[ev.object_id].hp <= 150000 && clients[ev.object_id].first_pattern == false) { // 첫번째 전멸기
 					for (auto& pl : clients[ev.object_id].room_list) {
