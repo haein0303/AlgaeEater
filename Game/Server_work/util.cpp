@@ -220,8 +220,11 @@ void process_packet(int c_id, char* packet)
 			}
 		}
 		else {						// 공격자가 npc
-			clients[c_id].hp -= clients[p->attacker_id].atk;
-			cout << clients[c_id].hp;
+			if (clients[c_id].god_mod == true) break;
+			else {
+				clients[c_id].hp -= clients[p->attacker_id].atk;
+				cout << clients[c_id].hp;
+			}
 			Update_Player(c_id);
 		}
 		break;

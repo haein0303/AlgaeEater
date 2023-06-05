@@ -275,7 +275,7 @@ void do_timer()
 					clients[ev.object_id].second_pattern = true;
 				}
 
-				if (clients[ev.target_id].char_state == AN_DEAD) {
+				/*if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
 						if (pl < MAX_USER) {
@@ -294,7 +294,7 @@ void do_timer()
 						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 						break;
 					}
-				}
+				}*/
 
 				lua_getglobal(clients[ev.object_id].L, "wander_boss");
 				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
