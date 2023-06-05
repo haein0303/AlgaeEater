@@ -265,7 +265,7 @@ void process_packet(int c_id, char* packet)
 		break;
 	}
 	case CS_GOD_MOD: {
-		if (clients[c_id].god_mod = false) {
+		if (clients[c_id].god_mod == false) {
 			clients[c_id].atk *= 100;
 			clients[c_id].skill_atk *= 100;
 			clients[c_id].god_mod = true;
