@@ -29,7 +29,7 @@ public:
 	void Init(WindowInfo windowInfo);
 
 	//Å° ÀÔ·Â
-	void InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr);
+	void InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr, array<BoundingBox, 1> bounding_boxes);
 	void inputMouse(OBJECT* playerArr, shared_ptr<SFML> networkPtr);
 
 private:

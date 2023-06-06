@@ -15,7 +15,7 @@ void Input::Init(WindowInfo windowInfo)
 
 bool send_toggle = false;
 int counter_toggle = 0;
-void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr)
+void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr, array<BoundingBox, 1> bounding_boxes)
 {
 		HWND hwnd = GetActiveWindow();
 		bool key_toggle = false;
@@ -147,6 +147,10 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 			else if (!(w == false && a == false && s == false && d == false)
 				&& playerArr[networkPtr->myClientId]._animation_state != 2
 				&& playerArr[networkPtr->myClientId]._animation_state != 3) {
+
+				float pos_x0 = playerArr[networkPtr->myClientId]._transform.x;
+				float pos_z0 = playerArr[networkPtr->myClientId]._transform.z;
+
 				if (w != s && a == d)
 				{
 					if (w == true)
@@ -205,6 +209,17 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<S
 					}
 				}
 				playerArr[networkPtr->myClientId]._animation_state = 1;
+
+				playerArr[networkPtr->myClientId]._bounding_box.Center.x = playerArr[networkPtr->myClientId]._transform.x;
+				playerArr[networkPtr->myClientId]._bounding_box.Center.z = playerArr[networkPtr->myClientId]._transform.z;
+				if (playerArr[networkPtr->myClientId]._bounding_box.Intersects(bounding_boxes[0]))
+				{
+					playerArr[networkPtr->myClientId]._transform.x = pos_x0;
+					playerArr[networkPtr->myClientId]._transform.z = pos_z0;
+
+					playerArr[networkPtr->myClientId]._bounding_box.Center.x = pos_x0;
+					playerArr[networkPtr->myClientId]._bounding_box.Center.z = pos_z0;
+				}
 			}
 			else if (playerArr[networkPtr->myClientId]._animation_state != 2 && playerArr[networkPtr->myClientId]._animation_state != 3) {
 				playerArr[networkPtr->myClientId]._animation_state = 0;

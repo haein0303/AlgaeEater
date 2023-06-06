@@ -132,6 +132,8 @@ public:
 
 	vector<MapData> _map_data;
 
+	array<BoundingBox, 1> bounding_boxes;
+
 private:
 	//화면 크기 관련
 	D3D12_VIEWPORT	_viewport;
@@ -283,7 +285,12 @@ public:
 				else if (data.mesh_type.compare("Clotch") == 0)
 					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("tank") == 0)
+				{
+					data.scale.x *= 2.f;
+					data.scale.y *= 2.f;
+					data.scale.z *= 2.f;
 					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
 				else if (data.mesh_type.compare("Plane002") == 0)
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Grid_Metal_tile") == 0)

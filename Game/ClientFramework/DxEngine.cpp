@@ -87,7 +87,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	barrel.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	barrel.Init("../Resources/barrel.txt", ObjectType::GeneralObjects);
-	barrel.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	barrel.Add_texture(L"..\\Resources\\Texture\\barrel.png");
 	barrel.Make_SRV();
 	barrel.CreatePSO(L"..\\Bricks.hlsl");
 
@@ -105,7 +105,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	tank.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	tank.Init("../Resources/tank.txt", ObjectType::GeneralObjects);
-	tank.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	tank.Add_texture(L"..\\Resources\\Texture\\Tank_Color.png");
 	tank.Make_SRV();
 	tank.CreatePSO(L"..\\Bricks.hlsl");
 
@@ -255,6 +255,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	key_data[0]._key = 0;
 	key_data[0]._on = true;
 
+	bounding_boxes[0].Center.x = 170.f;
+	bounding_boxes[0].Center.z = -240.f;
+	bounding_boxes[0].Extents = XMFLOAT3(5.f, 5.f, 5.f);
+
 	ImportMapdata("../Resources/MapData.txt");
 
 	
@@ -311,10 +315,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 	if (isActive)
 	{
-		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr);
+		inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes);
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
-	
+
 	// 파티클 동기화
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{

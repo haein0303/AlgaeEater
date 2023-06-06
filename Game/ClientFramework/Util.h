@@ -22,6 +22,7 @@
 #include <iostream>
 #include <pix.h>
 #include <array>
+#include <DirectXCollision.h>
 
 #include <string>
 #include <shellapi.h>
