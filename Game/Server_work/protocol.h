@@ -165,6 +165,7 @@ struct SC_ADD_CUBE_PACKET {
 	float	x, y, z;
 	float	degree;
 	char	name[NAME_SIZE];
+	int		color;
 	int		hp;
 };
 

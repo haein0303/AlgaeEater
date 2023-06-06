@@ -112,7 +112,7 @@ void SESSION::send_remove_object(int c_id)
 	do_send(&p);
 }
 
-void SESSION::send_cube_add(int c_id, float x, float y, float z, float degree)
+void SESSION::send_cube_add(int c_id, float x, float y, float z, float degree, int color)
 {
 	SC_ADD_CUBE_PACKET p;
 	p.id = c_id;
@@ -121,6 +121,7 @@ void SESSION::send_cube_add(int c_id, float x, float y, float z, float degree)
 	p.x = x;
 	p.y = y;
 	p.z = z;
+	p.color = color;
 	p.degree = degree;
 	do_send(&p);
 }

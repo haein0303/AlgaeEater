@@ -218,6 +218,38 @@ void process_packet(int c_id, char* packet)
 					}
 				}
 			}
+
+			int pl_id = clients[p->attacker_id]._Room_Num * ROOM_USER;
+			int pl = p->target_id;
+
+			if (clients[pl]._object_type == TY_BOSS_1 ||
+				clients[pl]._object_type == TY_BOSS_2 ||
+				clients[pl]._object_type == TY_BOSS_3) {
+				for (int i = pl_id; i < pl_id + ROOM_USER; i++) {
+					clients[pl_id]._sl.lock();
+					if (clients[pl_id]._s_state != ST_INGAME) {
+						clients[pl_id]._sl.unlock();
+						continue;
+					}
+					
+					clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+						clients[pl].hp, clients[pl].char_state, clients[pl].eye_color, 0);
+					clients[pl_id]._sl.unlock();
+				}
+			}
+			else {
+				for (int i = pl_id; i < pl_id + ROOM_USER; i++) {
+					clients[pl_id]._sl.lock();
+					if (clients[pl_id]._s_state != ST_INGAME) {
+						clients[pl_id]._sl.unlock();
+						continue;
+					}
+
+					clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+						clients[pl].hp, clients[pl].char_state, 0);
+					clients[pl_id]._sl.unlock();
+				}
+			}
 		}
 		else {						// 공격자가 npc
 			if (clients[c_id].god_mod == true) break;
@@ -254,6 +286,7 @@ void process_packet(int c_id, char* packet)
 		{
 		case 0: // 1스테이지 큐브, 기둥
 			// 플레이어가 첫번째 전멸기 기둥 부실때 트리거
+			cout << "기둥 파괴 색 : " << cubes[p->target_id].color << endl;
 			clients[boss_num].crash_sequence[clients[boss_num].crash_count] = cubes[p->target_id].color;
 			clients[boss_num].crash_count++;
 			break;

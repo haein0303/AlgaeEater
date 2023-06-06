@@ -79,9 +79,11 @@ void do_timer()
 			}
 			case EV_STAGE1_FIRST_BOSS:
 			{
+				cout << "기믹 판정 시작" << endl;
 				int cnt_ck = 0;
 				for (int i = 0; i < 4; i++) {
 					if (clients[ev.object_id].color_sequence[i] == clients[ev.object_id].crash_sequence[i]) {
+						cout << "보스 저장 순서 :" << clients[ev.object_id].color_sequence[i] << endl;
 						cnt_ck++;
 					}
 				}
@@ -92,11 +94,14 @@ void do_timer()
 						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER;
 					else
 						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER + 1;
-					for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
+
+					cout << "기믹 성공" << endl;
+
+					/*for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
 						char msg[NAME_SIZE] = "기믹 성공";
 
 						clients[i].send_msg(msg);
-					}
+					}*/
 
 					// 보스 그로기
 					//clients[ev.object_id].char_state = 4?
@@ -111,11 +116,13 @@ void do_timer()
 					else
 						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER + 1;
 
-					for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
+					cout << "기믹 실패" << endl;
+
+					/*for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
 						char msg[NAME_SIZE] = "기믹 실패";
 
 						clients[i].send_msg(msg);
-					}
+					}*/
 				}
 				break;
 			}
@@ -244,13 +251,13 @@ void do_timer()
 						}
 						clients[pl]._sl.unlock();
 
-						char msg[NAME_SIZE] = "기둥 파괴";
+						/*char msg[NAME_SIZE] = "기둥 파괴";
 
-						clients[pl].send_msg(msg);
+						clients[pl].send_msg(msg);*/
 					}
 
+					add_timer(ev.object_id, 40000, EV_STAGE1_FIRST_BOSS, ev.target_id);
 					add_timer(ev.object_id, 1000, EV_BOSS_EYE, ev.target_id);
-					add_timer(ev.object_id, 10000, EV_STAGE1_FIRST_BOSS, ev.target_id);
 					clients[ev.object_id].first_pattern = true;
 					break;
 				}
@@ -307,35 +314,34 @@ void do_timer()
 				int pl = ev.object_id;
 
 				// 여기에서 보스가 중간으로 텔포 하도록 해줘야 함, 근데 보스방 센터 위치를 몰?루
-				// 보스 텔포 시켜주고 큐브 만들어 줘야 함
-				// 보스 쉴드 트리거 on 시켜줘야 함
 
-				srand((unsigned int)time(NULL));
+				if (clients[pl].color_sequence[0] == 0) {
 
-				for (int i = 0; i < 4; i++) {
-					clients[ev.object_id].color_sequence[i] = rand() % 3 + 1;
-					if (i != 0) {
-						for (int j = i - 1; j >= 0; j--) {
-							if (clients[ev.object_id].color_sequence[i] == clients[ev.object_id].color_sequence[j]) {
-								i--;
-								break;
-							}
-						}
+					clients[pl].boss_shield_trigger = true;
+
+					send_cube(pl, clients[pl].x, clients[pl].y, clients[pl].z);
+
+					srand((unsigned int)time(NULL));
+
+					for (int i = 0; i < 3; i++) {
+						clients[pl].color_sequence[i] = i + 1;
 					}
-				}
 
-				clients[ev.object_id].color_sequence[3] = 0;
+					clients[pl].color_sequence[3] = 0;
+				}
 
 				clients[ev.target_id].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
 					clients[pl].hp, clients[pl].char_state, clients[pl].color_sequence[clients[pl].eye_color], 0);
 
+				cout << clients[pl].color_sequence[clients[pl].eye_color] << endl;
+
 				clients[pl].eye_color++;
-				if (clients[pl].eye_color > 4) {
+				if (clients[pl].eye_color > 3) {
 					clients[pl].eye_color = 0;
 					break;
 				}
 
-				add_timer(ev.object_id, 3000, EV_BOSS_EYE, ev.target_id);
+				add_timer(pl, 3000, EV_BOSS_EYE, ev.target_id);
 				break;
 			}
 			case EV_WANDER: {

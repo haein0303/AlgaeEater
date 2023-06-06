@@ -240,7 +240,7 @@ void send_cube(int c_id, float x, float y, float z)
 			}
 			clients[pl]._sl.unlock();
 
-			clients[pl].send_cube_add(i % ROOM_CUBE, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree);
+			clients[pl].send_cube_add(i % ROOM_CUBE, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree, cubes[i].color);
 		}
 
 		cnt++;
@@ -629,6 +629,6 @@ void send_second_cube(int c_id, float x, float y, float z)
 		}
 		clients[pl]._sl.unlock();
 
-		clients[pl].send_cube_add(s_num % ROOM_CUBE, cubes[s_num].x, cubes[s_num].y, cubes[s_num].z, cubes[s_num].degree);
+		clients[pl].send_cube_add(s_num % ROOM_CUBE, cubes[s_num].x, cubes[s_num].y, cubes[s_num].z, cubes[s_num].degree, cubes[s_num].color);
 	}
 }
