@@ -255,11 +255,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	key_data[0]._key = 0;
 	key_data[0]._on = true;
 
-	bounding_boxes[0].Center.x = 170.f;
-	bounding_boxes[0].Center.z = -240.f;
-	bounding_boxes[0].Extents = XMFLOAT3(5.f, 5.f, 5.f);
-
 	ImportMapdata("../Resources/MapData.txt");
+	ImportCollisionObjectsData("../Resources/CollisionData.txt");
 
 	
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");

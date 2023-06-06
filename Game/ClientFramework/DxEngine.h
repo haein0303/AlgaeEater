@@ -132,7 +132,7 @@ public:
 
 	vector<MapData> _map_data;
 
-	array<BoundingBox, 1> bounding_boxes;
+	vector<BoundingBox> bounding_boxes;
 
 private:
 	//화면 크기 관련
@@ -346,7 +346,42 @@ public:
 				in >> data.mesh_type >> ignore >> ignore >> data.pos.x >> data.pos.y >> data.pos.z
 					>> ignore >> data.scale.x >> data.scale.y >> data.scale.z
 					>> ignore >> data.rotation.x >> data.rotation.y >> data.rotation.z;
-				_map_data.push_back(data);
+				_map_data.emplace_back(data);
+			}
+		}
+	}
+
+	void ImportCollisionObjectsData(const string& file_path)
+	{
+		ifstream in{ file_path };
+
+		if (!in)
+		{
+			exit(0);
+		}
+
+		string ignore;
+		string str = "\n";
+		MapData data;
+
+		while (in >> str)
+		{
+			if (str.compare("num:") == 0)
+			{
+				int num;
+				in >> num;
+				_map_data.reserve(num);
+			}
+			else if (str.compare("Mesh:") == 0)
+			{
+				BoundingBox bounding_box;
+				in >> ignore >> ignore >> ignore >> bounding_box.Center.x >> ignore >> bounding_box.Center.z
+					>> ignore >> bounding_box.Extents.x >> bounding_box.Extents.y >> bounding_box.Extents.z
+					>> ignore >> ignore >> ignore >> ignore;
+				bounding_box.Center.x *= 2.f;
+				bounding_box.Center.y = 0.f;
+				bounding_box.Center.z *= 2.f;
+				bounding_boxes.emplace_back(bounding_box);
 			}
 		}
 	}
