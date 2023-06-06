@@ -453,8 +453,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	for (int i = 0; i < CubeMax; ++i) {
 		if (playerArr[networkPtr->myClientId]._on == true && pillars_data[i]._on == true)
 		{
-			if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f
-				&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color)
+			if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
 			{
 				if ((playerArr[networkPtr->myClientId]._animation_state == 2 || playerArr[networkPtr->myClientId]._animation_state == 3)
 					&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
