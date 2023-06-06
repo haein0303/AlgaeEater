@@ -111,20 +111,50 @@ void process_packet(int c_id, char* packet)
 						if ((i - MAX_USER) % ROOM_NPC < 3) {
 							clients[i].x = 130;
 							clients[i].start_x = 130;
-							clients[i].z = -240 + (i - MAX_USER) * 10;
-							clients[i].start_z = -240 + (i - MAX_USER) * 10;
+							clients[i].z = -240 + (i - MAX_USER) % ROOM_NPC * 10;
+							clients[i].start_z = -240 + (i - MAX_USER) % ROOM_NPC * 10;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 2 && (i - MAX_USER) % 10 < 6) {
+						else if ((i - MAX_USER) % ROOM_NPC > 2 && (i - MAX_USER) % ROOM_NPC < 6) {
 							clients[i].x = 100;
 							clients[i].start_x = 100;
-							clients[i].z = -270 + (i - MAX_USER) * 10;
-							clients[i].start_z = -270 + (i - MAX_USER) * 10;
+							clients[i].z = -270 + (i - MAX_USER) % ROOM_NPC * 10;
+							clients[i].start_z = -270 + (i - MAX_USER) % ROOM_NPC * 10;
 						}
-						else {
+						else if ((i - MAX_USER) % ROOM_NPC > 5 && (i - MAX_USER) % ROOM_NPC < 9){
 							clients[i].x = 70;
 							clients[i].start_x = 70;
-							clients[i].z = -300 + (i - MAX_USER) * 10;
-							clients[i].start_z = -300 + (i - MAX_USER) * 10;
+							clients[i].z = -300 + (i - MAX_USER) % ROOM_NPC * 20;
+							clients[i].start_z = -300 + (i - MAX_USER) % ROOM_NPC * 20;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC > 8 && (i - MAX_USER) % ROOM_NPC < 12) {
+							clients[i].x = 0;
+							clients[i].start_x = 0;
+							clients[i].z = -80 - (i - MAX_USER - 8) % ROOM_NPC * 20;
+							clients[i].start_z = -80 - (i - MAX_USER - 8) % ROOM_NPC * 20;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC > 11 && (i - MAX_USER) % ROOM_NPC < 15) {
+							clients[i].x = 20;
+							clients[i].start_x = 20;
+							clients[i].z = -80 - (i - MAX_USER - 11) % ROOM_NPC * 20;
+							clients[i].start_z = -80 - (i - MAX_USER - 11) % ROOM_NPC * 20;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC > 14 && (i - MAX_USER) % ROOM_NPC < 18) {
+							clients[i].x = 35;
+							clients[i].start_x = 35;
+							clients[i].z = -80 - (i - MAX_USER - 14) % ROOM_NPC * 20;
+							clients[i].start_z = -80 - (i - MAX_USER - 14) % ROOM_NPC * 20;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC > 17 && (i - MAX_USER) % ROOM_NPC < 19) {
+							clients[i].x = 0;
+							clients[i].start_x = 0;
+							clients[i].z = 0;
+							clients[i].start_z = 0;
+						}
+						else {
+							clients[i].x = -340;
+							clients[i].start_x = -340;
+							clients[i].z = -145;
+							clients[i].start_z = -145;
 						}
 						break;
 					default:
