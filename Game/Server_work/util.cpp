@@ -180,7 +180,7 @@ void process_packet(int c_id, char* packet)
 	case CS_COLLISION: {
 		CS_COLLISION_PACKET* p = reinterpret_cast<CS_COLLISION_PACKET*>(packet);
 		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
-			if (p->attack_type = 0) { // 일반 공격
+			if (p->attack_type == 0) { // 일반 공격
 				if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
 					clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
 					cout << "보스 쉴드 파괴 중" << endl;
@@ -201,7 +201,7 @@ void process_packet(int c_id, char* packet)
 				}
 			}
 			else { // 스킬 공격
-				if (p->attack_type = 1) { // 스킬 공격
+				if (p->attack_type == 1) { // 스킬 공격
 					if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
 						clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
 						if (clients[p->target_id].boss_shield <= 0) {
@@ -283,12 +283,10 @@ void process_packet(int c_id, char* packet)
 	}
 	case CS_OBJECT_COLLISION: {
 		CS_OBJECT_COLLISION_PACKET* p = reinterpret_cast<CS_OBJECT_COLLISION_PACKET*>(packet);
-		int boss_num = clients[c_id]._Room_Num * ROOM_NPC - 1 + MAX_USER;
+		int boss_num = clients[c_id]._Room_Num * ROOM_NPC + ROOM_NPC - 1 + MAX_USER;
 		switch (p->object_type)
 		{
 		case 0: // 1스테이지 큐브, 기둥
-			// 플레이어가 첫번째 전멸기 기둥 부실때 트리거
-			cout << "기둥 파괴 색 : " << cubes[p->target_id].color << endl;
 			clients[boss_num].crash_sequence[clients[boss_num].crash_count] = cubes[p->target_id].color;
 			clients[boss_num].crash_count++;
 			break;

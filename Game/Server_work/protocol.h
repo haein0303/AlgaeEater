@@ -95,7 +95,7 @@ struct CS_CONSOLE_PACKET {
 struct CS_COLLISION_PACKET {
 	unsigned char size;
 	char	type;
-	char	attack_type;
+	int		attack_type;
 	int		attacker_id;
 	int		target_id;
 };

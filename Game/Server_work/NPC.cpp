@@ -258,6 +258,7 @@ void rush_npc(int c_id, float t_x, float t_z)
 
 	// 큐브랑 충돌 못했음 -> 기믹 실패
 	if (x == t_x && z == t_z) {
+		cout << "기믹 실패" << endl;
 		return;
 	}
 
@@ -266,6 +267,21 @@ void rush_npc(int c_id, float t_x, float t_z)
 	if (abs(x - cubes[cube_num].x) + abs(z - cubes[cube_num].z) <= 2) {
 		// 큐브랑 충돌, 그로기 상태 만들기
 		// 타겟 아이디 설정 해줘야 함 ㅇㅇ
+		cout << "기믹 성공" << endl;
+		clients[c_id].char_state = AN_DEAD;
+
+		for (auto& pl : clients[c_id].room_list) {
+			if (pl >= MAX_USER) continue;
+			clients[pl]._sl.lock();
+			if (clients[pl]._s_state != ST_INGAME) {
+				clients[pl]._sl.unlock();
+				continue;
+			}
+			clients[pl]._sl.unlock();
+
+			clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0, 0);
+		}
+
 		add_timer(c_id, 10000, EV_BOSS_CON, 0);
 		return;
 	}
@@ -302,7 +318,7 @@ void move_npc(int player_id, int c_id)
 	if (clients[c_id]._object_type == TY_MOVE_NPC || clients[c_id]._object_type == TY_HOLD_NPC) {
 		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
 			// 공격 처리 관련, 여기서 안 할 수도 있음
-			clients[c_id].char_state = AN_ATTACK;
+			clients[c_id].char_state = AN_ATTACK_1;
 			clients[c_id].degree = nde;
 
 			for (auto& pl : clients[c_id].room_list) {
@@ -325,7 +341,7 @@ void move_npc(int player_id, int c_id)
 	else {
 		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 5.f) {
 			// 공격 처리 관련, 여기서 안 할 수도 있음
-			clients[c_id].char_state = AN_ATTACK;
+			clients[c_id].char_state = AN_ATTACK_1;
 			clients[c_id].degree = nde;
 
 			for (auto& pl : clients[c_id].room_list) {

@@ -83,7 +83,6 @@ void do_timer()
 				int cnt_ck = 0;
 				for (int i = 0; i < 4; i++) {
 					if (clients[ev.object_id].color_sequence[i] == clients[ev.object_id].crash_sequence[i]) {
-						cout << "보스 저장 순서 :" << clients[ev.object_id].color_sequence[i] << endl;
 						cnt_ck++;
 					}
 				}
@@ -104,8 +103,15 @@ void do_timer()
 					}*/
 
 					// 보스 그로기
-					//clients[ev.object_id].char_state = 4?
+					clients[ev.object_id].char_state = AN_DEAD;
 					clients[ev.object_id].boss_shield_trigger = false;
+
+					int pl = ev.object_id;
+
+					for (int i = pl_num; i < pl_num + ROOM_USER; ++i) {
+						clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+							clients[pl].hp, clients[pl].char_state, 0, 0);
+					}
 					
 					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
 				}
