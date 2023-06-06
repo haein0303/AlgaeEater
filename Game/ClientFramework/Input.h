@@ -16,7 +16,7 @@ public:
 	bool s = false;
 	bool d = false;
 
-	float move_speed = 50.f;
+	float move_speed = 10.f;
 
 	bool _mouse_enable = false;
 	bool _mouse_chaged = false;
