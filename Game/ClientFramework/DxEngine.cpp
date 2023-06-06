@@ -365,7 +365,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					CS_COLLISION_PACKET p;
 					p.size = sizeof(p);
 					p.type = CS_COLLISION;
-					p.attack_type = playerArr[i]._animation_state-1;
+					p.attack_type = playerArr[i]._animation_state-2;
 					p.attacker_id = playerArr[i]._my_server_id;
 					p.target_id = npcArr[j]._my_server_id;
 					networkPtr->send_packet(&p);
@@ -407,7 +407,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
 				p.type = CS_COLLISION;
-				p.attack_type = playerArr[i]._animation_state-1;
+				p.attack_type = playerArr[i]._animation_state-2;
 				p.attacker_id = playerArr[i]._my_server_id;
 				p.target_id = boss_obj._my_server_id;
 				networkPtr->send_packet(&p);
