@@ -64,13 +64,3 @@ public:
 	//매 프레임마다 그리기
 	virtual void Draw(WindowInfo windowInfo, int);
 };
-
-class PLAYER :public OBJECT {
-
-
-
-
-
-
-
-};

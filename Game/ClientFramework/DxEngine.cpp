@@ -1145,15 +1145,15 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 						* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0], pillars_data[i]._transform.y + P.m128_f32[1], pillars_data[i]._transform.z + P.m128_f32[2]));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-					if (i == 0)
-						_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
-					else if (i == 1)
-						_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
-					else if (i == 2)
+					//Èò
+					if (pillars_data[i]._pillar_color == 0)
+						_transform.color = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+					else if (pillars_data[i]._pillar_color == 1) // ÆÄ
 						_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
-					else if (i == 3)
-						_transform.color = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					else if (pillars_data[i]._pillar_color == 2) // ÃÊ
+						_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
+					else if (pillars_data[i]._pillar_color == 3) // »¡
+						_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
 					else
 						_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
 

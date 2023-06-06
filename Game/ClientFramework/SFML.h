@@ -270,6 +270,7 @@ public:
 			pillars_data[id]._transform.x = my_packet->x;
 			pillars_data[id]._transform.y = my_packet->y;
 			pillars_data[id]._transform.z = my_packet->z;
+			pillars_data[id]._pillar_color = my_packet->color;
 			pillars_data[id]._degree = my_packet->degree;
 
 			break;
