@@ -137,16 +137,16 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 
 		}
 
-		if (playerArr[networkPtr->myClientId]._animation_state != 4) {
+		if (playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Death) {
 			if (_states[VK_RBUTTON] == 2) {
-				playerArr[networkPtr->myClientId]._animation_state = 3;
+				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Skill;
 			}
 			else if (_states[VK_LBUTTON] == 2) {
-				playerArr[networkPtr->myClientId]._animation_state = 2;
+				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Attack;
 			}
 			else if (!(w == false && a == false && s == false && d == false)
-				&& playerArr[networkPtr->myClientId]._animation_state != 2
-				&& playerArr[networkPtr->myClientId]._animation_state != 3) {
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Skill) {
 
 				float pos_x0 = playerArr[networkPtr->myClientId]._transform.x;
 				float pos_z0 = playerArr[networkPtr->myClientId]._transform.z;
@@ -208,7 +208,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 						playerArr[networkPtr->myClientId]._degree = -angle.x + 225.f;
 					}
 				}
-				playerArr[networkPtr->myClientId]._animation_state = 1;
+				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Walk;
 
 				playerArr[networkPtr->myClientId]._bounding_box.Center.x = playerArr[networkPtr->myClientId]._transform.x;
 				playerArr[networkPtr->myClientId]._bounding_box.Center.z = playerArr[networkPtr->myClientId]._transform.z;
@@ -238,8 +238,8 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 				}
 				
 			}
-			else if (playerArr[networkPtr->myClientId]._animation_state != 2 && playerArr[networkPtr->myClientId]._animation_state != 3) {
-				playerArr[networkPtr->myClientId]._animation_state = 0;
+			else if (playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack && playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Skill) {
+				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Idle;
 			}
 
 

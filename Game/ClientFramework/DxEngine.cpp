@@ -288,7 +288,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 	for (int i = 0; i < PLAYERMAX; ++i) {
 		if (playerArr[i]._on == true) {
-			if (playerArr[i]._animation_state == 0 || playerArr[i]._animation_state == 1) {
+			if (playerArr[i]._animation_state == AnimationOrder::Idle || playerArr[i]._animation_state == AnimationOrder::Walk) {
 				playerArr[i]._can_attack = true;
 				playerArr[i]._can_attack2 = true;
 				playerArr[i]._can_attack3 = true;
@@ -297,14 +297,14 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 	for (int i = 0; i < NPCMAX; ++i) {
 		if (npcArr[i]._on == true) {
-			if (npcArr[i]._animation_state == 0 || npcArr[i]._animation_state == 1) {
+			if (npcArr[i]._animation_state == AnimationOrder::Idle || npcArr[i]._animation_state == AnimationOrder::Walk) {
 				npcArr[i]._can_attack = true;
 			}
 		}
 	}
 
 	if (boss_obj._on == true) {
-		if (boss_obj._animation_state == 0 || boss_obj._animation_state == 1) {
+		if (boss_obj._animation_state == AnimationOrder::Idle || boss_obj._animation_state == AnimationOrder::Walk) {
 			boss_obj._can_attack = true;
 		}
 	}
@@ -324,7 +324,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				if (npcArr[j]._on == true) {
 					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
-						if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+						if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
 							&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
 							&& playerArr[i]._can_attack2) {
 							playerArr[i]._can_attack2 = false;
@@ -335,7 +335,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 			if (boss_obj._on == true) {
 				if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
-					if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+					if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
 						&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
 						&& playerArr[i]._can_attack2) {
 						playerArr[i]._can_attack2 = false;
@@ -353,7 +353,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		int i = networkPtr->myClientId;
 		if (npcArr[j]._on == true) {
 			if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
-				if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+				if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
 					&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
 					&& playerArr[i]._can_attack) {
 
@@ -371,7 +371,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 					cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
 				}
-				if (npcArr[j]._animation_state == 2
+				if (npcArr[j]._animation_state == AnimationOrder::Attack
 					&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
 					&& npcArr[j]._can_attack) {
 
@@ -395,7 +395,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
 		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
-			if ((playerArr[i]._animation_state == 2 || playerArr[i]._animation_state == 3)
+			if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
 				&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
 				&& playerArr[i]._can_attack) {
 
@@ -413,7 +413,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				cout << "BOSS hp : " << boss_obj._hp << endl;
 				cout << "BOSS particle : " << boss_obj._particle_count << endl;
 			}
-			if (boss_obj._animation_state == 2
+			if (boss_obj._animation_state == AnimationOrder::Attack
 				&& boss_obj._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(boss_obj._animation_state) * 0.5f
 				&& boss_obj._can_attack) {
 
@@ -452,7 +452,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 			if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
 			{
-				if ((playerArr[networkPtr->myClientId]._animation_state == 2 || playerArr[networkPtr->myClientId]._animation_state == 3)
+				if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
 					&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
 					&& playerArr[networkPtr->myClientId]._can_attack3)
 				{
@@ -475,7 +475,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 	
 	if (playerArr[networkPtr->myClientId]._hp <= 0.f) {
-		playerArr[networkPtr->myClientId]._animation_state = 4;
+		playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Death;
 
 		CS_MOVE_PACKET p;
 		p.size = sizeof(p);

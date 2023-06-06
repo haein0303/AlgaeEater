@@ -18,7 +18,7 @@ void AnimationObject::CreateVertexAnimationObject(vector<Vertex>& vertices, vect
 
 void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 {
-	if (player._animation_state != 0) {
+	if (player._animation_state != AnimationOrder::Idle) {
 		player._animation_time_pos += dt;
 	}
 	else {
@@ -26,13 +26,13 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 	}
 
 	// 애니메이션이 끝나면 애니메이션 루프
-	if ((player._animation_state == 0 || player._animation_state == 1) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
+	if ((player._animation_state == AnimationOrder::Idle || player._animation_state == AnimationOrder::Walk) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
 		player._animation_time_pos = 0.f;
 	}
 	// 공격 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
-	if ((player._animation_state == 2 || player._animation_state == 3) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
+	if ((player._animation_state == AnimationOrder::Attack || player._animation_state == AnimationOrder::Skill) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
 		player._animation_time_pos = 0.f;
-		player._animation_state = 0;
+		player._animation_state = AnimationOrder::Idle;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
@@ -47,7 +47,7 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 void AnimationObject::UpdateVertexAnimation(float dt, OBJECT& obj, XMVECTOR& P, XMVECTOR& Q)
 {
 	// 애니메이션이 끝나면 애니메이션 루프
-	if ((obj._animation_state == 0) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state)) {
+	if ((obj._animation_state == AnimationOrder::Idle) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state)) {
 		obj._on = false;
 	}
 

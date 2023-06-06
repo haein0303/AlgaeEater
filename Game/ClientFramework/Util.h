@@ -301,6 +301,15 @@ struct MapData
 	XMFLOAT3 rotation;
 };
 
+enum AnimationOrder
+{
+	Idle = 0,
+	Walk,
+	Death,
+	Skill,
+	Attack
+};
+
 
 constexpr int GAME_PORT_NUM = 4000;
 constexpr int LOBBY_PORT_NUM = 4001;
