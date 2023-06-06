@@ -38,7 +38,7 @@ public:
 		return 0;
 	}
 
-	void ReceiveServer(OBJECT* playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data) //서버에서 받는거, clientMain
+	void ReceiveServer(array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data) //서버에서 받는거, clientMain
 	{
 		char net_buf[BUF_SIZE];
 		size_t	received;
@@ -53,7 +53,7 @@ public:
 			if (received > 0) process_data(net_buf, received, playerArr, npcArr, pillars_data, boss_obj, key_data);
 	}
 
-	void process_data(char* net_buf, size_t io_byte, OBJECT* playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data)
+	void process_data(char* net_buf, size_t io_byte, array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data)
 	{
 		char* ptr = net_buf;
 		static size_t in_packet_size = 0;
@@ -96,7 +96,7 @@ public:
 
 
 	//서버에서 데이터 받을때(패킷종류별로 무슨 작업 할건지 ex: 이동 패킷, 로그인 패킷 how to 처리)
-	void ProcessPacket(char* ptr, OBJECT* playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data)
+	void ProcessPacket(char* ptr, array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data)
 	{
 		static bool first_time = true;
 		switch (ptr[1])

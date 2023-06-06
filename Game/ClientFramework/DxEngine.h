@@ -65,7 +65,7 @@ public:
 	shared_ptr<d11on12> d11Ptr = make_shared<d11on12>();
 
 	// 오브젝트 데이터 객체 생성
-	OBJECT playerArr[PLAYERMAX];
+	array<OBJECT, PLAYERMAX> playerArr;
 	OBJECT npcArr[NPCMAX];
 	OBJECT boss_obj;
 	OBJECT pillars_data[CubeMax];

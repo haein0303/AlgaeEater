@@ -29,8 +29,8 @@ public:
 	void Init(WindowInfo windowInfo);
 
 	//Å° ÀÔ·Â
-	void InputKey(shared_ptr<Timer> timerPtr, OBJECT* playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes);
-	void inputMouse(OBJECT* playerArr, shared_ptr<SFML> networkPtr);
+	void InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes);
+	void inputMouse(array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr);
 
 private:
 	POINT m_ptOldCursorPos;
