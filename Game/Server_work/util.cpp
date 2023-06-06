@@ -183,8 +183,10 @@ void process_packet(int c_id, char* packet)
 			if (p->attack_type = 0) { // ÀÏ¹İ °ø°İ
 				if (clients[p->target_id].boss_shield_trigger == true) { // º¸½º ±â¹Í Áß
 					clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
+					cout << "º¸½º ½¯µå ÆÄ±« Áß" << endl;
 					if (clients[p->target_id].boss_shield <= 0) {
 						clients[p->target_id].crash_sequence[3] = 0;
+						cout << "º¸½º ½¯µå ÆÄ±« : 0" << endl;
 					}
 				}
 
