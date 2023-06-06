@@ -214,21 +214,21 @@ void send_cube(int c_id, float x, float y, float z)
 			cubes[i].y = y;
 			cubes[i].z = z - 10.0f;
 			cubes[i].degree = 0;
-			cubes[i].color = cnt;
+			cubes[i].color = cnt + 1;
 			break;
 		case 1:
 			cubes[i].x = x - 10.0f;
 			cubes[i].y = y;
 			cubes[i].z = z;
 			cubes[i].degree = 0;
-			cubes[i].color = cnt;
+			cubes[i].color = cnt + 1;
 			break;
 		case 2:
 			cubes[i].x = x;
 			cubes[i].y = y;
 			cubes[i].z = z + 10.0f;
 			cubes[i].degree = 0;
-			cubes[i].color = cnt;
+			cubes[i].color = cnt + 1;
 			break;
 		}
 		for (auto& pl : clients[c_id].room_list) {
