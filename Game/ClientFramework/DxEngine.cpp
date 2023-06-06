@@ -463,12 +463,14 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					--pillars_data[i]._pillar_count;
 					cout << "pillar : " << pillars_data[i]._pillar_count << endl;
 
-					CS_OBJECT_COLLISION_PACKET p;
-					p.size = sizeof(p);
-					p.type = CS_OBJECT_COLLISION;
-					p.target_id = i;
-					p.object_type = 0;
-					networkPtr->send_packet(&p);
+					if (pillars_data[i]._pillar_count == 0) {
+						CS_OBJECT_COLLISION_PACKET p;
+						p.size = sizeof(p);
+						p.type = CS_OBJECT_COLLISION;
+						p.target_id = i;
+						p.object_type = 0;
+						networkPtr->send_packet(&p);
+					}					
 				}
 			}
 		}
