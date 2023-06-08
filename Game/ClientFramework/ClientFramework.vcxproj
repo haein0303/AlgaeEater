@@ -151,9 +151,6 @@
     <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="NetWork_Client.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="RTV.cpp" />
     <ClCompile Include="SCENE.cpp" />
@@ -185,9 +182,6 @@
     <ClInclude Include="OBJECT.h" />
     <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="NetWork_Client.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="RootSignature.h" />
     <ClInclude Include="SCENE.h" />
     <ClInclude Include="scene_stage1.h" />

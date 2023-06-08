@@ -87,9 +87,6 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Engine\텍스처</Filter>
     </ClCompile>
-    <ClCompile Include="NetWork_Client.cpp">
-      <Filter>Engine\NetWork</Filter>
-    </ClCompile>
     <ClCompile Include="DSV.cpp">
       <Filter>Engine\DSV</Filter>
     </ClCompile>
@@ -184,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="Client.h">
       <Filter>Client</Filter>
-    </ClInclude>
-    <ClInclude Include="NetWork_Client.h">
-      <Filter>Engine\NetWork</Filter>
     </ClInclude>
     <ClInclude Include="DSV.h">
       <Filter>Engine\DSV</Filter>
