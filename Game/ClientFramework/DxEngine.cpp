@@ -1129,7 +1129,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 				for (MESH_ASSET& piece_of_pillar : pillar)
 				{
-					float scale = 5.f;
+					float scale = 3.f;
 
 					piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
 
