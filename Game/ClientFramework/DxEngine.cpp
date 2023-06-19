@@ -1129,7 +1129,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 				for (MESH_ASSET& piece_of_pillar : pillar)
 				{
-					float scale = 1.f;
+					float scale = 5.f;
 
 					piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
 
@@ -1139,7 +1139,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
 						* XMMatrixRotationQuaternion(Q)
-						* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0], pillars_data[i]._transform.y + P.m128_f32[1], pillars_data[i]._transform.z + P.m128_f32[2]));
+						* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0] * scale, pillars_data[i]._transform.y + P.m128_f32[1] * scale, pillars_data[i]._transform.z + P.m128_f32[2] * scale));
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 					//»Ú
