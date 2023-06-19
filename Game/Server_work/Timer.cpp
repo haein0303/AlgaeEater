@@ -9,6 +9,7 @@
 #include <chrono>
 
 #include "Session.h"
+#include "util.h"
 
 using namespace std;
 using namespace chrono;
@@ -63,20 +64,6 @@ void do_timer()
 
 			switch (ev.ev)
 			{
-			case EV_MOVE:
-			{
-				ex_over->_comp_type = OP_NPC_MOVE;
-				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
-				break;
-			}
-			case EV_RUSH:
-			{
-				ex_over->_comp_type = OP_NPC_RUSH;
-				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
-				break;
-			}
 			case EV_STAGE1_FIRST_BOSS:
 			{
 				cout << "±â¹Í ÆÇÁ¤ ½ÃÀÛ" << endl;
@@ -124,6 +111,18 @@ void do_timer()
 
 					cout << "±â¹Í ½ÇÆÐ" << endl;
 
+					for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
+						clients[pl_num]._sl.lock();
+						if (clients[pl_num]._s_state != ST_INGAME) {
+							clients[pl_num]._sl.unlock();
+							continue;
+						}
+						
+						clients[pl_num].hp /= 2;
+						Update_Player(pl_num);
+						clients[pl_num]._sl.unlock();
+					}
+
 					/*for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
 						char msg[NAME_SIZE] = "±â¹Í ½ÇÆÐ";
 
@@ -165,20 +164,7 @@ void do_timer()
 				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 				break;
 			}
-			case EV_CB:
-			{
-				ex_over->_comp_type = OP_CREATE_CUBE;
-				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.target_id, &ex_over->_over);
-				break;
-			}
-			case EV_RETURN:
-				ex_over->_comp_type = OP_NPC_RETURN;
-				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
-				break;
 			case EV_NPC_CON:
-				//cout << ev.target_id << endl;
 				clients[ev.object_id]._sl.lock();
 				if (clients[ev.object_id]._s_state == ST_FREE) {
 					clients[ev.object_id]._sl.unlock();
@@ -206,11 +192,12 @@ void do_timer()
 					}
 				}*/
 
-				lua_getglobal(clients[ev.object_id].L, "tracking_player");
-				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
-				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
+				ex_over->_comp_type = OP_NPC_CON;
+				ex_over->target_id = ev.target_id;
+				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 
 				add_timer(ev.object_id, 100, EV_NPC_CON, ev.target_id);
+
 				break;
 			case EV_BOSS_CON:
 			{
@@ -286,6 +273,7 @@ void do_timer()
 					send_second_cube(ev.object_id, clients[ev.object_id].x, clients[ev.object_id].y, clients[ev.object_id].z);
 					add_timer(ev.object_id, 10000, EV_STAGE1_SECOND_BOSS, ev.target_id);
 					clients[ev.object_id].second_pattern = true;
+					break;
 				}
 
 				/*if (clients[ev.target_id].char_state == AN_DEAD) {
@@ -348,12 +336,6 @@ void do_timer()
 				}
 
 				add_timer(pl, 3000, EV_BOSS_EYE, ev.target_id);
-				break;
-			}
-			case EV_WANDER: {
-				ex_over->_comp_type = OP_BOSS_WANDER;
-				ex_over->target_id = ev.target_id;
-				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 				break;
 			}
 			default:

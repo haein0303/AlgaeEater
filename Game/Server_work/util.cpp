@@ -492,7 +492,6 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_MOVE: {
-			//cout << "npc : " << key << ", player : " << ex_over->target_id << endl;
 			move_npc(ex_over->target_id, key);
 			delete ex_over;
 			break;
@@ -500,7 +499,6 @@ void do_worker()
 		case OP_NPC_RUSH: {
 			float t_x = clients[key].target_x;
 			float t_z = clients[key].target_z;
-			//cout << key << endl;
 			rush_npc(key, t_x, t_z);
 			delete ex_over;
 			break;
@@ -522,6 +520,18 @@ void do_worker()
 		}
 		case OP_BOSS_WANDER: {
 			wander_boss(key);
+			delete ex_over;
+			break;
+		}
+		case OP_NPC_CON: {
+			if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 15) {
+				move_npc(ex_over->target_id, key);
+			}
+			else {
+				if (clients[key].start_x != clients[key].x || clients[key].start_z != clients[key].z) {
+					return_npc(key);
+				}
+			}
 			delete ex_over;
 			break;
 		}

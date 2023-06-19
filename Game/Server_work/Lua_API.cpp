@@ -7,6 +7,8 @@
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
 
+extern HANDLE g_h_iocp;
+
 int API_get_x(lua_State* L)
 {
 	int obj_id = lua_tonumber(L, -1);
@@ -51,15 +53,6 @@ int API_get_npc_z(lua_State* L)
 	return 1;
 }
 
-int API_Cube(lua_State* L)
-{
-	int target_id = lua_tonumber(L, -1);
-	lua_pop(L, 2);
-
-	add_timer(0, 100, EV_CB, target_id);
-	return 0;
-}
-
 int API_Rush(lua_State* L)
 {
 	int npc_id = lua_tonumber(L, -3);
@@ -70,7 +63,12 @@ int API_Rush(lua_State* L)
 	clients[npc_id].target_x = t_x;
 	clients[npc_id].target_z = t_z;
 
-	add_timer(npc_id, 100, EV_RUSH, npc_id);
+	auto ex_over = new OVER_EXP;
+
+	ex_over->_comp_type = OP_NPC_RUSH;
+	ex_over->target_id = npc_id;
+	PostQueuedCompletionStatus(g_h_iocp, 1, npc_id, &ex_over->_over);
+
 	return 0;
 }
 
@@ -91,7 +89,11 @@ int API_Tracking(lua_State* L)
 	int npc_id = lua_tonumber(L, -1);
 	lua_pop(L, 3);
 
-	add_timer(npc_id, 10, EV_MOVE, player_id);
+	auto ex_over = new OVER_EXP;
+
+	ex_over->_comp_type = OP_NPC_MOVE;
+	ex_over->target_id = player_id;
+	PostQueuedCompletionStatus(g_h_iocp, 1, npc_id, &ex_over->_over);
 	return 0;
 }
 
@@ -100,7 +102,11 @@ int API_Return(lua_State* L)
 	int npc_id = lua_tonumber(L, -1);
 	lua_pop(L, 2);
 
-	add_timer(npc_id, 10, EV_RETURN, npc_id);
+	auto ex_over = new OVER_EXP;
+
+	ex_over->_comp_type = OP_NPC_MOVE;
+	ex_over->target_id = npc_id;
+	PostQueuedCompletionStatus(g_h_iocp, 1, npc_id, &ex_over->_over);
 	return 0;
 }
 
@@ -109,7 +115,10 @@ int API_Wander(lua_State* L)
 	int npc_id = lua_tonumber(L, -1);
 	lua_pop(L, 2);
 
-	add_timer(npc_id, 10, EV_WANDER, npc_id);
+	auto ex_over = new OVER_EXP;
+	ex_over->_comp_type = OP_BOSS_WANDER;
+	ex_over->target_id = npc_id;
+	PostQueuedCompletionStatus(g_h_iocp, 1, npc_id, &ex_over->_over);
 	return 0;
 }
 
@@ -139,7 +148,6 @@ void reset_lua(int c_id)
 	lua_register(clients[npc_id].L, "API_get_x", API_get_x);
 	lua_register(clients[npc_id].L, "API_get_z", API_get_z);
 	lua_register(clients[npc_id].L, "API_Rush", API_Rush);
-	lua_register(clients[npc_id].L, "API_Cube", API_Cube);
 	lua_register(clients[npc_id].L, "API_get_state", API_get_state);
 }
 
@@ -243,7 +251,6 @@ void close_lua(int npc_id)
 
 		lua_register(clients[npc_id].L, "API_Wander", API_Wander);
 		lua_register(clients[npc_id].L, "API_Rush", API_Rush);
-		lua_register(clients[npc_id].L, "API_Cube", API_Cube);
 		lua_register(clients[npc_id].L, "API_get_state", API_get_state);
 		break;
 	}

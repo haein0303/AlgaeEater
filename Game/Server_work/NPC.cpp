@@ -46,24 +46,6 @@ void initialize_npc()
 			else clients[i].object_list.insert(j);
 		}
 
-		clients[i].L = luaL_newstate();
-
-		luaL_openlibs(clients[i].L);
-
-		luaL_loadfile(clients[i].L, "hello.lua");
-		lua_pcall(clients[i].L, 0, 0, 0);
-
-		lua_getglobal(clients[i].L, "set_object_id");
-		lua_pushnumber(clients[i].L, i);
-		lua_pcall(clients[i].L, 1, 0, 0);
-
-		lua_register(clients[i].L, "API_get_x", API_get_x);
-		lua_register(clients[i].L, "API_get_z", API_get_z);
-		lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
-		lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
-		lua_register(clients[i].L, "API_Tracking", API_Tracking);
-		lua_register(clients[i].L, "API_Return", API_Return);
-
 		int st = (i - MAX_USER - clients[i]._Room_Num * ROOM_NPC);
 
 		if (st > 9) clients[i]._object_type = TY_HOLD_NPC;
@@ -135,9 +117,26 @@ void initialize_npc()
 			clients[i].eye_color = 0;
 			clients[i]._object_type = TY_BOSS_1;
 
+			clients[i].L = luaL_newstate();
+
+			luaL_openlibs(clients[i].L);
+
+			luaL_loadfile(clients[i].L, "hello.lua");
+			lua_pcall(clients[i].L, 0, 0, 0);
+
+			lua_getglobal(clients[i].L, "set_object_id");
+			lua_pushnumber(clients[i].L, i);
+			lua_pcall(clients[i].L, 1, 0, 0);
+
+			lua_register(clients[i].L, "API_get_x", API_get_x);
+			lua_register(clients[i].L, "API_get_z", API_get_z);
+			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
+			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
+			lua_register(clients[i].L, "API_Tracking", API_Tracking);
+			lua_register(clients[i].L, "API_Return", API_Return);
+
 			lua_register(clients[i].L, "API_Wander", API_Wander);
 			lua_register(clients[i].L, "API_Rush", API_Rush);
-			lua_register(clients[i].L, "API_Cube", API_Cube);
 			lua_register(clients[i].L, "API_get_state", API_get_state);
 			break;
 		}
@@ -259,13 +258,25 @@ void rush_npc(int c_id, float t_x, float t_z)
 	// 큐브랑 충돌 못했음 -> 기믹 실패
 	if (x == t_x && z == t_z) {
 		cout << "기믹 실패" << endl;
+
+		for (auto& pl : clients[c_id].room_list) {
+			if (pl >= MAX_USER) continue;
+			clients[pl]._sl.lock();
+			if (clients[pl]._s_state != ST_INGAME) {
+				clients[pl]._sl.unlock();
+				continue;
+			}
+			clients[pl]._sl.unlock();
+
+			clients[pl].hp /= 2;
+		}
 		return;
 	}
 
 	// 큐브랑 충돌 함 -> 기믹 성공
 	int cube_num = clients[c_id]._Room_Num * ROOM_CUBE - 1;
 	if (abs(x - cubes[cube_num].x) + abs(z - cubes[cube_num].z) <= 2) {
-		// 큐브랑 충돌, 그로기 상태 만들기
+		// 반복 설정은 여기서 해줘야 함
 		// 타겟 아이디 설정 해줘야 함 ㅇㅇ
 		cout << "기믹 성공" << endl;
 		clients[c_id].char_state = AN_DEAD;
@@ -304,7 +315,10 @@ void rush_npc(int c_id, float t_x, float t_z)
 		clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
 	}
 
-	add_timer(c_id, 30, EV_RUSH, c_id);
+	auto ex_over = new OVER_EXP;
+	ex_over->_comp_type = OP_NPC_RUSH;
+	ex_over->target_id = c_id;
+	PostQueuedCompletionStatus(g_h_iocp, 1, c_id, &ex_over->_over);
 }
 
 void move_npc(int player_id, int c_id)
