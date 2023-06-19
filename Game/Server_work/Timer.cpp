@@ -123,6 +123,8 @@ void do_timer()
 						clients[pl_num]._sl.unlock();
 					}
 
+					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
+
 					/*for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
 						char msg[NAME_SIZE] = "±â¹Í ½ÇÆÐ";
 
