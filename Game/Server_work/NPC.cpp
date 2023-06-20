@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Session.h"
 #include "Timer.h"
+#include "util.h"
 #include "Lua_API.h"
 
 
@@ -269,7 +270,10 @@ void rush_npc(int c_id, float t_x, float t_z)
 			clients[pl]._sl.unlock();
 
 			clients[pl].hp /= 2;
+
+			Update_Player(pl);
 		}
+		add_timer(c_id, 10000, EV_BOSS_CON, 0);
 		return;
 	}
 
