@@ -96,6 +96,7 @@ public:
 	MESH_ASSET Tube;
 	MESH_ASSET barrel;
 	MESH_ASSET Box;
+	MESH_ASSET NeonCrate_0;
 	MESH_ASSET Clotch;
 	MESH_ASSET tank;
 	MESH_ASSET Plane002;
@@ -131,6 +132,7 @@ public:
 	float _scale = 100.f; // 게임 세계 단위
 
 	vector<MapData> _map_data;
+	vector<MapData> _map_data2;
 
 	vector<BoundingBox> bounding_boxes;
 
@@ -273,7 +275,7 @@ public:
 				cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
 			}
 
-			// map
+			/*// map
 			for (MapData data : _map_data)
 			{
 				if(data.mesh_type.compare("tube") == 0)
@@ -297,8 +299,37 @@ public:
 					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
+			}*/
+
+			// map
+			for (MapData data : _map_data2)
+			{
+				if (data.mesh_type.compare("tube") == 0)
+					DrawMapObject(cmdList, Tube, i_now_render_index, data.pos, data.scale, data.rotation, 0.f);
+				else if (data.mesh_type.compare("Barrel") == 0)
+					DrawMapObject(cmdList, barrel, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Sci-fi-BOX") == 0)
+					DrawMapObject(cmdList, Box, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Clotch") == 0)
+					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("tank") == 0)
+				{
+					data.scale.x *= 2.f;
+					data.scale.y *= 2.f;
+					data.scale.z *= 2.f;
+					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
+				else if (data.mesh_type.compare("Plane002") == 0)
+					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Grid_Metal_tile") == 0)
+					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Cube") == 0)
+					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if(data.mesh_type.compare("NeonCrate_0") == 0)
+					DrawMapObject(cmdList, NeonCrate_0, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
 		}
+
 	}
 
 	void DrawMapObject(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& obj,  const int i_now_render_index, XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation, float rot = -XM_PI * 0.5f)
@@ -307,7 +338,9 @@ public:
 		cmdList->IASetVertexBuffers(0, 1, &obj._vertexBufferView);
 		cmdList->IASetIndexBuffer(&obj._indexBufferView);
 
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * scale.x / 50.f, _scale * scale.y / 50.f, _scale * scale.z / 50.f) * XMMatrixRotationX(rotation.x * XM_PI / 180.f) * XMMatrixRotationY(rotation.y * XM_PI / 180.f) * XMMatrixRotationZ(rotation.z * XM_PI / 180.f) * XMMatrixTranslation(pos.x * 2.f, pos.y * 2.f, pos.z * 2.f));
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * scale.x / 50.f, _scale * scale.y / 50.f, _scale * scale.z / 50.f)
+			* XMMatrixRotationX(rotation.x * XM_PI / 180.f) * XMMatrixRotationY(rotation.y * XM_PI / 180.f) * XMMatrixRotationZ(rotation.z * XM_PI / 180.f)
+			* XMMatrixTranslation(pos.x * 2.f, pos.y * 2.f, pos.z * 2.f));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -320,7 +353,7 @@ public:
 		cmdList->DrawIndexedInstanced(obj._indexCount, 1, 0, 0, 0);
 	}
 
-	void ImportMapdata(const string& file_path)
+	void ImportMapdata(const string& file_path, vector<MapData>& map_data)
 	{
 		ifstream in{ file_path };
 
@@ -339,19 +372,19 @@ public:
 			{
 				int num;
 				in >> num;
-				_map_data.reserve(num);
+				map_data.reserve(num);
 			}
 			else if (str.compare("Mesh:") == 0)
 			{
 				in >> data.mesh_type >> ignore >> ignore >> data.pos.x >> data.pos.y >> data.pos.z
 					>> ignore >> data.scale.x >> data.scale.y >> data.scale.z
 					>> ignore >> data.rotation.x >> data.rotation.y >> data.rotation.z;
-				_map_data.emplace_back(data);
+				map_data.emplace_back(data);
 			}
 		}
 	}
 
-	void ImportCollisionObjectsData(const string& file_path)
+	void ImportCollisionObjectsData(const string& file_path, vector<MapData>& map_data)
 	{
 		ifstream in{ file_path };
 
@@ -370,7 +403,7 @@ public:
 			{
 				int num;
 				in >> num;
-				_map_data.reserve(num);
+				bounding_boxes.reserve(num);
 			}
 			else if (str.compare("Mesh:") == 0)
 			{

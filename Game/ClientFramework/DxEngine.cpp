@@ -97,6 +97,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	Box.Make_SRV();
 	Box.CreatePSO(L"..\\Bricks.hlsl");
 
+	NeonCrate_0.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	NeonCrate_0.Init("../Resources/NeonCrate_0.txt", ObjectType::GeneralObjects);
+	NeonCrate_0.Add_texture(L"..\\Resources\\Texture\\Box_Sci-fi_box_mat_AlbedoTransparency.tga");
+	NeonCrate_0.Make_SRV();
+	NeonCrate_0.CreatePSO(L"..\\Bricks.hlsl");
+
 	Clotch.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Clotch.Init("../Resources/Clotch.txt", ObjectType::GeneralObjects);
 	Clotch.Add_texture(L"..\\Resources\\Texture\\diff.png");
@@ -255,8 +261,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	key_data[0]._key = 0;
 	key_data[0]._on = true;
 
-	ImportMapdata("../Resources/MapData.txt");
-	ImportCollisionObjectsData("../Resources/CollisionData.txt");
+	ImportMapdata("../Resources/MapData.txt", _map_data);
+	ImportMapdata("../Resources/MapData2.txt", _map_data2);
+	//ImportCollisionObjectsData("../Resources/CollisionData.txt");
 
 	
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
