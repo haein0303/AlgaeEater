@@ -264,9 +264,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	ImportMapdata("../Resources/MapData.txt", _map_data);
 	ImportMapdata("../Resources/MapData2.txt", _map_data2);
 	ImportMapdata("../Resources/MapData3.txt", _map_data3);
-	//ImportCollisionObjectsData("../Resources/CollisionData.txt", bounding_boxes);
-	//ImportCollisionObjectsData("../Resources/CollisionData2.txt", bounding_boxes2);
-
+	ImportCollisionObjectsData("../Resources/CollisionData.txt", bounding_boxes);
+	ImportCollisionObjectsData("../Resources/CollisionData2.txt", bounding_boxes2);
+	ImportCollisionObjectsData("../Resources/CollisionData3.txt", bounding_boxes3);
 	
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
@@ -326,7 +326,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		case 0:
 		case 1:
 			//inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes);
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2);
+			//inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2);
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3);
 			break;
 		case 2:
 			break;

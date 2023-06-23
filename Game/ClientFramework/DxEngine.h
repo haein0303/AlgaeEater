@@ -137,6 +137,7 @@ public:
 
 	vector<BoundingBox> bounding_boxes;
 	vector<BoundingBox> bounding_boxes2;
+	vector<BoundingBox> bounding_boxes3;
 
 private:
 	//화면 크기 관련
