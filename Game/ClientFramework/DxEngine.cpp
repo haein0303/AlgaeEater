@@ -263,8 +263,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	ImportMapdata("../Resources/MapData.txt", _map_data);
 	ImportMapdata("../Resources/MapData2.txt", _map_data2);
-	ImportCollisionObjectsData("../Resources/CollisionData.txt", bounding_boxes);
-	ImportCollisionObjectsData("../Resources/CollisionData2.txt", bounding_boxes2);
+	ImportMapdata("../Resources/MapData3.txt", _map_data3);
+	//ImportCollisionObjectsData("../Resources/CollisionData.txt", bounding_boxes);
+	//ImportCollisionObjectsData("../Resources/CollisionData2.txt", bounding_boxes2);
 
 	
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");

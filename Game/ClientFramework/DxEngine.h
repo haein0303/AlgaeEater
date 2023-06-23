@@ -133,6 +133,7 @@ public:
 
 	vector<MapData> _map_data;
 	vector<MapData> _map_data2;
+	vector<MapData> _map_data3;
 
 	vector<BoundingBox> bounding_boxes;
 	vector<BoundingBox> bounding_boxes2;
@@ -302,7 +303,7 @@ public:
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
 			}*/
 
-			// map
+			/*// map
 			for (MapData data : _map_data2)
 			{
 				if (data.mesh_type.compare("tube") == 0)
@@ -327,6 +328,34 @@ public:
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if(data.mesh_type.compare("NeonCrate_0") == 0)
+					DrawMapObject(cmdList, NeonCrate_0, i_now_render_index, data.pos, data.scale, data.rotation);
+			}*/
+
+			// map
+			for (MapData data : _map_data3)
+			{
+				if (data.mesh_type.compare("tube") == 0)
+					DrawMapObject(cmdList, Tube, i_now_render_index, data.pos, data.scale, data.rotation, 0.f);
+				else if (data.mesh_type.compare("Barrel") == 0)
+					DrawMapObject(cmdList, barrel, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Sci-fi-BOX") == 0)
+					DrawMapObject(cmdList, Box, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Clotch") == 0)
+					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("tank") == 0)
+				{
+					data.scale.x *= 2.f;
+					data.scale.y *= 2.f;
+					data.scale.z *= 2.f;
+					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
+				else if (data.mesh_type.compare("Plane002") == 0)
+					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Grid_Metal_tile") == 0)
+					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Cube") == 0)
+					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("NeonCrate_0") == 0)
 					DrawMapObject(cmdList, NeonCrate_0, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
 		}
