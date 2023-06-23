@@ -135,6 +135,7 @@ public:
 	vector<MapData> _map_data2;
 
 	vector<BoundingBox> bounding_boxes;
+	vector<BoundingBox> bounding_boxes2;
 
 private:
 	//화면 크기 관련
@@ -384,7 +385,7 @@ public:
 		}
 	}
 
-	void ImportCollisionObjectsData(const string& file_path, vector<MapData>& map_data)
+	void ImportCollisionObjectsData(const string& file_path, vector<BoundingBox>& collision_data)
 	{
 		ifstream in{ file_path };
 
@@ -395,7 +396,6 @@ public:
 
 		string ignore;
 		string str = "\n";
-		MapData data;
 
 		while (in >> str)
 		{
@@ -403,7 +403,7 @@ public:
 			{
 				int num;
 				in >> num;
-				bounding_boxes.reserve(num);
+				collision_data.reserve(num);
 			}
 			else if (str.compare("Mesh:") == 0)
 			{
@@ -414,7 +414,7 @@ public:
 				bounding_box.Center.x *= 2.f;
 				bounding_box.Center.y = 0.f;
 				bounding_box.Center.z *= 2.f;
-				bounding_boxes.emplace_back(bounding_box);
+				collision_data.emplace_back(bounding_box);
 			}
 		}
 	}
