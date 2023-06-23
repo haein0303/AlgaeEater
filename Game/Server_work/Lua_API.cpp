@@ -97,19 +97,6 @@ int API_Tracking(lua_State* L)
 	return 0;
 }
 
-int API_Return(lua_State* L)
-{
-	int npc_id = lua_tonumber(L, -1);
-	lua_pop(L, 2);
-
-	auto ex_over = new OVER_EXP;
-
-	ex_over->_comp_type = OP_NPC_MOVE;
-	ex_over->target_id = npc_id;
-	PostQueuedCompletionStatus(g_h_iocp, 1, npc_id, &ex_over->_over);
-	return 0;
-}
-
 int API_Wander(lua_State* L)
 {
 	int npc_id = lua_tonumber(L, -1);
@@ -188,7 +175,6 @@ void close_lua(int npc_id)
 	lua_register(clients[npc_id].L, "API_get_npc_x", API_get_npc_x);
 	lua_register(clients[npc_id].L, "API_get_npc_z", API_get_npc_z);
 	lua_register(clients[npc_id].L, "API_Tracking", API_Tracking);
-	lua_register(clients[npc_id].L, "API_Return", API_Return);
 
 	int st = (npc_id - MAX_USER - clients[npc_id]._Room_Num * ROOM_NPC);
 

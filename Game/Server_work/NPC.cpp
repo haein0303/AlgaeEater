@@ -134,7 +134,6 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
 			lua_register(clients[i].L, "API_get_npc_z", API_get_npc_z);
 			lua_register(clients[i].L, "API_Tracking", API_Tracking);
-			lua_register(clients[i].L, "API_Return", API_Return);
 
 			lua_register(clients[i].L, "API_Wander", API_Wander);
 			lua_register(clients[i].L, "API_Rush", API_Rush);

@@ -210,7 +210,7 @@ void process_packet(int c_id, char* packet)
 	case CS_COLLISION: {
 		CS_COLLISION_PACKET* p = reinterpret_cast<CS_COLLISION_PACKET*>(packet);
 		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
-			if (p->attack_type == 0) { // 일반 공격
+			if (p->attack_type == 2) { // 일반 공격
 				if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
 					clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
 					cout << "보스 쉴드 파괴 중" << endl;
@@ -227,6 +227,7 @@ void process_packet(int c_id, char* packet)
 						clients[p->target_id]._sl.lock();
 						clients[p->target_id]._s_state = ST_FREE;
 						clients[p->target_id]._sl.unlock();
+						cout << "일반 공격" << endl;
 					}
 				}
 			}
@@ -234,8 +235,10 @@ void process_packet(int c_id, char* packet)
 				if (p->attack_type == 1) { // 스킬 공격
 					if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
 						clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
+						cout << "보스 쉴드 파괴 중" << endl;
 						if (clients[p->target_id].boss_shield <= 0) {
 							clients[p->target_id].crash_sequence[3] = 0;
+							cout << "보스 쉴드 파괴 : 0" << endl;
 						}
 					}
 
@@ -246,6 +249,7 @@ void process_packet(int c_id, char* packet)
 							clients[p->target_id]._sl.lock();
 							clients[p->target_id]._s_state = ST_FREE;
 							clients[p->target_id]._sl.unlock();
+							cout << "스킬 공격" << endl;
 						}
 					}
 				}
