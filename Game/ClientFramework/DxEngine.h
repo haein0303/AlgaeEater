@@ -278,7 +278,7 @@ public:
 				cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
 			}
 
-			/*// map
+			// map
 			for (MapData data : _map_data)
 			{
 				if(data.mesh_type.compare("tube") == 0)
@@ -302,9 +302,31 @@ public:
 					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
-			}*/
+			}
+		}
 
-			/*// map
+		else if (stage == 2)
+		{
+			// floor
+			{
+				cmdList->SetPipelineState(floor._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
+				cmdList->IASetIndexBuffer(&floor._indexBufferView);
+
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 10.f, _scale * 10.f, _scale / 100.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, 0.f, 0.f));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(floor._tex._srvHandle, 5, devicePtr);
+
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
+			}
+
+			// map
 			for (MapData data : _map_data2)
 			{
 				if (data.mesh_type.compare("tube") == 0)
@@ -330,7 +352,29 @@ public:
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if(data.mesh_type.compare("NeonCrate_0") == 0)
 					DrawMapObject(cmdList, NeonCrate_0, i_now_render_index, data.pos, data.scale, data.rotation);
-			}*/
+			}
+		}
+
+		else if (stage == 3)
+		{
+			// floor
+			{
+				cmdList->SetPipelineState(floor._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &floor._vertexBufferView);
+				cmdList->IASetIndexBuffer(&floor._indexBufferView);
+
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 10.f, _scale * 10.f, _scale / 100.f) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(0.f, 0.f, 0.f));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				floor._tex._srvHandle = floor._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(floor._tex._srvHandle, 5, devicePtr);
+
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(floor._indexCount, 1, 0, 0, 0);
+			}
 
 			// map
 			for (MapData data : _map_data3)
@@ -360,7 +404,6 @@ public:
 					DrawMapObject(cmdList, NeonCrate_0, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
 		}
-
 	}
 
 	void DrawMapObject(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& obj,  const int i_now_render_index, XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation, float rot = -XM_PI * 0.5f)

@@ -229,11 +229,11 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 				{
 					if (networkPtr->myClientId != i && playerArr[networkPtr->myClientId]._bounding_box.Intersects(playerArr[i]._bounding_box))
 					{
-						playerArr[networkPtr->myClientId]._transform.x = pos_x0;
-						playerArr[networkPtr->myClientId]._transform.z = pos_z0;
+						//playerArr[networkPtr->myClientId]._transform.x = pos_x0;
+						//playerArr[networkPtr->myClientId]._transform.z = pos_z0;
 
-						playerArr[networkPtr->myClientId]._bounding_box.Center.x = pos_x0;
-						playerArr[networkPtr->myClientId]._bounding_box.Center.z = pos_z0;
+						//playerArr[networkPtr->myClientId]._bounding_box.Center.x = pos_x0;
+						//playerArr[networkPtr->myClientId]._bounding_box.Center.z = pos_z0;
 					}
 				}
 				

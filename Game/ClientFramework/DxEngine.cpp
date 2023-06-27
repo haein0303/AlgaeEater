@@ -325,11 +325,13 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 		case 0:
 		case 1:
-			//inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes);
-			//inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2);
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3);
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes);
 			break;
 		case 2:
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2);
+			break;
+		case 3:
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3);
 			break;
 		default:
 			break;
@@ -1075,7 +1077,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
 			break;
 		case 1:
-			Map(cmdList, floor, map_asset, i_now_render_index, 1);
+			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
+			break;
+		case 2:
+			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
+			break;
+		case 3:
+			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
 			break;
 		default:
 			Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);

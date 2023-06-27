@@ -113,8 +113,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)/ClientFramework/FbxLib;$(SolutionDir)\SFMLLib</AdditionalLibraryDirectories>
-      <AdditionalOptions>libfbxsdk-md.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)\SFMLLib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
