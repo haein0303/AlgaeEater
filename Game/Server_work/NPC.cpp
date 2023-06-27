@@ -272,7 +272,7 @@ void rush_npc(int c_id, float t_x, float t_z)
 
 			Update_Player(pl);
 		}
-		add_timer(c_id, 10000, EV_BOSS_CON, 0);
+		add_timer(c_id, 10000, EV_STAGE1_SECOND_BOSS, 0);
 		return;
 	}
 

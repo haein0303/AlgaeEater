@@ -139,11 +139,15 @@ void do_timer()
 			case EV_STAGE1_SECOND_BOSS:
 			{
 				// 타겟 랜덤으로 돌려야 함
-				int tar_id = 0;
+				int tar_id = clients[ev.object_id]._Room_Num * ROOM_USER;
 
-				if (clients[tar_id]._Room_Num == 999) tar_id = 1;
+				if (clients[tar_id]._Room_Num == 999) tar_id += 1;
 
-				/*if (clients[tar_id].char_state == AN_DEAD) {
+				srand((unsigned int)time(NULL));
+
+				tar_id += rand() % ROOM_USER;
+
+				if (clients[tar_id].char_state == AN_DEAD) {
 					int dead_player = tar_id;
 					for (auto& pl : clients[tar_id].room_list) {
 						if (pl < MAX_USER) {
@@ -156,13 +160,9 @@ void do_timer()
 						}
 					}
 					if (dead_player == tar_id) {
-						clients[ev.object_id].char_state = AN_IDLE;
-						ex_over->_comp_type = OP_SET_NPC;
-						ex_over->target_id = tar_id;
-						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
-						break;
+						cout << "타겟 지정 불가" << endl;
 					}
-				}*/
+				}
 
 				lua_getglobal(clients[ev.object_id].L, "event_rush");
 				lua_pushnumber(clients[ev.object_id].L, tar_id);
@@ -176,7 +176,8 @@ void do_timer()
 					break;
 				}
 				clients[ev.object_id]._sl.unlock();
-				/*if (clients[ev.target_id].char_state == AN_DEAD) {
+
+				if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
 						if (pl < MAX_USER) {
@@ -189,13 +190,9 @@ void do_timer()
 						}
 					}
 					if (dead_player == ev.target_id) {
-						clients[ev.object_id].char_state = AN_IDLE;
-						ex_over->_comp_type = OP_SET_NPC;
-						ex_over->target_id = ev.target_id;
-						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
-						break;
+						cout << "타겟 지정 불가" << endl;
 					}
-				}*/
+				}
 
 				ex_over->_comp_type = OP_NPC_CON;
 				ex_over->target_id = ev.target_id;
@@ -213,16 +210,12 @@ void do_timer()
 				}
 				clients[ev.object_id]._sl.unlock();
 
-				/*clients[ev.target_id]._sl.lock();
-				if (clients[ev.target_id]._s_state == ST_FREE) {
-					clients[ev.target_id]._sl.unlock();
+				if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
 						if (pl < MAX_USER) {
-							clients[pl]._sl.lock();
-							if (clients[pl]._s_state == ST_INGAME)
+							if (clients[pl].char_state != AN_DEAD)
 							{
-								clients[pl]._sl.unlock();
 								cout << "변경" << endl;
 								ev.target_id = pl;
 								break;
@@ -230,14 +223,9 @@ void do_timer()
 						}
 					}
 					if (dead_player == ev.target_id) {
-						clients[ev.object_id].char_state = AN_DEAD;
-						ex_over->_comp_type = OP_SET_NPC;
-						ex_over->target_id = ev.target_id;
-						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
-						break;
+						cout << "타겟 지정 불가" << endl;
 					}
 				}
-				clients[ev.target_id]._sl.unlock();*/
 
 				if (clients[ev.object_id].hp <= 150000 && clients[ev.object_id].first_pattern == false) { // 첫번째 전멸기
 					for (auto& pl : clients[ev.object_id].room_list) {
@@ -280,27 +268,6 @@ void do_timer()
 					clients[ev.object_id].second_pattern = true;
 					break;
 				}
-
-				/*if (clients[ev.target_id].char_state == AN_DEAD) {
-					int dead_player = ev.target_id;
-					for (auto& pl : clients[ev.target_id].room_list) {
-						if (pl < MAX_USER) {
-							if (clients[pl].char_state != AN_DEAD)
-							{
-								cout << "변경" << endl;
-								ev.target_id = pl;
-								break;
-							}
-						}
-					}
-					if (dead_player == ev.target_id) {
-						clients[ev.object_id].char_state = AN_DEAD;
-						ex_over->_comp_type = OP_SET_NPC;
-						ex_over->target_id = ev.target_id;
-						PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
-						break;
-					}
-				}*/
 
 				lua_getglobal(clients[ev.object_id].L, "wander_boss");
 				lua_pushnumber(clients[ev.object_id].L, ev.target_id);

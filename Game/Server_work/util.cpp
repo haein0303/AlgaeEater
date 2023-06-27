@@ -107,7 +107,12 @@ void process_packet(int c_id, char* packet)
 					{
 					case 0: // 테스트 스테이지
 						break;
-					case 1:	// 스테이지 1
+					case 1: {// 스테이지 1
+
+						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
+							clients[i]._object_type = TY_BOSS_1;
+						}
+
 						if ((i - MAX_USER) % ROOM_NPC < 3) {
 							clients[i].x = 130;
 							clients[i].start_x = 130;
@@ -120,7 +125,7 @@ void process_packet(int c_id, char* packet)
 							clients[i].z = -270 + (i - MAX_USER) % ROOM_NPC * 10;
 							clients[i].start_z = -270 + (i - MAX_USER) % ROOM_NPC * 10;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 5 && (i - MAX_USER) % ROOM_NPC < 9){
+						else if ((i - MAX_USER) % ROOM_NPC > 5 && (i - MAX_USER) % ROOM_NPC < 9) {
 							clients[i].x = 70;
 							clients[i].start_x = 70;
 							clients[i].z = -300 + (i - MAX_USER) % ROOM_NPC * 20;
@@ -157,6 +162,14 @@ void process_packet(int c_id, char* packet)
 							clients[i].start_z = -145;
 						}
 						break;
+					}
+					case 2: {
+						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
+							clients[i]._object_type = TY_BOSS_2;
+						}
+
+						break;
+					}
 					default:
 						break;
 					}
@@ -222,12 +235,11 @@ void process_packet(int c_id, char* packet)
 
 				else { // 일반
 					clients[p->target_id].hp -= clients[p->attacker_id].atk;
-					if (clients[p->target_id].hp == 0) {
+					if (clients[p->target_id].hp <= 0) {
 						clients[p->target_id].char_state = AN_DEAD;
 						clients[p->target_id]._sl.lock();
 						clients[p->target_id]._s_state = ST_FREE;
 						clients[p->target_id]._sl.unlock();
-						cout << "일반 공격" << endl;
 					}
 				}
 			}
@@ -244,12 +256,11 @@ void process_packet(int c_id, char* packet)
 
 					else { // 일반
 						clients[p->target_id].hp -= clients[p->attacker_id].skill_atk;
-						if (clients[p->target_id].hp == 0) {
+						if (clients[p->target_id].hp <= 0) {
 							clients[p->target_id].char_state = AN_DEAD;
 							clients[p->target_id]._sl.lock();
 							clients[p->target_id]._s_state = ST_FREE;
 							clients[p->target_id]._sl.unlock();
-							cout << "스킬 공격" << endl;
 						}
 					}
 				}
