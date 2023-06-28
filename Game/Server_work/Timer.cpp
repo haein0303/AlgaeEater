@@ -139,29 +139,20 @@ void do_timer()
 			case EV_STAGE1_SECOND_BOSS:
 			{
 				// 타겟 랜덤으로 돌려야 함
-				int tar_id = clients[ev.object_id]._Room_Num * ROOM_USER;
 
-				if (clients[tar_id]._Room_Num == 999) tar_id += 1;
+				int tar_id = ev.target_id;
 
-				srand((unsigned int)time(NULL));
-
-				tar_id += rand() % ROOM_USER;
-
-				if (clients[tar_id].char_state == AN_DEAD) {
-					int dead_player = tar_id;
-					for (auto& pl : clients[tar_id].room_list) {
-						if (pl < MAX_USER) {
-							if (clients[pl].char_state != AN_DEAD)
-							{
-								cout << "변경" << endl;
-								tar_id = pl;
-								break;
-							}
-						}
+				for (auto& pl : clients[ev.object_id].room_list) {
+					if (pl >= MAX_USER) continue;
+					clients[pl]._sl.lock();
+					if (clients[pl]._s_state != ST_INGAME || clients[pl].char_state == AN_DEAD) {
+						clients[pl]._sl.unlock();
+						continue;
 					}
-					if (dead_player == tar_id) {
-						cout << "타겟 지정 불가" << endl;
-					}
+					clients[pl]._sl.unlock();
+
+					tar_id = pl;
+					break;
 				}
 
 				lua_getglobal(clients[ev.object_id].L, "event_rush");
@@ -249,19 +240,19 @@ void do_timer()
 				}
 
 				if (clients[ev.object_id].hp <= 50000 && clients[ev.object_id].second_pattern == false) { // 두번째 전멸기
-					for (auto& pl : clients[ev.object_id].room_list) {
-						if (pl >= MAX_USER) continue;
-						clients[pl]._sl.lock();
-						if (clients[pl]._s_state != ST_INGAME) {
-							clients[pl]._sl.unlock();
-							continue;
-						}
-						clients[pl]._sl.unlock();
+					//for (auto& pl : clients[ev.object_id].room_list) {
+					//	if (pl >= MAX_USER) continue;
+					//	clients[pl]._sl.lock();
+					//	if (clients[pl]._s_state != ST_INGAME) {
+					//		clients[pl]._sl.unlock();
+					//		continue;
+					//	}
+					//	clients[pl]._sl.unlock();
 
-						char msg[NAME_SIZE] = "기둥 돌진";
+					//	char msg[NAME_SIZE] = "기둥 돌진";
 
-						clients[pl].send_msg(msg);
-					}
+					//	//clients[pl].send_msg(msg);
+					//}
 
 					send_second_cube(ev.object_id, clients[ev.object_id].x, clients[ev.object_id].y, clients[ev.object_id].z);
 					add_timer(ev.object_id, 10000, EV_STAGE1_SECOND_BOSS, ev.target_id);

@@ -645,7 +645,7 @@ void wander_boss(int c_id)
 
 void send_second_cube(int c_id, float x, float y, float z)
 {
-	int s_num = clients[c_id]._Room_Num * ROOM_CUBE - 1;
+	int s_num = clients[c_id]._Room_Num * ROOM_CUBE + ROOM_CUBE - 1;
 
 	cubes[s_num].x = x;
 	cubes[s_num].y = y;
