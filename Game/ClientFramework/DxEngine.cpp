@@ -261,10 +261,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	key_data[0]._key = 0;
 	key_data[0]._on = true;
 
-	ImportMapdata("../Resources/MapData.txt", _map_data);
+	ImportMapdata("../Resources/MapData1.txt", _map_data);
 	ImportMapdata("../Resources/MapData2.txt", _map_data2);
 	ImportMapdata("../Resources/MapData3.txt", _map_data3);
-	ImportCollisionObjectsData("../Resources/CollisionData.txt", bounding_boxes);
+	ImportCollisionObjectsData("../Resources/CollisionMapData1.txt", bounding_boxes);
 	ImportCollisionObjectsData("../Resources/CollisionData2.txt", bounding_boxes2);
 	ImportCollisionObjectsData("../Resources/CollisionData3.txt", bounding_boxes3);
 	
