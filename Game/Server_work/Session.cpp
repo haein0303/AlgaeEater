@@ -189,14 +189,16 @@ void SESSION::send_door()
 	do_send(&p);
 }
 
-void SESSION::send_field_add(int c_id, float x, float y, float z, int type)
+void SESSION::send_field_add(int c_id, float x, float y, float z, int char_state, int fd_type)
 {
-	SC_FIELD_PACKET p;
-	p.size = sizeof(SC_FIELD_PACKET);
+	SC_BOSS_SKILL_START_PACKET p;
+	p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
 	p.type = SC_KEY;
 	p.x = x;
 	p.y = y;
 	p.z = z;
-	p.FD_type = type;
+	p.char_state = char_state;
+	p.fd_type = fd_type;
+	p.id = c_id;
 	do_send(&p);
 }

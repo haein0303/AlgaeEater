@@ -214,7 +214,7 @@ struct SC_DOOR_PACKET {
 	char	type;
 };
 
-struct SC_BOSS_SKILL_START {
+struct SC_BOSS_SKILL_START_PACKET {
 	unsigned char size;
 	char	type;
 	int		id;
@@ -225,7 +225,7 @@ struct SC_BOSS_SKILL_START {
 	int		char_state;
 };
 
-struct SC_BOSS_SKILL_END {
+struct SC_BOSS_SKILL_END_PACKET {
 	unsigned char size;
 	char	type;
 };

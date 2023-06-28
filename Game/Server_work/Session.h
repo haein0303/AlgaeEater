@@ -86,7 +86,7 @@ public:
 	void send_msg(char* msg);
 	void send_key(int c_id, float x, float y, float z, int color);
 	void send_door();
-	void send_field_add(int c_id, float x, float y, float z, int type);
+	void send_field_add(int c_id, float x, float y, float z, int char_state, int fd_type);
 };
 
 struct CUBE {
