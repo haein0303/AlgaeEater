@@ -219,8 +219,8 @@ struct SC_BOSS_SKILL_START_PACKET {
 	char	type;
 	int		id;
 	float	x;
-	float	y;
 	float	z;
+	float	r;
 	int		fd_type;
 	int		char_state;
 };
