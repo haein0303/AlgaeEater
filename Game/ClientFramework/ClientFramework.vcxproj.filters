@@ -132,6 +132,9 @@
     <ClCompile Include="scene_stage1.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowMap.cpp">
+      <Filter>Engine\장치 초기화</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="scene_stage1.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMap.h">
+      <Filter>Engine\장치 초기화</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

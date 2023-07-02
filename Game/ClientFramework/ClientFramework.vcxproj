@@ -154,6 +154,7 @@
     <ClCompile Include="RTV.cpp" />
     <ClCompile Include="SCENE.cpp" />
     <ClCompile Include="scene_stage1.cpp" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="SCENE.h" />
     <ClInclude Include="scene_stage1.h" />
     <ClInclude Include="SFML.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Util.h" />
