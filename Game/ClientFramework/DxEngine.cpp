@@ -959,13 +959,29 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 #pragma endregion
 
 		// Boss
-		if (boss_obj._on == true) {
-			XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
-			float boss_default_rot_x = -XM_PI * 0.5f;
-			XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
-			float boss2_default_rot_x = 0.f;
-			Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x);
+		switch (Scene_num)
+		{
+		case 0:
+		case 1:
+			if (boss_obj._on == true)
+			{
+				XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
+				float boss_default_rot_x = -XM_PI * 0.5f;
+				Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x);
+			}
+			break;
+		case 2:
+			if (boss_obj._on == true)
+			{
+				XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
+				float boss2_default_rot_x = 0.f;
+				Boss(cmdList, boss2, i_now_render_index, boss2_scale, boss2_default_rot_x);
+			}
+			break;
+		default:
+			break;
 		}
+		
 
 		cmdList->SetPipelineState(npc_asset._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
