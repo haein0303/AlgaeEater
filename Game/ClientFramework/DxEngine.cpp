@@ -510,6 +510,19 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		p.char_state = playerArr[networkPtr->myClientId]._animation_state;
 		networkPtr->send_packet(&p);
 	}
+
+	for (int i = 0; i < NPCMAX; ++i)
+	{
+		if (npcArr[i]._hp <= 0)
+		{
+			npcArr[i]._animation_state = AnimationOrder::Death; // ÆÐÅ¶ Ã¼Å©
+
+			if (npcArr[i]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[i]._animation_state))
+			{
+				npcArr[i]._on = false;
+			}
+		}
+	}
 	
 
 	//VP ï¿½ï¿½È¯
@@ -1038,7 +1051,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				_transform.hp_bar_start_pos = npcArr[i]._transform;
 				_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f;
 				_transform.current_hp = npcArr[i]._hp;
-				_transform.max_hp = 100;
+				_transform.max_hp = 100; // ÆÐÅ¶ Ã¼Å©
 
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
