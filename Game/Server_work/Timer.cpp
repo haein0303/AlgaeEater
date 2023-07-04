@@ -168,6 +168,17 @@ void do_timer()
 				}
 				clients[ev.object_id]._sl.unlock();
 
+				for (auto& pl : clients[ev.object_id].room_list) {
+					if (pl >= MAX_USER) continue;
+					if (pl == ev.target_id) continue;
+					if (clients[pl].char_state == AN_DEAD) continue;
+
+					float tar_abs = abs(clients[ev.object_id].x - clients[ev.target_id].x) + abs(clients[ev.object_id].z - clients[ev.target_id].z);
+					float new_abs = abs(clients[ev.object_id].x - clients[pl].x) + abs(clients[ev.object_id].z - clients[pl].z);
+
+					if (tar_abs > new_abs) ev.target_id = pl;
+				}
+
 				if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
 					for (auto& pl : clients[ev.target_id].room_list) {
@@ -200,6 +211,17 @@ void do_timer()
 					break;
 				}
 				clients[ev.object_id]._sl.unlock();
+
+				for (auto& pl : clients[ev.object_id].room_list) {
+					if (pl >= MAX_USER) continue;
+					if (pl == ev.target_id) continue;
+					if (clients[pl].char_state == AN_DEAD) continue;
+
+					float tar_abs = abs(clients[ev.object_id].x - clients[ev.target_id].x) + abs(clients[ev.object_id].z - clients[ev.target_id].z);
+					float new_abs = abs(clients[ev.object_id].x - clients[pl].x) + abs(clients[ev.object_id].z - clients[pl].z);
+
+					if (tar_abs > new_abs) ev.target_id = pl;
+				}
 
 				if (clients[ev.target_id].char_state == AN_DEAD) {
 					int dead_player = ev.target_id;
