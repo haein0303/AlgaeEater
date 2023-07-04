@@ -155,6 +155,7 @@ void process_packet(int c_id, char* packet)
 {
 	switch (packet[1]) {
 	case LCS_LOGIN: {
+		int sdk = 0;
 		clients[c_id]._sl.lock();
 		if (clients[c_id]._s_state == ST_FREE) {
 			clients[c_id]._sl.unlock();
@@ -166,15 +167,48 @@ void process_packet(int c_id, char* packet)
 			break;
 		}
 
-		LSC_LOGIN_OK_PACKET p;
-		p.id = c_id;
-		p.size = sizeof(LSC_LOGIN_OK_PACKET);
-		p.type = LSC_LOGIN_OK;
+		LCS_LOGIN_PACKET* pl = reinterpret_cast<LCS_LOGIN_PACKET*>(packet);
+		for (int i = 0; i < MAX_USER; i++) {
+			if (sizeof(user_datas[i].user_id) == 0) continue;
+			if (user_datas[i].user_id == pl->id) {
+				if (user_datas[i].user_passward == pl->passward) {
+					LSC_LOGIN_OK_PACKET p;
+					p.id = c_id;
+					p.size = sizeof(LSC_LOGIN_OK_PACKET);
+					p.type = LSC_LOGIN_OK;
+					p.level = user_datas[i].user_level;
 
-		clients[c_id].do_send(&p);
-		clients[c_id]._s_state = ST_INGAME;
-		clients[c_id]._sl.unlock();
-		cout << "클라 접속 확인" << endl;
+					clients[c_id].do_send(&p);
+					clients[c_id]._s_state = ST_INGAME;
+					clients[c_id]._sl.unlock();
+					cout << "클라 접속 확인" << endl;
+					break;
+				}
+				else {
+					LSC_LOGIN_FAIL_PACKET p;
+					p.size = sizeof(LSC_LOGIN_FAIL_PACKET);
+					p.type = LSC_LOGIN_FAIL;
+
+					clients[c_id].do_send(&p);
+					clients[c_id]._sl.unlock();
+					cout << "클라 접속 실패" << endl;
+					break;
+				}
+			}
+			else sdk++;
+		}
+
+		if (sdk >= MAX_USER) {
+			LSC_LOGIN_FAIL_PACKET p;
+			p.size = sizeof(LSC_LOGIN_FAIL_PACKET);
+			p.type = LSC_LOGIN_FAIL;
+
+			clients[c_id].do_send(&p);
+			clients[c_id]._sl.unlock();
+			cout << "클라 접속 실패" << endl;
+			break;
+		}
+		
 		break;
 	}
 	case LCS_MATCH: {

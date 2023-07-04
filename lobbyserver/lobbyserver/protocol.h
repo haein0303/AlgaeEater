@@ -64,7 +64,8 @@ constexpr char LCS_MATCH = 31;
 constexpr char LCS_OUT = 32;
 
 constexpr char LSC_LOGIN_OK = 40;
-constexpr char LSC_CONGAME = 41;
+constexpr char LSC_LOGIN_FAIL = 41;
+constexpr char LSC_CONGAME = 42;
 
 constexpr float PI = 3.1415926535;
 
@@ -245,6 +246,8 @@ struct SS_DATA_PASS_PACKET {
 struct LCS_LOGIN_PACKET {
 	unsigned char size;
 	char	type;
+	char	id[NAME_SIZE];
+	char	passward[NAME_SIZE];
 };
 
 struct LCS_MATCH_PACKET {
@@ -262,6 +265,12 @@ struct LSC_LOGIN_OK_PACKET {
 	unsigned char size;
 	char	type;
 	int		id;
+	int		level;
+};
+
+struct LSC_LOGIN_FAIL_PACKET {
+	unsigned char size;
+	char	type;
 };
 
 struct LSC_CONGAME_PACKET {
