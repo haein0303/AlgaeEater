@@ -20,11 +20,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		else
-		{
-			
-		}
-
 	}
 	cout << "EXIT lobby Msg Queue INIT CALL" << endl;
 

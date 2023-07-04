@@ -100,9 +100,12 @@ HFONT hFont;
 HFONT title_font;
 
 CImage i_login_bg;
+CImage i_join_bg;
 
 string c_id;
 string c_pw;
+
+int login_select = 0;
 
 
 
@@ -130,6 +133,14 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	RECT center_rc = { 0,200,1280,720 };
 	RECT logo_rc = { 540,140,740,340 };
 
+	RECT login_button_rc = { 460,450,600,500 };
+	RECT join_button_rc = { 660,450,810,500 };
+	RECT join2_button_rc = { 550,450,700,500 };
+
+	RECT login_id_rc = { 480, 260,800,300 };
+	RECT login_pw_rc = { 480, 370,800,400 };
+
+
 	RECT login_bg_rc = { 250,300,780,476 };
 	switch (iMsg)
 	{
@@ -141,6 +152,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		i_logo_b.Load(L"..\\Resources\\UserInterface\\test.png");
 
 		i_login_bg.Load(L"..\\Resources\\Lobby\\title_back_login.png");
+		i_join_bg.Load(L"..\\Resources\\Lobby\\title_join.png");
 		
 
 		for (int i = 1; i <= 4; ++i) {
@@ -241,18 +253,41 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 			DrawText(memDC, L"서버와 연결할 수 없습니다. 연결을 확인해주세요.", -1, &center_rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 			break;
-		case SCENE_STATE::LOG_IN:
-			
-			i_login_bg.Draw(memDC, 0,0,1280,720);
+		case SCENE_STATE::LOG_IN: {
+			i_login_bg.Draw(memDC, 0, 0, 1280, 720);
+			wstring idString(c_id.begin(), c_id.end());
+			wstring pwString(c_pw.begin(), c_pw.end());
+			SelectObject(memDC, title_font);
+			SetBkMode(memDC, TRANSPARENT);
+			SetTextColor(memDC, RGB(255, 255, 255));
+			if (login_select == 1) {
+				SetCaretPos(480+ c_id.length()*12, 250);
+			}
+			if (login_select == 2) {
+				SetCaretPos(480 + c_pw.length() * 12, 360);
+			}
+			DrawText(memDC, const_cast<LPWSTR>(idString.c_str()), -1, &login_id_rc, DT_LEFT | DT_SINGLELINE);
+			DrawText(memDC, const_cast<LPWSTR>(pwString.c_str()), -1, &login_pw_rc, DT_LEFT | DT_SINGLELINE);
+		}	
+		break;
+		case SCENE_STATE::ACOUNT: {
+			i_join_bg.Draw(memDC, 0, 0, 1280, 720);
 
+			wstring idString(c_id.begin(), c_id.end());
+			wstring pwString(c_pw.begin(), c_pw.end());
+			SelectObject(memDC, title_font);
+			SetBkMode(memDC, TRANSPARENT);
+			SetTextColor(memDC, RGB(255, 255, 255));
+			if (login_select == 1) {
+				SetCaretPos(480 + c_id.length() * 12, 250);
+			}
+			if (login_select == 2) {
+				SetCaretPos(480 + c_pw.length() * 12, 360);
+			}
+			DrawText(memDC, const_cast<LPWSTR>(idString.c_str()), -1, &login_id_rc, DT_LEFT | DT_SINGLELINE);
+			DrawText(memDC, const_cast<LPWSTR>(pwString.c_str()), -1, &login_pw_rc, DT_LEFT | DT_SINGLELINE);
 
-			
-			SetCaretPos(480, 360);
-			
-			break;
-		case SCENE_STATE::ACOUNT:
-			basic_BG.Draw(memDC, 0, 0, 1280, 720);
-
+		}
 			break;
 		case SCENE_STATE::READY:
 			basic_BG.Draw(memDC, 0, 0, 1280, 720);
@@ -261,24 +296,6 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
 			break;
 		}
-
-
-
-
-
-
-		
-		
-
-
-		/*SelectObject(memDC, hFont);
-		SetBkMode(memDC, TRANSPARENT);
-		DrawText(memDC, lobby_client._client_msg, -1, &Game_info_rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-
-		Icon[lobby_client._ready_state].Draw(memDC, 1280 - 176, 720 - 190, 126, 140);
-		DrawText(memDC, lobby_client._state_msg[lobby_client._ready_state], -1, &Game_state_rc, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
-
-		DrawText(memDC, L"Press Space for Ready", -1, &Game_ready_rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);*/
 
 		BitBlt(hdc, 0, 0, 1280, 720, memDC, 0, 0, SRCCOPY);
 
@@ -304,25 +321,24 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		break;
 	case WM_KEYDOWN:
 		switch (g_scene_state) {
-			case SCENE_STATE::LOG_IN:{
+			case SCENE_STATE::LOG_IN: case SCENE_STATE::ACOUNT: {
 				switch (wParam) {
 				case VK_BACK:
-					if (!c_id.empty()) {
-						c_id = c_id.substr(0, c_id.length() - 1);
-						cout << "POP : " << c_id << endl;
+					if (login_select == 1) {
+						if (c_id.length() > 1) {
+							c_id.pop_back();
+							c_id.resize(c_id.length() - 1);
+							//cout << "POP : " << c_id << endl;
+						}
 					}
-					else {
-						cout << "EMPTY" << endl;
+					if (login_select == 2) {
+						if (c_pw.length() > 1) {
+							c_pw.pop_back();
+							c_pw.resize(c_pw.length() - 1);
+							//cout << "POP : " << c_id << endl;
+						}
 					}
-					
-					
-					break;
-				}
-			}
-			break;
-			case SCENE_STATE::ACOUNT: {
-				switch (wParam) {
-				case VK_SPACE:
+					UpdateWindow(hwnd);
 					break;
 				}
 			}
@@ -363,18 +379,85 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		break;
 	case WM_CHAR: {
 		switch (g_scene_state) {
-		case SCENE_STATE::LOG_IN: {
+		case SCENE_STATE::LOG_IN: case SCENE_STATE::ACOUNT:{
 			char ch = static_cast<char>(wParam);
-			c_id += ch;
-			cout << c_id << endl;;
+			if (login_select == 1) {
+				if (c_id.length() < 10) {
+					c_id += ch;
+				}
+				else {
+					cout << "열글자 초과" << endl;
+				}
+			}
+
+			if (login_select == 2) {
+				if (c_pw.length() < 10) {
+					c_pw += ch;
+				}
+				else {
+					cout << "열글자 초과" << endl;
+				}
+			}
+			
 		}break;
 		}
 	}
+	InvalidateRect(hwnd, NULL, false);
 	break;
 	case WM_LBUTTONDOWN: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		cout << "X : " << x << " Y : " << y << endl;
+
+		if (g_scene_state == SCENE_STATE::LOG_IN) {
+
+			if (onClicK_check(login_button_rc, x, y)) {
+				cout << "로그인 클릭" << endl;
+			}
+			if (onClicK_check(join_button_rc, x, y)) {
+				c_id.erase();
+				c_pw.erase();
+				g_scene_state = SCENE_STATE::ACOUNT;
+				cout << "조인 클릭" << endl;
+				
+			}
+			
+			if(onClicK_check(login_id_rc, x, y)){
+				login_select = 1;
+				ShowCaret(hwnd);
+			}
+			else if (onClicK_check(login_pw_rc, x, y)) {
+				login_select = 2;
+				ShowCaret(hwnd);
+			}
+			else {
+				login_select = 0;
+				HideCaret(hwnd);
+			}
+		}else if (g_scene_state == SCENE_STATE::ACOUNT) {
+
+			if (onClicK_check(join2_button_rc, x, y)) {
+				g_scene_state = SCENE_STATE::LOG_IN;
+				c_id.erase();
+				c_pw.erase();
+			}
+
+			if (onClicK_check(login_id_rc, x, y)) {
+				login_select = 1;
+				ShowCaret(hwnd);
+			}
+			else if (onClicK_check(login_pw_rc, x, y)) {
+				login_select = 2;
+				ShowCaret(hwnd);
+			}
+			else {
+				login_select = 0;
+				HideCaret(hwnd);
+			}
+		}
+		cout << "g_scene_state : " << g_scene_state << endl;
+		InvalidateRect(hwnd, NULL, false);
+
 	}		
 		break;
 	default:
@@ -397,4 +480,8 @@ void CALLBACK TimerProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 	
 	}
 	InvalidateRect(hWnd, NULL, false);
+}
+
+bool onClicK_check(const RECT& rc, const int& x, const int& y) {
+	return (x >= rc.left && x <= rc.right && y >= rc.top && y <= rc.bottom);
 }

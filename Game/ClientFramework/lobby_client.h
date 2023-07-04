@@ -27,3 +27,5 @@ public:
 };
 
 LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+
+bool onClicK_check(const RECT& rc, const int& x, const int& y);
