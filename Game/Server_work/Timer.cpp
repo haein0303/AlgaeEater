@@ -118,10 +118,10 @@ void do_timer()
 							clients[pl_num]._sl.unlock();
 							continue;
 						}
+						clients[pl_num]._sl.unlock();
 						
 						clients[pl_num].hp /= 2;
 						Update_Player(pl_num);
-						clients[pl_num]._sl.unlock();
 					}
 
 					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
