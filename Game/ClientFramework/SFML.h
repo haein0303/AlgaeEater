@@ -108,6 +108,7 @@ public:
 			user_map.insert({ packet->id,user_accept_counter });
 			cout << myClientId <<" : id : " << packet->id << " || user_accept_counter : " << user_accept_counter << " : " << user_map.count(packet->id) << endl;
 			playerArr[myClientId]._on = true;
+			playerArr[myClientId]._my_server_id = packet->id;
 			playerArr[myClientId]._transform.x = packet->x;
 			playerArr[myClientId]._transform.y = packet->y;
 			playerArr[myClientId]._transform.z = packet->z;

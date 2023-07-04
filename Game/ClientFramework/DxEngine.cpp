@@ -390,7 +390,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					p.target_id = npcArr[j]._my_server_id;
 					networkPtr->send_packet(&p);
 
-					cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
+					cout << "player" << playerArr[i]._my_server_id << endl;
 					cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 					cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
 				}
