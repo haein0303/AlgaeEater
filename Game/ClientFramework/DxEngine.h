@@ -107,6 +107,7 @@ public:
 	MESH_ASSET Plane002;
 	MESH_ASSET Grid_Metal_tile;
 	MESH_ASSET Cube;
+	MESH_ASSET Grid_Metal_door;
 
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
@@ -139,6 +140,8 @@ public:
 	vector<MapData> _map_data;
 	vector<MapData> _map_data2;
 	vector<MapData> _map_data3;
+	XMFLOAT3 doorPos = XMFLOAT3(52.f / 2.f, 1.5f, -203.f / 2.f);
+	float doorPosX0 = 52.f / 2.f;
 
 	vector<BoundingBox> bounding_boxes;
 	vector<BoundingBox> bounding_boxes2;
@@ -308,6 +311,12 @@ public:
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
+
+			// door
+			XMFLOAT3 scale = XMFLOAT3(3, 1, 6);
+			XMFLOAT3 rot = XMFLOAT3(90.f, 0.f, -90.f);
+			OpenDoor(doorPos, doorPosX0);
+			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos, scale, rot);
 		}
 
 		else if (stage == 2)
@@ -495,5 +504,11 @@ public:
 				collision_data.emplace_back(bounding_box);
 			}
 		}
+	}
+
+	void OpenDoor(XMFLOAT3& pos, float posX0)
+	{
+		if(pos.x > posX0 - 3.f)
+			pos.x -= 1.f * timerPtr->_deltaTime;
 	}
 };

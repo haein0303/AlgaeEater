@@ -133,6 +133,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	Cube.Make_SRV();
 	Cube.CreatePSO(L"..\\Bricks.hlsl");
 
+	Grid_Metal_door.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	Grid_Metal_door.Init("../Resources/Grid_Metal_door.txt", ObjectType::GeneralObjects);
+	Grid_Metal_door.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Grid_Metal_door.Make_SRV();
+	Grid_Metal_door.CreatePSO(L"..\\Wall.hlsl");
+
 	testCube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	testCube.Init("../Resources/TestCube.txt", ObjectType::GeneralObjects);
 	testCube.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
@@ -1006,26 +1012,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 #pragma endregion
 
-		{
-			cmdList->SetPipelineState(testCube._pipelineState.Get());
-			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
-			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
-
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(test.Extents.x, test.Extents.y, test.Extents.z)
-				* XMMatrixTranslation(test.Center.x, test.Center.y, test.Center.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
-		}
-
-		// 캐릭터 공격 콜라이더
+		/*// 캐릭터 공격 콜라이더
 		if(playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack
 			&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
 		{
@@ -1046,7 +1033,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
-		}
+		}*/
 
 		// Boss
 		switch (Scene_num)
