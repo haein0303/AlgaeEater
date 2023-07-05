@@ -411,48 +411,50 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
 	}
 
-	// npc 공격 충돌 체크
+	// 플레이어 공격 충돌 체크
+	if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
+		&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
+		&& playerArr[networkPtr->myClientId]._can_attack)
+	{
+		for (int i = 0; i < NPCMAX; ++i)
+		{
+			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
+			{
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+				p.target_id = npcArr[i]._my_server_id;
+				networkPtr->send_packet(&p);
+
+				cout << "player" << playerArr[networkPtr->myClientId]._my_server_id << endl;
+				cout << "npc" << i << " hp : " << npcArr[i]._hp << endl;
+				cout << "particle " << i << " : " << npcArr[i]._particle_count << endl;
+			}
+		}
+		playerArr[networkPtr->myClientId]._can_attack = false;
+	}
+		
 	for (int j = 0; j < NPCMAX; ++j)
 	{
-		int i = networkPtr->myClientId;
-		if (npcArr[j]._on == true)
+		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 9.f
+			&& npcArr[j]._animation_state == AnimationOrder::Attack
+			&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
+			&& npcArr[j]._can_attack)
 		{
-			if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
-				&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
-				&& playerArr[i]._can_attack
-				&& testCharacter.Intersects(npcArr[j]._bounding_box))
-			{
-				playerArr[i]._can_attack = false;
+			npcArr[j]._can_attack = false;
 
-				CS_COLLISION_PACKET p;
-				p.size = sizeof(p);
-				p.type = CS_COLLISION;
-				p.attack_type = playerArr[i]._animation_state - 2;
-				p.attacker_id = playerArr[i]._my_server_id;
-				p.target_id = npcArr[j]._my_server_id;
-				networkPtr->send_packet(&p);
+			CS_COLLISION_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_COLLISION;
+			p.attack_type = 0;
+			p.attacker_id = npcArr[j]._my_server_id;
+			p.target_id = playerArr[0]._my_server_id;
+			networkPtr->send_packet(&p);
 
-				cout << "player" << playerArr[i]._my_server_id << endl;
-				cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
-				cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
-			}
-			if (npcArr[j]._animation_state == AnimationOrder::Attack
-				&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
-				&& npcArr[j]._can_attack) {
-
-				npcArr[j]._can_attack = false;
-
-				CS_COLLISION_PACKET p;
-				p.size = sizeof(p);
-				p.type = CS_COLLISION;
-				p.attack_type = 0;
-				p.attacker_id = npcArr[j]._my_server_id;
-				p.target_id = playerArr[i]._my_server_id;
-				networkPtr->send_packet(&p);
-
-				cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
-				cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
-			}
+			cout << "player" << 0 << " hp : " << playerArr[0]._hp << endl;
+			cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 		}
 	}
 		
