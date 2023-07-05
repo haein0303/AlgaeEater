@@ -245,6 +245,12 @@ void process_packet(int c_id, char* packet)
 		}
 		break;
 	}
+	case LCS_JOIN: {
+		LCS_JOIN_PACKET* p = reinterpret_cast<LCS_JOIN_PACKET*>(packet);
+
+		cout << "아무튼 회원가입 하려함" << endl;
+		break;
+	}
 	case SS_CONNECT_SERVER: {
 		cout << "쌍방 연결 확인" << endl;
 

@@ -62,10 +62,13 @@ constexpr char SS_DATA_PASS = 29;
 constexpr char LCS_LOGIN = 30;
 constexpr char LCS_MATCH = 31;
 constexpr char LCS_OUT = 32;
+constexpr char LCS_JOIN = 33;
 
 constexpr char LSC_LOGIN_OK = 40;
 constexpr char LSC_LOGIN_FAIL = 41;
 constexpr char LSC_CONGAME = 42;
+constexpr char LSC_JOIN_OK = 43;
+constexpr char LSC_JOIN_FAIL = 44;
 
 constexpr float PI = 3.1415926535;
 
@@ -261,6 +264,13 @@ struct LCS_OUT_PACKET {
 	char	type;
 };
 
+struct LCS_JOIN_PACKET {
+	unsigned char size;
+	char	type;
+	char	id[NAME_SIZE];
+	char	passward[NAME_SIZE];
+};
+
 struct LSC_LOGIN_OK_PACKET {
 	unsigned char size;
 	char	type;
@@ -277,5 +287,15 @@ struct LSC_CONGAME_PACKET {
 	unsigned char size;
 	char	type;
 	bool	connect;
+};
+
+struct LSC_JOIN_OK_PACKET {
+	unsigned char size;
+	char	type;
+};
+
+struct LSC_JOIN_FAIL_PACKET {
+	unsigned char size;
+	char	type;
 };
 #pragma pack (pop)
