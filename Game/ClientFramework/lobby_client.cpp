@@ -73,14 +73,6 @@ int LOBBY_CLIENT::connect_server(int port)
 		g_scene_state = SCENE_STATE::FAIL;
 		return -1;
 	}
-
-	/*LCS_LOGIN_PACKET p_LOGIN;
-	p_LOGIN.size = sizeof(p_LOGIN);
-	p_LOGIN.type = LCS_LOGIN;
-	strcpy(p_LOGIN.id, "asdasd");
-	strcpy(p_LOGIN.passward, "asdasd");
-	Lobby_network->send_packet(&p_LOGIN);*/
-	//draw_text(L"SERVER CONNECTED");
 	g_scene_state = SCENE_STATE::LOG_IN;
 	return 0;
 }
@@ -445,9 +437,16 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		}else if (g_scene_state == SCENE_STATE::ACOUNT) {
 
 			if (onClicK_check(join2_button_rc, x, y)) {
-				g_scene_state = SCENE_STATE::LOG_IN;
-				c_id.erase();
-				c_pw.erase();
+				LCS_JOIN_PACKET p;
+				p.size = sizeof(p);
+				p.type = LCS_LOGIN;
+				strcpy(p.id, c_id.c_str());
+				strcpy(p.passward, c_pw.c_str());
+				lobby_client.Lobby_network->send_packet(&p);
+
+				//g_scene_state = SCENE_STATE::LOG_IN;
+				//c_id.erase();
+				//c_pw.erase();
 			}
 
 			if (onClicK_check(login_id_rc, x, y)) {

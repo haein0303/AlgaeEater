@@ -12,7 +12,8 @@
 #include <windows.h>  
 #include <sqlext.h>  
 #include <locale.h>
-#include "protocol.h"
+//#include "protocol.h"
+#include "../../Game/Server_work/protocol.h"
 
 #define UNICODE  
 #include <sqlext.h>  

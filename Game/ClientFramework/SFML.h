@@ -385,6 +385,20 @@ public:
 				cout << "·Î±×ÀÎ FAIL" << endl;
 			}
 			break;
+
+			case LSC_JOIN_OK:
+			{
+				LSC_LOGIN_FAIL_PACKET* packet = reinterpret_cast<LSC_LOGIN_FAIL_PACKET*>(ptr);
+				cout << "LSC_JOIN_OK" << endl;
+			}
+			break;
+
+			case LSC_JOIN_FAIL:
+			{
+				LSC_LOGIN_FAIL_PACKET* packet = reinterpret_cast<LSC_LOGIN_FAIL_PACKET*>(ptr);
+				cout << "LSC_JOIN_FAIL" << endl;
+			}
+			break;
 		}
 	}
 
