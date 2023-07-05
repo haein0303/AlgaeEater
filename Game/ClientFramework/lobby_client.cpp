@@ -62,24 +62,26 @@ HWND LOBBY_CLIENT::init(HINSTANCE hInst, int nCmdShow)
 int LOBBY_CLIENT::connect_server(int port)
 {
 	if (_is_connected) {
-		draw_text(L"SERVER CONNECTED");
-		g_scene_state = SCENE_STATE::READY;
+		cout << "SERVER CONNECTED" << endl;
+		g_scene_state = SCENE_STATE::LOG_IN;
 		return 0;
 	}
-	draw_text(L"TRY CONNECT SERVER");
-	if (-1 == Lobby_network->ConnectServer(port,0)) {
-		draw_text(L"SERVER CONNECTED FAIL");
-		g_scene_state = SCENE_STATE::LOG_IN;
-		//g_scene_state = SCENE_STATE::FAIL;
+	cout << "TRY CONNECT SERVER" << endl;
+	if (-1 == Lobby_network->ConnectServer(port)) {
+		cout << "SERVER CONNECTED FAIL" << endl;
+		//g_scene_state = SCENE_STATE::LOG_IN;
+		g_scene_state = SCENE_STATE::FAIL;
 		return -1;
 	}
 
-	LCS_LOGIN_PACKET p_LOGIN;
+	/*LCS_LOGIN_PACKET p_LOGIN;
 	p_LOGIN.size = sizeof(p_LOGIN);
 	p_LOGIN.type = LCS_LOGIN;
-	Lobby_network->send_packet(&p_LOGIN);
-	draw_text(L"SERVER CONNECTED");
-	_ready_state = SCENE_STATE::LOG_IN;
+	strcpy(p_LOGIN.id, "asdasd");
+	strcpy(p_LOGIN.passward, "asdasd");
+	Lobby_network->send_packet(&p_LOGIN);*/
+	//draw_text(L"SERVER CONNECTED");
+	g_scene_state = SCENE_STATE::LOG_IN;
 	return 0;
 }
 
@@ -321,7 +323,8 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		break;
 	case WM_KEYDOWN:
 		switch (g_scene_state) {
-			case SCENE_STATE::LOG_IN: case SCENE_STATE::ACOUNT: {
+			case SCENE_STATE::LOG_IN: 
+			case SCENE_STATE::ACOUNT: {
 				switch (wParam) {
 				case VK_BACK:
 					if (login_select == 1) {
@@ -363,7 +366,6 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 						lobby_client.draw_text(L"SEND MATCH PACKET");
 						lobby_client._ready_state = 0;
 					}
-
 					break;
 				case VK_LEFT:
 					lobby_client._scene_select = (lobby_client._scene_select + 3) % 4;
@@ -412,6 +414,12 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		if (g_scene_state == SCENE_STATE::LOG_IN) {
 
 			if (onClicK_check(login_button_rc, x, y)) {
+				LCS_LOGIN_PACKET p;
+				p.size = sizeof(p);
+				p.type = LCS_LOGIN;
+				strcpy(p.id, c_id.c_str());
+				strcpy(p.passward, c_pw.c_str());
+				lobby_client.Lobby_network->send_packet(&p);
 				cout << "로그인 클릭" << endl;
 			}
 			if (onClicK_check(join_button_rc, x, y)) {

@@ -38,6 +38,21 @@ public:
 		return 0;
 	}
 
+	int ConnectServer(int PortNum) 
+	{
+		wcout.imbue(locale("korean"));
+		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum);
+		socket.setBlocking(false);
+
+		if (status != sf::Socket::Done) {
+			wcout << L"서버와 연결할 수 없습니다.\n";
+			return -1;
+			while (true);
+		}
+
+		return 0;
+	}
+
 	void ReceiveServer(array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data) //서버에서 받는거, clientMain
 	{
 		char net_buf[BUF_SIZE];
@@ -350,17 +365,26 @@ public:
 	void ProcessPacket(char* ptr, int& data) {
 		switch (ptr[1])
 		{
-		case LSC_LOGIN_OK: 
-		{
-			LSC_LOGIN_OK_PACKET* packet = reinterpret_cast<LSC_LOGIN_OK_PACKET*>(ptr);
-		}
-		break;
-		case LSC_CONGAME: 
-		{
-			LSC_CONGAME_PACKET* packet = reinterpret_cast<LSC_CONGAME_PACKET*>(ptr);
-			data = -1;
-		}
-		break;
+			case LSC_LOGIN_OK: 
+			{
+				LSC_LOGIN_OK_PACKET* packet = reinterpret_cast<LSC_LOGIN_OK_PACKET*>(ptr);
+				cout << "로그인 OK" << endl;
+			}
+			break;
+
+			case LSC_CONGAME: 
+			{
+				LSC_CONGAME_PACKET* packet = reinterpret_cast<LSC_CONGAME_PACKET*>(ptr);
+				data = -1;
+			}
+			break;
+
+			case LSC_LOGIN_FAIL:
+			{
+				LSC_LOGIN_FAIL_PACKET* packet = reinterpret_cast<LSC_LOGIN_FAIL_PACKET*>(ptr);
+				cout << "로그인 FAIL" << endl;
+			}
+			break;
 		}
 	}
 
