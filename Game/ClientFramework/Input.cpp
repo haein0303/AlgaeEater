@@ -242,7 +242,6 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Idle;
 			}
 
-
 			if (playerArr[networkPtr->myClientId]._animation_state0 != playerArr[networkPtr->myClientId]._animation_state) {
 				playerArr[networkPtr->myClientId]._animation_time_pos = 0.f;
 				playerArr[networkPtr->myClientId]._animation_state0 = playerArr[networkPtr->myClientId]._animation_state;

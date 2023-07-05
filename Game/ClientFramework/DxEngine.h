@@ -91,6 +91,11 @@ public:
 	MESH_ASSET color_pattern;
 	array <MESH_ASSET, 20> pillar;
 
+	BoundingBox test;
+	MESH_ASSET testCube;
+
+	BoundingOrientedBox testCharacter;
+
 	// map°ü·Ã
 	MESH_ASSET key;
 	MESH_ASSET Tube;

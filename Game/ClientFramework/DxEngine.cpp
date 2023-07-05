@@ -133,6 +133,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	Cube.Make_SRV();
 	Cube.CreatePSO(L"..\\Bricks.hlsl");
 
+	testCube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	testCube.Init("../Resources/TestCube.txt", ObjectType::GeneralObjects);
+	testCube.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	testCube.Make_SRV();
+	testCube.CreatePSO(L"..\\Bricks.hlsl");
+
 	hp_bar.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	hp_bar.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
 	hp_bar.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
@@ -268,6 +274,13 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	ImportCollisionObjectsData("../Resources/CollisionData2.txt", bounding_boxes2);
 	ImportCollisionObjectsData("../Resources/CollisionData3.txt", bounding_boxes3);
 	
+	test.Center = XMFLOAT3(170.f, 1.f, -240.f);
+	test.Extents = XMFLOAT3(1.f, 1.f, 1.f);
+
+	testCharacter.Center = XMFLOAT3(0.f, 0.f, 0.f);
+	testCharacter.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
+	testCharacter.Orientation = XMFLOAT4(0.f, 0.f, 0.f, 0.f);
+
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
 	ID2D1Bitmap* _i_tmp;
@@ -370,47 +383,69 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 
-	// 공격 충돌 체크
+	// 콜라이더 on off
+	if (playerArr[0]._animation_state == AnimationOrder::Attack
+		&& playerArr[0]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state) * 0.5f)
+	{
+		testCharacter.Center = XMFLOAT3(playerArr[0]._transform.x + 0.5f * cosf((-playerArr[0]._degree + 90.f) * XM_PI / 180.f),
+			playerArr[0]._transform.y + 0.5f,
+			playerArr[0]._transform.z + 0.5f * sinf((-playerArr[0]._degree + 90.f) * XM_PI / 180.f));
+		testCharacter.Extents = XMFLOAT3(1.f, 0.5f, 0.3f);
+		XMVECTOR v{ 0, 1, 0, 0 };
+		XMStoreFloat4(&testCharacter.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
+	}
+	else
+	{
+		testCharacter.Center.y = -100.f;
+	}
+	
+	// npc bounding box
+	for (OBJECT& obj : npcArr)
+	{
+		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
+	}
+
+	// npc 공격 충돌 체크
 	for (int j = 0; j < NPCMAX; ++j)
 	{
 		int i = networkPtr->myClientId;
-		if (npcArr[j]._on == true) {
-			if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
-				if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
-					&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
-					&& playerArr[i]._can_attack) {
+		if (npcArr[j]._on == true)
+		{
+			if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
+				&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
+				&& playerArr[i]._can_attack
+				&& testCharacter.Intersects(npcArr[j]._bounding_box))
+			{
+				playerArr[i]._can_attack = false;
 
-					playerArr[i]._can_attack = false;
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = playerArr[i]._animation_state - 2;
+				p.attacker_id = playerArr[i]._my_server_id;
+				p.target_id = npcArr[j]._my_server_id;
+				networkPtr->send_packet(&p);
 
-					CS_COLLISION_PACKET p;
-					p.size = sizeof(p);
-					p.type = CS_COLLISION;
-					p.attack_type = playerArr[i]._animation_state-2;
-					p.attacker_id = playerArr[i]._my_server_id;
-					p.target_id = npcArr[j]._my_server_id;
-					networkPtr->send_packet(&p);
+				cout << "player" << playerArr[i]._my_server_id << endl;
+				cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
+				cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
+			}
+			if (npcArr[j]._animation_state == AnimationOrder::Attack
+				&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
+				&& npcArr[j]._can_attack) {
 
-					cout << "player" << playerArr[i]._my_server_id << endl;
-					cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
-					cout << "particle " << j << " : " << npcArr[j]._particle_count << endl;
-				}
-				if (npcArr[j]._animation_state == AnimationOrder::Attack
-					&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
-					&& npcArr[j]._can_attack) {
+				npcArr[j]._can_attack = false;
 
-					npcArr[j]._can_attack = false;
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = 0;
+				p.attacker_id = npcArr[j]._my_server_id;
+				p.target_id = playerArr[i]._my_server_id;
+				networkPtr->send_packet(&p);
 
-					CS_COLLISION_PACKET p;
-					p.size = sizeof(p);
-					p.type = CS_COLLISION;
-					p.attack_type = 0;
-					p.attacker_id = npcArr[j]._my_server_id;
-					p.target_id = playerArr[i]._my_server_id;
-					networkPtr->send_packet(&p);
-
-					cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
-					cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
-				}
+				cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
+				cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 			}
 		}
 	}
@@ -970,6 +1005,48 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 #pragma endregion
+
+		{
+			cmdList->SetPipelineState(testCube._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(test.Extents.x, test.Extents.y, test.Extents.z)
+				* XMMatrixTranslation(test.Center.x, test.Center.y, test.Center.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+		}
+
+		// 캐릭터 공격 콜라이더
+		if(playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack
+			&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+		{
+			cmdList->SetPipelineState(testCube._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+			
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(testCharacter.Extents.x, testCharacter.Extents.y, testCharacter.Extents.z)
+				*XMMatrixRotationQuaternion(XMLoadFloat4(&testCharacter.Orientation))
+				* XMMatrixTranslation(testCharacter.Center.x, testCharacter.Center.y, testCharacter.Center.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+		}
 
 		// Boss
 		switch (Scene_num)
