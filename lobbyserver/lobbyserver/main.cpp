@@ -178,7 +178,7 @@ void process_packet(int c_id, char* packet)
 		for (int i = 0; i < MAX_USER; i++) {
 			if (sizeof(user_datas[i].user_id) == 0) continue;
 			if (strcmp(user_datas[i].user_id, pl->id) == 0) {
-				if (strcmp(user_datas[i].user_passward, pl->passward)) {
+				if (strcmp(user_datas[i].user_passward, pl->passward) == 0) {
 					LSC_LOGIN_OK_PACKET p;
 					p.id = c_id;
 					p.size = sizeof(LSC_LOGIN_OK_PACKET);
