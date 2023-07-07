@@ -112,8 +112,8 @@ void SESSION::send_login_ok_packet(int c_id)
 
 class USER_DATA {
 public:
-	char user_id[DATA_LEN];
-	char user_passward[DATA_LEN];
+	char user_id[NAME_SIZE];
+	char user_passward[NAME_SIZE];
 	int user_level;
 };
 
@@ -169,10 +169,16 @@ void process_packet(int c_id, char* packet)
 		}
 
 		LCS_LOGIN_PACKET* pl = reinterpret_cast<LCS_LOGIN_PACKET*>(packet);
+
+		cout << "id : " << pl->id << "  pass : " << pl->passward << endl;
+		cout << user_datas[0].user_id << user_datas[0].user_passward << endl;
+
+		cout << "클라에서 보내준거 " << strlen(pl->id) << "  서버에서 저장된거" << strlen(user_datas[0].user_id) << endl;
+
 		for (int i = 0; i < MAX_USER; i++) {
 			if (sizeof(user_datas[i].user_id) == 0) continue;
-			if (user_datas[i].user_id == pl->id) {
-				if (user_datas[i].user_passward == pl->passward) {
+			if (strcmp(user_datas[i].user_id, pl->id) == 0) {
+				if (strcmp(user_datas[i].user_passward, pl->passward)) {
 					LSC_LOGIN_OK_PACKET p;
 					p.id = c_id;
 					p.size = sizeof(LSC_LOGIN_OK_PACKET);
@@ -523,7 +529,25 @@ void Data_read() {
 
 								user_datas[i].user_level = duser_level;
 
-								wcout << user_datas[i].user_id << "   " << user_datas[i].user_passward << "   " << user_datas[i].user_level << endl;
+								int len = strlen(user_datas[i].user_id);
+								int index = 0;
+								for (int j = 0; j < len; j++) {
+									if (!std::isspace(user_datas[i].user_id[j])) {
+										user_datas[i].user_id[index++] = user_datas[i].user_id[j];
+									}
+								}
+								user_datas[i].user_id[index] = '\0';
+
+								len = strlen(user_datas[i].user_passward);
+								index = 0;
+								for (int j = 0; j < len; j++) {
+									if (!std::isspace(user_datas[i].user_passward[j])) {
+										user_datas[i].user_passward[index++] = user_datas[i].user_passward[j];
+									}
+								}
+								user_datas[i].user_passward[index] = '\0';
+
+								cout << "데이터 로드 성공" << endl;
 							}			
 							else		
 								break;
