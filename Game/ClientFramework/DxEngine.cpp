@@ -283,9 +283,14 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	test.Center = XMFLOAT3(170.f, 1.f, -240.f);
 	test.Extents = XMFLOAT3(1.f, 1.f, 1.f);
 
-	testCharacter.Center = XMFLOAT3(0.f, 0.f, 0.f);
+	XMVECTOR v{ 0, 1, 0, 0 };
+	testCharacter.Center = XMFLOAT3(0.f, -100.f, 0.f);
 	testCharacter.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
-	testCharacter.Orientation = XMFLOAT4(0.f, 0.f, 0.f, 0.f);
+	XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
+
+	testCharacter2.Center = XMFLOAT3(0.f, -100.f, 0.f);
+	testCharacter2.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
+	XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
@@ -389,7 +394,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 
-	// 콜라이더 on off
+	// 플레이어 기본 공격 콜라이더 on off
 	if (playerArr[0]._animation_state == AnimationOrder::Attack
 		&& playerArr[0]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state) * 0.5f)
 	{
@@ -404,6 +409,22 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	{
 		testCharacter.Center.y = -100.f;
 	}
+
+	// 플레이어 스킬 콜라이더 on off
+	if (playerArr[0]._animation_state == AnimationOrder::Skill
+		&& playerArr[0]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state) * 0.5f)
+	{
+		testCharacter2.Center = XMFLOAT3(playerArr[0]._transform.x,
+			playerArr[0]._transform.y + 0.5f,
+			playerArr[0]._transform.z);
+		testCharacter2.Extents = XMFLOAT3(1.f, 0.3f, 1.f);
+		XMVECTOR v{ 0, 1, 0, 0 };
+		XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
+	}
+	else
+	{
+		testCharacter2.Center.y = -100.f;
+	}
 	
 	// npc bounding box
 	for (OBJECT& obj : npcArr)
@@ -411,16 +432,28 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
 	}
 
-	// 플레이어 공격 충돌 체크
+	// 플레이어 공격 충돌 감지
 	if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
 		&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
 		&& playerArr[networkPtr->myClientId]._can_attack)
 	{
 		for (int i = 0; i < NPCMAX; ++i)
 		{
-			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box)
-				//|| npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box)
-				) // 스킬
+			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
+			{
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+				p.target_id = npcArr[i]._my_server_id;
+				networkPtr->send_packet(&p);
+
+				cout << "player" << playerArr[networkPtr->myClientId]._my_server_id << endl;
+				cout << "npc" << i << " hp : " << npcArr[i]._hp << endl;
+				cout << "particle " << i << " : " << npcArr[i]._particle_count << endl;
+			}
+			if (npcArr[i]._on == true && testCharacter2.Intersects(npcArr[i]._bounding_box))
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
@@ -438,7 +471,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		playerArr[networkPtr->myClientId]._can_attack = false;
 	}
 	
-	// npc 공격 충돌 체크
+	// npc 공격 충돌 감지
 	for (int j = 0; j < NPCMAX; ++j)
 	{
 		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 9.f
@@ -461,7 +494,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 	
-	// 보스 공격 충돌 체크
+	// 보스 공격 충돌 감지
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
 		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
@@ -1029,6 +1062,29 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(testCharacter.Extents.x, testCharacter.Extents.y, testCharacter.Extents.z)
 				*XMMatrixRotationQuaternion(XMLoadFloat4(&testCharacter.Orientation))
 				* XMMatrixTranslation(testCharacter.Center.x, testCharacter.Center.y, testCharacter.Center.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+		}
+
+		// 캐릭터 스킬 콜라이더
+		if(playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill
+			&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+		{
+			cmdList->SetPipelineState(testCube._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(testCharacter2.Extents.x, testCharacter2.Extents.y, testCharacter2.Extents.z)
+				*XMMatrixRotationQuaternion(XMLoadFloat4(&testCharacter2.Orientation))
+				* XMMatrixTranslation(testCharacter2.Center.x, testCharacter2.Center.y, testCharacter2.Center.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 

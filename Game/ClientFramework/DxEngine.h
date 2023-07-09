@@ -95,6 +95,7 @@ public:
 	MESH_ASSET testCube;
 
 	BoundingOrientedBox testCharacter;
+	BoundingOrientedBox testCharacter2;
 
 	// map°ü·Ã
 	MESH_ASSET key;
