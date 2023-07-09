@@ -418,7 +418,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	{
 		for (int i = 0; i < NPCMAX; ++i)
 		{
-			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
+			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box)
+				//|| npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box)
+				) // 스킬
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
@@ -435,7 +437,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 		playerArr[networkPtr->myClientId]._can_attack = false;
 	}
-		
+	
+	// npc 공격 충돌 체크
 	for (int j = 0; j < NPCMAX; ++j)
 	{
 		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 9.f
@@ -457,7 +460,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 		}
 	}
-		
+	
+	// 보스 공격 충돌 체크
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
 		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
