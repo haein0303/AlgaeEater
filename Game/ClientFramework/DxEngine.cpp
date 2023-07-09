@@ -363,7 +363,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
-	// 파티클 동기화
+	/*// 파티클 동기화
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		if (playerArr[i]._on == true) {
@@ -392,7 +392,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				}
 			}
 		}
-	}
+	}*/
 
 	// 플레이어 기본 공격 콜라이더 on off
 	if (playerArr[0]._animation_state == AnimationOrder::Attack
@@ -425,7 +425,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	{
 		testCharacter2.Center.y = -100.f;
 	}
-	
+
 	// npc bounding box
 	for (OBJECT& obj : npcArr)
 	{
@@ -441,6 +441,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
 			{
+				npcArr[i]._particle_count += 100;
+
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
 				p.type = CS_COLLISION;
@@ -455,6 +457,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 			if (npcArr[i]._on == true && testCharacter2.Intersects(npcArr[i]._bounding_box))
 			{
+				npcArr[i]._particle_count += 100;
+
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
 				p.type = CS_COLLISION;
