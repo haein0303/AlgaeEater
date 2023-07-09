@@ -591,20 +591,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		networkPtr->send_packet(&p);
 	}
 
-	for (int i = 0; i < NPCMAX; ++i)
-	{
-		if (npcArr[i]._hp <= 0)
-		{
-			npcArr[i]._animation_state = AnimationOrder::Death; // ÆÐÅ¶ Ã¼Å©
-
-			if (npcArr[i]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[i]._animation_state))
-			{
-				npcArr[i]._on = false;
-			}
-		}
-	}
-	
-
 	//VP ï¿½ï¿½È¯
 	float zoom = 3.f * _scale / 100.f;
 	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - zoom * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
@@ -1120,7 +1106,19 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		default:
 			break;
 		}
-		
+
+		for (int i = 0; i < NPCMAX; ++i)
+		{
+			if (npcArr[i]._hp <= 0)
+			{
+				npcArr[i]._animation_state = AnimationOrder::Death; // ÆÐÅ¶ Ã¼Å©
+
+				if (npcArr[i]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[i]._animation_state))
+				{
+					npcArr[i]._on = false;
+				}
+			}
+		}
 
 		cmdList->SetPipelineState(npc_asset._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);
