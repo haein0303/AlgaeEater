@@ -363,37 +363,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
-	/*// 파티클 동기화
-	for (int i = 0; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._on == true) {
-			for (int j = 0; j < NPCMAX; ++j)
-			{
-				if (npcArr[j]._on == true) {
-					if (pow(playerArr[i]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[i]._transform.z - npcArr[j]._transform.z, 2) <= 9.f) {
-						if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
-							&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
-							&& playerArr[i]._can_attack2) {
-							playerArr[i]._can_attack2 = false;
-							npcArr[j]._particle_count += 100;
-						}
-					}
-				}
-			}
-			if (boss_obj._on == true) {
-				if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
-					if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
-						&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
-						&& playerArr[i]._can_attack2) {
-						playerArr[i]._can_attack2 = false;
-						boss_obj._particle_count += 100;
-						cout << "test" << endl;
-					}
-				}
-			}
-		}
-	}*/
-
 	// 플레이어 기본 공격 콜라이더 on off
 	if (playerArr[0]._animation_state == AnimationOrder::Attack
 		&& playerArr[0]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state) * 0.5f)
@@ -432,6 +401,28 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
 	}
 
+	// 파티클 동기화
+	for (OBJECT& player : playerArr)
+	{
+		if ((player._animation_state == AnimationOrder::Attack || player._animation_state == AnimationOrder::Skill)
+			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f
+			&& player._can_attack2)
+		{
+			for (int i = 0; i < NPCMAX; ++i)
+			{
+				if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
+				{
+					npcArr[i]._particle_count += 100;
+				}
+				if (npcArr[i]._on == true && testCharacter2.Intersects(npcArr[i]._bounding_box))
+				{
+					npcArr[i]._particle_count += 100;
+				}
+			}
+			playerArr[networkPtr->myClientId]._can_attack2 = false;
+		}
+	}
+
 	// 플레이어 공격 충돌 감지
 	if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
 		&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
@@ -441,8 +432,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
 			{
-				npcArr[i]._particle_count += 100;
-
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
 				p.type = CS_COLLISION;
@@ -457,8 +446,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 			if (npcArr[i]._on == true && testCharacter2.Intersects(npcArr[i]._bounding_box))
 			{
-				npcArr[i]._particle_count += 100;
-
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
 				p.type = CS_COLLISION;
