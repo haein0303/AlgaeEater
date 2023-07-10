@@ -294,6 +294,18 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	testCharacter2.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
 	XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 
+	// boss1 bounding box
+	for (int i = 0; i < 8; ++i)
+	{
+		boss_col[i].Extents = XMFLOAT3(0.5f, 2.f, 0.5f);
+		boss_col[i].Center = XMFLOAT3(boss_obj._transform.x, boss_obj._transform.y, boss_obj._transform.z);
+	}
+
+	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
+		boss_obj._transform.y,
+		boss_obj._transform.z);
+	boss_collision.Extents = XMFLOAT3(2.f, 1.5f, 3.f);
+
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
 	ID2D1Bitmap* _i_tmp;
@@ -402,6 +414,46 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	{
 		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
 	}
+
+	// boss bounding box
+	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
+		boss_obj._transform.y + 2.5f,
+		boss_obj._transform.z);
+	XMVECTOR v{ 0, 1, 0, 0 };
+	XMStoreFloat4(&boss_collision.Orientation, XMQuaternionRotationNormal(v, boss_obj._degree * XM_PI / 180.f));
+
+	float r = 6.f;
+	boss_col[0].Center = XMFLOAT3(boss_obj._transform.x + (r + 0.8f) * cosf((-boss_obj._degree - 60.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + (r + 0.8f) * sinf((-boss_obj._degree - 60.f) * XM_PI / 180.f));
+
+	boss_col[1].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 35.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 35.f) * XM_PI / 180.f));
+
+	boss_col[2].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 15.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 15.f) * XM_PI / 180.f));
+
+	boss_col[3].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree + 15.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + r * sinf((-boss_obj._degree + 15.f) * XM_PI / 180.f));
+
+	boss_col[4].Center = XMFLOAT3(boss_obj._transform.x + (r + 0.8f) * cosf((-boss_obj._degree - 120.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + (r + 0.8f) * sinf((-boss_obj._degree - 120.f) * XM_PI / 180.f));
+
+	boss_col[5].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 145.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 145.f) * XM_PI / 180.f));
+
+	boss_col[6].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 165.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 165.f) * XM_PI / 180.f));
+
+	boss_col[7].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 195.f) * XM_PI / 180.f)
+		, boss_obj._transform.y + 1.f
+		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 195.f) * XM_PI / 180.f));
 
 	// 파티클 동기화
 	for (OBJECT& player : playerArr)
@@ -1064,6 +1116,48 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(testCharacter2.Extents.x, testCharacter2.Extents.y, testCharacter2.Extents.z)
 				*XMMatrixRotationQuaternion(XMLoadFloat4(&testCharacter2.Orientation))
 				* XMMatrixTranslation(testCharacter2.Center.x, testCharacter2.Center.y, testCharacter2.Center.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+		}
+
+		// 보스 다리 콜라이더
+		for (int i = 0; i<8; ++i)
+		{
+			cmdList->SetPipelineState(testCube._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(boss_col[i].Extents.x, boss_col[i].Extents.y, boss_col[i].Extents.z)
+				* XMMatrixTranslation(boss_col[i].Center.x, boss_col[i].Center.y, boss_col[i].Center.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+		}
+
+		// 보스 몸통 콜라이더
+		{
+			cmdList->SetPipelineState(testCube._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(boss_collision.Extents.x, boss_collision.Extents.y, boss_collision.Extents.z)
+				* XMMatrixRotationQuaternion(XMLoadFloat4(&boss_collision.Orientation))
+				* XMMatrixTranslation(boss_collision.Center.x, boss_collision.Center.y, boss_collision.Center.z));
 			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 

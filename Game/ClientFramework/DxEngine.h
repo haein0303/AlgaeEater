@@ -99,6 +99,10 @@ public:
 	BoundingOrientedBox testCharacter;
 	BoundingOrientedBox testCharacter2;
 
+	// boss collision test
+	array<BoundingBox, 8> boss_col;
+	BoundingOrientedBox boss_collision;
+
 	// map°ü·Ã
 	MESH_ASSET key;
 	MESH_ASSET Tube;
