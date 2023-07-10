@@ -22,6 +22,7 @@
 #include "SCENE.h"
 #include "OBJECT.h"
 #include "d11on12.h"
+#include "ShadowMap.h"
 
 class DxEngine {
 public:
@@ -60,6 +61,7 @@ public:
 	shared_ptr<Timer> logicTimerPtr = make_shared<Timer>();
 	shared_ptr<Input> inputPtr = make_shared<Input>();
 	shared_ptr<SFML> networkPtr = make_shared<SFML>();
+	shared_ptr<ShadowMap> shadowmapPtr = make_shared<ShadowMap>();
 	unique_ptr<AnimationObject[]> animationPtr = make_unique<AnimationObject[]>(2);
 
 	shared_ptr<d11on12> d11Ptr = make_shared<d11on12>();

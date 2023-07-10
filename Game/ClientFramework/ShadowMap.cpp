@@ -1,5 +1,9 @@
 #include "ShadowMap.h"
 
+ShadowMap::ShadowMap()
+{
+}
+
 ShadowMap::ShadowMap(ID3D12Device* device, UINT width, UINT height)
 {
 	md3dDevice = device;
@@ -61,6 +65,19 @@ void ShadowMap::BuildDescriptors(CD3DX12_CPU_DESCRIPTOR_HANDLE hCpuSrv,
 	BuildDescriptors();
 }
 
+void ShadowMap::CreateShadowMap(ID3D12Device* device, UINT width, UINT height)
+{
+	md3dDevice = device;
+
+	mWidth = width;
+	mHeight = height;
+
+	mViewport = { 0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f };
+	mScissorRect = { 0, 0, (int)width, (int)height };
+
+	BuildResource();
+}
+
 void ShadowMap::OnResize(UINT newWidth, UINT newHeight)
 {
 	if ((mWidth != newWidth) || (mHeight != newHeight))
@@ -118,11 +135,13 @@ void ShadowMap::BuildResource()
 	optClear.DepthStencil.Depth = 1.0f;
 	optClear.DepthStencil.Stencil = 0;
 
-	/*md3dDevice->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+	D3D12_HEAP_PROPERTIES heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+
+	md3dDevice->CreateCommittedResource(
+		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&texDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		&optClear,
-		IID_PPV_ARGS(&mShadowMap));*/
+		IID_PPV_ARGS(&mShadowMap));
 }

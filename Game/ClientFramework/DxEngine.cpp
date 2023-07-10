@@ -5,20 +5,22 @@
 void DxEngine::Init(WindowInfo windowInfo)
 {
 
-	//È­ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//ºäÆ÷Æ® ¹× Á¤º¸ ¼¼ÆÃ
 	_viewport = { 0, 0, static_cast<FLOAT>(windowInfo.ClientWidth), static_cast<FLOAT>(windowInfo.ClientHeight), 0.0f, 1.0f };
 	_scissorRect = CD3DX12_RECT(0, 0, windowInfo.ClientWidth, windowInfo.ClientHeight);
 
-	//DXï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+	//DXÃÊ±âÈ­
 	devicePtr->CreateDevice();
 	cmdQueuePtr->CreateCmdListAndCmdQueue(devicePtr);
 	swapChainPtr->DescriptAndCreateSwapChain(windowInfo, devicePtr, cmdQueuePtr);
 	rtvPtr->CreateRTV(devicePtr, swapChainPtr);
-	cameraPtr->TransformProjection(windowInfo); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+	cameraPtr->TransformProjection(windowInfo); //À©µµ¿ì Å©±â ±âÁØÀ¸·Î Ä«¸Þ¶ó ¼³Á¤
 	rootSignaturePtr->CreateRootSignature(devicePtr);
 	constantBufferPtr->CreateConstantBuffer(CONSTANT_COUNT, CONSTANT_COUNT, devicePtr);
 	constantBufferPtr->CreateView(devicePtr);
 	descHeapPtr->CreateDescTable(CONSTANT_COUNT, devicePtr);
+	shadowmapPtr->CreateShadowMap(devicePtr->_device.Get(), 2048, 2048);
+
 	
 	d11Ptr->init(this, windowInfo);
 	d11Ptr->LoadPipeline();
@@ -37,7 +39,7 @@ void DxEngine::Init(WindowInfo windowInfo)
 	dsvPtr->CreateDSV(DXGI_FORMAT_D32_FLOAT, windowInfo, devicePtr);
 	srand((unsigned int)time(NULL));
 	
-	inputPtr->Init(windowInfo); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+	inputPtr->Init(windowInfo); 
 
 	_renderEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
 	_excuteEvent = ::CreateEvent(nullptr, FALSE, TRUE, nullptr);
