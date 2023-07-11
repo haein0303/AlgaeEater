@@ -313,14 +313,14 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].color = p->color;
 		keys[p->key_id].on_field = false;
 
-		for (int i = clients[c_id]._Room_Num * ROOM_KEY; i < clients[c_id]._Room_Num * 4 + ROOM_KEY; ++i) {
+		for (int i = clients[c_id]._Room_Num * ROOM_KEY; i < clients[c_id]._Room_Num * ROOM_KEY + ROOM_KEY; ++i) {
 			if (keys[i].on_field == true) break;
 			else cnt++;
 		}
 
 		if (cnt == ROOM_KEY) {
 
-			for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * 4 + ROOM_USER; ++i) {
+			for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * ROOM_KEY + ROOM_USER; ++i) {
 				clients[i].send_door();
 			}
 		}
