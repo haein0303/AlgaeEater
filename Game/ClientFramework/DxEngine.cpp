@@ -271,9 +271,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 	boss_obj._transform.y += 1.f;
 
-	key_data[0]._transform = XMFLOAT4(170.f, 0.f, -240.f, 1.f);
-	key_data[0]._key = 0;
-	key_data[0]._on = true;
+	for (int i = 0; i < KEYMAX; ++i) {
+		key_data[i]._transform = XMFLOAT4(180.f, 0.f, -240.f, 1.f);
+		key_data[i]._key = 0;
+		key_data[i]._on = true;
+	}
+	
 
 	ImportMapdata("../Resources/MapData1.txt", _map_data);
 	ImportMapdata("../Resources/MapData2.txt", _map_data2);
@@ -585,13 +588,25 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		for (int j = 0; j < KEYMAX; ++j) {
-			if (pow(playerArr[i]._transform.x - key_data[j]._transform.x, 2) + pow(playerArr[i]._transform.z - key_data[j]._transform.z, 2) <= 1.f)
-			{
-				playerArr[i]._player_color = key_data[j]._key;
-				key_data[j]._on = false;
-			}
-		}
-		
+			if (key_data[j]._on == true) {
+				if (pow(playerArr[i]._transform.x - key_data[j]._transform.x, 2) + pow(playerArr[i]._transform.z - key_data[j]._transform.z, 2) <= 1.f)
+				{
+					playerArr[i]._player_color = key_data[j]._key;
+					key_data[j]._on = false;
+
+
+					CS_KEY_PACKET p;
+					p.size = sizeof(p);
+					p.type = CS_KEY;
+					p.color = key_data[j]._key;
+					p.key_id = key_data[j]._my_server_id;
+
+					cout << "GET KEY : " << j << "[" << key_data[j]._my_server_id << "]" << endl;
+
+					networkPtr->send_packet(&p);
+				}
+			}			
+		}		
 	}
 
 	// 기둥 충돌처리

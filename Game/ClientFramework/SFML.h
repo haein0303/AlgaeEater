@@ -301,8 +301,12 @@ public:
 			key_data[id]._transform.x = my_packet->x;
 			key_data[id]._transform.y = my_packet->y;
 			key_data[id]._transform.z = my_packet->z;
+			cout << "SEND KEY : [" << id << "]" << endl;
 
 			break;
+		}
+		case SC_DOOR: {
+			cout << "DOOR OPEN" << endl;
 		}
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);

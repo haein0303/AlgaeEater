@@ -181,7 +181,7 @@ void initialize_key()
 		keys[i].x = 165.f;
 		keys[i].y = 0.f;
 		keys[i].z = -225.f + i * 5;
-		keys[i].color = i / ROOM_KEY;
+		keys[i].color = i % KEY_NUM;
 		keys[i]._Room_Num = i / ROOM_KEY;
 		keys[i].on_field = true;
 	}
