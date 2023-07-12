@@ -265,6 +265,9 @@
     <FxCompile Include="..\Wall.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Circle.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectXTex.inl">

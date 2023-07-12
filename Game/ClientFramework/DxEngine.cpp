@@ -80,6 +80,15 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss2Skill.Make_SRV();
 	boss2Skill.CreatePSO(L"..\\Bricks.hlsl");
 
+	boss2_skill_circle.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	boss2_skill_circle.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
+	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
+	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
+	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+	boss2_skill_circle.Make_SRV();
+	boss2_skill_circle.CreatePSO(L"..\\Circle.hlsl");
+
 	stage0_map.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	stage0_map.Init("../Resources/stage0_map.txt", ObjectType::GeneralObjects);
 	stage0_map.Add_texture(L"..\\Resources\\Texture\\sample.png");
@@ -319,6 +328,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss_collision.Extents = XMFLOAT3(2.f, 1.5f, 3.f);
 
 	boss2Skill._tex._srvHandle = boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+	boss2_skill_circle._tex._srvHandle = boss2_skill_circle._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
@@ -1234,34 +1244,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 
 		// boss2Skill
-		{
-			cmdList->SetPipelineState(boss2Skill._pipelineState.Get());
-			cmdList->IASetVertexBuffers(0, 1, &boss2Skill._vertexBufferView);
-			cmdList->IASetIndexBuffer(&boss2Skill._indexBufferView);
+		XMFLOAT3 boss2_skill_pos = XMFLOAT3(170.f, 0.01f, -240.f);
+		XMFLOAT3 boss2_skill_scale = XMFLOAT3(1.f, 1.f, 1.f);
+		Boss2Skill(cmdList, boss2Skill, i_now_render_index, boss2_skill_time[0], boss2_skill_pos, boss2_skill_scale);
 
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1, 1, 1) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(170.f, 0.1f, -240.f));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-
-			boss2_skill_time += timerPtr->_deltaTime;
-			if (boss2_skill_time > 1.f)
-			{
-				if (boss2Skill._tex._srvHandle.ptr == boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart().ptr + 3 * devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV))
-					boss2Skill._tex._srvHandle = boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				else
-					boss2Skill._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-
-				boss2_skill_time = 0.f;
-			}
-			descHeapPtr->CopyDescriptor(boss2Skill._tex._srvHandle, 5, devicePtr);
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(boss2Skill._indexCount, 1, 0, 0, 0);
-		}
-		
+		XMFLOAT3 boss2_skill_pos2 = XMFLOAT3(167.f, 0.01f, -240.f);
+		XMFLOAT3 boss2_skill_scale2 = XMFLOAT3(1.f, 1.f, 1.f);
+		Boss2Skill(cmdList, boss2_skill_circle, i_now_render_index, boss2_skill_time[1], boss2_skill_pos2, boss2_skill_scale2);
 
 		cmdList->SetPipelineState(npc_asset._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &npc_asset._vertexBufferView);

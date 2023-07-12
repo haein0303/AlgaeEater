@@ -124,7 +124,8 @@ public:
 	MESH_ASSET cube_asset;
 
 	MESH_ASSET boss2Skill;
-	float boss2_skill_time = 0.f;
+	MESH_ASSET boss2_skill_circle;
+	array<float, 2> boss2_skill_time{0.f};
 
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
@@ -520,5 +521,34 @@ public:
 	{
 		if(pos.x > posX0 - 3.f)
 			pos.x -= 1.f * timerPtr->_deltaTime;
+	}
+
+	void Boss2Skill(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss2Skill, const int i_now_render_index, float& boss2_skill_time, const XMFLOAT3& pos, const XMFLOAT3& scale)
+	{
+		cmdList->SetPipelineState(boss2Skill._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &boss2Skill._vertexBufferView);
+		cmdList->IASetIndexBuffer(&boss2Skill._indexBufferView);
+
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(pos.x, pos.y, pos.z));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+		boss2_skill_time += timerPtr->_deltaTime;
+		if (boss2_skill_time > 0.5f)
+		{
+			if (boss2Skill._tex._srvHandle.ptr == boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart().ptr + 3 * devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV))
+				boss2Skill._tex._srvHandle = boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			else
+				boss2Skill._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+			boss2_skill_time = 0.f;
+		}
+		descHeapPtr->CopyDescriptor(boss2Skill._tex._srvHandle, 5, devicePtr);
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(boss2Skill._indexCount, 1, 0, 0, 0);
 	}
 };
