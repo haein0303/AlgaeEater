@@ -112,7 +112,7 @@ void initialize_npc()
 		case 19: // º¸½º
 		{
 			clients[i].hp = BOSS_HP[0];
-			clients[i].atk = 5;
+			clients[i].atk = 2;
 			clients[i].x = 30;
 			clients[i].z = 30;
 			clients[i].eye_color = 0;
