@@ -240,7 +240,7 @@ void do_timer()
 					}
 				}
 
-				if (clients[ev.object_id].hp <= 150000 && clients[ev.object_id].first_pattern == false) { // 첫번째 전멸기
+				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.75 && clients[ev.object_id].first_pattern == false) { // 첫번째 전멸기
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl >= MAX_USER) continue;
 						clients[pl]._sl.lock();
@@ -261,7 +261,7 @@ void do_timer()
 					break;
 				}
 
-				if (clients[ev.object_id].hp <= 50000 && clients[ev.object_id].second_pattern == false) { // 두번째 전멸기
+				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.25 && clients[ev.object_id].second_pattern == false) { // 두번째 전멸기
 					//for (auto& pl : clients[ev.object_id].room_list) {
 					//	if (pl >= MAX_USER) continue;
 					//	clients[pl]._sl.lock();

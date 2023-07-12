@@ -12,7 +12,7 @@ enum BOSS_NUM {
 	STAGE3,
 	COUNT
 };
-constexpr int BOSS_HP[4] = { 200000,200000,200000,200000 };
+constexpr int BOSS_HP[4] = { 5000,5000,5000,5000 };
 
 
 #define LOBBY_SERVER_IP "127.0.0.1"
