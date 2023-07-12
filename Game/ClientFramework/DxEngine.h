@@ -123,6 +123,9 @@ public:
 
 	MESH_ASSET cube_asset;
 
+	MESH_ASSET boss2Skill;
+	float boss2_skill_time = 0.f;
+
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
 
