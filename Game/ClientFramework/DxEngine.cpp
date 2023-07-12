@@ -424,7 +424,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		testCharacter2.Center = XMFLOAT3(playerArr[0]._transform.x,
 			playerArr[0]._transform.y + 0.5f,
 			playerArr[0]._transform.z);
-		testCharacter2.Extents = XMFLOAT3(1.f, 0.3f, 1.f);
+		testCharacter2.Extents = XMFLOAT3(10.f, 1.f, 10.f);
 		XMVECTOR v{ 0, 1, 0, 0 };
 		XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 	}
@@ -497,6 +497,21 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					npcArr[i]._particle_count += 100;
 				}
 			}
+
+			if (testCharacter.Intersects(boss_collision))
+				boss_obj._particle_count += 100;
+			if (Scene_num == 1)
+				for (int i = 0; i < 8; ++i)
+					if (testCharacter.Intersects(boss_col[i]))
+						boss_leg[i] += 100;
+
+			if (testCharacter2.Intersects(boss_collision))
+				boss_obj._particle_count += 100;
+			if (Scene_num == 1)
+				for (int i = 0; i < 8; ++i)
+					if (testCharacter2.Intersects(boss_col[i]))
+						boss_leg[i] += 100;
+
 			playerArr[networkPtr->myClientId]._can_attack2 = false;
 		}
 	}
@@ -508,6 +523,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	{
 		for (int i = 0; i < NPCMAX; ++i)
 		{
+			// npc 평타 감지
 			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
 			{
 				CS_COLLISION_PACKET p;
@@ -522,6 +538,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				cout << "npc" << i << " hp : " << npcArr[i]._hp << endl;
 				cout << "particle " << i << " : " << npcArr[i]._particle_count << endl;
 			}
+
+			// npc 스킬 감지
 			if (npcArr[i]._on == true && testCharacter2.Intersects(npcArr[i]._bounding_box))
 			{
 				CS_COLLISION_PACKET p;
@@ -537,6 +555,57 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				cout << "particle " << i << " : " << npcArr[i]._particle_count << endl;
 			}
 		}
+
+		// 보스 대상 평타 충돌 감지
+		if (testCharacter.Intersects(boss_collision))
+		{
+			CS_COLLISION_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_COLLISION;
+			p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+			p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+			p.target_id = boss_obj._my_server_id;
+			networkPtr->send_packet(&p);
+		}
+		for (int i = 0; i < 8; ++i)
+		{
+			if (testCharacter.Intersects(boss_col[i]))
+			{
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+				p.target_id = boss_obj._my_server_id;
+				networkPtr->send_packet(&p);
+			}
+		}
+
+		// 보스 대상 스킬 충돌 감지
+		if (testCharacter2.Intersects(boss_collision))
+		{
+			CS_COLLISION_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_COLLISION;
+			p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+			p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+			p.target_id = boss_obj._my_server_id;
+			networkPtr->send_packet(&p);
+		}
+		for (int i = 0; i < 8; ++i)
+		{
+			if (testCharacter2.Intersects(boss_col[i]))
+			{
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+				p.target_id = boss_obj._my_server_id;
+				networkPtr->send_packet(&p);
+			}
+		}
+
 		playerArr[networkPtr->myClientId]._can_attack = false;
 	}
 	
@@ -567,7 +636,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
 		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
-			if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
+			/*if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
 				&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
 				&& playerArr[i]._can_attack) {
 
@@ -584,7 +653,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				cout << "player" << i << " hp : " << boss_obj._hp << endl;
 				cout << "BOSS hp : " << boss_obj._hp << endl;
 				cout << "BOSS particle : " << boss_obj._particle_count << endl;
-			}
+			}*/
 			if (boss_obj._animation_state == AnimationOrder::Attack
 				&& boss_obj._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(boss_obj._animation_state) * 0.5f
 				&& boss_obj._can_attack) {
@@ -1562,6 +1631,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 
 		}
+
 		if (boss_obj._on == true) { // boss
 			while (boss_obj._particle_count > 0)
 			{
@@ -1612,6 +1682,35 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 			}
 		}
+
+		if (boss_obj._on == true && Scene_num == 1) // 보스1 개별 다리 처리
+		{
+			for (int i = 0; i < 8; ++i)
+			{
+				while (boss_leg[i] > 0)
+				{
+					if (index >= PARTICLE_NUM) // 파티클 개수에 대한 예외처리
+						break;
+
+					if (particles[index].alive == 0)
+					{
+						particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
+						particles[index].curTime = 0.0f;
+						particles[index].pos = XMVectorSet(boss_col[i].Center.x, boss_col[i].Center.y + 1.f, boss_col[i].Center.z, 1.f);
+						particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+						particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
+						XMVector3Normalize(particles[index].dir);
+						particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
+							particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
+						particles[index].alive = 1;
+						--boss_leg[i];
+					}
+					else
+						++index;
+				}
+			}
+		}
+		
 
 		// 파티클 연산
 		for (int i = 0; i < PARTICLE_NUM; ++i) // ?뙆?떚?겢 臾쇰━泥섎━ 諛? ?젋?뜑留?

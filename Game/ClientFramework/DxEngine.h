@@ -102,6 +102,7 @@ public:
 	// boss collision test
 	array<BoundingBox, 8> boss_col;
 	BoundingOrientedBox boss_collision;
+	array<int, 8> boss_leg{0};
 
 	// map°ü·Ã
 	MESH_ASSET key;
