@@ -315,6 +315,27 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		break;
 	case WM_KEYDOWN:
 		switch (g_scene_state) {
+			case SCENE_STATE::FAIL: {
+				switch (wParam) {
+				case VK_F1:
+					lobby_client._scene_select = 1;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				case VK_F2:
+					lobby_client._scene_select = 2;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				case VK_F3:
+					lobby_client._scene_select = 3;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				case VK_F4:
+					lobby_client._scene_select = 0;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				}
+			}
+			break;
 			case SCENE_STATE::LOG_IN: 
 			case SCENE_STATE::ACOUNT: {
 				switch (wParam) {
@@ -334,6 +355,22 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 						}
 					}
 					UpdateWindow(hwnd);
+					break;
+				case VK_F1:
+					lobby_client._scene_select = 1;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				case VK_F2:
+					lobby_client._scene_select = 2;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				case VK_F3:
+					lobby_client._scene_select = 3;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				case VK_F4:
+					lobby_client._scene_select = 0;
+					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
 					break;
 				}
 			}
