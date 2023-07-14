@@ -116,6 +116,54 @@ public:
 	MESH_ASSET Grid_Metal_tile;
 	MESH_ASSET Cube;
 	MESH_ASSET Grid_Metal_door;
+	MESH_ASSET Plate_mettal_wall_HQ__2_;
+	MESH_ASSET Wall_Door_4m_A;
+	MESH_ASSET Wall_Line_1m_A;
+	MESH_ASSET Wall_Line_2m_A;
+	MESH_ASSET Wall_Turn_L_Out_A;
+	MESH_ASSET Wall_Win_4m_A;
+	MESH_ASSET Wall_Line_4m_A;
+	MESH_ASSET Trap_A_2x2m;
+	MESH_ASSET Trap_A_4x2m;
+	MESH_ASSET Railings_A_1m;
+	MESH_ASSET Railings_A_2m;
+	MESH_ASSET Railings_A_4m;
+	MESH_ASSET Railings_A_Turn_L_In;
+	MESH_ASSET Railings_A_Turn_L_Out;
+	MESH_ASSET Trap_A_Stairs;
+	MESH_ASSET Column_BB_6m;
+	MESH_ASSET Beam_B_4m;
+	MESH_ASSET Column_A_2m;
+	MESH_ASSET Column_B_6m;
+	MESH_ASSET Console_B;
+	MESH_ASSET FireStair_Base;
+	MESH_ASSET FireStair_Cover;
+	MESH_ASSET FireStair_EndTop;
+	MESH_ASSET Tube_Line_A_1m;
+	MESH_ASSET Tube_Line_A_2m;
+	MESH_ASSET Tube_Line_A_4m;
+	MESH_ASSET Tube_Line_A_6m;
+	MESH_ASSET Tube_Line_B_1m;
+	MESH_ASSET Tube_Line_B_2m;
+	MESH_ASSET Tube_Line_B_4m;
+	MESH_ASSET Tube_Line_B_6m;
+	MESH_ASSET Tube_Turn_L_A;
+	MESH_ASSET Tube_Turn_L_B;
+	MESH_ASSET Wall_Door_4m_B;
+	MESH_ASSET Wall_Line_2m_B;
+	MESH_ASSET Wall_Line_2m_D;
+	MESH_ASSET Wall_Line_2m_¬³;
+	MESH_ASSET Wall_Line_4m_B;
+	MESH_ASSET Wall_Line_4m_D;
+	MESH_ASSET Wall_Line_4m_¬³;
+	MESH_ASSET Wall_Turn_L_In_A;
+	MESH_ASSET Wall_Turn_L_In_B;
+	MESH_ASSET Wall_Turn_L_In_D;
+	MESH_ASSET Wall_Turn_L_Out_B;
+	MESH_ASSET Wall_Turn_L_Out_D;
+	MESH_ASSET Wall_Turn_L_Out_¬³;
+	MESH_ASSET Wall_Win_4m_B;
+	MESH_ASSET Wall_Win_4m_C;
 
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
@@ -372,12 +420,113 @@ public:
 				}
 				else if (data.mesh_type.compare("Plane002") == 0)
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
-				else if (data.mesh_type.compare("Grid_Metal_tile") == 0)
+				else if (data.mesh_type.compare("Grid_Metal_tile") == 0 || data.mesh_type.compare("Plate_mettal_wall_HQ__2_") == 0)
+				{
+					data.scale.x *= 2.5f;
+					data.scale.y *= 2.5f;
+					data.scale.z *= 2.5f;
 					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if(data.mesh_type.compare("NeonCrate_0") == 0)
 					DrawMapObject(cmdList, NeonCrate_0, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Door_4m_A") == 0)
+					DrawMapObject(cmdList, Wall_Door_4m_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_1m_A") == 0)
+					DrawMapObject(cmdList, Wall_Line_1m_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_2m_A") == 0)
+					DrawMapObject(cmdList, Wall_Line_2m_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_Out_A") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_Out_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Win_4m_A") == 0)
+					DrawMapObject(cmdList, Wall_Win_4m_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_4m_A") == 0)
+					DrawMapObject(cmdList, Wall_Line_4m_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Trap_A_2x2m") == 0)
+					DrawMapObject(cmdList, Trap_A_2x2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Trap_A_4x2m") == 0)
+					DrawMapObject(cmdList, Trap_A_4x2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_1m") == 0)
+					DrawMapObject(cmdList, Railings_A_1m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_2m") == 0)
+					DrawMapObject(cmdList, Railings_A_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_4m") == 0)
+					DrawMapObject(cmdList, Railings_A_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_Turn_L_In") == 0)
+					DrawMapObject(cmdList, Railings_A_Turn_L_In, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_Turn_L_Out") == 0)
+					DrawMapObject(cmdList, Railings_A_Turn_L_Out, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Trap_A_Stairs") == 0)
+					DrawMapObject(cmdList, Trap_A_Stairs, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Column_BB_6m") == 0)
+				{
+					DrawMapObject(cmdList, Column_BB_6m, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
+				else if (data.mesh_type.compare("Beam_B_4m") == 0)
+					DrawMapObject(cmdList, Beam_B_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Column_A_2m") == 0)
+					DrawMapObject(cmdList, Column_A_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Column_B_6m") == 0)
+					DrawMapObject(cmdList, Column_B_6m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Console_B") == 0)
+					DrawMapObject(cmdList, Console_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("FireStair_Base") == 0)
+					DrawMapObject(cmdList, FireStair_Base, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("FireStair_Cover") == 0)
+					DrawMapObject(cmdList, FireStair_Cover, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("FireStair_EndTop") == 0)
+					DrawMapObject(cmdList, FireStair_EndTop, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_A_1m") == 0)
+					DrawMapObject(cmdList, Tube_Line_A_1m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_A_2m") == 0)
+					DrawMapObject(cmdList, Tube_Line_A_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_A_4m") == 0)
+					DrawMapObject(cmdList, Tube_Line_A_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_A_6m") == 0)
+					DrawMapObject(cmdList, Tube_Line_A_6m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_B_1m") == 0)
+					DrawMapObject(cmdList, Tube_Line_B_1m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_B_2m") == 0)
+					DrawMapObject(cmdList, Tube_Line_B_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_B_4m") == 0)
+					DrawMapObject(cmdList, Tube_Line_B_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_B_6m") == 0)
+					DrawMapObject(cmdList, Tube_Line_B_6m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Turn_L_A") == 0)
+					DrawMapObject(cmdList, Tube_Turn_L_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Turn_L_B") == 0)
+					DrawMapObject(cmdList, Tube_Turn_L_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Door_4m_B") == 0)
+					DrawMapObject(cmdList, Wall_Door_4m_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_2m_B") == 0)
+					DrawMapObject(cmdList, Wall_Line_2m_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_2m_D") == 0)
+					DrawMapObject(cmdList, Wall_Line_2m_D, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_2m_¬³") == 0)
+					DrawMapObject(cmdList, Wall_Line_2m_¬³, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_4m_B") == 0)
+					DrawMapObject(cmdList, Wall_Line_4m_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_4m_D") == 0)
+					DrawMapObject(cmdList, Wall_Line_4m_D, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_4m_¬³") == 0)
+					DrawMapObject(cmdList, Wall_Line_4m_¬³, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_In_A") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_In_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_In_B") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_In_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_In_D") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_In_D, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_Out_B") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_Out_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_Out_D") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_Out_D, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_Out_¬³") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_Out_¬³, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Win_4m_B") == 0)
+					DrawMapObject(cmdList, Wall_Win_4m_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Win_4m_C") == 0)
+					DrawMapObject(cmdList, Wall_Win_4m_C, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
 		}
 
