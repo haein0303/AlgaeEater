@@ -160,6 +160,21 @@ void do_timer()
 				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 				break;
 			}
+			case EV_STAGE2_FIRST_BOSS: {
+				clients[ev.target_id]._sl.lock();
+				if (clients[ev.target_id]._s_state != ST_INGAME) {
+					clients[ev.target_id]._sl.unlock();
+					break;
+				}
+				clients[ev.target_id]._sl.unlock();
+
+				SC_BOSS_SKILL_END_PACKET p;
+				p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
+				p.type = SC_BOSS_SKILL_START;
+
+				clients[ev.target_id].do_send(&p);
+				break;
+			}
 			case EV_NPC_CON:
 				clients[ev.object_id]._sl.lock();
 				if (clients[ev.object_id]._s_state == ST_FREE) {
@@ -307,6 +322,9 @@ void do_timer()
 						clients[pl].do_send(&p);
 
 						// 여기서 시간 고려해서 타이머 세팅
+						float dec = abs(clients[ev.object_id].x - clients[pl].x) + abs(clients[ev.object_id].z - clients[pl].z);
+
+						add_timer(ev.object_id, dec * 100, EV_STAGE2_FIRST_BOSS, pl);
 					}
 				}
 
