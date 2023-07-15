@@ -167,283 +167,283 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	Wall_Door_4m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Door_4m_A.Init("../Resources/Wall_Door_4m_A.txt", ObjectType::GeneralObjects);
-	Wall_Door_4m_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Door_4m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
 	Wall_Door_4m_A.Make_SRV();
 	Wall_Door_4m_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_1m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_1m_A.Init("../Resources/Wall_Line_1m_A.txt", ObjectType::GeneralObjects);
-	Wall_Line_1m_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_1m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
 	Wall_Line_1m_A.Make_SRV();
 	Wall_Line_1m_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_2m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_2m_A.Init("../Resources/Wall_Line_2m_A.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_2m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
 	Wall_Line_2m_A.Make_SRV();
 	Wall_Line_2m_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_4m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_4m_A.Init("../Resources/Wall_Line_4m_A.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_4m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
 	Wall_Line_4m_A.Make_SRV();
 	Wall_Line_4m_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Turn_L_Out_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Turn_L_Out_A.Init("../Resources/Wall_Turn_L_Out_A.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Turn_L_Out_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
 	Wall_Turn_L_Out_A.Make_SRV();
 	Wall_Turn_L_Out_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Win_4m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Win_4m_A.Init("../Resources/Wall_Win_4m_A.txt", ObjectType::GeneralObjects);
-	Wall_Win_4m_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Win_4m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
 	Wall_Win_4m_A.Make_SRV();
 	Wall_Win_4m_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Trap_A_2x2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Trap_A_2x2m.Init("../Resources/Trap_A_2x2m.txt", ObjectType::GeneralObjects);
-	Trap_A_2x2m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Trap_A_2x2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Trap.png");
 	Trap_A_2x2m.Make_SRV();
 	Trap_A_2x2m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Trap_A_4x2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Trap_A_4x2m.Init("../Resources/Trap_A_4x2m.txt", ObjectType::GeneralObjects);
-	Trap_A_4x2m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Trap_A_4x2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Trap.png");
 	Trap_A_4x2m.Make_SRV();
 	Trap_A_4x2m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Trap_A_Stairs.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Trap_A_Stairs.Init("../Resources/Trap_A_Stairs.txt", ObjectType::GeneralObjects);
-	Trap_A_Stairs.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Trap_A_Stairs.Add_texture(L"..\\Resources\\Texture\\Stage2\\Trap.png");
 	Trap_A_Stairs.Make_SRV();
 	Trap_A_Stairs.CreatePSO(L"..\\Bricks.hlsl");
 
 	Column_BB_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Column_BB_6m.Init("../Resources/Column_BB_6m.txt", ObjectType::GeneralObjects);
-	Column_BB_6m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Column_BB_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
 	Column_BB_6m.Make_SRV();
 	Column_BB_6m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Railings_A_1m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Railings_A_1m.Init("../Resources/Railings_A_1m.txt", ObjectType::GeneralObjects);
-	Railings_A_1m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Railings_A_1m.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	Railings_A_1m.Make_SRV();
 	Railings_A_1m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Railings_A_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Railings_A_2m.Init("../Resources/Railings_A_2m.txt", ObjectType::GeneralObjects);
-	Railings_A_2m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Railings_A_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	Railings_A_2m.Make_SRV();
 	Railings_A_2m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Railings_A_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Railings_A_4m.Init("../Resources/Railings_A_4m.txt", ObjectType::GeneralObjects);
-	Railings_A_4m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Railings_A_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	Railings_A_4m.Make_SRV();
 	Railings_A_4m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Railings_A_Turn_L_In.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Railings_A_Turn_L_In.Init("../Resources/Railings_A_Turn_L_In.txt", ObjectType::GeneralObjects);
-	Railings_A_Turn_L_In.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Railings_A_Turn_L_In.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	Railings_A_Turn_L_In.Make_SRV();
 	Railings_A_Turn_L_In.CreatePSO(L"..\\Bricks.hlsl");
 
 	Railings_A_Turn_L_Out.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Railings_A_Turn_L_Out.Init("../Resources/Railings_A_Turn_L_Out.txt", ObjectType::GeneralObjects);
-	Railings_A_Turn_L_Out.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Railings_A_Turn_L_Out.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	Railings_A_Turn_L_Out.Make_SRV();
 	Railings_A_Turn_L_Out.CreatePSO(L"..\\Bricks.hlsl");
 
 	Beam_B_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Beam_B_4m.Init("../Resources/Beam_B_4m.txt", ObjectType::GeneralObjects);
-	Beam_B_4m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Beam_B_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
 	Beam_B_4m.Make_SRV();
 	Beam_B_4m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Column_A_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Column_A_2m.Init("../Resources/Column_A_2m.txt", ObjectType::GeneralObjects);
-	Column_A_2m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Column_A_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
 	Column_A_2m.Make_SRV();
 	Column_A_2m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Column_B_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Column_B_6m.Init("../Resources/Column_B_6m.txt", ObjectType::GeneralObjects);
-	Column_B_6m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Column_B_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
 	Column_B_6m.Make_SRV();
 	Column_B_6m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Console_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Console_B.Init("../Resources/Console_B.txt", ObjectType::GeneralObjects);
-	Console_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Console_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
 	Console_B.Make_SRV();
 	Console_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	FireStair_Base.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	FireStair_Base.Init("../Resources/FireStair_Base.txt", ObjectType::GeneralObjects);
-	FireStair_Base.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	FireStair_Base.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	FireStair_Base.Make_SRV();
 	FireStair_Base.CreatePSO(L"..\\Bricks.hlsl");
 
 	FireStair_Cover.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	FireStair_Cover.Init("../Resources/FireStair_Cover.txt", ObjectType::GeneralObjects);
-	FireStair_Cover.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	FireStair_Cover.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	FireStair_Cover.Make_SRV();
 	FireStair_Cover.CreatePSO(L"..\\Bricks.hlsl");
 
 	FireStair_EndTop.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	FireStair_EndTop.Init("../Resources/FireStair_EndTop.txt", ObjectType::GeneralObjects);
-	FireStair_EndTop.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	FireStair_EndTop.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
 	FireStair_EndTop.Make_SRV();
 	FireStair_EndTop.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_A_1m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_A_1m.Init("../Resources/Tube_Line_A_1m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_1m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_A_1m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_A_1m.Make_SRV();
 	Tube_Line_A_1m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_A_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_A_2m.Init("../Resources/Tube_Line_A_2m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_2m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_A_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_A_2m.Make_SRV();
 	Tube_Line_A_2m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_A_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_A_4m.Init("../Resources/Tube_Line_A_4m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_4m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_A_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_A_4m.Make_SRV();
 	Tube_Line_A_4m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_A_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_A_6m.Init("../Resources/Tube_Line_A_6m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_6m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_A_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_A_6m.Make_SRV();
 	Tube_Line_A_6m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_B_1m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_B_1m.Init("../Resources/Tube_Line_B_1m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_1m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_B_1m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_B_1m.Make_SRV();
 	Tube_Line_B_1m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_B_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_B_2m.Init("../Resources/Tube_Line_B_2m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_2m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_B_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_B_2m.Make_SRV();
 	Tube_Line_B_2m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_B_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_B_4m.Init("../Resources/Tube_Line_B_4m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_4m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_B_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_B_4m.Make_SRV();
 	Tube_Line_B_4m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Line_B_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Line_B_6m.Init("../Resources/Tube_Line_B_6m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_6m.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Line_B_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Line_B_6m.Make_SRV();
 	Tube_Line_B_6m.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Turn_L_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Turn_L_A.Init("../Resources/Tube_Turn_L_A.txt", ObjectType::GeneralObjects);
-	Tube_Turn_L_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Turn_L_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Turn_L_A.Make_SRV();
 	Tube_Turn_L_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Tube_Turn_L_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Tube_Turn_L_B.Init("../Resources/Tube_Turn_L_B.txt", ObjectType::GeneralObjects);
-	Tube_Turn_L_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Tube_Turn_L_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
 	Tube_Turn_L_B.Make_SRV();
 	Tube_Turn_L_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Door_4m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Door_4m_B.Init("../Resources/Wall_Door_4m_B.txt", ObjectType::GeneralObjects);
-	Wall_Door_4m_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Door_4m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
 	Wall_Door_4m_B.Make_SRV();
 	Wall_Door_4m_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_2m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_2m_B.Init("../Resources/Wall_Line_2m_B.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_2m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
 	Wall_Line_2m_B.Make_SRV();
 	Wall_Line_2m_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_2m_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_2m_D.Init("../Resources/Wall_Line_2m_D.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_D.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_2m_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Line_2m_D.Make_SRV();
 	Wall_Line_2m_D.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_2m_¬³.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_2m_¬³.Init("../Resources/Wall_Line_2m_¬³.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_¬³.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_2m_¬³.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Line_2m_¬³.Make_SRV();
 	Wall_Line_2m_¬³.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_4m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_4m_B.Init("../Resources/Wall_Line_4m_B.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_4m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
 	Wall_Line_4m_B.Make_SRV();
 	Wall_Line_4m_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_4m_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_4m_D.Init("../Resources/Wall_Line_4m_D.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_D.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_4m_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Line_4m_D.Make_SRV();
 	Wall_Line_4m_D.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Line_4m_¬³.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Line_4m_¬³.Init("../Resources/Wall_Line_4m_¬³.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_¬³.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Line_4m_¬³.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Line_4m_¬³.Make_SRV();
 	Wall_Line_4m_¬³.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Turn_L_In_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Turn_L_In_A.Init("../Resources/Wall_Turn_L_In_A.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_In_A.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Turn_L_In_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
 	Wall_Turn_L_In_A.Make_SRV();
 	Wall_Turn_L_In_A.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Turn_L_In_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Turn_L_In_B.Init("../Resources/Wall_Turn_L_In_B.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_In_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Turn_L_In_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
 	Wall_Turn_L_In_B.Make_SRV();
 	Wall_Turn_L_In_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Turn_L_In_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Turn_L_In_D.Init("../Resources/Wall_Turn_L_In_D.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_In_D.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Turn_L_In_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Turn_L_In_D.Make_SRV();
 	Wall_Turn_L_In_D.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Turn_L_Out_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Turn_L_Out_B.Init("../Resources/Wall_Turn_L_Out_B.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Turn_L_Out_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
 	Wall_Turn_L_Out_B.Make_SRV();
 	Wall_Turn_L_Out_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Turn_L_Out_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Turn_L_Out_D.Init("../Resources/Wall_Turn_L_Out_D.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_D.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Turn_L_Out_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Turn_L_Out_D.Make_SRV();
 	Wall_Turn_L_Out_D.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Turn_L_Out_¬³.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Turn_L_Out_¬³.Init("../Resources/Wall_Turn_L_Out_¬³.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_¬³.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Turn_L_Out_¬³.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Turn_L_Out_¬³.Make_SRV();
 	Wall_Turn_L_Out_¬³.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Win_4m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Win_4m_B.Init("../Resources/Wall_Win_4m_B.txt", ObjectType::GeneralObjects);
-	Wall_Win_4m_B.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Win_4m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
 	Wall_Win_4m_B.Make_SRV();
 	Wall_Win_4m_B.CreatePSO(L"..\\Bricks.hlsl");
 
 	Wall_Win_4m_C.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	Wall_Win_4m_C.Init("../Resources/Wall_Win_4m_C.txt", ObjectType::GeneralObjects);
-	Wall_Win_4m_C.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
+	Wall_Win_4m_C.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Win_4m_C.Make_SRV();
 	Wall_Win_4m_C.CreatePSO(L"..\\Bricks.hlsl");
 
