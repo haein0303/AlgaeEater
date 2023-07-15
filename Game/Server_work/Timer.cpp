@@ -23,6 +23,8 @@ extern array<CUBE, CUBE_NUM> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
+int fd_cont = 0;
+
 void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id)
 {
 	TIMER_EVENT ev;
@@ -300,7 +302,8 @@ void do_timer()
 					break;
 				}
 
-				if (clients[ev.object_id]._object_type == TY_BOSS_2) {
+				if (clients[ev.object_id]._object_type == TY_BOSS_2 && fd_cont < 11) {
+					fd_cont++;
 					// 일단 여기서 보내자
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl >= MAX_USER) continue;
