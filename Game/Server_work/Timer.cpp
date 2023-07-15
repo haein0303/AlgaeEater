@@ -161,18 +161,21 @@ void do_timer()
 				break;
 			}
 			case EV_STAGE2_FIRST_BOSS: {
-				clients[ev.target_id]._sl.lock();
-				if (clients[ev.target_id]._s_state != ST_INGAME) {
-					clients[ev.target_id]._sl.unlock();
-					break;
+				for (auto& pl : clients[ev.object_id].room_list) {
+					if (pl >= MAX_USER) continue;
+					clients[pl]._sl.lock();
+					if (clients[pl]._s_state != ST_INGAME) {
+						clients[pl]._sl.unlock();
+						continue;
+					}
+					clients[pl]._sl.unlock();
+
+					SC_BOSS_SKILL_END_PACKET p;
+					p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
+					p.type = SC_BOSS_SKILL_START;
+
+					clients[pl].do_send(&p);
 				}
-				clients[ev.target_id]._sl.unlock();
-
-				SC_BOSS_SKILL_END_PACKET p;
-				p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
-				p.type = SC_BOSS_SKILL_START;
-
-				clients[ev.target_id].do_send(&p);
 				break;
 			}
 			case EV_NPC_CON:
