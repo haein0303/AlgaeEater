@@ -221,6 +221,7 @@ struct SC_BOSS_SKILL_START_PACKET {
 	unsigned char size;
 	char	type;
 	int		id;
+	int		fd_id;
 	float	x;
 	float	z;
 	float	r;
@@ -231,6 +232,7 @@ struct SC_BOSS_SKILL_START_PACKET {
 struct SC_BOSS_SKILL_END_PACKET {
 	unsigned char size;
 	char	type;
+	int		fd_id;
 };
 
 struct SS_CONNECT_SERVER_PACKET {
