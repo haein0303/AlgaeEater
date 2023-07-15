@@ -307,6 +307,27 @@ public:
 		}
 		case SC_DOOR: {
 			cout << "DOOR OPEN" << endl;
+
+			break;
+		}
+		case SC_BOSS_SKILL_START: {
+			SC_BOSS_SKILL_START_PACKET* packet = reinterpret_cast<SC_BOSS_SKILL_START_PACKET*>(ptr);
+			Boss2SkillData boss2_skill;
+			boss2_skill.pos.x = packet->x;
+			boss2_skill.pos.y = 0.01f;
+			boss2_skill.pos.z = packet->z;
+			boss2_skill.scale = packet->r;
+			boss2_skill.type = packet->fd_type;
+			boss2_skill.isOn = true;
+
+			boss_obj.boss2_skill_vec.emplace_back(boss2_skill);
+
+			break;
+		}
+		case SC_BOSS_SKILL_END: {
+			cout << "SC_BOSS_SKILL_END" << endl;
+
+			break;
 		}
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);

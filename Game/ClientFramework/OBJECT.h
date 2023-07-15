@@ -51,6 +51,7 @@ public:
 	shared_ptr<MESH_ASSET> _my_mesh;
 	shared_ptr<Timer> _logicTimerPtr;
 
+	vector<Boss2SkillData> boss2_skill_vec;
 	
 public:
 	//DX엔진 초기화

@@ -310,6 +310,15 @@ enum AnimationOrder
 	Attack
 };
 
+// 보스2 스킬
+struct Boss2SkillData
+{
+	XMFLOAT3 pos;
+	float scale;
+	int type;
+	bool isOn = false;
+};
+
 
 constexpr int GAME_PORT_NUM = 4000;
 constexpr int LOBBY_PORT_NUM = 4001;
