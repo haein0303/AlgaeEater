@@ -240,7 +240,7 @@ void do_timer()
 					}
 				}
 
-				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.75 && clients[ev.object_id].first_pattern == false) { // 첫번째 전멸기
+				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.75 && clients[ev.object_id].first_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_1) { // 첫번째 전멸기
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl >= MAX_USER) continue;
 						clients[pl]._sl.lock();
@@ -261,7 +261,7 @@ void do_timer()
 					break;
 				}
 
-				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.25 && clients[ev.object_id].second_pattern == false) { // 두번째 전멸기
+				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.25 && clients[ev.object_id].second_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_1) { // 두번째 전멸기
 					//for (auto& pl : clients[ev.object_id].room_list) {
 					//	if (pl >= MAX_USER) continue;
 					//	clients[pl]._sl.lock();
@@ -280,6 +280,34 @@ void do_timer()
 					add_timer(ev.object_id, 10000, EV_STAGE1_SECOND_BOSS, ev.target_id);
 					clients[ev.object_id].second_pattern = true;
 					break;
+				}
+
+				if (clients[ev.object_id]._object_type == TY_BOSS_2) {
+					// 일단 여기서 보내자
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER) continue;
+
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state != ST_INGAME) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						SC_BOSS_SKILL_START_PACKET p;
+						p.char_state = AN_ATTACK_1;
+						p.fd_type = 0;
+						p.id = ev.object_id;
+						p.r = 3;
+						p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
+						p.type = SC_BOSS_SKILL_START;
+						p.x = clients[pl].x;
+						p.z = clients[pl].z;
+
+						clients[pl].do_send(&p);
+
+						// 여기서 시간 고려해서 타이머 세팅
+					}
 				}
 
 				lua_getglobal(clients[ev.object_id].L, "wander_boss");

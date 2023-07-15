@@ -14,7 +14,6 @@ enum BOSS_NUM {
 };
 constexpr int BOSS_HP[4] = { 5000,5000,5000,5000 };
 
-
 #define LOBBY_SERVER_IP "127.0.0.1"
 #define GAME_SERVER_IP "127.0.0.1"
 constexpr int GAME_SERVER_PORT_NUM = 4000;
