@@ -164,6 +164,31 @@ public:
 	MESH_ASSET Wall_Turn_L_Out_¬³;
 	MESH_ASSET Wall_Win_4m_B;
 	MESH_ASSET Wall_Win_4m_C;
+	MESH_ASSET Ferm_B_6m;
+	MESH_ASSET Floor_Cross_A;
+	MESH_ASSET Floor_O_4x4m;
+	MESH_ASSET Railings_A_4m_Block_2m;
+	MESH_ASSET Railings_A_4m_Col_Mid_2m;
+	MESH_ASSET Railings_A_4m_Col_Top;
+	MESH_ASSET Railings_A_4m_Rama_4m;
+	MESH_ASSET Railings_A_CornerIn;
+	MESH_ASSET Railings_A_TurnL_4m;
+	MESH_ASSET Stairs_A_Rama_Beam_1m;
+	MESH_ASSET Stairs_A_Rama_Beam_2m;
+	MESH_ASSET Stairs_A_Rama_Beam_4m;
+	MESH_ASSET Stairs_A_Rama_Low;
+	MESH_ASSET Stairs_A_Rama_Mid;
+	MESH_ASSET Stairs_A_TrapConnector;
+	MESH_ASSET Sup_Column_Base;
+	MESH_ASSET Sup_Floor_O_4x2m_Block_2m;
+	MESH_ASSET Sup_Wall_O_2m;
+	MESH_ASSET Trap_4x2m;
+	MESH_ASSET Trap_4x4m;
+	MESH_ASSET Wall_I_4m;
+	MESH_ASSET Wall_I_4m_Door;
+	MESH_ASSET Wall_I_4m_TurnIn;
+	MESH_ASSET Wall_O_4m;
+	MESH_ASSET Wall_O_4m_Door;
 
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
@@ -422,9 +447,9 @@ public:
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Grid_Metal_tile") == 0 || data.mesh_type.compare("Plate_mettal_wall_HQ__2_") == 0)
 				{
-					data.scale.x *= 2.5f;
-					data.scale.y *= 2.5f;
-					data.scale.z *= 2.5f;
+					data.scale.x *= 2.54f;
+					data.scale.y *= 2.54f;
+					data.scale.z *= 2.54f;
 					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
 				}
 				else if (data.mesh_type.compare("Cube") == 0)
@@ -571,12 +596,81 @@ public:
 				}
 				else if (data.mesh_type.compare("Plane002") == 0)
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
-				else if (data.mesh_type.compare("Grid_Metal_tile") == 0)
+				else if (data.mesh_type.compare("Grid_Metal_tile") == 0 || data.mesh_type.compare("Plate_mettal_wall_HQ__2_") == 0)
+				{
+					data.scale.x *= 2.54f;
+					data.scale.y *= 2.54f;
+					data.scale.z *= 2.54f;
 					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("NeonCrate_0") == 0)
 					DrawMapObject(cmdList, NeonCrate_0, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Ferm_B_6m") == 0)
+					DrawMapObject(cmdList, Ferm_B_6m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Floor_Cross_A") == 0)
+					DrawMapObject(cmdList, Floor_Cross_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Floor_O_4x4m") == 0)
+					DrawMapObject(cmdList, Floor_O_4x4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_4m_Block_2m") == 0)
+					DrawMapObject(cmdList, Railings_A_4m_Block_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_4m_Col_Mid_2m") == 0)
+					DrawMapObject(cmdList, Railings_A_4m_Col_Mid_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_4m_Col_Top") == 0)
+					DrawMapObject(cmdList, Railings_A_4m_Col_Top, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_4m_Rama_4m") == 0)
+					DrawMapObject(cmdList, Railings_A_4m_Rama_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_CornerIn") == 0)
+					DrawMapObject(cmdList, Railings_A_CornerIn, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_TurnL_4m") == 0)
+					DrawMapObject(cmdList, Railings_A_TurnL_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Stairs_A_Rama_Beam_1m") == 0)
+					DrawMapObject(cmdList, Stairs_A_Rama_Beam_1m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Stairs_A_Rama_Beam_2m") == 0)
+					DrawMapObject(cmdList, Stairs_A_Rama_Beam_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Stairs_A_Rama_Beam_4m") == 0)
+					DrawMapObject(cmdList, Stairs_A_Rama_Beam_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Stairs_A_Rama_Low") == 0)
+					DrawMapObject(cmdList, Stairs_A_Rama_Low, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Stairs_A_Rama_Mid") == 0)
+					DrawMapObject(cmdList, Stairs_A_Rama_Mid, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Stairs_A_TrapConnector") == 0)
+					DrawMapObject(cmdList, Stairs_A_TrapConnector, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Sup_Column_Base") == 0)
+					DrawMapObject(cmdList, Sup_Column_Base, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Sup_Floor_O_4x2m_Block_2m") == 0)
+					DrawMapObject(cmdList, Sup_Floor_O_4x2m_Block_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Sup_Wall_O_2m") == 0)
+					DrawMapObject(cmdList, Sup_Wall_O_2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Trap_4x2m") == 0)
+					DrawMapObject(cmdList, Trap_4x2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Trap_4x4m") == 0)
+					DrawMapObject(cmdList, Trap_4x4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_I_4m") == 0)
+					DrawMapObject(cmdList, Wall_I_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_I_4m_Door") == 0)
+					DrawMapObject(cmdList, Wall_I_4m_Door, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_I_4m_TurnIn") == 0)
+					DrawMapObject(cmdList, Wall_I_4m_TurnIn, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_O_4m") == 0)
+					DrawMapObject(cmdList, Wall_O_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_O_4m_Door") == 0)
+					DrawMapObject(cmdList, Wall_O_4m_Door, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Column_BB_6m") == 0)
+					DrawMapObject(cmdList, Column_BB_6m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_1m") == 0)
+					DrawMapObject(cmdList, Railings_A_1m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Railings_A_4m") == 0)
+					DrawMapObject(cmdList, Railings_A_4m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Trap_A_2x2m") == 0)
+					DrawMapObject(cmdList, Trap_A_2x2m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Line_B_1m") == 0)
+					DrawMapObject(cmdList, Tube_Line_B_1m, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Tube_Turn_L_B") == 0)
+					DrawMapObject(cmdList, Tube_Turn_L_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Line_4m_A") == 0)
+					DrawMapObject(cmdList, Wall_Line_4m_A, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
 		}
 	}
@@ -700,5 +794,14 @@ public:
 
 		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 		cmdList->DrawIndexedInstanced(boss2Skill._indexCount, 1, 0, 0, 0);
+	}
+
+	void InitMeshAsset(MESH_ASSET& mesh_asset, const char* mesh_path, const WCHAR* tex_path)
+	{
+		mesh_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		mesh_asset.Init(mesh_path, ObjectType::GeneralObjects);
+		mesh_asset.Add_texture(tex_path);
+		mesh_asset.Make_SRV();
+		mesh_asset.CreatePSO(L"..\\Bricks.hlsl");
 	}
 };

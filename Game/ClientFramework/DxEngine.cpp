@@ -59,6 +59,8 @@ void DxEngine::Init(WindowInfo windowInfo)
 
 void DxEngine::late_Init(WindowInfo windowInfo)
 {
+	cout << "late init" << endl;
+
 	map_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	map_asset.Init("../Resources/Stage1_Wall_Test.txt", ObjectType::GeneralObjects);
 	map_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
@@ -446,6 +448,32 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	Wall_Win_4m_C.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 	Wall_Win_4m_C.Make_SRV();
 	Wall_Win_4m_C.CreatePSO(L"..\\Bricks.hlsl");
+
+	InitMeshAsset(Ferm_B_6m, "../Resources/Ferm_B_6m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Floor_Cross_A, "../Resources/Floor_Cross_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Floor_O_4x4m, "../Resources/Floor_O_4x4m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Railings_A_4m_Block_2m, "../Resources/Railings_A_4m_Block_2m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Railings_A_4m_Col_Mid_2m, "../Resources/Railings_A_4m_Col_Mid_2m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Railings_A_4m_Col_Top, "../Resources/Railings_A_4m_Col_Top.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Railings_A_4m_Rama_4m, "../Resources/Railings_A_4m_Rama_4m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Railings_A_CornerIn, "../Resources/Railings_A_CornerIn.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Railings_A_TurnL_4m, "../Resources/Railings_A_TurnL_4m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Stairs_A_Rama_Beam_1m, "../Resources/Stairs_A_Rama_Beam_1m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Stairs_A_Rama_Beam_2m, "../Resources/Stairs_A_Rama_Beam_2m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Stairs_A_Rama_Beam_4m, "../Resources/Stairs_A_Rama_Beam_4m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Stairs_A_Rama_Low, "../Resources/Stairs_A_Rama_Low.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Stairs_A_Rama_Mid, "../Resources/Stairs_A_Rama_Mid.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Stairs_A_TrapConnector, "../Resources/Stairs_A_TrapConnector.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Sup_Column_Base, "../Resources/Sup_Column_Base.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Sup_Floor_O_4x2m_Block_2m, "../Resources/Sup_Floor_O_4x2m_Block_2m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Sup_Wall_O_2m, "../Resources/Sup_Wall_O_2m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Trap_4x2m, "../Resources/Trap_4x2m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Trap_4x4m, "../Resources/Trap_4x4m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Wall_I_4m, "../Resources/Wall_I_4m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Wall_I_4m_Door, "../Resources/Wall_I_4m_Door.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Wall_I_4m_TurnIn, "../Resources/Wall_I_4m_TurnIn.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Wall_O_4m, "../Resources/Wall_O_4m.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
+	InitMeshAsset(Wall_O_4m_Door, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
 
 	testCube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	testCube.Init("../Resources/TestCube.txt", ObjectType::GeneralObjects);
