@@ -617,7 +617,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	ImportMapdata("../Resources/MapData3.txt", _map_data3);
 	ImportCollisionObjectsData("../Resources/CollisionMapData1.txt", bounding_boxes);
 	ImportCollisionObjectsData("../Resources/CollisionMapData2.txt", bounding_boxes2);
-	ImportCollisionObjectsData("../Resources/CollisionData3.txt", bounding_boxes3);
+	ImportCollisionObjectsData("../Resources/CollisionMapData3.txt", bounding_boxes3);
 	
 	test.Center = XMFLOAT3(170.f, 1.f, -240.f);
 	test.Extents = XMFLOAT3(1.f, 1.f, 1.f);
