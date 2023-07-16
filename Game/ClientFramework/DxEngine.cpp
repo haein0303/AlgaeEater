@@ -61,420 +61,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 {
 	cout << "late init" << endl;
 
-	map_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	map_asset.Init("../Resources/Stage1_Wall_Test.txt", ObjectType::GeneralObjects);
-	map_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-	map_asset.Make_SRV();
-	map_asset.CreatePSO(L"..\\Bricks.hlsl");
-
-	floor.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	floor.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
-	floor.Add_texture(L"..\\Resources\\Texture\\Floor.jpg");
-	floor.Make_SRV();
-	floor.CreatePSO(L"..\\Bricks.hlsl");
-
-	boss2Skill.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
-	boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
-	boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
-	boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
-	boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
-	boss2Skill.Make_SRV();
-	boss2Skill.CreatePSO(L"..\\Bricks.hlsl");
-
-	boss2_skill_circle.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	boss2_skill_circle.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
-	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
-	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
-	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
-	boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
-	boss2_skill_circle.Make_SRV();
-	boss2_skill_circle.CreatePSO(L"..\\Circle.hlsl");
-
-	stage0_map.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	stage0_map.Init("../Resources/stage0_map.txt", ObjectType::GeneralObjects);
-	stage0_map.Add_texture(L"..\\Resources\\Texture\\sample.png");
-	stage0_map.Add_texture(L"..\\Resources\\Texture\\Back_wall.png");
-	stage0_map.Add_texture(L"..\\Resources\\Texture\\Front_wall.png");
-	stage0_map.Add_texture(L"..\\Resources\\Texture\\Right_wall.png");
-	stage0_map.Add_texture(L"..\\Resources\\Texture\\Left_wall.png");
-	stage0_map.Make_SRV();
-	stage0_map.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube.Init("../Resources/Tube.txt", ObjectType::GeneralObjects);
-	Tube.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
-	Tube.Make_SRV();
-	Tube.CreatePSO(L"..\\Bricks.hlsl");
-
-	barrel.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	barrel.Init("../Resources/barrel.txt", ObjectType::GeneralObjects);
-	barrel.Add_texture(L"..\\Resources\\Texture\\barrel.png");
-	barrel.Make_SRV();
-	barrel.CreatePSO(L"..\\Bricks.hlsl");
-
-	Box.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Box.Init("../Resources/Box.txt", ObjectType::GeneralObjects);
-	Box.Add_texture(L"..\\Resources\\Texture\\Box_Sci-fi_box_mat_AlbedoTransparency.tga");
-	Box.Make_SRV();
-	Box.CreatePSO(L"..\\Bricks.hlsl");
-
-	NeonCrate_0.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	NeonCrate_0.Init("../Resources/NeonCrate_0.txt", ObjectType::GeneralObjects);
-	NeonCrate_0.Add_texture(L"..\\Resources\\Texture\\Box_Sci-fi_box_mat_AlbedoTransparency.tga");
-	NeonCrate_0.Make_SRV();
-	NeonCrate_0.CreatePSO(L"..\\Bricks.hlsl");
-
-	Clotch.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Clotch.Init("../Resources/Clotch.txt", ObjectType::GeneralObjects);
-	Clotch.Add_texture(L"..\\Resources\\Texture\\diff.png");
-	Clotch.Make_SRV();
-	Clotch.CreatePSO(L"..\\Bricks.hlsl");
-
-	tank.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	tank.Init("../Resources/tank.txt", ObjectType::GeneralObjects);
-	tank.Add_texture(L"..\\Resources\\Texture\\Tank_Color.png");
-	tank.Make_SRV();
-	tank.CreatePSO(L"..\\Bricks.hlsl");
-
-	Plane002.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Plane002.Init("../Resources/Plane002.txt", ObjectType::GeneralObjects);
-	Plane002.Add_texture(L"..\\Resources\\Texture\\mettile1_diff.png");
-	Plane002.Make_SRV();
-	Plane002.CreatePSO(L"..\\Bricks.hlsl");
-
-	Grid_Metal_tile.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Grid_Metal_tile.Init("../Resources/Grid_Metal_tile.txt", ObjectType::GeneralObjects);
-	Grid_Metal_tile.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
-	Grid_Metal_tile.Make_SRV();
-	Grid_Metal_tile.CreatePSO(L"..\\Wall.hlsl");
-
-	Plate_mettal_wall_HQ__2_.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Plate_mettal_wall_HQ__2_.Init("../Resources/Plate_mettal_wall_HQ__2_.txt", ObjectType::GeneralObjects);
-	Plate_mettal_wall_HQ__2_.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
-	Plate_mettal_wall_HQ__2_.Make_SRV();
-	Plate_mettal_wall_HQ__2_.CreatePSO(L"..\\Wall.hlsl");
-
-	Cube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Cube.Init("../Resources/Cube.txt", ObjectType::GeneralObjects);
-	Cube.Add_texture(L"..\\Resources\\Texture\\mettile1_diff.png");
-	Cube.Make_SRV();
-	Cube.CreatePSO(L"..\\Bricks.hlsl");
-
-	Grid_Metal_door.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Grid_Metal_door.Init("../Resources/Grid_Metal_door.txt", ObjectType::GeneralObjects);
-	Grid_Metal_door.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
-	Grid_Metal_door.Make_SRV();
-	Grid_Metal_door.CreatePSO(L"..\\Wall.hlsl");
-
-	Wall_Door_4m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Door_4m_A.Init("../Resources/Wall_Door_4m_A.txt", ObjectType::GeneralObjects);
-	Wall_Door_4m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
-	Wall_Door_4m_A.Make_SRV();
-	Wall_Door_4m_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_1m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_1m_A.Init("../Resources/Wall_Line_1m_A.txt", ObjectType::GeneralObjects);
-	Wall_Line_1m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
-	Wall_Line_1m_A.Make_SRV();
-	Wall_Line_1m_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_2m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_2m_A.Init("../Resources/Wall_Line_2m_A.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
-	Wall_Line_2m_A.Make_SRV();
-	Wall_Line_2m_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_4m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_4m_A.Init("../Resources/Wall_Line_4m_A.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
-	Wall_Line_4m_A.Make_SRV();
-	Wall_Line_4m_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Turn_L_Out_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Turn_L_Out_A.Init("../Resources/Wall_Turn_L_Out_A.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
-	Wall_Turn_L_Out_A.Make_SRV();
-	Wall_Turn_L_Out_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Win_4m_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Win_4m_A.Init("../Resources/Wall_Win_4m_A.txt", ObjectType::GeneralObjects);
-	Wall_Win_4m_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
-	Wall_Win_4m_A.Make_SRV();
-	Wall_Win_4m_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Trap_A_2x2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Trap_A_2x2m.Init("../Resources/Trap_A_2x2m.txt", ObjectType::GeneralObjects);
-	Trap_A_2x2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Trap.png");
-	Trap_A_2x2m.Make_SRV();
-	Trap_A_2x2m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Trap_A_4x2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Trap_A_4x2m.Init("../Resources/Trap_A_4x2m.txt", ObjectType::GeneralObjects);
-	Trap_A_4x2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Trap.png");
-	Trap_A_4x2m.Make_SRV();
-	Trap_A_4x2m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Trap_A_Stairs.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Trap_A_Stairs.Init("../Resources/Trap_A_Stairs.txt", ObjectType::GeneralObjects);
-	Trap_A_Stairs.Add_texture(L"..\\Resources\\Texture\\Stage2\\Trap.png");
-	Trap_A_Stairs.Make_SRV();
-	Trap_A_Stairs.CreatePSO(L"..\\Bricks.hlsl");
-
-	Column_BB_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Column_BB_6m.Init("../Resources/Column_BB_6m.txt", ObjectType::GeneralObjects);
-	Column_BB_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
-	Column_BB_6m.Make_SRV();
-	Column_BB_6m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Railings_A_1m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Railings_A_1m.Init("../Resources/Railings_A_1m.txt", ObjectType::GeneralObjects);
-	Railings_A_1m.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	Railings_A_1m.Make_SRV();
-	Railings_A_1m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Railings_A_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Railings_A_2m.Init("../Resources/Railings_A_2m.txt", ObjectType::GeneralObjects);
-	Railings_A_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	Railings_A_2m.Make_SRV();
-	Railings_A_2m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Railings_A_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Railings_A_4m.Init("../Resources/Railings_A_4m.txt", ObjectType::GeneralObjects);
-	Railings_A_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	Railings_A_4m.Make_SRV();
-	Railings_A_4m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Railings_A_Turn_L_In.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Railings_A_Turn_L_In.Init("../Resources/Railings_A_Turn_L_In.txt", ObjectType::GeneralObjects);
-	Railings_A_Turn_L_In.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	Railings_A_Turn_L_In.Make_SRV();
-	Railings_A_Turn_L_In.CreatePSO(L"..\\Bricks.hlsl");
-
-	Railings_A_Turn_L_Out.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Railings_A_Turn_L_Out.Init("../Resources/Railings_A_Turn_L_Out.txt", ObjectType::GeneralObjects);
-	Railings_A_Turn_L_Out.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	Railings_A_Turn_L_Out.Make_SRV();
-	Railings_A_Turn_L_Out.CreatePSO(L"..\\Bricks.hlsl");
-
-	Beam_B_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Beam_B_4m.Init("../Resources/Beam_B_4m.txt", ObjectType::GeneralObjects);
-	Beam_B_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
-	Beam_B_4m.Make_SRV();
-	Beam_B_4m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Column_A_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Column_A_2m.Init("../Resources/Column_A_2m.txt", ObjectType::GeneralObjects);
-	Column_A_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
-	Column_A_2m.Make_SRV();
-	Column_A_2m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Column_B_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Column_B_6m.Init("../Resources/Column_B_6m.txt", ObjectType::GeneralObjects);
-	Column_B_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
-	Column_B_6m.Make_SRV();
-	Column_B_6m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Console_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Console_B.Init("../Resources/Console_B.txt", ObjectType::GeneralObjects);
-	Console_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png");
-	Console_B.Make_SRV();
-	Console_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	FireStair_Base.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	FireStair_Base.Init("../Resources/FireStair_Base.txt", ObjectType::GeneralObjects);
-	FireStair_Base.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	FireStair_Base.Make_SRV();
-	FireStair_Base.CreatePSO(L"..\\Bricks.hlsl");
-
-	FireStair_Cover.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	FireStair_Cover.Init("../Resources/FireStair_Cover.txt", ObjectType::GeneralObjects);
-	FireStair_Cover.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	FireStair_Cover.Make_SRV();
-	FireStair_Cover.CreatePSO(L"..\\Bricks.hlsl");
-
-	FireStair_EndTop.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	FireStair_EndTop.Init("../Resources/FireStair_EndTop.txt", ObjectType::GeneralObjects);
-	FireStair_EndTop.Add_texture(L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png");
-	FireStair_EndTop.Make_SRV();
-	FireStair_EndTop.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_A_1m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_A_1m.Init("../Resources/Tube_Line_A_1m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_1m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_A_1m.Make_SRV();
-	Tube_Line_A_1m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_A_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_A_2m.Init("../Resources/Tube_Line_A_2m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_A_2m.Make_SRV();
-	Tube_Line_A_2m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_A_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_A_4m.Init("../Resources/Tube_Line_A_4m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_A_4m.Make_SRV();
-	Tube_Line_A_4m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_A_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_A_6m.Init("../Resources/Tube_Line_A_6m.txt", ObjectType::GeneralObjects);
-	Tube_Line_A_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_A_6m.Make_SRV();
-	Tube_Line_A_6m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_B_1m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_B_1m.Init("../Resources/Tube_Line_B_1m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_1m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_B_1m.Make_SRV();
-	Tube_Line_B_1m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_B_2m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_B_2m.Init("../Resources/Tube_Line_B_2m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_2m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_B_2m.Make_SRV();
-	Tube_Line_B_2m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_B_4m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_B_4m.Init("../Resources/Tube_Line_B_4m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_4m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_B_4m.Make_SRV();
-	Tube_Line_B_4m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Line_B_6m.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Line_B_6m.Init("../Resources/Tube_Line_B_6m.txt", ObjectType::GeneralObjects);
-	Tube_Line_B_6m.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Line_B_6m.Make_SRV();
-	Tube_Line_B_6m.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Turn_L_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Turn_L_A.Init("../Resources/Tube_Turn_L_A.txt", ObjectType::GeneralObjects);
-	Tube_Turn_L_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Turn_L_A.Make_SRV();
-	Tube_Turn_L_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Tube_Turn_L_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Tube_Turn_L_B.Init("../Resources/Tube_Turn_L_B.txt", ObjectType::GeneralObjects);
-	Tube_Turn_L_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Tubes.png");
-	Tube_Turn_L_B.Make_SRV();
-	Tube_Turn_L_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Door_4m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Door_4m_B.Init("../Resources/Wall_Door_4m_B.txt", ObjectType::GeneralObjects);
-	Wall_Door_4m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
-	Wall_Door_4m_B.Make_SRV();
-	Wall_Door_4m_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_2m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_2m_B.Init("../Resources/Wall_Line_2m_B.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
-	Wall_Line_2m_B.Make_SRV();
-	Wall_Line_2m_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_2m_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_2m_D.Init("../Resources/Wall_Line_2m_D.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Line_2m_D.Make_SRV();
-	Wall_Line_2m_D.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_2m_С.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_2m_С.Init("../Resources/Wall_Line_2m_С.txt", ObjectType::GeneralObjects);
-	Wall_Line_2m_С.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Line_2m_С.Make_SRV();
-	Wall_Line_2m_С.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_4m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_4m_B.Init("../Resources/Wall_Line_4m_B.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
-	Wall_Line_4m_B.Make_SRV();
-	Wall_Line_4m_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_4m_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_4m_D.Init("../Resources/Wall_Line_4m_D.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Line_4m_D.Make_SRV();
-	Wall_Line_4m_D.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Line_4m_С.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Line_4m_С.Init("../Resources/Wall_Line_4m_С.txt", ObjectType::GeneralObjects);
-	Wall_Line_4m_С.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Line_4m_С.Make_SRV();
-	Wall_Line_4m_С.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Turn_L_In_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Turn_L_In_A.Init("../Resources/Wall_Turn_L_In_A.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_In_A.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_A.png");
-	Wall_Turn_L_In_A.Make_SRV();
-	Wall_Turn_L_In_A.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Turn_L_In_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Turn_L_In_B.Init("../Resources/Wall_Turn_L_In_B.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_In_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
-	Wall_Turn_L_In_B.Make_SRV();
-	Wall_Turn_L_In_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Turn_L_In_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Turn_L_In_D.Init("../Resources/Wall_Turn_L_In_D.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_In_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Turn_L_In_D.Make_SRV();
-	Wall_Turn_L_In_D.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Turn_L_Out_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Turn_L_Out_B.Init("../Resources/Wall_Turn_L_Out_B.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
-	Wall_Turn_L_Out_B.Make_SRV();
-	Wall_Turn_L_Out_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Turn_L_Out_D.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Turn_L_Out_D.Init("../Resources/Wall_Turn_L_Out_D.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_D.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Turn_L_Out_D.Make_SRV();
-	Wall_Turn_L_Out_D.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Turn_L_Out_С.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Turn_L_Out_С.Init("../Resources/Wall_Turn_L_Out_С.txt", ObjectType::GeneralObjects);
-	Wall_Turn_L_Out_С.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Turn_L_Out_С.Make_SRV();
-	Wall_Turn_L_Out_С.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Win_4m_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Win_4m_B.Init("../Resources/Wall_Win_4m_B.txt", ObjectType::GeneralObjects);
-	Wall_Win_4m_B.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_B.png");
-	Wall_Win_4m_B.Make_SRV();
-	Wall_Win_4m_B.CreatePSO(L"..\\Bricks.hlsl");
-
-	Wall_Win_4m_C.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	Wall_Win_4m_C.Init("../Resources/Wall_Win_4m_C.txt", ObjectType::GeneralObjects);
-	Wall_Win_4m_C.Add_texture(L"..\\Resources\\Texture\\Stage2\\Walls_C.png");
-	Wall_Win_4m_C.Make_SRV();
-	Wall_Win_4m_C.CreatePSO(L"..\\Bricks.hlsl");
-
-	InitMeshAsset(Ferm_B_6m, "../Resources/Ferm_B_6m.txt", L"..\\Resources\\Texture\\Stage3\\ferm_Karkas.png");
-	InitMeshAsset(Floor_Cross_A, "../Resources/Floor_Cross_A.txt", L"..\\Resources\\Texture\\Stage3\\Floor_Cross_A.png");
-	InitMeshAsset(Floor_O_4x4m, "../Resources/Floor_O_4x4m.txt", L"..\\Resources\\Texture\\Stage3\\Floor_O_A.png");
-	InitMeshAsset(Railings_A_4m_Block_2m, "../Resources/Railings_A_4m_Block_2m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png");
-	InitMeshAsset(Railings_A_4m_Col_Mid_2m, "../Resources/Railings_A_4m_Col_Mid_2m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png");
-	InitMeshAsset(Railings_A_4m_Col_Top, "../Resources/Railings_A_4m_Col_Top.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png");
-	InitMeshAsset(Railings_A_4m_Rama_4m, "../Resources/Railings_A_4m_Rama_4m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png");
-	InitMeshAsset(Railings_A_CornerIn, "../Resources/Railings_A_CornerIn.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png");
-	InitMeshAsset(Railings_A_TurnL_4m, "../Resources/Railings_A_TurnL_4m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png");
-	InitMeshAsset(Stairs_A_Rama_Beam_1m, "../Resources/Stairs_A_Rama_Beam_1m.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png");
-	InitMeshAsset(Stairs_A_Rama_Beam_2m, "../Resources/Stairs_A_Rama_Beam_2m.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png");
-	InitMeshAsset(Stairs_A_Rama_Beam_4m, "../Resources/Stairs_A_Rama_Beam_4m.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png");
-	InitMeshAsset(Stairs_A_Rama_Low, "../Resources/Stairs_A_Rama_Low.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png");
-	InitMeshAsset(Stairs_A_Rama_Mid, "../Resources/Stairs_A_Rama_Mid.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png");
-	InitMeshAsset(Stairs_A_TrapConnector, "../Resources/Stairs_A_TrapConnector.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png");
-	InitMeshAsset(Sup_Column_Base, "../Resources/Sup_Column_Base.txt", L"..\\Resources\\Texture\\Stage3\\Support_A.png");
-	InitMeshAsset(Sup_Floor_O_4x2m_Block_2m, "../Resources/Sup_Floor_O_4x2m_Block_2m.txt", L"..\\Resources\\Texture\\Stage3\\Support_A.png");
-	InitMeshAsset(Sup_Wall_O_2m, "../Resources/Sup_Wall_O_2m.txt", L"..\\Resources\\Texture\\Stage3\\Support_A.png");
-	InitMeshAsset(Trap_4x2m, "../Resources/Trap_4x2m.txt", L"..\\Resources\\Texture\\Stage3\\Trap_A.png");
-	InitMeshAsset(Trap_4x4m, "../Resources/Trap_4x4m.txt", L"..\\Resources\\Texture\\Stage3\\Trap_A.png");
-	InitMeshAsset(Wall_I_4m, "../Resources/Wall_I_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_4m.png");
-	InitMeshAsset(Wall_I_4m_Door, "../Resources/Wall_I_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_Door.png");
-	InitMeshAsset(Wall_I_4m_TurnIn, "../Resources/Wall_I_4m_TurnIn.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_4m_TurnIn.png");
-	InitMeshAsset(Wall_O_4m, "../Resources/Wall_O_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png");
-	InitMeshAsset(Wall_O_4m_Door, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png");
-
 	testCube.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	testCube.Init("../Resources/TestCube.txt", ObjectType::GeneralObjects);
 	testCube.Add_texture(L"..\\Resources\\Texture\\Atlass_albedo.tga");
@@ -487,15 +73,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	hp_bar.Make_SRV();
 	hp_bar.CreatePSO(L"..\\HPBar.hlsl");
 
-	color_pattern.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	color_pattern.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
-	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
-	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
-	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
-	color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
-	color_pattern.Make_SRV();
-	color_pattern.CreatePSO(L"..\\ColorPattern.hlsl");
-
 	key.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	key.Init("../Resources/rust_key.txt", ObjectType::GeneralObjects);
 	key.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
@@ -507,27 +84,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	skybox.Add_texture(L"..\\Resources\\Texture\\Sky.jpg");
 	skybox.Make_SRV();
 	skybox.CreatePSO(L"..\\SkySphere.hlsl");
-
-	boss.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	boss.Init("../Resources/mechanical_spider.txt", ObjectType::AnimationObjects);
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png");
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");	// 0
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");	// 1
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");	// 2
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");// 3
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Black_Color_Eye.png");	// 4
-	boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Gray_BaseColor_Wire.png");
-	boss.Make_SRV();
-	boss.CreatePSO();
-
-	boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-	boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
-	boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
-	boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
-	boss2.Make_SRV();
-	boss2.CreatePSO();
 
 	player_AKI_Body_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_AKI_Body_asset.Init("../Resources/AKI_Body.txt", ObjectType::AnimationObjects);
@@ -569,25 +125,257 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
 
-	char a[] = "../Resources/pillar0.txt";
-	for (int i = 0; i < 10; ++i)
+	switch (Scene_num)
 	{
-		pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		pillar[i].Init(a, ObjectType::VertexAnimationObjects);
-		pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-		pillar[i].Make_SRV();
-		pillar[i].CreatePSO(L"..\\Color.hlsl");
-		++a[19];
+	case 0:
+		boss.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss.Init("../Resources/mechanical_spider.txt", ObjectType::AnimationObjects);
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png");
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");	// 0
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");	// 1
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");	// 2
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");// 3
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Black_Color_Eye.png");	// 4
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Gray_BaseColor_Wire.png");
+		boss.Make_SRV();
+		boss.CreatePSO();
+
+		stage0_map.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		stage0_map.Init("../Resources/stage0_map.txt", ObjectType::GeneralObjects);
+		stage0_map.Add_texture(L"..\\Resources\\Texture\\sample.png");
+		stage0_map.Add_texture(L"..\\Resources\\Texture\\Back_wall.png");
+		stage0_map.Add_texture(L"..\\Resources\\Texture\\Front_wall.png");
+		stage0_map.Add_texture(L"..\\Resources\\Texture\\Right_wall.png");
+		stage0_map.Add_texture(L"..\\Resources\\Texture\\Left_wall.png");
+		stage0_map.Make_SRV();
+		stage0_map.CreatePSO(L"..\\Bricks.hlsl");
+
+		boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
+		boss_obj._transform.y += 1.f;
+		break;
+	case 1:
+	{
+		boss.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss.Init("../Resources/mechanical_spider.txt", ObjectType::AnimationObjects);
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_yellow_BaseColor.png");
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");	// 0
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");	// 1
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");	// 2
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");// 3
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Black_Color_Eye.png");	// 4
+		boss.Add_texture(L"..\\Resources\\Texture\\spider_paint_Gray_BaseColor_Wire.png");
+		boss.Make_SRV();
+		boss.CreatePSO();
+
+		InitMeshAsset(map_asset, ObjectType::GeneralObjects, "../Resources/Stage1_Wall_Test.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
+		InitMeshAsset(floor, ObjectType::GeneralObjects, "../Resources/Floor.txt", L"..\\Resources\\Texture\\Floor.jpg", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube, ObjectType::GeneralObjects, "../Resources/Tube.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Bricks.hlsl");
+		InitMeshAsset(barrel, ObjectType::GeneralObjects, "../Resources/barrel.txt", L"..\\Resources\\Texture\\barrel.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Box, ObjectType::GeneralObjects, "../Resources/Box.txt", L"..\\Resources\\Texture\\Box_Sci-fi_box_mat_AlbedoTransparency.tga", L"..\\Bricks.hlsl");
+		InitMeshAsset(NeonCrate_0, ObjectType::GeneralObjects, "../Resources/NeonCrate_0.txt", L"..\\Resources\\Texture\\Box_Sci-fi_box_mat_AlbedoTransparency.tga", L"..\\Bricks.hlsl");
+		InitMeshAsset(Clotch, ObjectType::GeneralObjects, "../Resources/Clotch.txt", L"..\\Resources\\Texture\\diff.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(tank, ObjectType::GeneralObjects, "../Resources/tank.txt", L"..\\Resources\\Texture\\Tank_Color.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Plane002, ObjectType::GeneralObjects, "../Resources/Plane002.txt", L"..\\Resources\\Texture\\mettile1_diff.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Grid_Metal_tile, ObjectType::GeneralObjects, "../Resources/Grid_Metal_tile.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+		InitMeshAsset(Plate_mettal_wall_HQ__2_, ObjectType::GeneralObjects, "../Resources/Plate_mettal_wall_HQ__2_.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+		InitMeshAsset(Cube, ObjectType::GeneralObjects, "../Resources/Cube.txt", L"..\\Resources\\Texture\\mettile1_diff.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Grid_Metal_door, ObjectType::GeneralObjects, "../Resources/Grid_Metal_door.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+
+		char a[] = "../Resources/pillar0.txt";
+		for (int i = 0; i < 10; ++i)
+		{
+			pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+			pillar[i].Init(a, ObjectType::VertexAnimationObjects);
+			pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+			pillar[i].Make_SRV();
+			pillar[i].CreatePSO(L"..\\Color.hlsl");
+			++a[19];
+		}
+		char b[] = "../Resources/pillar10.txt";
+		for (int i = 10; i < 20; ++i)
+		{
+			pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+			pillar[i].Init(b, ObjectType::VertexAnimationObjects);
+			pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+			pillar[i].Make_SRV();
+			pillar[i].CreatePSO(L"..\\Color.hlsl");
+			++b[20];
+		}
+
+		color_pattern.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		color_pattern.Init("../Resources/Floor.txt", ObjectType::GeneralObjects);
+		color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+		color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
+		color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
+		color_pattern.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+		color_pattern.Make_SRV();
+		color_pattern.CreatePSO(L"..\\ColorPattern.hlsl");
+
+		ImportMapdata("../Resources/MapData1.txt", _map_data);
+		ImportCollisionObjectsData("../Resources/CollisionMapData1.txt", bounding_boxes);
+
+		// boss1 bounding box
+		for (int i = 0; i < 8; ++i)
+		{
+			boss_col[i].Extents = XMFLOAT3(0.5f, 2.f, 0.5f);
+			boss_col[i].Center = XMFLOAT3(boss_obj._transform.x, boss_obj._transform.y, boss_obj._transform.z);
+		}
+
+		boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
+		boss_obj._transform.y += 1.f;
+		break;
 	}
-	char b[] = "../Resources/pillar10.txt";
-	for (int i = 10; i < 20; ++i)
+	case 2:
 	{
-		pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		pillar[i].Init(b, ObjectType::VertexAnimationObjects);
-		pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
-		pillar[i].Make_SRV();
-		pillar[i].CreatePSO(L"..\\Color.hlsl");
-		++b[20];
+		boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
+		boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
+		boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
+		boss2.Make_SRV();
+		boss2.CreatePSO();
+
+		boss2Skill.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+		boss2Skill.Make_SRV();
+		boss2Skill.CreatePSO(L"..\\Bricks.hlsl");
+
+		boss2_skill_circle.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss2_skill_circle.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+		boss2_skill_circle.Make_SRV();
+		boss2_skill_circle.CreatePSO(L"..\\Circle.hlsl");
+
+		InitMeshAsset(floor, ObjectType::GeneralObjects, "../Resources/Floor.txt", L"..\\Resources\\Texture\\Floor.jpg", L"..\\Bricks.hlsl");
+		InitMeshAsset(Grid_Metal_tile, ObjectType::GeneralObjects, "../Resources/Grid_Metal_tile.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+		InitMeshAsset(Plate_mettal_wall_HQ__2_, ObjectType::GeneralObjects, "../Resources/Plate_mettal_wall_HQ__2_.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+		InitMeshAsset(Cube, ObjectType::GeneralObjects, "../Resources/Cube.txt", L"..\\Resources\\Texture\\mettile1_diff.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Grid_Metal_door, ObjectType::GeneralObjects, "../Resources/Grid_Metal_door.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+
+		InitMeshAsset(Wall_Door_4m_A, ObjectType::GeneralObjects, "../Resources/Wall_Door_4m_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_1m_A, ObjectType::GeneralObjects, "../Resources/Wall_Line_1m_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_2m_A, ObjectType::GeneralObjects, "../Resources/Wall_Line_2m_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_4m_A, ObjectType::GeneralObjects, "../Resources/Wall_Line_4m_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_Out_A, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_Out_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Win_4m_A, ObjectType::GeneralObjects, "../Resources/Wall_Win_4m_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Trap_A_2x2m, ObjectType::GeneralObjects, "../Resources/Trap_A_2x2m.txt", L"..\\Resources\\Texture\\Stage2\\Trap.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Trap_A_4x2m, ObjectType::GeneralObjects, "../Resources/Trap_A_4x2m.txt", L"..\\Resources\\Texture\\Stage2\\Trap.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Trap_A_Stairs, ObjectType::GeneralObjects, "../Resources/Trap_A_Stairs.txt", L"..\\Resources\\Texture\\Stage2\\Trap.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Column_BB_6m, ObjectType::GeneralObjects, "../Resources/Column_BB_6m.txt", L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_1m, ObjectType::GeneralObjects, "../Resources/Railings_A_1m.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_2m, ObjectType::GeneralObjects, "../Resources/Railings_A_2m.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_4m, ObjectType::GeneralObjects, "../Resources/Railings_A_4m.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_Turn_L_In, ObjectType::GeneralObjects, "../Resources/Railings_A_Turn_L_In.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_Turn_L_Out, ObjectType::GeneralObjects, "../Resources/Railings_A_Turn_L_Out.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Beam_B_4m, ObjectType::GeneralObjects, "../Resources/Beam_B_4m.txt", L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Column_A_2m, ObjectType::GeneralObjects, "../Resources/Column_A_2m.txt", L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Column_B_6m, ObjectType::GeneralObjects, "../Resources/Column_B_6m.txt", L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Console_B, ObjectType::GeneralObjects, "../Resources/Console_B.txt", L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(FireStair_Base, ObjectType::GeneralObjects, "../Resources/FireStair_Base.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(FireStair_Cover, ObjectType::GeneralObjects, "../Resources/FireStair_Cover.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(FireStair_EndTop, ObjectType::GeneralObjects, "../Resources/FireStair_EndTop.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_A_1m, ObjectType::GeneralObjects, "../Resources/Tube_Line_A_1m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_A_2m, ObjectType::GeneralObjects, "../Resources/Tube_Line_A_2m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_A_4m, ObjectType::GeneralObjects, "../Resources/Tube_Line_A_4m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_A_6m, ObjectType::GeneralObjects, "../Resources/Tube_Line_A_6m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_B_1m, ObjectType::GeneralObjects, "../Resources/Tube_Line_B_1m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_B_2m, ObjectType::GeneralObjects, "../Resources/Tube_Line_B_2m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_B_4m, ObjectType::GeneralObjects, "../Resources/Tube_Line_B_4m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_B_6m, ObjectType::GeneralObjects, "../Resources/Tube_Line_B_6m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Turn_L_A, ObjectType::GeneralObjects, "../Resources/Tube_Turn_L_A.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Turn_L_B, ObjectType::GeneralObjects, "../Resources/Tube_Turn_L_B.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Door_4m_B, ObjectType::GeneralObjects, "../Resources/Wall_Door_4m_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_2m_B, ObjectType::GeneralObjects, "../Resources/Wall_Line_2m_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_2m_D, ObjectType::GeneralObjects, "../Resources/Wall_Line_2m_D.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_2m_С, ObjectType::GeneralObjects, "../Resources/Wall_Line_2m_С.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_4m_B, ObjectType::GeneralObjects, "../Resources/Wall_Line_4m_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_4m_D, ObjectType::GeneralObjects, "../Resources/Wall_Line_4m_D.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_4m_С, ObjectType::GeneralObjects, "../Resources/Wall_Line_4m_С.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_In_A, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_In_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_In_B, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_In_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_In_D, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_In_D.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_Out_B, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_Out_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_Out_D, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_Out_D.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_Out_С, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_Out_С.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Win_4m_B, ObjectType::GeneralObjects, "../Resources/Wall_Win_4m_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Win_4m_C, ObjectType::GeneralObjects, "../Resources/Wall_Win_4m_C.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+
+		ImportMapdata("../Resources/MapData2.txt", _map_data2);
+		ImportCollisionObjectsData("../Resources/CollisionMapData2.txt", bounding_boxes2);
+
+		boss2Skill._tex._srvHandle = boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		boss2_skill_circle._tex._srvHandle = boss2_skill_circle._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
+		boss_obj._transform.y += 1.f;
+	}
+		break;
+	case 3:
+		boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
+		boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
+		boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
+		boss2.Make_SRV();
+		boss2.CreatePSO();
+
+		InitMeshAsset(floor, ObjectType::GeneralObjects, "../Resources/Floor.txt", L"..\\Resources\\Texture\\Floor.jpg", L"..\\Bricks.hlsl");
+		InitMeshAsset(Grid_Metal_tile, ObjectType::GeneralObjects, "../Resources/Grid_Metal_tile.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+		InitMeshAsset(Plate_mettal_wall_HQ__2_, ObjectType::GeneralObjects, "../Resources/Plate_mettal_wall_HQ__2_.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+		InitMeshAsset(Cube, ObjectType::GeneralObjects, "../Resources/Cube.txt", L"..\\Resources\\Texture\\mettile1_diff.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Grid_Metal_door, ObjectType::GeneralObjects, "../Resources/Grid_Metal_door.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
+
+		InitMeshAsset(Column_BB_6m, ObjectType::GeneralObjects, "../Resources/Column_BB_6m.txt", L"..\\Resources\\Texture\\Stage2\\ColumnAndBeam.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_1m, ObjectType::GeneralObjects, "../Resources/Railings_A_1m.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_4m, ObjectType::GeneralObjects, "../Resources/Railings_A_4m.txt", L"..\\Resources\\Texture\\Stage2\\RailingsAndFireStair.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Trap_A_2x2m, ObjectType::GeneralObjects, "../Resources/Trap_A_2x2m.txt", L"..\\Resources\\Texture\\Stage2\\Trap.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Line_B_1m, ObjectType::GeneralObjects, "../Resources/Tube_Line_B_1m.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Tube_Turn_L_B, ObjectType::GeneralObjects, "../Resources/Tube_Turn_L_B.txt", L"..\\Resources\\Texture\\Stage2\\Tubes.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Line_4m_A, ObjectType::GeneralObjects, "../Resources/Wall_Line_4m_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
+
+		InitMeshAsset(Ferm_B_6m, ObjectType::GeneralObjects, "../Resources/Ferm_B_6m.txt", L"..\\Resources\\Texture\\Stage3\\ferm_Karkas.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Floor_Cross_A, ObjectType::GeneralObjects, "../Resources/Floor_Cross_A.txt", L"..\\Resources\\Texture\\Stage3\\Floor_Cross_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Floor_O_4x4m, ObjectType::GeneralObjects, "../Resources/Floor_O_4x4m.txt", L"..\\Resources\\Texture\\Stage3\\Floor_O_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_4m_Block_2m, ObjectType::GeneralObjects, "../Resources/Railings_A_4m_Block_2m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_4m_Col_Mid_2m, ObjectType::GeneralObjects, "../Resources/Railings_A_4m_Col_Mid_2m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_4m_Col_Top, ObjectType::GeneralObjects, "../Resources/Railings_A_4m_Col_Top.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_4m_Rama_4m, ObjectType::GeneralObjects, "../Resources/Railings_A_4m_Rama_4m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_CornerIn, ObjectType::GeneralObjects, "../Resources/Railings_A_CornerIn.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Railings_A_TurnL_4m, ObjectType::GeneralObjects, "../Resources/Railings_A_TurnL_4m.txt", L"..\\Resources\\Texture\\Stage3\\Railings_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Stairs_A_Rama_Beam_1m, ObjectType::GeneralObjects, "../Resources/Stairs_A_Rama_Beam_1m.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Stairs_A_Rama_Beam_2m, ObjectType::GeneralObjects, "../Resources/Stairs_A_Rama_Beam_2m.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Stairs_A_Rama_Beam_4m, ObjectType::GeneralObjects, "../Resources/Stairs_A_Rama_Beam_4m.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Stairs_A_Rama_Low, ObjectType::GeneralObjects, "../Resources/Stairs_A_Rama_Low.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Stairs_A_Rama_Mid, ObjectType::GeneralObjects, "../Resources/Stairs_A_Rama_Mid.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Stairs_A_TrapConnector, ObjectType::GeneralObjects, "../Resources/Stairs_A_TrapConnector.txt", L"..\\Resources\\Texture\\Stage3\\Stairs_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Sup_Column_Base, ObjectType::GeneralObjects, "../Resources/Sup_Column_Base.txt", L"..\\Resources\\Texture\\Stage3\\Support_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Sup_Floor_O_4x2m_Block_2m, ObjectType::GeneralObjects, "../Resources/Sup_Floor_O_4x2m_Block_2m.txt", L"..\\Resources\\Texture\\Stage3\\Support_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Sup_Wall_O_2m, ObjectType::GeneralObjects, "../Resources/Sup_Wall_O_2m.txt", L"..\\Resources\\Texture\\Stage3\\Support_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Trap_4x2m, ObjectType::GeneralObjects, "../Resources/Trap_4x2m.txt", L"..\\Resources\\Texture\\Stage3\\Trap_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Trap_4x4m, ObjectType::GeneralObjects, "../Resources/Trap_4x4m.txt", L"..\\Resources\\Texture\\Stage3\\Trap_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_I_4m, ObjectType::GeneralObjects, "../Resources/Wall_I_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_4m.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_I_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_I_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_Door.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_I_4m_TurnIn, ObjectType::GeneralObjects, "../Resources/Wall_I_4m_TurnIn.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_4m_TurnIn.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_O_4m, ObjectType::GeneralObjects, "../Resources/Wall_O_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_O_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
+
+		ImportMapdata("../Resources/MapData3.txt", _map_data3);
+		ImportCollisionObjectsData("../Resources/CollisionMapData3.txt", bounding_boxes3);
+
+		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
+		boss_obj._transform.y += 1.f;
+		break;
+	default:
+		break;
 	}
 
 	for (int i = 0; i < PLAYERMAX; ++i)
@@ -600,24 +388,13 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		
 			npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
 			npcArr[i]._transform.y += 0.2f;
-		
 	}
-	boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
-	boss_obj._transform.y += 1.f;
 
 	for (int i = 0; i < KEYMAX; ++i) {
 		key_data[i]._transform = XMFLOAT4(180.f, 0.f, -240.f, 1.f);
 		key_data[i]._key = 0;
 		key_data[i]._on = true;
 	}
-	
-
-	ImportMapdata("../Resources/MapData1.txt", _map_data);
-	ImportMapdata("../Resources/MapData2.txt", _map_data2);
-	ImportMapdata("../Resources/MapData3.txt", _map_data3);
-	ImportCollisionObjectsData("../Resources/CollisionMapData1.txt", bounding_boxes);
-	ImportCollisionObjectsData("../Resources/CollisionMapData2.txt", bounding_boxes2);
-	ImportCollisionObjectsData("../Resources/CollisionMapData3.txt", bounding_boxes3);
 	
 	test.Center = XMFLOAT3(170.f, 1.f, -240.f);
 	test.Extents = XMFLOAT3(1.f, 1.f, 1.f);
@@ -631,22 +408,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	testCharacter2.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
 	XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 
-	boss_obj.boss2_skill_vec.reserve(100);
-
-	// boss1 bounding box
-	for (int i = 0; i < 8; ++i)
-	{
-		boss_col[i].Extents = XMFLOAT3(0.5f, 2.f, 0.5f);
-		boss_col[i].Center = XMFLOAT3(boss_obj._transform.x, boss_obj._transform.y, boss_obj._transform.z);
-	}
-
 	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
 		boss_obj._transform.y,
 		boss_obj._transform.z);
 	boss_collision.Extents = XMFLOAT3(2.f, 1.5f, 3.f);
 
-	boss2Skill._tex._srvHandle = boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-	boss2_skill_circle._tex._srvHandle = boss2_skill_circle._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+	boss_obj.boss2_skill_vec.reserve(100);
 
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
@@ -763,39 +530,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		boss_obj._transform.z);
 	XMVECTOR v{ 0, 1, 0, 0 };
 	XMStoreFloat4(&boss_collision.Orientation, XMQuaternionRotationNormal(v, boss_obj._degree * XM_PI / 180.f));
-
-	float r = 6.f;
-	boss_col[0].Center = XMFLOAT3(boss_obj._transform.x + (r + 0.8f) * cosf((-boss_obj._degree - 60.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + (r + 0.8f) * sinf((-boss_obj._degree - 60.f) * XM_PI / 180.f));
-
-	boss_col[1].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 35.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 35.f) * XM_PI / 180.f));
-
-	boss_col[2].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 15.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 15.f) * XM_PI / 180.f));
-
-	boss_col[3].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree + 15.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + r * sinf((-boss_obj._degree + 15.f) * XM_PI / 180.f));
-
-	boss_col[4].Center = XMFLOAT3(boss_obj._transform.x + (r + 0.8f) * cosf((-boss_obj._degree - 120.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + (r + 0.8f) * sinf((-boss_obj._degree - 120.f) * XM_PI / 180.f));
-
-	boss_col[5].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 145.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 145.f) * XM_PI / 180.f));
-
-	boss_col[6].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 165.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 165.f) * XM_PI / 180.f));
-
-	boss_col[7].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 195.f) * XM_PI / 180.f)
-		, boss_obj._transform.y + 1.f
-		, boss_obj._transform.z + r * sinf((-boss_obj._degree - 195.f) * XM_PI / 180.f));
 
 	// 파티클 동기화
 	for (OBJECT& player : playerArr)
@@ -954,24 +688,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
 		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
-			/*if ((playerArr[i]._animation_state == AnimationOrder::Attack || playerArr[i]._animation_state == AnimationOrder::Skill)
-				&& playerArr[i]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[i]._animation_state) * 0.5f
-				&& playerArr[i]._can_attack) {
-
-				playerArr[i]._can_attack = false;
-
-				CS_COLLISION_PACKET p;
-				p.size = sizeof(p);
-				p.type = CS_COLLISION;
-				p.attack_type = playerArr[i]._animation_state-2;
-				p.attacker_id = playerArr[i]._my_server_id;
-				p.target_id = boss_obj._my_server_id;
-				networkPtr->send_packet(&p);
-
-				cout << "player" << i << " hp : " << boss_obj._hp << endl;
-				cout << "BOSS hp : " << boss_obj._hp << endl;
-				cout << "BOSS particle : " << boss_obj._particle_count << endl;
-			}*/
 			if (boss_obj._animation_state == AnimationOrder::Attack
 				&& boss_obj._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(boss_obj._animation_state) * 0.5f
 				&& boss_obj._can_attack) {
@@ -1017,34 +733,85 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}		
 	}
 
-	// 기둥 충돌처리
-	for (int i = 0; i < CubeMax; ++i) {
-		if (playerArr[networkPtr->myClientId]._on == true && pillars_data[i]._on == true)
-		{
-			if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
-			{
-				if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
-					&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
-					&& playerArr[networkPtr->myClientId]._can_attack3)
-				{
-					playerArr[networkPtr->myClientId]._can_attack3 = false;
-					--pillars_data[i]._pillar_count;
-					cout << "pillar : " << pillars_data[i]._pillar_count << endl;
+	switch (Scene_num)
+	{
+	case 0:
+		break;
+	case 1:
+	{
+		// 보스 다리 충돌처리
+		float r = 6.f;
+		boss_col[0].Center = XMFLOAT3(boss_obj._transform.x + (r + 0.8f) * cosf((-boss_obj._degree - 60.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + (r + 0.8f) * sinf((-boss_obj._degree - 60.f) * XM_PI / 180.f));
 
-					if (pillars_data[i]._pillar_count == 0) {
-						CS_OBJECT_COLLISION_PACKET p;
-						p.size = sizeof(p);
-						p.type = CS_OBJECT_COLLISION;
-						p.target_id = i;
-						p.object_type = 0;
-						networkPtr->send_packet(&p);
-					}					
+		boss_col[1].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 35.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + r * sinf((-boss_obj._degree - 35.f) * XM_PI / 180.f));
+
+		boss_col[2].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 15.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + r * sinf((-boss_obj._degree - 15.f) * XM_PI / 180.f));
+
+		boss_col[3].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree + 15.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + r * sinf((-boss_obj._degree + 15.f) * XM_PI / 180.f));
+
+		boss_col[4].Center = XMFLOAT3(boss_obj._transform.x + (r + 0.8f) * cosf((-boss_obj._degree - 120.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + (r + 0.8f) * sinf((-boss_obj._degree - 120.f) * XM_PI / 180.f));
+
+		boss_col[5].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 145.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + r * sinf((-boss_obj._degree - 145.f) * XM_PI / 180.f));
+
+		boss_col[6].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 165.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + r * sinf((-boss_obj._degree - 165.f) * XM_PI / 180.f));
+
+		boss_col[7].Center = XMFLOAT3(boss_obj._transform.x + r * cosf((-boss_obj._degree - 195.f) * XM_PI / 180.f)
+			, boss_obj._transform.y + 1.f
+			, boss_obj._transform.z + r * sinf((-boss_obj._degree - 195.f) * XM_PI / 180.f));
+
+		// 기둥 충돌처리
+		for (int i = 0; i < CubeMax; ++i)
+		{
+			if (playerArr[networkPtr->myClientId]._on == true && pillars_data[i]._on == true)
+			{
+				if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
+				{
+					if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
+						&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
+						&& playerArr[networkPtr->myClientId]._can_attack3)
+					{
+						playerArr[networkPtr->myClientId]._can_attack3 = false;
+						--pillars_data[i]._pillar_count;
+						cout << "pillar : " << pillars_data[i]._pillar_count << endl;
+
+						if (pillars_data[i]._pillar_count == 0) {
+							CS_OBJECT_COLLISION_PACKET p;
+							p.size = sizeof(p);
+							p.type = CS_OBJECT_COLLISION;
+							p.target_id = i;
+							p.object_type = 0;
+							networkPtr->send_packet(&p);
+						}
+					}
 				}
 			}
 		}
+		break;
+	}
+	case 2:
+		break;
+	case 3:
+		break;
+	default:
+		break;
 	}
 	
-	if (playerArr[networkPtr->myClientId]._hp <= 0.f) {
+	if (playerArr[networkPtr->myClientId]._hp <= 0.f)
+	{
 		playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Death;
 
 		CS_MOVE_PACKET p;
@@ -1592,25 +1359,150 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
 		}*/
 
-		// Boss
 		switch (Scene_num)
 		{
 		case 0:
-		case 1:
+			Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
+
 			if (boss_obj._on == true)
 			{
 				XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
 				float boss_default_rot_x = -XM_PI * 0.5f;
-				Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x);
+				Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x, Scene_num);
+			}
+			break;
+		case 1:
+			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
+
+			if (boss_obj._on == true)
+			{
+				XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
+				float boss_default_rot_x = -XM_PI * 0.5f;
+				Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x, Scene_num);
+			}
+
+			// 머리 위 색깔 패턴
+			cmdList->SetPipelineState(color_pattern._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &color_pattern._vertexBufferView);
+			cmdList->IASetIndexBuffer(&color_pattern._indexBufferView);
+			for (int i = 0; i < PLAYERMAX; ++i)
+			{
+				if (playerArr[i]._on == true)
+				{
+					if (playerArr[i]._player_color == 0)
+					{
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.001f, _scale * 0.001f, _scale * 0.001f)
+							* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f * _scale / 100.f),
+								sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
+							* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
+							* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f * _scale / 100.f, playerArr[i]._transform.z));
+						XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+						XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+						{
+							D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+							descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+							color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+							descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
+						}
+
+						descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+						cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
+					}
+				}
+			}
+
+			// pillar
+			for (int i = 0; i < CubeMax; ++i)
+			{
+				if (pillars_data[i]._on == true)
+				{
+					XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					switch (pillars_data[i]._pillar_count)
+					{
+					case 5:
+						pillars_data[i]._animation_time_pos = 0.f;
+						break;
+					case 4:
+						pillars_data[i]._animation_time_pos = 0.025f;
+						break;
+					case 3:
+						pillars_data[i]._animation_time_pos = 0.050f;
+						break;
+					case 2:
+						pillars_data[i]._animation_time_pos = 0.075f;
+						break;
+					case 1:
+						pillars_data[i]._animation_time_pos = 0.100f;
+						break;
+					default:
+						pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
+						break;
+					}
+					for (MESH_ASSET& piece_of_pillar : pillar)
+					{
+						float scale = 3.f;
+
+						piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
+
+						cmdList->SetPipelineState(piece_of_pillar._pipelineState.Get());
+						cmdList->IASetVertexBuffers(0, 1, &piece_of_pillar._vertexBufferView);
+						cmdList->IASetIndexBuffer(&piece_of_pillar._indexBufferView);
+
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
+							* XMMatrixRotationQuaternion(Q)
+							* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0] * scale, pillars_data[i]._transform.y + P.m128_f32[1] * scale, pillars_data[i]._transform.z + P.m128_f32[2] * scale));
+						XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+						XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+						//흰
+						if (pillars_data[i]._pillar_color == 0)
+							_transform.color = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+						else if (pillars_data[i]._pillar_color == 1) // 파
+							_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
+						else if (pillars_data[i]._pillar_color == 2) // 초
+							_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
+						else if (pillars_data[i]._pillar_color == 3) // 빨
+							_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+						else
+							_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
+
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						piece_of_pillar._tex._srvHandle = piece_of_pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+						descHeapPtr->CopyDescriptor(piece_of_pillar._tex._srvHandle, 5, devicePtr);
+
+						descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+						cmdList->DrawIndexedInstanced(piece_of_pillar._indexCount, 1, 0, 0, 0);
+					}
+				}
 			}
 			break;
 		case 2:
+			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
+
 			if (boss_obj._on == true)
 			{
 				XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
 				float boss2_default_rot_x = 0.f;
-				Boss(cmdList, boss2, i_now_render_index, boss2_scale, boss2_default_rot_x);
+				Boss(cmdList, boss2, i_now_render_index, boss2_scale, boss2_default_rot_x, Scene_num);
 			}
+
+			// boss2Skill
+			for (const Boss2SkillData& boss2_skill : boss_obj.boss2_skill_vec)
+			{
+				XMFLOAT3 boss2_skill_scale = XMFLOAT3(boss2_skill.scale, boss2_skill.scale, boss2_skill.scale);
+				Boss2Skill(cmdList, boss2Skill, i_now_render_index, boss2_skill_time[0], boss2_skill.pos, boss2_skill_scale);
+			}
+
+			//XMFLOAT3 boss2_skill_pos2 = XMFLOAT3(167.f, 0.01f, -240.f);
+			//XMFLOAT3 boss2_skill_scale2 = XMFLOAT3(1.f, 1.f, 1.f);
+			//Boss2Skill(cmdList, boss2_skill_circle, i_now_render_index, boss2_skill_time[1], boss2_skill_pos2, boss2_skill_scale2);
+			break;
+		case 3:
+			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
 			break;
 		default:
 			break;
@@ -1628,17 +1520,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 			}
 		}
-
-		// boss2Skill
-		for (const Boss2SkillData& boss2_skill : boss_obj.boss2_skill_vec)
-		{
-			XMFLOAT3 boss2_skill_scale = XMFLOAT3(boss2_skill.scale, boss2_skill.scale, boss2_skill.scale);
-			Boss2Skill(cmdList, boss2Skill, i_now_render_index, boss2_skill_time[0], boss2_skill.pos, boss2_skill_scale);
-		}
-
-		//XMFLOAT3 boss2_skill_pos2 = XMFLOAT3(167.f, 0.01f, -240.f);
-		//XMFLOAT3 boss2_skill_scale2 = XMFLOAT3(1.f, 1.f, 1.f);
-		//Boss2Skill(cmdList, boss2_skill_circle, i_now_render_index, boss2_skill_time[1], boss2_skill_pos2, boss2_skill_scale2);
 
 		//
 		cmdList->SetPipelineState(npc_asset._pipelineState.Get());
@@ -1712,57 +1593,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 
-		// 머리 위 색깔 패턴
-		cmdList->SetPipelineState(color_pattern._pipelineState.Get());
-		cmdList->IASetVertexBuffers(0, 1, &color_pattern._vertexBufferView);
-		cmdList->IASetIndexBuffer(&color_pattern._indexBufferView);
-		for (int i = 0; i < PLAYERMAX; ++i)
-		{
-			if (playerArr[i]._on == true)
-			{
-				if (playerArr[i]._player_color == 0)
-				{
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.001f, _scale * 0.001f, _scale * 0.001f)
-						* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (playerArr[i]._transform.y + 1.75f * _scale / 100.f),
-							sqrt(pow(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z, 2))))
-						* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - playerArr[i]._transform.x, cameraPtr->pos.m128_f32[2] - playerArr[i]._transform.z))
-						* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y + 1.75f * _scale / 100.f, playerArr[i]._transform.z));
-					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-					{
-						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-
-						color_pattern._tex._srvHandle = color_pattern._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-
-						descHeapPtr->CopyDescriptor(color_pattern._tex._srvHandle, 5, devicePtr);
-					}
-
-					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdList->DrawIndexedInstanced(color_pattern._indexCount, 1, 0, 0, 0);
-				}
-			}
-		}
-
-		// map
-		switch (Scene_num) {
-		case 0:
-			Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
-			break;
-		case 1:
-			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
-			break;
-		case 2:
-			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
-			break;
-		case 3:
-			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
-			break;
-		default:
-			Map(cmdList, stage0_map, map_asset, i_now_render_index, Scene_num);
-			break;
-		}
+		// key
 		for (int i = 0; i < KEYMAX; ++i) {
 			if (key_data[i]._on == true)
 			{
@@ -1799,72 +1630,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 				cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
-			}
-		}
-
-		// pillar
-		for (int i = 0; i < CubeMax; ++i)
-		{
-			if (pillars_data[i]._on == true)
-			{
-				XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				switch (pillars_data[i]._pillar_count)
-				{
-				case 5:
-					pillars_data[i]._animation_time_pos = 0.f;
-					break;
-				case 4:
-					pillars_data[i]._animation_time_pos = 0.025f;
-					break;
-				case 3:
-					pillars_data[i]._animation_time_pos = 0.050f;
-					break;
-				case 2:
-					pillars_data[i]._animation_time_pos = 0.075f;
-					break;
-				case 1:
-					pillars_data[i]._animation_time_pos = 0.100f;
-					break;
-				default:
-					pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
-					break;
-				}
-				for (MESH_ASSET& piece_of_pillar : pillar)
-				{
-					float scale = 3.f;
-
-					piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
-
-					cmdList->SetPipelineState(piece_of_pillar._pipelineState.Get());
-					cmdList->IASetVertexBuffers(0, 1, &piece_of_pillar._vertexBufferView);
-					cmdList->IASetIndexBuffer(&piece_of_pillar._indexBufferView);
-
-					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
-						* XMMatrixRotationQuaternion(Q)
-						* XMMatrixTranslation(pillars_data[i]._transform.x + P.m128_f32[0] * scale, pillars_data[i]._transform.y + P.m128_f32[1] * scale, pillars_data[i]._transform.z + P.m128_f32[2] * scale));
-					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-					//흰
-					if (pillars_data[i]._pillar_color == 0)
-						_transform.color = XMVectorSet(1.f, 1.f, 1.f, 1.f);
-					else if (pillars_data[i]._pillar_color == 1) // 파
-						_transform.color = XMVectorSet(0.f, 0.f, 1.f, 1.f);
-					else if (pillars_data[i]._pillar_color == 2) // 초
-						_transform.color = XMVectorSet(0.f, 1.f, 0.f, 1.f);
-					else if (pillars_data[i]._pillar_color == 3) // 빨
-						_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
-					else
-						_transform.color = XMVectorSet(1.f, 0.f, 0.f, 1.f);
-
-					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-					piece_of_pillar._tex._srvHandle = piece_of_pillar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-					descHeapPtr->CopyDescriptor(piece_of_pillar._tex._srvHandle, 5, devicePtr);
-
-					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdList->DrawIndexedInstanced(piece_of_pillar._indexCount, 1, 0, 0, 0);
-				}
 			}
 		}
 

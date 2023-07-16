@@ -238,7 +238,7 @@ private:
 	D3D12_RECT		_scissorRect;
 
 public:
-	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x) {
+	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x, int scene_num) {
 		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0);
 
 		cmdList->SetPipelineState(boss._pipelineState.Get());
@@ -259,29 +259,46 @@ public:
 
 		int sum = 0;
 		int count = 0;
-		for (Subset i : boss._animationPtr->mSubsets)
+		if (scene_num == 1)
 		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
-			sum += i.FaceCount * 3;
+			for (Subset i : boss._animationPtr->mSubsets)
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+				sum += i.FaceCount * 3;
 
-			if (count == 2) { // eye, 조건에 boss별 type추가 필요
-				boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				boss._tex._srvHandle.Offset(3 + boss_obj._eye_color, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-			}
-			else if (count == 3) { // wire
-				boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-				boss._tex._srvHandle.Offset(8, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-			}
-			else {
-				boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-			}
+				if (count == 2) { // eye, 조건에 boss별 type추가 필요
+					boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					boss._tex._srvHandle.Offset(3 + boss_obj._eye_color, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				}
+				else if (count == 3) { // wire
+					boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					boss._tex._srvHandle.Offset(8, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				}
+				else {
+					boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+				}
 
-			++count;
+				++count;
+			}
 		}
+		else
+		{
+			for (Subset i : boss._animationPtr->mSubsets)
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+				sum += i.FaceCount * 3;
+				//boss._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+			}
+		}
+		
 	}
 
 	void Map(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& floor, MESH_ASSET& map_asset, const int i_now_render_index, int stage)
@@ -796,12 +813,12 @@ public:
 		cmdList->DrawIndexedInstanced(boss2Skill._indexCount, 1, 0, 0, 0);
 	}
 
-	void InitMeshAsset(MESH_ASSET& mesh_asset, const char* mesh_path, const WCHAR* tex_path)
+	void InitMeshAsset(MESH_ASSET& mesh_asset, ObjectType obj_type, const char* mesh_path, const WCHAR* tex_path, const WCHAR* shader_path)
 	{
 		mesh_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		mesh_asset.Init(mesh_path, ObjectType::GeneralObjects);
+		mesh_asset.Init(mesh_path, obj_type);
 		mesh_asset.Add_texture(tex_path);
 		mesh_asset.Make_SRV();
-		mesh_asset.CreatePSO(L"..\\Bricks.hlsl");
+		mesh_asset.CreatePSO(shader_path);
 	}
 };
