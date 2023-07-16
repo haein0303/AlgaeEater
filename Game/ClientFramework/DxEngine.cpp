@@ -369,7 +369,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_O_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
-		ImportCollisionObjectsData("../Resources/CollisionMapData3.txt", bounding_boxes3);
+		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
 
 		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
