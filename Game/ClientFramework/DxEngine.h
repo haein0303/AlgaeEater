@@ -76,9 +76,9 @@ public:
 
 	// 파티클 데이터
 	ParticleData particles[PARTICLE_NUM];
-	float coefficient_of_restitution = 0.3f;	// 반발계수
+	float coefficient_of_restitution = 0.7f;	// 반발계수
 	float friction_coefficient = 0.9f;			// 마찰계수
-	float gravitational_acceleration = -5.f;	// 중력가속도
+	float gravitational_acceleration = -4.f;	// 중력가속도
 
 	// 플레이어와 npc 관련
 	MESH_ASSET player_AKI_Body_asset;

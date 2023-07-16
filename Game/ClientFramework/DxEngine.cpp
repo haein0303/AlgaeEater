@@ -493,7 +493,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		testCharacter.Center = XMFLOAT3(playerArr[0]._transform.x + 0.5f * cosf((-playerArr[0]._degree + 90.f) * XM_PI / 180.f),
 			playerArr[0]._transform.y + 0.5f,
 			playerArr[0]._transform.z + 0.5f * sinf((-playerArr[0]._degree + 90.f) * XM_PI / 180.f));
-		testCharacter.Extents = XMFLOAT3(1.f, 0.5f, 0.3f);
+		testCharacter.Extents = XMFLOAT3(1.f, 1.f, 1.f);
 		XMVECTOR v{ 0, 1, 0, 0 };
 		XMStoreFloat4(&testCharacter.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 	}
@@ -509,7 +509,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		testCharacter2.Center = XMFLOAT3(playerArr[0]._transform.x,
 			playerArr[0]._transform.y + 0.5f,
 			playerArr[0]._transform.z);
-		testCharacter2.Extents = XMFLOAT3(10.f, 1.f, 10.f);
+		testCharacter2.Extents = XMFLOAT3(3.f, 1.f, 3.f);
 		XMVECTOR v{ 0, 1, 0, 0 };
 		XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 	}
@@ -1675,7 +1675,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 						particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 						particles[index].curTime = 0.0f;
 						particles[index].pos = XMVectorSet(npcArr[i]._transform.x, npcArr[i]._transform.y + 0.3f, npcArr[i]._transform.z, 1.f);
-						particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+						particles[index].moveSpeed = (float)(rand() % 101) / 100 + 2.f; // 2~3
 						particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 						XMVector3Normalize(particles[index].dir);
 						particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
@@ -1700,7 +1700,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 						particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 						particles[index].curTime = 0.0f;
 						particles[index].pos = XMVectorSet(npcArr[i]._transform.x + 0.5f, npcArr[i]._transform.y + 2.f, npcArr[i]._transform.z, 1.f);
-						particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+						particles[index].moveSpeed = (float)(rand() % 101) / 100 + 2.f; // 2~3
 						particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 						XMVector3Normalize(particles[index].dir);
 						particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
@@ -1729,7 +1729,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 					particles[index].curTime = 0.0f;
 					particles[index].pos = XMVectorSet(boss_obj._transform.x, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
-					particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+					particles[index].moveSpeed = (float)(rand() % 101) / 100 + 2.f; // 2~3
 					particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 					XMVector3Normalize(particles[index].dir);
 					particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
@@ -1754,7 +1754,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 					particles[index].curTime = 0.0f;
 					particles[index].pos = XMVectorSet(boss_obj._transform.x + 0.5f, boss_obj._transform.y + 2.f, boss_obj._transform.z, 1.f);
-					particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+					particles[index].moveSpeed = (float)(rand() % 101) / 100 + 2.f; // 2~3
 					particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 					XMVector3Normalize(particles[index].dir);
 					particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,
@@ -1782,7 +1782,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 						particles[index].lifeTime = (float)(rand() % 101) / 1000.f + 0.3f; // 0.3~0.4
 						particles[index].curTime = 0.0f;
 						particles[index].pos = XMVectorSet(boss_col[i].Center.x, boss_col[i].Center.y + 1.f, boss_col[i].Center.z, 1.f);
-						particles[index].moveSpeed = (float)(rand() % 101) / 50 + 2.f; // 2~4
+						particles[index].moveSpeed = (float)(rand() % 101) / 100 + 2.f; // 2~3
 						particles[index].dir = XMVectorSet(((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, ((float)(rand() % 101) / 100 - 0.5f) * 2, 1.0f);
 						XMVector3Normalize(particles[index].dir);
 						particles[index].velocity = XMVectorSet(particles[index].dir.m128_f32[0] * particles[index].moveSpeed,

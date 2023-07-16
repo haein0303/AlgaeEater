@@ -243,7 +243,7 @@ struct ParticleData {
 	float lifeTime = 0.f;
 	float curTime = 0.f;
 	XMVECTOR velocity = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-	XMVECTOR bounding_box_half_size = XMVectorSet(0.042f, 0.042f, 0.042f, 0.f);
+	XMVECTOR bounding_box_half_size = XMVectorSet(0.042f / 3.f, 0.042f / 3.f, 0.042f / 3.f, 0.f);
 };
 
 // 애니메이션
