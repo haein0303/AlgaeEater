@@ -16,6 +16,56 @@ extern array<KEY, KEY_NUM> keys;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
+class point {
+public:
+	float x;
+	float z;
+};
+
+array<point, 8> STAGE1_MOB_POS;
+
+void stage() {
+	for (int i = 0; i < 8; i++) {
+		switch (i)
+		{
+		case 0:
+			STAGE1_MOB_POS[i].x = 130;
+			STAGE1_MOB_POS[i].z = -220;
+			break;
+		case 1:
+			STAGE1_MOB_POS[i].x = 70;
+			STAGE1_MOB_POS[i].z = -240;
+			break;
+		case 2:
+			STAGE1_MOB_POS[i].x = 0;
+			STAGE1_MOB_POS[i].z = -140;
+			break;
+		case 3:
+			STAGE1_MOB_POS[i].x = 0;
+			STAGE1_MOB_POS[i].z = -100;
+			break;
+		case 4:
+			STAGE1_MOB_POS[i].x = -100;
+			STAGE1_MOB_POS[i].z = -130;
+			break;
+		case 5:
+			STAGE1_MOB_POS[i].x = -125;
+			STAGE1_MOB_POS[i].z = -210;
+			break;
+		case 6:
+			STAGE1_MOB_POS[i].x = -30;
+			STAGE1_MOB_POS[i].z = 10;
+			break;
+		case 7:
+			STAGE1_MOB_POS[i].x = -30;
+			STAGE1_MOB_POS[i].z = 50;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 int get_new_client_id()
 {
 	for (int i = 0; i < MAX_USER; ++i) {
@@ -99,6 +149,9 @@ void process_packet(int c_id, char* packet)
 			pl._sl.unlock();
 		}
 
+		std::random_device rd;
+		std::uniform_int_distribution<int> dis(-10, 10);
+
 		// npc 세팅 부분
 		if (clients[c_id]._Room_Num != 999) {
 			if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1].Lua_on == false) {
@@ -108,52 +161,50 @@ void process_packet(int c_id, char* packet)
 					case 0: // 테스트 스테이지
 						break;
 					case 1: {// 스테이지 1
-
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_1;
 						}
-
 						if ((i - MAX_USER) % ROOM_NPC < 3) {
-							clients[i].x = 130;
-							clients[i].start_x = 130;
-							clients[i].z = -240 + (i - MAX_USER) % ROOM_NPC * 10;
-							clients[i].start_z = -240 + (i - MAX_USER) % ROOM_NPC * 10;
+							clients[i].x = STAGE1_MOB_POS[0].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE1_MOB_POS[0].z + dis(rd);
+							clients[i].start_z = clients[i].z;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 2 && (i - MAX_USER) % ROOM_NPC < 6) {
-							clients[i].x = 100;
-							clients[i].start_x = 100;
-							clients[i].z = -270 + (i - MAX_USER) % ROOM_NPC * 10;
-							clients[i].start_z = -270 + (i - MAX_USER) % ROOM_NPC * 10;
+						else if ((i - MAX_USER) % ROOM_NPC >= 3 && (i - MAX_USER) % ROOM_NPC < 6) {
+							clients[i].x = STAGE1_MOB_POS[1].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE1_MOB_POS[1].z + dis(rd);
+							clients[i].start_z = clients[i].z;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 5 && (i - MAX_USER) % ROOM_NPC < 9) {
-							clients[i].x = 70;
-							clients[i].start_x = 70;
-							clients[i].z = -300 + (i - MAX_USER) % ROOM_NPC * 20;
-							clients[i].start_z = -300 + (i - MAX_USER) % ROOM_NPC * 20;
+						else if ((i - MAX_USER) % ROOM_NPC >= 6 && (i - MAX_USER) % ROOM_NPC < 9) {
+							clients[i].x = STAGE1_MOB_POS[2].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE1_MOB_POS[2].z + dis(rd);
+							clients[i].start_z = clients[i].z;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 8 && (i - MAX_USER) % ROOM_NPC < 12) {
-							clients[i].x = 0;
-							clients[i].start_x = 0;
-							clients[i].z = -80 - (i - MAX_USER - 8) % ROOM_NPC * 20;
-							clients[i].start_z = -80 - (i - MAX_USER - 8) % ROOM_NPC * 20;
+						else if ((i - MAX_USER) % ROOM_NPC >= 9 && (i - MAX_USER) % ROOM_NPC < 12) {
+							clients[i].x = STAGE1_MOB_POS[3].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE1_MOB_POS[3].z + dis(rd);
+							clients[i].start_z = clients[i].z;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 11 && (i - MAX_USER) % ROOM_NPC < 15) {
-							clients[i].x = 20;
-							clients[i].start_x = 20;
-							clients[i].z = -80 - (i - MAX_USER - 11) % ROOM_NPC * 20;
-							clients[i].start_z = -80 - (i - MAX_USER - 11) % ROOM_NPC * 20;
+						else if ((i - MAX_USER) % ROOM_NPC >= 12 && (i - MAX_USER) % ROOM_NPC < 15) {
+							clients[i].x = STAGE1_MOB_POS[4].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE1_MOB_POS[4].z + dis(rd);
+							clients[i].start_z = clients[i].z;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 14 && (i - MAX_USER) % ROOM_NPC < 18) {
-							clients[i].x = 35;
-							clients[i].start_x = 35;
-							clients[i].z = -80 - (i - MAX_USER - 14) % ROOM_NPC * 20;
-							clients[i].start_z = -80 - (i - MAX_USER - 14) % ROOM_NPC * 20;
+						else if ((i - MAX_USER) % ROOM_NPC >= 15 && (i - MAX_USER) % ROOM_NPC < 18) {
+							clients[i].x = STAGE1_MOB_POS[5].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE1_MOB_POS[5].z + dis(rd);
+							clients[i].start_z = clients[i].z;
 						}
-						else if ((i - MAX_USER) % ROOM_NPC > 17 && (i - MAX_USER) % ROOM_NPC < 19) {
-							clients[i].x = 0;
-							clients[i].start_x = 0;
-							clients[i].z = 0;
-							clients[i].start_z = 0;
+						else if ((i - MAX_USER) % ROOM_NPC >= 18 && (i - MAX_USER) % ROOM_NPC < 19) {
+							clients[i].x = STAGE1_MOB_POS[6].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE1_MOB_POS[6].z + dis(rd);
+							clients[i].start_z = clients[i].z;
 						}
 						else {
 							clients[i].x = -340;

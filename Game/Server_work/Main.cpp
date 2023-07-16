@@ -28,6 +28,7 @@ mutex timer_l;
 
 int main()
 {
+	stage();
 	initialize_key();
 	initialize_cube();
 	initialize_npc();
