@@ -73,7 +73,7 @@ public:
 		dxEngine.cmdQueuePtr->WaitSync();
 	}
 
-	void in_scene(int data) {
+	void in_scene(int data, int char_sel) {
 		dxEngine.Scene_num = data;
 	}
 

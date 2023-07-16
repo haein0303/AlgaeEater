@@ -38,7 +38,7 @@ HWND LOBBY_CLIENT::init(HINSTANCE hInst, int nCmdShow)
 	WndClass.lpszMenuName = NULL;
 	WndClass.lpszClassName = _T("AlgaeEater_lobby");
 	RegisterClass(&WndClass);
-	_hwnd = hwnd = CreateWindow(_T("AlgaeEater_lobby"), _T("AlgaeEater_lobby"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, LobbyWidth, LobbyHeight, NULL, NULL, hInst, NULL);
+	_hwnd = hwnd = CreateWindow(_T("AlgaeEater_lobby"), _T("AlgaeEater_lobby"), WS_OVERLAPPED | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, LobbyWidth, LobbyHeight, NULL, NULL, hInst, NULL);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);	
 
@@ -69,7 +69,7 @@ int LOBBY_CLIENT::connect_server(int port)
 	cout << "TRY CONNECT SERVER" << endl;
 	if (-1 == Lobby_network->ConnectServer(port)) {
 		cout << "SERVER CONNECTED FAIL" << endl;
-		//g_scene_state = SCENE_STATE::LOG_IN;
+		//g_scene_state = SCENE_STATE::READY;
 		g_scene_state = SCENE_STATE::FAIL;
 		return -1;
 	}
@@ -90,6 +90,8 @@ CImage Icon[4];
 CImage i_stage_info[4];
 CImage i_logo;
 CImage i_logo_b;
+CImage i_lobby_ready[2];
+CImage i_lobby_char[2];
 HFONT hFont;
 HFONT title_font;
 
@@ -134,6 +136,9 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	RECT login_id_rc = { 480, 260,800,300 };
 	RECT login_pw_rc = { 480, 370,800,400 };
 
+	RECT ready_btn_rc = { 990, 480, 990 + 256, 480 + 192 };
+	RECT ready_scene_rc = { 740, 80, 740+500, 380 };
+	RECT ready_char_rc = { 150, 100, 300+ 150, 600 + 100 };
 
 	RECT login_bg_rc = { 250,300,780,476 };
 	switch (iMsg)
@@ -147,6 +152,10 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
 		i_login_bg.Load(L"..\\Resources\\Lobby\\title_back_login.png");
 		i_join_bg.Load(L"..\\Resources\\Lobby\\title_join.png");
+		i_lobby_ready[0].Load(L"..\\Resources\\Lobby\\lobby_wait.png");
+		i_lobby_ready[1].Load(L"..\\Resources\\Lobby\\lobby_ready.png");
+		i_lobby_char[0].Load(L"..\\Resources\\Lobby\\lobby_aki.png");
+		i_lobby_char[1].Load(L"..\\Resources\\Lobby\\lobby_mika.png");
 		
 
 		for (int i = 1; i <= 4; ++i) {
@@ -286,7 +295,11 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		case SCENE_STATE::READY:
 			basic_BG.Draw(memDC, 0, 0, 1280, 720);
 
-			i_stage_info[lobby_client._scene_select].Draw(memDC, 990, -40, 250, 250);
+			i_stage_info[lobby_client._scene_select].Draw(memDC, 740, -20, 500, 500);
+
+			i_lobby_ready[lobby_client._ready_state].Draw(memDC, 990, 480, 256, 192);
+
+			i_lobby_char[lobby_client._char_select].Draw(memDC, 150, 100, 300, 600);
 
 			break;
 		}
@@ -332,6 +345,12 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				case VK_F4:
 					lobby_client._scene_select = 0;
 					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
+					break;
+				case VK_F5:
+					g_scene_state = SCENE_STATE::LOG_IN;
+					break;
+				case VK_F6:
+					g_scene_state = SCENE_STATE::READY;
 					break;
 				}
 			}
@@ -439,8 +458,9 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		cout << "X : " << x << " Y : " << y << endl;
-
-		if (g_scene_state == SCENE_STATE::LOG_IN) {
+		switch (g_scene_state) {
+		case SCENE_STATE::LOG_IN:
+		{
 
 			if (onClicK_check(login_button_rc, x, y)) {
 				LCS_LOGIN_PACKET p;
@@ -456,10 +476,10 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				c_pw.erase();
 				g_scene_state = SCENE_STATE::ACOUNT;
 				cout << "조인 클릭" << endl;
-				
+
 			}
-			
-			if(onClicK_check(login_id_rc, x, y)){
+
+			if (onClicK_check(login_id_rc, x, y)) {
 				login_select = 1;
 				ShowCaret(hwnd);
 			}
@@ -471,7 +491,10 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				login_select = 0;
 				HideCaret(hwnd);
 			}
-		}else if (g_scene_state == SCENE_STATE::ACOUNT) {
+		}
+			break;
+		case SCENE_STATE::ACOUNT:
+		{
 
 			if (onClicK_check(join2_button_rc, x, y)) {
 				LCS_JOIN_PACKET p;
@@ -498,6 +521,31 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				login_select = 0;
 				HideCaret(hwnd);
 			}
+		}
+		break;
+		case SCENE_STATE::READY:
+		{
+			if (onClicK_check(ready_btn_rc, x, y)) {
+				if (lobby_client._ready_state) {
+					lobby_client._ready_state = 0;
+				}
+				else {
+					lobby_client._ready_state = 1;
+				}
+			}
+			if (onClicK_check(ready_scene_rc, x, y)) {
+				lobby_client._scene_select = (lobby_client._scene_select + 1) % 4;
+			}
+			
+			if (onClicK_check(ready_char_rc, x, y)) {
+				if (lobby_client._char_select) {
+					lobby_client._char_select = 0;
+				}
+				else {
+					lobby_client._char_select = 1;
+				}
+			}
+		}
 		}
 		cout << "g_scene_state : " << g_scene_state << endl;
 		InvalidateRect(hwnd, NULL, false);

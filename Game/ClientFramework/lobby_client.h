@@ -10,7 +10,9 @@ public:
 	int _is_connected = 0;
 	wchar_t _client_msg[200];
 	wchar_t _state_msg[4][100];
-	int _ready_state = 3;
+	int _ready_state = 0;
+
+	int _char_select = 0;
 	
 	int _scene_select = 1;
 
