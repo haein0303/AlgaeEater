@@ -101,7 +101,12 @@ CImage i_join_bg;
 string c_id;
 string c_pw;
 
+const char* masterid = "admin";
+const char* masterpw = "admin";
 int login_select = 0;
+
+int len = 0;
+char str[11];
 
 
 
@@ -360,20 +365,44 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				switch (wParam) {
 				case VK_BACK:
 					if (login_select == 1) {
-						if (c_id.length() > 1) {
+						if (c_id.length() > 0) {
 							c_id.pop_back();
-							c_id.resize(c_id.length() - 1);
+							//c_id.resize(c_id.length() - 1);
 							//cout << "POP : " << c_id << endl;
 						}
 					}
 					if (login_select == 2) {
-						if (c_pw.length() > 1) {
+						if (c_pw.length() > 0) {
 							c_pw.pop_back();
-							c_pw.resize(c_pw.length() - 1);
+							//c_pw.resize(c_pw.length() - 1);
 							//cout << "POP : " << c_id << endl;
 						}
 					}
 					UpdateWindow(hwnd);
+					break;
+				case VK_TAB:
+					if (login_select == 1) {
+						login_select = 2;
+					}
+					UpdateWindow(hwnd);
+					break;
+				case VK_RETURN:
+					if (login_select == 1 || login_select == 2) {
+						if (0 == strcmp(masterid, c_id.c_str()) && 0 == strcmp(masterpw, c_pw.c_str())) {
+							cout << "MASTER LOGIN" << endl;
+							g_scene_state = SCENE_STATE::READY;
+							break;
+						}
+						if ((c_id.length() > 1) && (c_pw.length() > 1)) {
+							LCS_LOGIN_PACKET p;
+							p.size = sizeof(p);
+							p.type = LCS_LOGIN;
+							strcpy(p.id, c_id.c_str());
+							strcpy(p.passward, c_pw.c_str());
+							lobby_client.Lobby_network->send_packet(&p);
+						}						
+					}
+					
 					break;
 				case VK_F1:
 					lobby_client._scene_select = 1;
@@ -432,20 +461,15 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		case SCENE_STATE::LOG_IN: case SCENE_STATE::ACOUNT:{
 			char ch = static_cast<char>(wParam);
 			if (login_select == 1) {
-				if (c_id.length() < 10) {
+				
+				if (isalnum(ch) && c_id.length() < 10) {
 					c_id += ch;
-				}
-				else {
-					cout << "열글자 초과" << endl;
 				}
 			}
 
 			if (login_select == 2) {
-				if (c_pw.length() < 10) {
+				if (isalnum(ch) && c_pw.length() < 10) {
 					c_pw += ch;
-				}
-				else {
-					cout << "열글자 초과" << endl;
 				}
 			}
 			
@@ -463,6 +487,14 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		{
 
 			if (onClicK_check(login_button_rc, x, y)) {
+				cout << "strcmp(masterid, c_id.c_str()) : " << strcmp(masterid, c_id.c_str()) << endl;
+				cout << "strcmp(masterpw, c_pw.c_str()) : " << strcmp(masterpw, c_pw.c_str()) << endl;
+
+				if (0 == strcmp(masterid, c_id.c_str()) && 0 == strcmp(masterpw, c_pw.c_str())) {
+					cout << "MASTER LOGIN" << endl;
+					g_scene_state = SCENE_STATE::READY;
+					break;
+				}
 				LCS_LOGIN_PACKET p;
 				p.size = sizeof(p);
 				p.type = LCS_LOGIN;
