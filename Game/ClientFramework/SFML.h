@@ -289,6 +289,8 @@ public:
 			pillars_data[id]._transform.z = my_packet->z;
 			pillars_data[id]._pillar_color = my_packet->color;
 			pillars_data[id]._degree = my_packet->degree;
+			pillars_data[id]._pillar_count = my_packet->hp;
+			cout << "pillar hp " << pillars_data[id]._pillar_count << endl;
 
 			break;
 		}

@@ -785,7 +785,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 						&& playerArr[networkPtr->myClientId]._can_attack3)
 					{
 						playerArr[networkPtr->myClientId]._can_attack3 = false;
-						cout << "pillar attack" << endl;
 
 						CS_OBJECT_COLLISION_PACKET p;
 						p.size = sizeof(p);
