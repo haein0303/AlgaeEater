@@ -73,11 +73,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	hp_bar.Make_SRV();
 	hp_bar.CreatePSO(L"..\\HPBar.hlsl");
 
-	key.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	/*key.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	key.Init("../Resources/rust_key.txt", ObjectType::GeneralObjects);
 	key.Add_texture(L"..\\Resources\\Texture\\hp.jpg");
 	key.Make_SRV();
-	key.CreatePSO(L"..\\Color.hlsl");
+	key.CreatePSO(L"..\\Color.hlsl");*/
 
 	skybox.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	skybox.Init("../Resources/SkySphere.txt", ObjectType::SkyBox);
@@ -390,11 +390,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 			npcArr[i]._transform.y += 0.2f;
 	}
 
-	for (int i = 0; i < KEYMAX; ++i) {
+	/*for (int i = 0; i < KEYMAX; ++i) {
 		key_data[i]._transform = XMFLOAT4(180.f, 0.f, -240.f, 1.f);
 		key_data[i]._key = 0;
 		key_data[i]._on = true;
-	}
+	}*/
 	
 	test.Center = XMFLOAT3(170.f, 1.f, -240.f);
 	test.Extents = XMFLOAT3(1.f, 1.f, 1.f);
@@ -431,7 +431,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, key_data);
+	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj);
 
 	//보간을 위해서 사용하는 초기 세팅이란다
 	for (OBJECT& p : playerArr) {
@@ -708,7 +708,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 
-	// key 충돌처리
+	/*// key 충돌처리
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		for (int j = 0; j < KEYMAX; ++j) {
@@ -731,7 +731,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				}
 			}			
 		}		
-	}
+	}*/
 
 	switch (Scene_num)
 	{
@@ -1593,7 +1593,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 
-		// key
+		/*// key
 		for (int i = 0; i < KEYMAX; ++i) {
 			if (key_data[i]._on == true)
 			{
@@ -1631,7 +1631,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 				cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
 			}
-		}
+		}*/
 
 		// skybox
 		{

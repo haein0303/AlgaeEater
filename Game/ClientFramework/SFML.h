@@ -53,7 +53,7 @@ public:
 		return 0;
 	}
 
-	void ReceiveServer(array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data) //서버에서 받는거, clientMain
+	void ReceiveServer(array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj) //서버에서 받는거, clientMain
 	{
 		char net_buf[BUF_SIZE];
 		size_t	received;
@@ -65,10 +65,10 @@ public:
 			while (true);
 		}
 		if (recv_result != sf::Socket::NotReady)
-			if (received > 0) process_data(net_buf, received, playerArr, npcArr, pillars_data, boss_obj, key_data);
+			if (received > 0) process_data(net_buf, received, playerArr, npcArr, pillars_data, boss_obj);
 	}
 
-	void process_data(char* net_buf, size_t io_byte, array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data)
+	void process_data(char* net_buf, size_t io_byte, array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj)
 	{
 		char* ptr = net_buf;
 		static size_t in_packet_size = 0;
@@ -79,7 +79,7 @@ public:
 			if (0 == in_packet_size) in_packet_size = ptr[0];
 			if (io_byte + saved_packet_size >= in_packet_size) {
 				memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
-				ProcessPacket(packet_buffer, playerArr, npcArr, pillars_data, boss_obj,key_data);
+				ProcessPacket(packet_buffer, playerArr, npcArr, pillars_data, boss_obj);
 				ptr += in_packet_size - saved_packet_size;
 				io_byte -= in_packet_size - saved_packet_size;
 				in_packet_size = 0;
@@ -111,7 +111,7 @@ public:
 
 
 	//서버에서 데이터 받을때(패킷종류별로 무슨 작업 할건지 ex: 이동 패킷, 로그인 패킷 how to 처리)
-	void ProcessPacket(char* ptr, array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj, OBJECT* key_data)
+	void ProcessPacket(char* ptr, array<OBJECT, PLAYERMAX>& playerArr, OBJECT* npcArr, OBJECT* pillars_data, OBJECT& boss_obj)
 	{
 		static bool first_time = true;
 		switch (ptr[1])
@@ -294,14 +294,14 @@ public:
 		}
 		case SC_KEY:
 		{
-			SC_KEY_PACKET* my_packet = reinterpret_cast<SC_KEY_PACKET*>(ptr);
+			/*SC_KEY_PACKET* my_packet = reinterpret_cast<SC_KEY_PACKET*>(ptr);
 			int id = my_packet->color;
 			key_data[id]._on = true;
 			key_data[id]._key = id;
 			key_data[id]._transform.x = my_packet->x;
 			key_data[id]._transform.y = my_packet->y;
 			key_data[id]._transform.z = my_packet->z;
-			cout << "SEND KEY : [" << id << "]" << endl;
+			cout << "SEND KEY : [" << id << "]" << endl;*/
 
 			break;
 		}

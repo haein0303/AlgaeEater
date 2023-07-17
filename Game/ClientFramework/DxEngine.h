@@ -71,8 +71,8 @@ public:
 	OBJECT npcArr[NPCMAX];
 	OBJECT boss_obj;
 	OBJECT pillars_data[CubeMax];
-	float _key_rotation_time = 0.f;
-	OBJECT key_data[KEYMAX];
+	//float _key_rotation_time = 0.f;
+	//OBJECT key_data[KEYMAX];
 
 	// 파티클 데이터
 	ParticleData particles[PARTICLE_NUM];
@@ -105,7 +105,7 @@ public:
 	array<int, 8> boss_leg{0};
 
 	// map관련
-	MESH_ASSET key;
+	//MESH_ASSET key;
 	MESH_ASSET Tube;
 	MESH_ASSET barrel;
 	MESH_ASSET Box;
