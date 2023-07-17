@@ -51,9 +51,10 @@ constexpr char SC_MOVE_BOSS = 16;
 constexpr char SC_MSG = 17;
 constexpr char SC_KEY = 18;
 constexpr char SC_DOOR = 19;
-///////////////////////////////
 constexpr char SC_BOSS_SKILL_START = 20;
 constexpr char SC_BOSS_SKILL_END = 21;
+constexpr char SC_BOSS_PLAYER_CON = 22;
+///////////////////////////////////////////
 
 constexpr char SS_CONNECT_SERVER = 28;
 constexpr char SS_DATA_PASS = 29;
@@ -233,6 +234,12 @@ struct SC_BOSS_SKILL_END_PACKET {
 	unsigned char size;
 	char	type;
 	int		fd_id;
+};
+
+struct SC_BOSS_PLAYER_CON_PACKET {
+	unsigned char size;
+	char	type;
+	int		con_num;   // 0 은 슬로우 1은 역조작 2는 마비
 };
 
 struct SS_CONNECT_SERVER_PACKET {
