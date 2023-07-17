@@ -393,6 +393,8 @@ void process_packet(int c_id, char* packet)
 			pac.degree = cubes[p->target_id].degree;
 			pac.color = cubes[p->target_id].color;
 
+			clients[c_id].send_cube_add(pac.id, pac.x, pac.y, pac.z, pac.degree, pac.color, pac.hp);
+
 			for (auto& pl : clients[c_id].room_list) {
 				if (pl >= MAX_USER) continue;
 				clients[pl]._sl.lock();
