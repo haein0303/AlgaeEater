@@ -170,6 +170,7 @@ void initialize_cube()
 		cubes[i].z = 30.0f;
 		cubes[i].degree = 0;
 		cubes[i].color = 0;
+		cubes[i].hp = 5;
 		cubes[i]._Room_Num = i / ROOM_CUBE;
 	}
 	cout << "cube ·Îµù ³¡" << endl;
@@ -239,7 +240,7 @@ void send_cube(int c_id, float x, float y, float z)
 			}
 			clients[pl]._sl.unlock();
 
-			clients[pl].send_cube_add(i % ROOM_CUBE, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree, cubes[i].color);
+			clients[pl].send_cube_add(i % ROOM_CUBE, cubes[i].x, cubes[i].y, cubes[i].z, cubes[i].degree, cubes[i].color, cubes[i].hp);
 		}
 
 		cnt++;
@@ -662,6 +663,6 @@ void send_second_cube(int c_id, float x, float y, float z)
 		}
 		clients[pl]._sl.unlock();
 
-		clients[pl].send_cube_add(s_num % ROOM_CUBE, cubes[s_num].x, cubes[s_num].y, cubes[s_num].z, cubes[s_num].degree, cubes[s_num].color);
+		clients[pl].send_cube_add(s_num % ROOM_CUBE, cubes[s_num].x, cubes[s_num].y, cubes[s_num].z, cubes[s_num].degree, cubes[s_num].color, cubes[s_num].hp);
 	}
 }

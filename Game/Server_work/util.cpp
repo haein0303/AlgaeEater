@@ -370,7 +370,6 @@ void process_packet(int c_id, char* packet)
 		}
 
 		if (cnt == ROOM_KEY) {
-
 			for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * ROOM_KEY + ROOM_USER; ++i) {
 				clients[i].send_door();
 			}
@@ -383,8 +382,33 @@ void process_packet(int c_id, char* packet)
 		switch (p->object_type)
 		{
 		case 0: // 1스테이지 큐브, 기둥
-			clients[boss_num].crash_sequence[clients[boss_num].crash_count] = cubes[p->target_id].color;
-			clients[boss_num].crash_count++;
+			cubes[p->target_id].hp--;
+
+			SC_ADD_CUBE_PACKET pac;
+			pac.hp = cubes[p->target_id].hp;
+			pac.id = p->target_id;
+			pac.x = cubes[p->target_id].x;
+			pac.y = cubes[p->target_id].y;
+			pac.z = cubes[p->target_id].z;
+			pac.degree = cubes[p->target_id].degree;
+			pac.color = cubes[p->target_id].color;
+
+			for (auto& pl : clients[c_id].room_list) {
+				if (pl >= MAX_USER) continue;
+				clients[pl]._sl.lock();
+				if (clients[pl]._s_state != ST_INGAME) {
+					clients[pl]._sl.unlock();
+					continue;
+				}
+				clients[pl]._sl.unlock();
+
+				clients[pl].send_cube_add(pac.id, pac.x, pac.y, pac.z, pac.degree, pac.color, pac.hp);
+			}
+			
+			if (cubes[p->target_id].hp == 0) {
+				clients[boss_num].crash_sequence[clients[boss_num].crash_count] = cubes[p->target_id].color;
+				clients[boss_num].crash_count++;
+			}
 			break;
 		case 1: // 2스테이지 장판
 			break;
