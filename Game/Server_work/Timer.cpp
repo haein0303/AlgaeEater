@@ -126,7 +126,8 @@ void do_timer()
 						Update_Player(pl_num);
 					}
 
-					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
+					clients[ev.object_id].boss_shield_trigger = false;
+					add_timer(ev.object_id, 1000, EV_BOSS_CON, ev.target_id);
 
 					break;
 
