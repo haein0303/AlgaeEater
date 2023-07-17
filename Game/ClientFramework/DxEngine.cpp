@@ -780,22 +780,19 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
 				{
-					if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
+					if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack)
 						&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
 						&& playerArr[networkPtr->myClientId]._can_attack3)
 					{
 						playerArr[networkPtr->myClientId]._can_attack3 = false;
-						--pillars_data[i]._pillar_count;
-						cout << "pillar : " << pillars_data[i]._pillar_count << endl;
+						cout << "pillar attack" << endl;
 
-						if (pillars_data[i]._pillar_count == 0) {
-							CS_OBJECT_COLLISION_PACKET p;
-							p.size = sizeof(p);
-							p.type = CS_OBJECT_COLLISION;
-							p.target_id = i;
-							p.object_type = 0;
-							networkPtr->send_packet(&p);
-						}
+						CS_OBJECT_COLLISION_PACKET p;
+						p.size = sizeof(p);
+						p.type = CS_OBJECT_COLLISION;
+						p.target_id = i;
+						p.object_type = 0;
+						networkPtr->send_packet(&p);
 					}
 				}
 			}
