@@ -96,9 +96,6 @@ public:
 	BoundingBox test;
 	MESH_ASSET testCube;
 
-	BoundingOrientedBox testCharacter;
-	BoundingOrientedBox testCharacter2;
-
 	// boss collision test
 	array<BoundingBox, 8> boss_col;
 	BoundingOrientedBox boss_collision;

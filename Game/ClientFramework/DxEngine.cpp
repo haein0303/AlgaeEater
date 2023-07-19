@@ -400,13 +400,13 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	test.Extents = XMFLOAT3(1.f, 1.f, 1.f);
 
 	XMVECTOR v{ 0, 1, 0, 0 };
-	testCharacter.Center = XMFLOAT3(0.f, -100.f, 0.f);
-	testCharacter.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
-	XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
+	playerArr[networkPtr->myClientId]._attack.Center = XMFLOAT3(0.f, -100.f, 0.f);
+	playerArr[networkPtr->myClientId]._attack.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
+	XMStoreFloat4(&playerArr[networkPtr->myClientId]._skill.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 
-	testCharacter2.Center = XMFLOAT3(0.f, -100.f, 0.f);
-	testCharacter2.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
-	XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
+	playerArr[networkPtr->myClientId]._skill.Center = XMFLOAT3(0.f, -100.f, 0.f);
+	playerArr[networkPtr->myClientId]._skill.Extents = XMFLOAT3(0.1f, 0.1f, 0.1f);
+	XMStoreFloat4(&playerArr[networkPtr->myClientId]._skill.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
 
 	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
 		boss_obj._transform.y,
@@ -486,43 +486,41 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
-	// 플레이어 기본 공격 콜라이더 on off
-	if (playerArr[0]._animation_state == AnimationOrder::Attack
-		&& playerArr[0]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state) * 0.5f)
+	for (OBJECT& player : playerArr)
 	{
-		testCharacter.Center = XMFLOAT3(playerArr[0]._transform.x + 0.5f * cosf((-playerArr[0]._degree + 90.f) * XM_PI / 180.f),
-			playerArr[0]._transform.y + 0.5f,
-			playerArr[0]._transform.z + 0.5f * sinf((-playerArr[0]._degree + 90.f) * XM_PI / 180.f));
-		testCharacter.Extents = XMFLOAT3(1.f, 1.f, 1.f);
-		XMVECTOR v{ 0, 1, 0, 0 };
-		XMStoreFloat4(&testCharacter.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
-	}
-	else
-	{
-		testCharacter.Center.y = -100.f;
-	}
+		// 플레이어 기본 공격 콜라이더 on off
+		if (player._animation_state == AnimationOrder::Attack
+			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
+		{
+			player._attack.Center = XMFLOAT3(player._transform.x + 0.5f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
+				player._transform.y + 0.5f,
+				player._transform.z + 0.5f * sinf((-player._degree + 90.f) * XM_PI / 180.f));
+			player._attack.Extents = XMFLOAT3(1.f, 1.f, 1.f);
+			XMVECTOR v{ 0, 1, 0, 0 };
+			XMStoreFloat4(&player._attack.Orientation, XMQuaternionRotationNormal(v, player._degree * XM_PI / 180.f));
+		}
+		else
+			player._attack.Center.y = -100.f;
 
-	// 플레이어 스킬 콜라이더 on off
-	if (playerArr[0]._animation_state == AnimationOrder::Skill
-		&& playerArr[0]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state) * 0.5f)
-	{
-		testCharacter2.Center = XMFLOAT3(playerArr[0]._transform.x,
-			playerArr[0]._transform.y + 0.5f,
-			playerArr[0]._transform.z);
-		testCharacter2.Extents = XMFLOAT3(3.f, 1.f, 3.f);
-		XMVECTOR v{ 0, 1, 0, 0 };
-		XMStoreFloat4(&testCharacter2.Orientation, XMQuaternionRotationNormal(v, playerArr[0]._degree * XM_PI / 180.f));
+		// 플레이어 스킬 콜라이더 on off
+		if (player._animation_state == AnimationOrder::Skill
+			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
+		{
+			player._skill.Center = XMFLOAT3(player._transform.x,
+				player._transform.y + 0.5f,
+				player._transform.z);
+			player._skill.Extents = XMFLOAT3(3.f, 1.f, 3.f);
+			XMVECTOR v{ 0, 1, 0, 0 };
+			XMStoreFloat4(&player._skill.Orientation, XMQuaternionRotationNormal(v, player._degree * XM_PI / 180.f));
+		}
+		else
+			player._skill.Center.y = -100.f;
 	}
-	else
-	{
-		testCharacter2.Center.y = -100.f;
-	}
+	
 
 	// npc bounding box
 	for (OBJECT& obj : npcArr)
-	{
 		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
-	}
 
 	// boss bounding box
 	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
@@ -540,31 +538,31 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 			for (int i = 0; i < NPCMAX; ++i)
 			{
-				if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
+				if (npcArr[i]._on == true && player._attack.Intersects(npcArr[i]._bounding_box))
 				{
 					npcArr[i]._particle_count += 100;
 				}
-				if (npcArr[i]._on == true && testCharacter2.Intersects(npcArr[i]._bounding_box))
+				if (npcArr[i]._on == true && player._skill.Intersects(npcArr[i]._bounding_box))
 				{
 					npcArr[i]._particle_count += 100;
 				}
 			}
 
-			if (testCharacter.Intersects(boss_collision))
+			if (player._attack.Intersects(boss_collision))
 				boss_obj._particle_count += 100;
 			if (Scene_num == 1)
 				for (int i = 0; i < 8; ++i)
-					if (testCharacter.Intersects(boss_col[i]))
+					if (player._attack.Intersects(boss_col[i]))
 						boss_leg[i] += 100;
 
-			if (testCharacter2.Intersects(boss_collision))
+			if (player._skill.Intersects(boss_collision))
 				boss_obj._particle_count += 100;
 			if (Scene_num == 1)
 				for (int i = 0; i < 8; ++i)
-					if (testCharacter2.Intersects(boss_col[i]))
+					if (player._skill.Intersects(boss_col[i]))
 						boss_leg[i] += 100;
 
-			playerArr[networkPtr->myClientId]._can_attack2 = false;
+			player._can_attack2 = false;
 		}
 	}
 
@@ -576,7 +574,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		for (int i = 0; i < NPCMAX; ++i)
 		{
 			// npc 평타 감지
-			if (npcArr[i]._on == true && testCharacter.Intersects(npcArr[i]._bounding_box))
+			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._attack.Intersects(npcArr[i]._bounding_box))
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
@@ -592,7 +590,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 
 			// npc 스킬 감지
-			if (npcArr[i]._on == true && testCharacter2.Intersects(npcArr[i]._bounding_box))
+			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._skill.Intersects(npcArr[i]._bounding_box))
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
@@ -609,7 +607,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 
 		// 보스 대상 평타 충돌 감지
-		if (testCharacter.Intersects(boss_collision))
+		if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_collision))
 		{
 			CS_COLLISION_PACKET p;
 			p.size = sizeof(p);
@@ -621,7 +619,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 		for (int i = 0; i < 8; ++i)
 		{
-			if (testCharacter.Intersects(boss_col[i]))
+			if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_col[i]))
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
@@ -634,7 +632,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 
 		// 보스 대상 스킬 충돌 감지
-		if (testCharacter2.Intersects(boss_collision))
+		if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_collision))
 		{
 			CS_COLLISION_PACKET p;
 			p.size = sizeof(p);
@@ -646,7 +644,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 		for (int i = 0; i < 8; ++i)
 		{
-			if (testCharacter2.Intersects(boss_col[i]))
+			if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_col[i]))
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
