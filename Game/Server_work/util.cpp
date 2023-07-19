@@ -12,7 +12,7 @@ extern default_random_engine dre;
 extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
-extern array<KEY, KEY_NUM> keys;
+//extern array<KEY, KEY_NUM> keys;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
@@ -235,9 +235,9 @@ void process_packet(int c_id, char* packet)
 					clients[i].Lua_on = true;
 				}
 
-				for (int i = clients[c_id]._Room_Num * ROOM_KEY; i < clients[c_id]._Room_Num * ROOM_KEY + ROOM_KEY; i++) {
+				/*for (int i = clients[c_id]._Room_Num * ROOM_KEY; i < clients[c_id]._Room_Num * ROOM_KEY + ROOM_KEY; i++) {
 					clients[c_id].send_key(i, keys[i].x, keys[i].y, keys[i].z, keys[i].color);
-				}
+				}*/
 			}
 		}
 
@@ -358,7 +358,7 @@ void process_packet(int c_id, char* packet)
 		}
 		break;
 	}
-	case CS_KEY: {
+	/*case CS_KEY: {
 		int cnt = 0;
 		CS_KEY_PACKET* p = reinterpret_cast<CS_KEY_PACKET*>(packet);
 		clients[c_id].color = p->color;
@@ -375,7 +375,7 @@ void process_packet(int c_id, char* packet)
 			}
 		}
 		break;
-	}
+	}*/
 	case CS_OBJECT_COLLISION: {
 		CS_OBJECT_COLLISION_PACKET* p = reinterpret_cast<CS_OBJECT_COLLISION_PACKET*>(packet);
 		int boss_num = clients[c_id]._Room_Num * ROOM_NPC + ROOM_NPC - 1 + MAX_USER;

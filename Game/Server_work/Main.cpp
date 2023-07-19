@@ -13,7 +13,7 @@ array<SESSION, MAX_USER + NPC_NUM> clients;
 
 array<CUBE, CUBE_NUM> cubes;
 
-array<KEY, KEY_NUM> keys;
+//array<KEY, KEY_NUM> keys;
 
 array<FIELD, FIELD_NUM> fields;
 
@@ -29,7 +29,7 @@ mutex timer_l;
 int main()
 {
 	stage();
-	initialize_key();
+	//initialize_key();
 	initialize_cube();
 	initialize_npc();
 	initialize_field();

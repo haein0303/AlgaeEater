@@ -14,7 +14,7 @@ extern default_random_engine dre;
 extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
-extern array<KEY, KEY_NUM> keys;
+//extern array<KEY, KEY_NUM> keys;
 extern array<FIELD, FIELD_NUM> fields;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
@@ -176,18 +176,18 @@ void initialize_cube()
 	cout << "cube 로딩 끝" << endl;
 }
 
-void initialize_key()
-{
-	for (int i = 0; i < KEY_NUM; i++) {
-		keys[i].x = 165.f;
-		keys[i].y = 0.f;
-		keys[i].z = -225.f + i * 5;
-		keys[i].color = i % KEY_NUM;
-		keys[i]._Room_Num = i / ROOM_KEY;
-		keys[i].on_field = true;
-	}
-	cout << "key 로딩 끝" << endl;
-}
+//void initialize_key()
+//{
+//	for (int i = 0; i < KEY_NUM; i++) {
+//		keys[i].x = 165.f;
+//		keys[i].y = 0.f;
+//		keys[i].z = -225.f + i * 5;
+//		keys[i].color = i % KEY_NUM;
+//		keys[i]._Room_Num = i / ROOM_KEY;
+//		keys[i].on_field = true;
+//	}
+//	cout << "key 로딩 끝" << endl;
+//}
 
 void initialize_field()
 {
