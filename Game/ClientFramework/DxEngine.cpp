@@ -516,7 +516,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		else
 			player._skill.Center.y = -100.f;
 	}
-	
 
 	// npc bounding box
 	for (OBJECT& obj : npcArr)
@@ -538,28 +537,28 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 			for (int i = 0; i < NPCMAX; ++i)
 			{
-				if (npcArr[i]._on == true && player._attack.Intersects(npcArr[i]._bounding_box))
+				if (npcArr[i]._on == true && player._attack.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 				{
 					npcArr[i]._particle_count += 100;
 				}
-				if (npcArr[i]._on == true && player._skill.Intersects(npcArr[i]._bounding_box))
+				if (npcArr[i]._on == true && player._skill.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 				{
 					npcArr[i]._particle_count += 100;
 				}
 			}
 
-			if (player._attack.Intersects(boss_collision))
+			if (player._attack.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
 				boss_obj._particle_count += 100;
 			if (Scene_num == 1)
 				for (int i = 0; i < 8; ++i)
-					if (player._attack.Intersects(boss_col[i]))
+					if (player._attack.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
 						boss_leg[i] += 100;
 
-			if (player._skill.Intersects(boss_collision))
+			if (player._skill.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
 				boss_obj._particle_count += 100;
 			if (Scene_num == 1)
 				for (int i = 0; i < 8; ++i)
-					if (player._skill.Intersects(boss_col[i]))
+					if (player._skill.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
 						boss_leg[i] += 100;
 
 			player._can_attack2 = false;
@@ -574,7 +573,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		for (int i = 0; i < NPCMAX; ++i)
 		{
 			// npc 평타 감지
-			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._attack.Intersects(npcArr[i]._bounding_box))
+			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._attack.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
@@ -588,9 +587,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				cout << "npc" << i << " hp : " << npcArr[i]._hp << endl;
 				cout << "particle " << i << " : " << npcArr[i]._particle_count << endl;
 			}
-
+			
 			// npc 스킬 감지
-			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._skill.Intersects(npcArr[i]._bounding_box))
+			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._skill.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 			{
 				CS_COLLISION_PACKET p;
 				p.size = sizeof(p);
@@ -607,7 +606,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 
 		// 보스 대상 평타 충돌 감지
-		if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_collision))
+		if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
 		{
 			CS_COLLISION_PACKET p;
 			p.size = sizeof(p);
@@ -616,23 +615,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
 			p.target_id = boss_obj._my_server_id;
 			networkPtr->send_packet(&p);
-		}
-		for (int i = 0; i < 8; ++i)
-		{
-			if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_col[i]))
-			{
-				CS_COLLISION_PACKET p;
-				p.size = sizeof(p);
-				p.type = CS_COLLISION;
-				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-				p.target_id = boss_obj._my_server_id;
-				networkPtr->send_packet(&p);
-			}
 		}
 
 		// 보스 대상 스킬 충돌 감지
-		if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_collision))
+		if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
 		{
 			CS_COLLISION_PACKET p;
 			p.size = sizeof(p);
@@ -642,17 +628,33 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			p.target_id = boss_obj._my_server_id;
 			networkPtr->send_packet(&p);
 		}
-		for (int i = 0; i < 8; ++i)
+
+		// 보스1 다리 대상 공격&스킬 충돌 감지
+		if (Scene_num == 1)
 		{
-			if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_col[i]))
+			for (int i = 0; i < 8; ++i)
 			{
-				CS_COLLISION_PACKET p;
-				p.size = sizeof(p);
-				p.type = CS_COLLISION;
-				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-				p.target_id = boss_obj._my_server_id;
-				networkPtr->send_packet(&p);
+				if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
+				{
+					CS_COLLISION_PACKET p;
+					p.size = sizeof(p);
+					p.type = CS_COLLISION;
+					p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+					p.target_id = boss_obj._my_server_id;
+					networkPtr->send_packet(&p);
+				}
+
+				if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
+				{
+					CS_COLLISION_PACKET p;
+					p.size = sizeof(p);
+					p.type = CS_COLLISION;
+					p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+					p.target_id = boss_obj._my_server_id;
+					networkPtr->send_packet(&p);
+				}
 			}
 		}
 
