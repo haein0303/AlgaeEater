@@ -165,6 +165,7 @@ public:
 				npcArr[npc_accept_counter]._transform.z = my_packet->z;
 				npcArr[npc_accept_counter]._degree = my_packet->degree;
 				npcArr[npc_accept_counter]._hp = my_packet->hp;
+				npcArr[npc_accept_counter]._max_hp = my_packet->hp;
 
 				npcArr[npc_accept_counter]._prev_degree = npcArr[npc_accept_counter]._degree;
 				npcArr[npc_accept_counter]._prev_transform = npcArr[npc_accept_counter]._transform;

@@ -1573,7 +1573,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				_transform.hp_bar_start_pos = npcArr[i]._transform;
 				_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f;
 				_transform.current_hp = npcArr[i]._hp;
-				_transform.max_hp = 80; // 패킷 체크
+				_transform.max_hp = npcArr[i]._max_hp;
 
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
