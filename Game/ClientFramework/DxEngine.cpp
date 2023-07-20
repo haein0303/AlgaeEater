@@ -1910,7 +1910,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			_swprintf(text, L"[GOD(DEV) MODE ON]  ");
 			d11Ptr->draw_infotext(text, _tmp);
 			height = 15.f;
+
+			inputPtr->move_speed = 50.f;
 		}
+		else
+			inputPtr->move_speed = 10.f;
 
 
 
