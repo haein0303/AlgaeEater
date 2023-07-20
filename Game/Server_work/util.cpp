@@ -26,7 +26,7 @@ array<point, 10> STAGE1_MOB_POS;
 array<point, 10> STAGE2_MOB_POS;
 
 void stage() {
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		switch (i)
 		{
 		case 0:
@@ -73,7 +73,7 @@ void stage() {
 			break;
 		}
 	}
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		switch (i)
 		{
 		case 0:
