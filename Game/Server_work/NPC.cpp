@@ -54,6 +54,9 @@ void initialize_npc()
 
 		switch (st)
 		{
+		case 40:
+		case 30:
+		case 20:
 		case 10:
 		case 0:
 			srand((unsigned int)time(NULL));
@@ -61,55 +64,79 @@ void initialize_npc()
 			clients[i].x = -20;
 			clients[i].z = -20;
 			break;
+		case 41:
+		case 31:
+		case 21:
 		case 11:
 		case 1:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = -20;
 			clients[i].z = 0;
 			break;
+		case 42:
+		case 32:
+		case 22:
 		case 12:
 		case 2:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = -20;
 			clients[i].z = 20;
 			break;
+		case 43:
+		case 33:
+		case 23:
 		case 13:
 		case 3:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 0;
 			clients[i].z = -20;
 			break;
+		case 44:
+		case 34:
+		case 24:
 		case 14:
 		case 4:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 0;
 			clients[i].z = 0;
 			break;
+		case 45:
+		case 35:
+		case 25:
 		case 15:
 		case 5:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 0;
 			clients[i].z = 20;
 			break;
+		case 46:
+		case 36:
+		case 26:
 		case 16:
 		case 6:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 20;
 			clients[i].z = -20;
 			break;
+		case 47:
+		case 37:
+		case 27:
 		case 17:
 		case 7:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 20;
 			clients[i].z = 0;
 			break;
+		case 48:
+		case 38:
+		case 28:
 		case 18:
 		case 8:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 20;
 			clients[i].z = 20;
 			break;
-		case 19: // 보스
+		case 49: // 보스
 		{
 			clients[i].hp = BOSS_HP[0];
 			clients[i].atk = 2;
