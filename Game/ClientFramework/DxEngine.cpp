@@ -411,7 +411,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
 		boss_obj._transform.y,
 		boss_obj._transform.z);
-	boss_collision.Extents = XMFLOAT3(2.f, 1.5f, 3.f);
+	boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 
 	boss_obj.boss2_skill_vec.reserve(100);
 
@@ -664,7 +664,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	// npc 공격 충돌 감지
 	for (int j = 0; j < NPCMAX; ++j)
 	{
-		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 9.f
+		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 4.f
 			&& npcArr[j]._animation_state == AnimationOrder::Attack
 			&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
 			&& npcArr[j]._can_attack)
@@ -687,7 +687,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	// 보스 공격 충돌 감지
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
-		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 9.f) {
+		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 26.f) {
 			if (boss_obj._animation_state == AnimationOrder::Attack
 				&& boss_obj._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(boss_obj._animation_state) * 0.5f
 				&& boss_obj._can_attack) {
