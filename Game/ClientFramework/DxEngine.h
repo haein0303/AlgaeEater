@@ -222,8 +222,9 @@ public:
 	vector<MapData> _map_data;
 	vector<MapData> _map_data2;
 	vector<MapData> _map_data3;
-	XMFLOAT3 doorPos = XMFLOAT3(-215.f / 2.f, 1.4f, -20.5f / 2.f);
-	XMFLOAT3 doorPos0 = XMFLOAT3(-215.f / 2.f, 1.4f, -20.5f / 2.f);
+	array<XMFLOAT3, 5> doorPos{ XMFLOAT3(-215.f / 2.f, 1.4f, -20.5f / 2.f), XMFLOAT3(-57.f / 2.f, 1.4f, -111.25f / 2.f)
+		, XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f), XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f), XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f) };
+	array<XMFLOAT3, 5> doorPos0{XMFLOAT3(0.f, 0.f, 0.f)};
 
 	vector<BoundingBox> bounding_boxes;
 	vector<BoundingBox> bounding_boxes2;
@@ -414,9 +415,9 @@ public:
 			// door
 			XMFLOAT3 scale = XMFLOAT3(2.85, 1, 4);
 			XMFLOAT3 rot = XMFLOAT3(0.f, 0.f, -90.f);
-			if (inputPtr->_open_door == true)
-				inputPtr->_open_door = OpenDoor(doorPos, doorPos0, rot.x);
-			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos, scale, rot);
+			if (inputPtr->_open_door[Scene_num-1] == true)
+				inputPtr->_open_door[Scene_num - 1] = OpenDoor(doorPos[0], doorPos0[Scene_num - 1], rot.x);
+			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[0], scale, rot);
 		}
 
 		else if (stage == 2)
@@ -568,6 +569,13 @@ public:
 				else if (data.mesh_type.compare("Wall_Win_4m_C") == 0)
 					DrawMapObject(cmdList, Wall_Win_4m_C, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
+
+			// door
+			XMFLOAT3 scale = XMFLOAT3(2.85, 1, 4);
+			XMFLOAT3 rot = XMFLOAT3(0.f, 0.f, -90.f);
+			if (inputPtr->_open_door[Scene_num - 1] == true)
+				inputPtr->_open_door[Scene_num - 1] = OpenDoor(doorPos[1], doorPos0[Scene_num - 1], rot.x);
+			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[1], scale, rot);
 		}
 
 		else if (stage == 3)
@@ -687,6 +695,20 @@ public:
 				else if (data.mesh_type.compare("Wall_Line_4m_A") == 0)
 					DrawMapObject(cmdList, Wall_Line_4m_A, i_now_render_index, data.pos, data.scale, data.rotation);
 			}
+
+			// door
+			XMFLOAT3 scale = XMFLOAT3(2.85, 1, 4.5);
+			XMFLOAT3 rot = XMFLOAT3(0.f, 0.f, -90.f);
+			if (inputPtr->_open_door[Scene_num - 1] == true)
+				OpenDoor(doorPos[Scene_num - 1], doorPos0[Scene_num - 1], rot.x);
+			if (inputPtr->_open_door[Scene_num] == true)
+				OpenDoor(doorPos[Scene_num], doorPos0[Scene_num], rot.x);
+			if (inputPtr->_open_door[Scene_num + 1] == true)
+				OpenDoor(doorPos[Scene_num + 1], doorPos0[Scene_num + 1], rot.x);
+			
+			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[2], scale, rot);
+			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[3], scale, rot);
+			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[4], scale, rot);
 		}
 	}
 
@@ -781,8 +803,8 @@ public:
 		// angle이 0일때 z, angle이 90일때 x
 		if (pow((pos.x - pos0.x), 2.f) + pow((pos.z - pos0.z), 2.f) < 9.f)
 		{
-			pos.x += cosf(angle - 90) * timerPtr->_deltaTime;
-			pos.z += sinf(angle - 90) * timerPtr->_deltaTime;
+			pos.x -= sinf(angle) * timerPtr->_deltaTime;
+			pos.z -= cosf(angle) * timerPtr->_deltaTime;
 
 			return true;
 		}

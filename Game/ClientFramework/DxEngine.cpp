@@ -227,6 +227,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
+		doorPos0[Scene_num - 1] = doorPos[Scene_num - 1];
 		break;
 	}
 	case 2:
@@ -318,8 +319,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
-	}
+		doorPos0[Scene_num - 1] = doorPos[Scene_num - 1];
 		break;
+	}
 	case 3:
 		boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
@@ -373,6 +375,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
+		doorPos0[Scene_num - 1] = doorPos[Scene_num - 1];
+		doorPos0[Scene_num] = doorPos[Scene_num];
+		doorPos0[Scene_num + 1] = doorPos[Scene_num + 1];
 		break;
 	default:
 		break;
@@ -796,11 +801,21 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				}
 			}
 		}
+		if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == false)
+			inputPtr->_open_door[Scene_num - 1] = true;
 		break;
 	}
 	case 2:
+		if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == false)
+			inputPtr->_open_door[Scene_num - 1] = true;
 		break;
 	case 3:
+		if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == false)
+			inputPtr->_open_door[Scene_num - 1] = true;
+		else if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == true && inputPtr->_open_door[Scene_num] == false)
+			inputPtr->_open_door[Scene_num] = true;
+		else if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num] == true && inputPtr->_open_door[Scene_num + 1] == false)
+			inputPtr->_open_door[Scene_num + 1] = true;
 		break;
 	default:
 		break;
