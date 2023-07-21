@@ -222,8 +222,8 @@ public:
 	vector<MapData> _map_data;
 	vector<MapData> _map_data2;
 	vector<MapData> _map_data3;
-	XMFLOAT3 doorPos = XMFLOAT3(52.f / 2.f, 1.5f, -203.f / 2.f);
-	float doorPosX0 = 52.f / 2.f;
+	XMFLOAT3 doorPos = XMFLOAT3(-215.f / 2.f, 1.4f, -20.5f / 2.f);
+	XMFLOAT3 doorPos0 = XMFLOAT3(-215.f / 2.f, 1.4f, -20.5f / 2.f);
 
 	vector<BoundingBox> bounding_boxes;
 	vector<BoundingBox> bounding_boxes2;
@@ -412,9 +412,10 @@ public:
 			}
 
 			// door
-			XMFLOAT3 scale = XMFLOAT3(3, 1, 6);
-			XMFLOAT3 rot = XMFLOAT3(90.f, 0.f, -90.f);
-			OpenDoor(doorPos, doorPosX0);
+			XMFLOAT3 scale = XMFLOAT3(2.85, 1, 4);
+			XMFLOAT3 rot = XMFLOAT3(0.f, 0.f, -90.f);
+			if (inputPtr->_open_door == true)
+				inputPtr->_open_door = OpenDoor(doorPos, doorPos0, rot.x);
 			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos, scale, rot);
 		}
 
@@ -775,10 +776,18 @@ public:
 		}
 	}
 
-	void OpenDoor(XMFLOAT3& pos, float posX0)
+	bool OpenDoor(XMFLOAT3& pos, XMFLOAT3 pos0, float angle)
 	{
-		if(pos.x > posX0 - 3.f)
-			pos.x -= 1.f * timerPtr->_deltaTime;
+		// angle이 0일때 z, angle이 90일때 x
+		if (pow((pos.x - pos0.x), 2.f) + pow((pos.z - pos0.z), 2.f) < 9.f)
+		{
+			pos.x += cosf(angle - 90) * timerPtr->_deltaTime;
+			pos.z += sinf(angle - 90) * timerPtr->_deltaTime;
+
+			return true;
+		}
+		else
+			return false;
 	}
 
 	void Boss2Skill(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss2Skill, const int i_now_render_index, float& boss2_skill_time, const XMFLOAT3& pos, const XMFLOAT3& scale)

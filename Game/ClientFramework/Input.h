@@ -25,6 +25,8 @@ public:
 	bool _show_info = false;
 	bool _god_mod_on = false;
 
+	bool _open_door = false;
+
 	//벡터 사이즈 초기화
 	void Init(WindowInfo windowInfo);
 

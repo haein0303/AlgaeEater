@@ -136,6 +136,8 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 			}
 
 		}
+		if (_states[VK_F8] == 2)
+			_open_door = true;
 
 		if (playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Death) {
 			if (_states[VK_RBUTTON] == 2) {
