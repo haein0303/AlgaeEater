@@ -375,7 +375,7 @@ void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 	case 2:
 		m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f + xs, 30.f + ys });
 		m_d2dDeviceContext->DrawTextW(L"È­ÇÐ °øÀåÀÇ º¸½º", wcslen(L"È­ÇÐ °øÀåÀÇ º¸½º"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
-		m_d2dDeviceContext->DrawTextW(L"±è°í¾ç¾¾", wcslen(L"±è°í¾ç¾¾"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
+		m_d2dDeviceContext->DrawTextW(L"·ÛÆ®°Ô´½", wcslen(L"·ÛÆ®°Ô´½"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
 		break;
 	case 3:
