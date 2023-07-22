@@ -30,44 +30,44 @@ void stage() {
 		switch (i)
 		{
 		case 0:
-			STAGE1_MOB_POS[i].x = 130;
-			STAGE1_MOB_POS[i].z = -220;
+			STAGE1_MOB_POS[i].x = 100;
+			STAGE1_MOB_POS[i].z = -230;
 			break;
 		case 1:
-			STAGE1_MOB_POS[i].x = 70;
-			STAGE1_MOB_POS[i].z = -240;
-			break;
-		case 2:
 			STAGE1_MOB_POS[i].x = 0;
 			STAGE1_MOB_POS[i].z = -140;
 			break;
-		case 3:
+		case 2:
 			STAGE1_MOB_POS[i].x = 0;
 			STAGE1_MOB_POS[i].z = -100;
 			break;
+		case 3:
+			STAGE1_MOB_POS[i].x = -90;
+			STAGE1_MOB_POS[i].z = -150;
+			break;
 		case 4:
-			STAGE1_MOB_POS[i].x = -80;
-			STAGE1_MOB_POS[i].z = -130;
+			STAGE1_MOB_POS[i].x = -110;
+			STAGE1_MOB_POS[i].z = -190;
 			break;
 		case 5:
-			STAGE1_MOB_POS[i].x = -120;
-			STAGE1_MOB_POS[i].z = -210;
-			break;
-		case 6:
-			STAGE1_MOB_POS[i].x = -30;
+			STAGE1_MOB_POS[i].x = -45;
 			STAGE1_MOB_POS[i].z = 10;
 			break;
-		case 7:
-			STAGE1_MOB_POS[i].x = -30;
+		case 6:
+			STAGE1_MOB_POS[i].x = -45;
 			STAGE1_MOB_POS[i].z = 50;
 			break;
+		case 7:
+			STAGE1_MOB_POS[i].x = -190;
+			STAGE1_MOB_POS[i].z = 25;
+			break;
 		case 8:
-			STAGE1_MOB_POS[i].x = -340;
-			STAGE1_MOB_POS[i].z = -145;
+			STAGE1_MOB_POS[i].x = -140;
+			STAGE1_MOB_POS[i].z = -15;
 			break;
 		case 9:
-			STAGE1_MOB_POS[i].x = -340;
-			STAGE1_MOB_POS[i].z = -145;
+			STAGE1_MOB_POS[i].x = -335;
+			STAGE1_MOB_POS[i].z = -100;
 			break;
 		default:
 			break;
