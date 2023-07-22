@@ -437,7 +437,7 @@ void process_packet(int c_id, char* packet)
 						switch (clients[p->target_id].stage)
 						{
 						case 1:
-							if (death_counts[clients[p->target_id]._Room_Num].counts >= 10) {
+							if (death_counts[clients[p->target_id]._Room_Num].counts >= 40) {
 								for (auto& pl : clients[p->target_id].room_list) {
 									if (pl >= MAX_USER) continue;
 									clients[pl].send_door();
@@ -482,7 +482,7 @@ void process_packet(int c_id, char* packet)
 							switch (clients[p->target_id].stage)
 							{
 							case 1:
-								if (death_counts[clients[p->target_id]._Room_Num].counts >= 10) {
+								if (death_counts[clients[p->target_id]._Room_Num].counts >= 40) {
 									for (auto& pl : clients[p->target_id].room_list) {
 										if (pl >= MAX_USER) continue;
 										clients[pl].send_door();
