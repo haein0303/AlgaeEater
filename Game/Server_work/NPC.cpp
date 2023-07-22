@@ -49,8 +49,7 @@ void initialize_npc()
 
 		int st = (i - MAX_USER - clients[i]._Room_Num * ROOM_NPC);
 
-		if (st > 9) clients[i]._object_type = TY_HOLD_NPC;
-		else clients[i]._object_type = TY_MOVE_NPC;
+		clients[i]._object_type = TY_MOVE_NPC;
 
 		switch (st)
 		{
@@ -132,6 +131,14 @@ void initialize_npc()
 		case 28:
 		case 18:
 		case 8:
+			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].x = 20;
+			clients[i].z = 20;
+			break;
+		case 39:
+		case 29:
+		case 19:
+		case 9:
 			clients[i].hp = (rand() % 3 + 5) * 10;
 			clients[i].x = 20;
 			clients[i].z = 20;

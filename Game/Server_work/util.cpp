@@ -16,11 +16,18 @@ extern array<CUBE, CUBE_NUM> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
+class stage_npc_death_counts {
+public:
+	int counts;
+};
+
 class point {
 public:
 	float x;
 	float z;
 };
+
+array<stage_npc_death_counts, ROOM_NUM> death_counts;
 
 array<point, 10> STAGE1_MOB_POS;
 array<point, 10> STAGE2_MOB_POS;
@@ -216,6 +223,7 @@ void process_packet(int c_id, char* packet)
 					case 0: // 테스트 스테이지
 						break;
 					case 1: {// 스테이지 1
+						clients[i].stage = clients[c_id].stage;
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_1;
 						}
@@ -425,6 +433,30 @@ void process_packet(int c_id, char* packet)
 				else { // 일반
 					clients[p->target_id].hp -= clients[p->attacker_id].atk;
 					if (clients[p->target_id].hp <= 0) {
+						if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
+						switch (clients[p->target_id].stage)
+						{
+						case 1:
+							if (death_counts[clients[p->target_id]._Room_Num].counts >= 45) {
+								for (auto& pl : clients[p->target_id].room_list) {
+									if (pl >= MAX_USER) continue;
+									clients[pl].send_door();
+								}
+							}
+							break;
+						case 2:
+							if (death_counts[clients[p->target_id]._Room_Num].counts >= 49) {
+								for (auto& pl : clients[p->target_id].room_list) {
+									if (pl >= MAX_USER) continue;
+									clients[pl].send_door();
+								}
+							}
+							break;
+						case 3:
+							break;
+						default:
+							break;
+						}
 						clients[p->target_id].char_state = AN_DEAD;
 						clients[p->target_id]._sl.lock();
 						clients[p->target_id]._s_state = ST_FREE;
