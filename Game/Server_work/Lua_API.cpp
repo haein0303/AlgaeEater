@@ -178,8 +178,7 @@ void close_lua(int npc_id)
 
 	int st = (npc_id - MAX_USER - clients[npc_id]._Room_Num * ROOM_NPC);
 
-	if (st > 9) clients[npc_id]._object_type = TY_HOLD_NPC;
-	else clients[npc_id]._object_type = TY_MOVE_NPC;
+	clients[npc_id]._object_type = TY_MOVE_NPC;
 
 	switch (st)
 	{

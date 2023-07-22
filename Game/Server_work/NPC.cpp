@@ -367,7 +367,7 @@ void move_npc(int player_id, int c_id)
 	float de = atan2(x - clients[player_id].x, z - clients[player_id].z);
 	float nde = de * 180 / PI;
 
-	if (clients[c_id]._object_type == TY_MOVE_NPC || clients[c_id]._object_type == TY_HOLD_NPC) {
+	if (clients[c_id]._object_type == TY_MOVE_NPC) {
 		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
 			// 공격 처리 관련, 여기서 안 할 수도 있음
 			clients[c_id].char_state = AN_ATTACK_1;
@@ -388,7 +388,6 @@ void move_npc(int player_id, int c_id)
 			return;
 		}
 		else clients[c_id].char_state = AN_WALK;
-
 	}
 	else {
 		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 5.f) {
@@ -410,11 +409,6 @@ void move_npc(int player_id, int c_id)
 			return;
 		}
 		else clients[c_id].char_state = AN_WALK;
-	}
-
-	if (clients[c_id]._object_type == TY_HOLD_NPC) {
-		clients[c_id].char_state = AN_IDLE;
-		return;
 	}
 
 	x += 0.3f * -sin(de);
