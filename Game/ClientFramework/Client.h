@@ -124,6 +124,43 @@ public:
 			dxEngine.Draw_multi(windowInfo, i_now_render_index);
 		}
 	}
+	void single_init() {
+		cout << "try server connect" << endl;
+		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM, dxEngine.Scene_num)) {
+			cout << "SERVER CONNECT FAIL" << endl;
+			while (1);
+		}
+		cout << "complite server connect" << endl;
+
+		cout << "Loading Model data" << endl;
+		dxEngine.late_Init(windowInfo);
+		cout << "Complite Model data Loading" << endl;
+
+		cout << "LOGIC CALL" << endl;
+	}
+	void single_work() {
+		int i_now_render_index = 0;
+		while (g_isLive) {
+			dxEngine.FixedUpdate(windowInfo, isActive);
+
+			::WaitForSingleObject(dxEngine._renderEvent, INFINITE);
+
+			dxEngine.timerPtr->TimerUpdate();
+
+
+			dxEngine.timerPtr->ShowFps(windowInfo);
+
+			dxEngine.Update(windowInfo, isActive);
+
+			dxEngine.Draw_multi(windowInfo, i_now_render_index);
+			if (i_now_render_index) {
+				i_now_render_index = 0;
+			}
+			else {
+				i_now_render_index = 1;
+			}
+		}
+	}
 
 	void life_control(bool input) {
 		//cout << g_isLive << endl;
