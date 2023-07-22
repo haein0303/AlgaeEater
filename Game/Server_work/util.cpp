@@ -478,6 +478,30 @@ void process_packet(int c_id, char* packet)
 					else { // ÀÏ¹Ý
 						clients[p->target_id].hp -= clients[p->attacker_id].skill_atk;
 						if (clients[p->target_id].hp <= 0) {
+							if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
+							switch (clients[p->target_id].stage)
+							{
+							case 1:
+								if (death_counts[clients[p->target_id]._Room_Num].counts >= 10) {
+									for (auto& pl : clients[p->target_id].room_list) {
+										if (pl >= MAX_USER) continue;
+										clients[pl].send_door();
+									}
+								}
+								break;
+							case 2:
+								if (death_counts[clients[p->target_id]._Room_Num].counts >= 49) {
+									for (auto& pl : clients[p->target_id].room_list) {
+										if (pl >= MAX_USER) continue;
+										clients[pl].send_door();
+									}
+								}
+								break;
+							case 3:
+								break;
+							default:
+								break;
+							}
 							clients[p->target_id].char_state = AN_DEAD;
 							clients[p->target_id]._sl.lock();
 							clients[p->target_id]._s_state = ST_FREE;
