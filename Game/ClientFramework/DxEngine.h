@@ -198,6 +198,8 @@ public:
 	MESH_ASSET boss2_skill_circle;
 	array<float, 2> boss2_skill_time{0.f};
 
+	int open_door_count = 0;
+
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
 

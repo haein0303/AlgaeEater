@@ -436,7 +436,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
-	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj);
+	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, open_door_count);
 
 	//보간을 위해서 사용하는 초기 세팅이란다
 	for (OBJECT& p : playerArr) {
@@ -824,20 +824,21 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				}
 			}
 		}
-		if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == false)
+
+		if ((inputPtr->_states[VK_F8] == 2 || open_door_count > 0) && inputPtr->_open_door[Scene_num - 1] == false)
 			inputPtr->_open_door[Scene_num - 1] = true;
 		break;
 	}
 	case 2:
-		if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == false)
+		if ((inputPtr->_states[VK_F8] == 2 || open_door_count > 0) && inputPtr->_open_door[Scene_num - 1] == false)
 			inputPtr->_open_door[Scene_num - 1] = true;
 		break;
 	case 3:
-		if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == false)
+		if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 1) && inputPtr->_open_door[Scene_num - 1] == false)
 			inputPtr->_open_door[Scene_num - 1] = true;
-		else if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num - 1] == true && inputPtr->_open_door[Scene_num] == false)
+		else if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 2) && inputPtr->_open_door[Scene_num - 1] == true && inputPtr->_open_door[Scene_num] == false)
 			inputPtr->_open_door[Scene_num] = true;
-		else if (inputPtr->_states[VK_F8] == 2 && inputPtr->_open_door[Scene_num] == true && inputPtr->_open_door[Scene_num + 1] == false)
+		else if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 3) && inputPtr->_open_door[Scene_num] == true && inputPtr->_open_door[Scene_num + 1] == false)
 			inputPtr->_open_door[Scene_num + 1] = true;
 		break;
 	default:
