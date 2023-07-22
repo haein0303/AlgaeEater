@@ -198,9 +198,8 @@ public:
 			boss_obj._delta_time = 0.f;
 
 
-		}
-			
 			break;
+		}
 		case SC_MOVE_BOSS: {
 			SC_MOVE_BOSS_PACKET* my_packet = reinterpret_cast<SC_MOVE_BOSS_PACKET*>(ptr);
 			int id = my_packet->id;
@@ -221,8 +220,8 @@ public:
 			boss_obj._animation_state = my_packet->char_state;
 			boss_obj._eye_color = my_packet->eye_color; // 0,1,2,3,4
 			//cout << boss_obj._eye_color << endl;
-		}
 			break;
+		}
 		case SC_MOVE_OBJECT:
 		{
 			SC_MOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(ptr);
@@ -245,7 +244,6 @@ public:
 					playerArr[id]._transform.z = my_packet->z;
 					playerArr[id]._degree = my_packet->degree;
 					playerArr[id]._animation_state = my_packet->char_state;
-
 					
 					if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
 						playerArr[id]._animation_time_pos = 0.f;

@@ -979,7 +979,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 		}
 		for (int i = 0; i < NPCMAX; ++i) {
-			if (npcArr[i]._on == true && i != 9) {
+			if (npcArr[i]._on == true) {
 				npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0);
 			}
 		}
@@ -1599,7 +1599,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		cmdList->IASetIndexBuffer(&hp_bar._indexBufferView);
 		for (int i = 0; i < NPCMAX; i++)
 		{
-			if (npcArr[i]._on == true && i != 9) {
+			if (npcArr[i]._on == true) {
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.5 * 0.01f, _scale * 0.001f, _scale * 0.001f)
 					* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._prev_transform.y + 0.01f),
 						sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z, 2))))
@@ -1697,7 +1697,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		for (int i = 0; i < NPCMAX; ++i)
 		{
 			// npc
-			if (npcArr[i]._on == true && i != 9) {
+			if (npcArr[i]._on == true) {
 				while (npcArr[i]._particle_count > 0)
 				{
 					if (index >= PARTICLE_NUM) { // 파티클 개수에 대한 예외처리
@@ -1722,7 +1722,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					}
 				}
 			}
-			else if (npcArr[i]._on == true && i == 9 && index <= PARTICLE_NUM) {
+			else if (npcArr[i]._on == true && index <= PARTICLE_NUM) {
 				while (npcArr[i]._particle_count > 0)
 				{
 					if (index >= PARTICLE_NUM) { // 파티클 개수에 대한 예외처리
