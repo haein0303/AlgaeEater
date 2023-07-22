@@ -143,6 +143,8 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 			}
 			else if (_states[VK_LBUTTON] == 2) {
 				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Attack;
+				playerArr[networkPtr->myClientId]._combo_count++;
+				cout << "combo : " << playerArr[networkPtr->myClientId]._combo_count << endl;
 			}
 			else if (!(w == false && a == false && s == false && d == false)
 				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack

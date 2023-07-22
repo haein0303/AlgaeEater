@@ -491,11 +491,34 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
+	// 콤보 공격
+	for (OBJECT& player : playerArr)
+	{
+		if (player._combo_count == 1 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.4f)
+		{
+			player._animation_time_pos = 0.f;
+			player._animation_state = AnimationOrder::Idle;
+			player._combo_count = 0;
+		}
+		else if (player._combo_count == 2 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.47f)
+		{
+			player._animation_time_pos = 0.f;
+			player._animation_state = AnimationOrder::Idle;
+			player._combo_count = 0;
+		}
+		else if (player._combo_count == 3 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.7f)
+		{
+			player._animation_time_pos = 0.f;
+			player._animation_state = AnimationOrder::Idle;
+			player._combo_count = 0;
+		}
+	}
+
 	for (OBJECT& player : playerArr)
 	{
 		// 플레이어 기본 공격 콜라이더 on off
 		if (player._animation_state == AnimationOrder::Attack
-			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
+			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.3f)
 		{
 			player._attack.Center = XMFLOAT3(player._transform.x + 0.5f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
 				player._transform.y + 0.5f,

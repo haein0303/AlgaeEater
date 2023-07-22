@@ -29,10 +29,17 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 	if ((player._animation_state == AnimationOrder::Idle || player._animation_state == AnimationOrder::Walk) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
 		player._animation_time_pos = 0.f;
 	}
-	// 공격 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
-	if ((player._animation_state == AnimationOrder::Attack || player._animation_state == AnimationOrder::Skill) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
+	// 스킬 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
+	if ((player._animation_state == AnimationOrder::Skill) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
 		player._animation_time_pos = 0.f;
 		player._animation_state = AnimationOrder::Idle;
+	}
+
+	// 공격 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
+	if ((player._animation_state == AnimationOrder::Attack) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
+		player._animation_time_pos = 0.f;
+		player._animation_state = AnimationOrder::Idle;
+		player._combo_count = 0;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산
