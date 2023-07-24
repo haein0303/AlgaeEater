@@ -286,6 +286,7 @@ void rush_npc(int c_id, float t_x, float t_z)
 {
 	float x = clients[c_id].x;
 	float z = clients[c_id].z;
+	int tar_id = 0;
 
 	float de = atan2(x - t_x, z - t_z);
 	float nde = de * 180 / PI;
@@ -308,7 +309,33 @@ void rush_npc(int c_id, float t_x, float t_z)
 
 			Update_Player(pl);
 		}
-		add_timer(c_id, 10000, EV_STAGE1_SECOND_BOSS, 0);
+
+		for (auto& pl : clients[c_id].room_list) {
+			if (pl >= MAX_USER) continue;
+			clients[pl]._sl.lock();
+			if (clients[pl]._s_state != ST_INGAME || clients[pl].char_state == AN_DEAD) {
+				clients[pl]._sl.unlock();
+				continue;
+			}
+			clients[pl]._sl.unlock();
+
+			tar_id = pl;
+			break;
+		}
+
+		SC_BOSS_RUSH_TARGET_PACKET p;
+		p.size = sizeof(SC_BOSS_RUSH_TARGET_PACKET);
+		p.type = SC_BOSS_RUSH_TARGET;
+		p.target_id = tar_id;
+		p.trigger = true;
+
+		for (auto& pl : clients[c_id].room_list) {
+			if (pl >= MAX_USER) continue;
+
+			clients[pl].do_send(&p);
+		}
+
+		add_timer(c_id, 10000, EV_STAGE1_SECOND_BOSS, tar_id);
 		return;
 	}
 
@@ -332,7 +359,20 @@ void rush_npc(int c_id, float t_x, float t_z)
 			clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0, 0);
 		}
 
-		add_timer(c_id, 10000, EV_BOSS_CON, 0);
+		for (auto& pl : clients[c_id].room_list) {
+			if (pl >= MAX_USER) continue;
+			clients[pl]._sl.lock();
+			if (clients[pl]._s_state != ST_INGAME || clients[pl].char_state == AN_DEAD) {
+				clients[pl]._sl.unlock();
+				continue;
+			}
+			clients[pl]._sl.unlock();
+
+			tar_id = pl;
+			break;
+		}
+
+		add_timer(c_id, 10000, EV_BOSS_CON, tar_id);
 		return;
 	}
 
