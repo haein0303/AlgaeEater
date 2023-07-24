@@ -389,9 +389,9 @@ public:
 			}
 
 			// map
-			for (MapData data : _map_data)
+			for (MapData& data : _map_data)
 			{
-				if(data.mesh_type.compare("tube") == 0)
+				if (data.mesh_type.compare("tube") == 0)
 					DrawMapObject(cmdList, Tube, i_now_render_index, data.pos, data.scale, data.rotation, 0.f);
 				else if (data.mesh_type.compare("Barrel") == 0)
 					DrawMapObject(cmdList, barrel, i_now_render_index, data.pos, data.scale, data.rotation);
@@ -401,10 +401,8 @@ public:
 					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("tank") == 0)
 				{
-					data.scale.x *= 2.f;
-					data.scale.y *= 2.f;
-					data.scale.z *= 2.f;
-					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, data.scale, data.rotation);
+					XMFLOAT3 scale = XMFLOAT3(data.scale.x * 2.f, data.scale.y * 2.f, data.scale.z * 2.f);
+					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, scale, data.rotation);
 				}
 				else if (data.mesh_type.compare("Plane002") == 0)
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
@@ -412,14 +410,17 @@ public:
 					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
-			}
-
-			// door
-			XMFLOAT3 scale = XMFLOAT3(2.85, 1, 4);
-			XMFLOAT3 rot = XMFLOAT3(0.f, 0.f, -90.f);
-			if (inputPtr->_open_door[Scene_num-1] == true)
-				inputPtr->_open_door[Scene_num - 1] = OpenDoor(doorPos[0], doorPos0[Scene_num - 1], rot.x);
-			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[0], scale, rot);
+				else if (data.mesh_type.compare("Grid_Metal_door") == 0)
+				{
+					// door
+					if (inputPtr->_open_door[Scene_num - 1] == true)
+					{
+						inputPtr->_open_door[Scene_num - 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						bounding_boxes[51].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+					}
+					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
+			}		
 		}
 
 		else if (stage == 2)

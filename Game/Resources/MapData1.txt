@@ -1,4 +1,4 @@
-num: 918
+num: 919
 Mesh: Plane002 (UnityEngine.Mesh) pos: 15.65297 -0.04 -119.0541 scale: 1 1 1 rotation: 270 0 0
 Mesh: tank (UnityEngine.Mesh) pos: 18.05 0 -84.05 scale: 1 1 1 rotation: 270 260 0
 Mesh: tank (UnityEngine.Mesh) pos: -27.71 0 -35.57 scale: 3 3 3 rotation: 270 260 0
@@ -874,19 +874,19 @@ Mesh: Grid_Metal_tile (UnityEngine.Mesh) pos: -106.8 1.400001 -68.18 scale: 1 1 
 Mesh: Grid_Metal_tile (UnityEngine.Mesh) pos: -106.8 1.400001 -66.21326 scale: 1 1 1 rotation: 90 90 0
 Mesh: Grid_Metal_tile (UnityEngine.Mesh) pos: -106.8 1.400002 -64.27214 scale: 1 1 1 rotation: 90 90 0
 Mesh: Grid_Metal_tile (UnityEngine.Mesh) pos: -106.8 1.400002 -62.2916 scale: 1 1 1 rotation: 90 90 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: 22.61237 9.562668 -63.97538 scale: 3 3 3 rotation: 270 0 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: 22.61237 9.094215 -56.90165 scale: 3 3 3 rotation: 296.532 180 180
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: 22.61237 3.062667 -32.43 scale: 3 3 3 rotation: 270 0 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: 23.02005 3.31 -25.1305 scale: 3 3 3 rotation: 353.5691 7.228763E-08 -1.286741E-06
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: -95.47375 3.062667 38.70182 scale: 3 3 3 rotation: 270 90.01401 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: -85.26831 3.062667 38.69926 scale: 3 3 3 rotation: 270 90.01401 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: -88.39996 9.094215 38.70002 scale: 3 3 3 rotation: 296.5319 270.014 180
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: -95.47375 9.562668 38.70182 scale: 3 3 3 rotation: 270 90.01401 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: -104.4738 3.312668 38.70182 scale: 3 3 3 rotation: 270 90.01401 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: -78.15997 3.457853 38.70182 scale: 3 3 3 rotation: 341.2243 269.9999 180.0141
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: -81.44998 10.34 38.70182 scale: 3 3 3 rotation: 322.9769 90.00006 0.01397874
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: 22.61237 3.062667 -53.77 scale: 3 3 3 rotation: 270 0 0
-Mesh: Sci-fi BOX (UnityEngine.Mesh) pos: 22.61237 3.062667 -63.97538 scale: 3 3 3 rotation: 270 0 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: 22.61237 9.562668 -63.97538 scale: 3 3 3 rotation: 270 0 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: 22.61237 9.094215 -56.90165 scale: 3 3 3 rotation: 296.532 180 180
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: 22.61237 3.062667 -32.43 scale: 3 3 3 rotation: 270 0 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: 23.02005 3.31 -25.1305 scale: 3 3 3 rotation: 353.5691 7.228763E-08 -1.286741E-06
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: -95.47375 3.062667 38.70182 scale: 3 3 3 rotation: 270 90.01401 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: -85.26831 3.062667 38.69926 scale: 3 3 3 rotation: 270 90.01401 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: -88.39996 9.094215 38.70002 scale: 3 3 3 rotation: 296.5319 270.014 180
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: -95.47375 9.562668 38.70182 scale: 3 3 3 rotation: 270 90.01401 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: -104.4738 3.312668 38.70182 scale: 3 3 3 rotation: 270 90.01401 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: -78.15997 3.457853 38.70182 scale: 3 3 3 rotation: 341.2243 269.9999 180.0141
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: -81.44998 10.34 38.70182 scale: 3 3 3 rotation: 322.9769 90.00006 0.01397874
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: 22.61237 3.062667 -53.77 scale: 3 3 3 rotation: 270 0 0
+Mesh: Sci-fi-BOX (UnityEngine.Mesh) pos: 22.61237 3.062667 -63.97538 scale: 3 3 3 rotation: 270 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: -4.429935 3.900001 -87.13001 scale: 8 8 8 rotation: 0 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: -4.429932 3.900001 -100.34 scale: 8 8 8 rotation: 0 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: 5.820084 3.900001 -112.94 scale: 8 8 8 rotation: 0 0 0
@@ -896,3 +896,4 @@ Mesh: Cube (UnityEngine.Mesh) pos: 5.820068 3.9 -125.98 scale: 8 8 8 rotation: 0
 Mesh: Cube (UnityEngine.Mesh) pos: -29.22093 5 55.06119 scale: 10 10 10 rotation: -4.365987E-08 354.1375 -8.526566E-07
 Mesh: Cube (UnityEngine.Mesh) pos: 5.820084 3.900001 -99.84002 scale: 8 8 8 rotation: 0 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: 5.820084 3.900001 -87.13001 scale: 8 8 8 rotation: 0 0 0
+Mesh: Grid_Metal_door (UnityEngine.Mesh) pos: -107.4 1.530045 -10.15614 scale: 3 3 4 rotation: 1.207419E-06 -3.622254E-06 270

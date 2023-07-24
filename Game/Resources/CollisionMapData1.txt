@@ -1,4 +1,4 @@
-num: 52
+num: 53
 Mesh: Cube (UnityEngine.Mesh) pos: 49.60001 1.24 -126.8 scale: 79.61923 3 2 rotation: 0 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: 52.39999 1.24 -100.96 scale: 46.53902 3 2 rotation: 0 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: 24.91 1.24 -68.94 scale: 12.79215 3 2 rotation: 0 0 0
@@ -50,3 +50,4 @@ Mesh: Cube (UnityEngine.Mesh) pos: 74.93 1.24 -123.9 scale: 0.4434359 3 4.206465
 Mesh: Cube (UnityEngine.Mesh) pos: 74.93 1.24 -115.53 scale: 0.4434359 3 4.206465 rotation: 0 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: -38.4 1.24 14.61 scale: 2 3 37.41581 rotation: 0 0 0
 Mesh: Cube (UnityEngine.Mesh) pos: -38.4 1.24 -10.34 scale: 2 3 4.261287 rotation: 0 0 0
+Mesh: Cube (UnityEngine.Mesh) pos: -108.48 1.24 -10.27 scale: 2 3 4.025863 rotation: 0 0 0
