@@ -51,9 +51,11 @@ constexpr char SC_MOVE_BOSS = 16;
 constexpr char SC_MSG = 17;
 constexpr char SC_KEY = 18;
 constexpr char SC_DOOR = 19;
-constexpr char SC_BOSS_SKILL_START = 20;
-constexpr char SC_BOSS_SKILL_END = 21;
-constexpr char SC_BOSS_PLAYER_CON = 22;
+constexpr char SC_BOSS_SHIELD = 20;
+constexpr char SC_BOSS_RUSH_TARGET = 21;
+constexpr char SC_BOSS_SKILL_START = 22;
+constexpr char SC_BOSS_SKILL_END = 23;
+constexpr char SC_BOSS_PLAYER_CON = 24;
 ///////////////////////////////////////////
 
 constexpr char SS_CONNECT_SERVER = 28;
@@ -216,6 +218,20 @@ struct SC_KEY_PACKET {
 struct SC_DOOR_PACKET {
 	unsigned char size;
 	char	type;
+};
+
+struct SC_BOSS_SHIELD_PACKET {
+	unsigned char size;
+	char	type;
+	int		shield_hp;
+	bool	trigger;
+};
+
+struct SC_BOSS_RUSH_TARGET_PACKET {
+	unsigned char size;
+	char	type;
+	int		target_id;
+	bool	trigger;
 };
 
 struct SC_BOSS_SKILL_START_PACKET {
