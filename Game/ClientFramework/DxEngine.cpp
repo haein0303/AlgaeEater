@@ -470,20 +470,19 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 	}
 
-
 	if (isActive)
 	{
 		switch (Scene_num)
 		{
 		case 0:
 		case 1:
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes);
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state));
 			break;
 		case 2:
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2);
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state));
 			break;
 		case 3:
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3);
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state));
 			break;
 		default:
 			break;
@@ -491,33 +490,25 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->inputMouse(playerArr, networkPtr);
 	}
 
-	// 콤보 공격
-	for (OBJECT& player : playerArr)
-	{
-		if (player._combo_count == 1 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.4f)
-		{
-			player._animation_time_pos = 0.f;
-			player._animation_state = AnimationOrder::Idle;
-			player._combo_count = 0;
-		}
-		else if (player._combo_count == 2 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.47f)
-		{
-			player._animation_time_pos = 0.f;
-			player._animation_state = AnimationOrder::Idle;
-			player._combo_count = 0;
-		}
-		else if (player._combo_count == 3 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.7f)
-		{
-			player._animation_time_pos = 0.f;
-			player._animation_state = AnimationOrder::Idle;
-			player._combo_count = 0;
-		}
-	}
+	// npc bounding box
+	for (OBJECT& obj : npcArr)
+		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
 
+	// boss bounding box
+	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
+		boss_obj._transform.y + 2.5f,
+		boss_obj._transform.z);
+	XMVECTOR v{ 0, 1, 0, 0 };
+	XMStoreFloat4(&boss_collision.Orientation, XMQuaternionRotationNormal(v, boss_obj._degree * XM_PI / 180.f));
+
+	// 공격 세팅 및 파티클 동기화
 	for (OBJECT& player : playerArr)
 	{
+		if (player._animation_state != player._animation_state0)
+			player._can_attack = true;
+
 		// 플레이어 기본 공격 콜라이더 on off
-		if (player._animation_state == AnimationOrder::Attack
+		if (player._animation_state == AnimationOrder::Attack1
 			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.3f)
 		{
 			player._attack.Center = XMFLOAT3(player._transform.x + 0.5f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
@@ -545,21 +536,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			player._skill.Center.y = -100.f;
 	}
 
-	// npc bounding box
-	for (OBJECT& obj : npcArr)
-		obj._bounding_box.Center = XMFLOAT3(obj._transform.x, obj._transform.y, obj._transform.z);
-
-	// boss bounding box
-	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
-		boss_obj._transform.y + 2.5f,
-		boss_obj._transform.z);
-	XMVECTOR v{ 0, 1, 0, 0 };
-	XMStoreFloat4(&boss_collision.Orientation, XMQuaternionRotationNormal(v, boss_obj._degree * XM_PI / 180.f));
-
 	// 파티클 동기화
 	for (OBJECT& player : playerArr)
 	{
-		if ((player._animation_state == AnimationOrder::Attack || player._animation_state == AnimationOrder::Skill)
+		if ((player._animation_state == AnimationOrder::Attack1 || player._animation_state == AnimationOrder::Skill)
 			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f
 			&& player._can_attack2)
 		{
@@ -594,8 +574,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	// 플레이어 공격 충돌 감지
-	if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack || playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
-		&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
+	if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1
+		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2
+		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3
+		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4
+		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
 		&& playerArr[networkPtr->myClientId]._can_attack)
 	{
 		for (int i = 0; i < NPCMAX; ++i)
@@ -693,7 +676,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	for (int j = 0; j < NPCMAX; ++j)
 	{
 		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 4.f
-			&& npcArr[j]._animation_state == AnimationOrder::Attack
+			&& npcArr[j]._animation_state == AnimationOrder::Attack1
 			&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
 			&& npcArr[j]._can_attack)
 		{
@@ -716,7 +699,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
 		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 26.f) {
-			if (boss_obj._animation_state == AnimationOrder::Attack
+			if (boss_obj._animation_state == AnimationOrder::Attack1
 				&& boss_obj._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(boss_obj._animation_state) * 0.5f
 				&& boss_obj._can_attack) {
 
@@ -808,7 +791,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
 				{
-					if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack)
+					if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1)
 						&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
 						&& playerArr[networkPtr->myClientId]._can_attack3)
 					{

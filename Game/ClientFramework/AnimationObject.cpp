@@ -18,12 +18,15 @@ void AnimationObject::CreateVertexAnimationObject(vector<Vertex>& vertices, vect
 
 void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 {
-	if (player._animation_state != AnimationOrder::Idle) {
-		player._animation_time_pos += dt;
-	}
-	else {
+	if (player._animation_state == AnimationOrder::Idle)
 		player._animation_time_pos += dt * 0.4f;
-	}
+	else if(player._animation_state == AnimationOrder::Attack1
+		|| player._animation_state == AnimationOrder::Attack2
+		|| player._animation_state == AnimationOrder::Attack3
+		|| player._animation_state == AnimationOrder::Attack4)
+		player._animation_time_pos += dt * 0.7f;
+	else
+		player._animation_time_pos += dt;
 
 	// 애니메이션이 끝나면 애니메이션 루프
 	if ((player._animation_state == AnimationOrder::Idle || player._animation_state == AnimationOrder::Walk) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
@@ -35,11 +38,23 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 		player._animation_state = AnimationOrder::Idle;
 	}
 
-	// 공격 애니메이션이 끝나면 애니메이션을 Idle상태로 바꿈
-	if ((player._animation_state == AnimationOrder::Attack) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
-		player._animation_time_pos = 0.f;
-		player._animation_state = AnimationOrder::Idle;
-		player._combo_count = 0;
+	// 공격 애니메이션이 끝나면 콤보 진행여부를 판단
+	if ((player._animation_state == AnimationOrder::Attack1
+		|| player._animation_state == AnimationOrder::Attack2
+		|| player._animation_state == AnimationOrder::Attack3
+		|| player._animation_state == AnimationOrder::Attack4) && player._animation_time_pos >= GetClipEndTime(player._animation_state))
+	{
+		if (player._next_combo && player._animation_state < AnimationOrder::Attack4)
+		{
+			player._animation_time_pos = 0.f;
+			player._animation_state++;
+			player._next_combo = false;
+		}
+		else
+		{
+			player._animation_time_pos = 0.f;
+			player._animation_state = AnimationOrder::Idle;
+		}
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산

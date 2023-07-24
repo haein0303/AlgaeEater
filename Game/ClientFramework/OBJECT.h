@@ -33,7 +33,7 @@ public:
 	BoundingBox _bounding_box{ XMFLOAT3(0.f, 0.f, 0.f) , XMFLOAT3(0.5f, 1.f, 0.5f) };
 	BoundingOrientedBox _attack;
 	BoundingOrientedBox _skill;
-	int			_combo_count = 0;
+	bool				_next_combo = false;
 
 	XMFLOAT4	_prev_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	XMFLOAT4	_delta_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);

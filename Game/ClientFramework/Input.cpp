@@ -15,7 +15,7 @@ void Input::Init(WindowInfo windowInfo)
 
 bool send_toggle = false;
 int counter_toggle = 0;
-void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes)
+void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes, float animation_end_time)
 {
 		HWND hwnd = GetActiveWindow();
 		bool key_toggle = false;
@@ -141,13 +141,37 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 			if (_states[VK_RBUTTON] == 2) {
 				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Skill;
 			}
-			else if (_states[VK_LBUTTON] == 2) {
-				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Attack;
-				playerArr[networkPtr->myClientId]._combo_count++;
-				cout << "combo : " << playerArr[networkPtr->myClientId]._combo_count << endl;
+			else if (playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack1
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack2
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack3
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack4
+				&& _states[VK_LBUTTON] == 2)
+			{
+				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Attack1;
+			}
+			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1
+				&& _states[VK_LBUTTON] == 2
+				&& playerArr[networkPtr->myClientId]._animation_time_pos >= animation_end_time - 0.4f
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time * 0.99f)
+			{
+				playerArr[networkPtr->myClientId]._next_combo = true;
+			}
+			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2
+				&& _states[VK_LBUTTON] == 2
+				&& playerArr[networkPtr->myClientId]._animation_time_pos >= animation_end_time - 0.4f
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time * 0.99f)
+			{
+				playerArr[networkPtr->myClientId]._next_combo = true;
+			}
+			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3
+				&& _states[VK_LBUTTON] == 2
+				&& playerArr[networkPtr->myClientId]._animation_time_pos >= animation_end_time - 0.4f
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time * 0.99f)
+			{
+				playerArr[networkPtr->myClientId]._next_combo = true;
 			}
 			else if (!(w == false && a == false && s == false && d == false)
-				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack1
 				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Skill) {
 
 				float pos_x0 = playerArr[networkPtr->myClientId]._transform.x;
@@ -240,13 +264,20 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 				}
 				
 			}
-			else if (playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack && playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Skill) {
+			else if (playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack1
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack2
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack3
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack4
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Skill) {
 				playerArr[networkPtr->myClientId]._animation_state = AnimationOrder::Idle;
 			}
 
 			if (playerArr[networkPtr->myClientId]._animation_state0 != playerArr[networkPtr->myClientId]._animation_state) {
 				playerArr[networkPtr->myClientId]._animation_time_pos = 0.f;
 				playerArr[networkPtr->myClientId]._animation_state0 = playerArr[networkPtr->myClientId]._animation_state;
+				playerArr[networkPtr->myClientId]._can_attack = true;
+				playerArr[networkPtr->myClientId]._can_attack2 = true;
+				playerArr[networkPtr->myClientId]._can_attack3 = true;
 
 				// 플레이어의 애니메이션 상태가 바뀌면 패킷 송신
 				CS_MOVE_PACKET p;

@@ -307,7 +307,10 @@ enum AnimationOrder
 	Walk,
 	Death,
 	Skill,
-	Attack
+	Attack1,
+	Attack2,
+	Attack3,
+	Attack4
 };
 
 // 보스2 스킬
