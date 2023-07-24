@@ -16,6 +16,7 @@ public:
 	int npc_accept_counter = 0;
 	unordered_map<int, int> npc_map;
 
+	
 
 	int ConnectServer(int PortNum,int Scene_select) //서버에 접속시 보내주는 부분
 	{
@@ -188,6 +189,7 @@ public:
 			boss_obj._transform.y = my_packet->y;
 			boss_obj._transform.z = my_packet->z;
 			boss_obj._degree = my_packet->degree;
+			boss_obj._max_hp = BOSS_HP[0];
 			boss_obj._hp = my_packet->hp;
 			boss_obj._animation_state = my_packet->char_state;
 
@@ -330,6 +332,21 @@ public:
 
 			break;
 		}
+		case SC_BOSS_SHIELD: {
+			SC_BOSS_SHIELD_PACKET* packet = reinterpret_cast<SC_BOSS_SHIELD_PACKET*>(ptr);
+			if (boss_obj._shield_on == false) {
+				boss_obj._shield_on = packet->trigger;
+				boss_obj._max_shield = packet->shield_hp;
+				cout << "MAX SHIELD : " << boss_obj._max_shield << endl;
+			}
+			
+			boss_obj._shield = packet->shield_hp;
+			cout << "MAX SHIELD : " << boss_obj._max_shield;
+			cout << "   SHIELD : " << boss_obj._shield << endl;
+			
+			break;
+		}
+
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 		}

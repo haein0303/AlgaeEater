@@ -160,6 +160,8 @@ void d11on12::LoadPipeline()
     m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), mSolidColorBrush.GetAddressOf());
 	m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Gray), &mGrayBrush);
 	m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &mRedBrush);
+	m_d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::LightBlue), &mBlueBrush);
+
 
     m_dWriteFactory->CreateTextFormat(L"Microsoft GothicNeo", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
@@ -279,6 +281,7 @@ void d11on12::Late_load()
 	user_icon.push_back(addResource(L"..\\Resources\\UserInterface\\AKI.png"));
 	user_icon.push_back(addResource(L"..\\Resources\\UserInterface\\MIKA.png"));
 
+	_alert_bg = addResource(L"..\\Resources\\UserInterface\\alert.png");
 
 }
 
@@ -381,7 +384,7 @@ void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 	case 3:
 		m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f + xs, 30.f + ys });
 		m_d2dDeviceContext->DrawTextW(L"ÃÖÁ¾ º¸½º", wcslen(L"ÃÖÁ¾ º¸½º"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
-		m_d2dDeviceContext->DrawTextW(L"±è¸Ø¹«¾¾", wcslen(L"±è¸Ø¹«¾¾"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
+		m_d2dDeviceContext->DrawTextW(L"TENEBRO", wcslen(L"TENEBRO"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
 		break;
 	}
@@ -390,11 +393,38 @@ void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 	float startx = 640.f - xs * 1.3f;
 	float width = xs * 1.3f * 2;
 
+
 	D2D1_RECT_F backgroundRect = D2D1::RectF(startx, 85.0f, startx + width, 90.f);
+	D2D1_RECT_F progressRect;
+	if (boss_obj._hp > 0) {
+		progressRect = D2D1::RectF(640.f - xs * 1.3f, 85.0f, startx + (width * ((float)boss_obj._hp / boss_obj._max_hp)), 90.f);
+	}
+	else {
+		progressRect = D2D1::RectF(640.f - xs * 1.3f, 85.0f, startx, 90.f);
+
+	}
+	
 	m_d2dDeviceContext->FillRectangle(backgroundRect, mGrayBrush);
 
-	D2D1_RECT_F progressRect = D2D1::RectF(640.f - xs * 1.3f, 85.0f, startx + (width*((float)hp/ BOSS_HP[stage])), 90.f);
 	m_d2dDeviceContext->FillRectangle(progressRect, mRedBrush);
+
+
+
+	D2D1_RECT_F backgroundRect2 = D2D1::RectF(startx, 95.0f, startx + width, 100.f);
+	D2D1_RECT_F progressRect2;
+	if (boss_obj._shield > 0) {
+		progressRect2 = D2D1::RectF(640.f - xs * 1.3f, 95.0f, startx + (width * ((float)boss_obj._shield / boss_obj._max_shield)), 100.f);
+	}
+	else {
+		progressRect2 = D2D1::RectF(640.f - xs * 1.3f, 95.0f, startx, 100.f);
+	}
+
+	if (boss_obj._shield_on) {
+		m_d2dDeviceContext->FillRectangle(backgroundRect2, mGrayBrush);
+
+		m_d2dDeviceContext->FillRectangle(progressRect2, mBlueBrush);
+	}
+	
 }
 
 void d11on12::draw_infotext(LPCWSTR text, D2D1_RECT_F rect)

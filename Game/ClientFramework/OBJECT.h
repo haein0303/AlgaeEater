@@ -30,6 +30,11 @@ public:
 	int			_pillar_count = 5;
 	int			_pillar_color = 0;
 	int			_max_hp = 0;
+
+	bool		_shield_on = false;
+	int			_max_shield = 0;
+	int			_shield = 0;
+
 	BoundingBox _bounding_box{ XMFLOAT3(0.f, 0.f, 0.f) , XMFLOAT3(0.5f, 1.f, 0.5f) };
 	BoundingOrientedBox _attack;
 	BoundingOrientedBox _skill;

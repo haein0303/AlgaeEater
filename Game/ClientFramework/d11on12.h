@@ -42,6 +42,7 @@ private:
 
 	ComPtr<ID2D1SolidColorBrush> mSolidColorBrush = nullptr;
 	ID2D1SolidColorBrush* mGrayBrush = nullptr;
+	ID2D1SolidColorBrush* mBlueBrush = nullptr;
 	ID2D1SolidColorBrush* mRedBrush = nullptr;
 	ComPtr<IDWriteTextFormat> mDWriteTextFormat = nullptr;
 	ComPtr<IDWriteTextFormat> m_mini_boss_font = nullptr;
@@ -75,6 +76,7 @@ private:
 	
 public:
 	ID2D1Bitmap* _boss_bg;
+	ID2D1Bitmap* _alert_bg;
 
 	vector<ID2D1Bitmap*> _v_Resource;
 	~d11on12() {
