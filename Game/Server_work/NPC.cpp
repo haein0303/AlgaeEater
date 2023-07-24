@@ -205,7 +205,7 @@ void initialize_cube()
 		cubes[i].z = 30.0f;
 		cubes[i].degree = 0;
 		cubes[i].color = 0;
-		cubes[i].hp = 5;
+		cubes[i].hp = 10;
 		cubes[i]._Room_Num = i / ROOM_CUBE;
 	}
 	cout << "cube ·Îµù ³¡" << endl;
@@ -356,7 +356,9 @@ void rush_npc(int c_id, float t_x, float t_z)
 			}
 			clients[pl]._sl.unlock();
 
-			clients[pl].send_remove_object(cube_num, 0);
+			int cli_cube_num = cube_num % ROOM_CUBE;
+
+			clients[pl].send_remove_object(cli_cube_num, 1);
 
 			clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0, 0);
 		}
