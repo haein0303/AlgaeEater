@@ -151,6 +151,7 @@ struct SC_ADD_OBJECT_PACKET {
 struct SC_REMOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;
+	int		ob_type;
 	int		id;
 };
 

@@ -356,6 +356,8 @@ void rush_npc(int c_id, float t_x, float t_z)
 			}
 			clients[pl]._sl.unlock();
 
+			clients[pl].send_remove_object(cube_num, 0);
+
 			clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0, 0);
 		}
 

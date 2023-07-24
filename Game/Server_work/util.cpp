@@ -735,11 +735,11 @@ void disconnect(int c_id)
 				clients[pl]._sl.unlock();
 				continue;
 			}
-			SC_REMOVE_OBJECT_PACKET p;
+			/*SC_REMOVE_OBJECT_PACKET p;
 			p.id = c_id;
 			p.size = sizeof(p);
 			p.type = SC_REMOVE_OBJECT;
-			clients[pl].do_send(&p);
+			clients[pl].do_send(&p);*/
 			clients[pl]._sl.unlock();
 			clients[pl].room_list.erase(c_id);
 		}

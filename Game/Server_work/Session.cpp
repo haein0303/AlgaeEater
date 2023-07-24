@@ -103,12 +103,13 @@ void SESSION::send_add_object(int c_id, float x, float y, float z, float degree,
 	do_send(&p);
 }
 
-void SESSION::send_remove_object(int c_id)
+void SESSION::send_remove_object(int c_id, int object_type)
 {
 	SC_REMOVE_OBJECT_PACKET p;
 	p.id = c_id;
 	p.size = sizeof(SC_REMOVE_OBJECT_PACKET);
 	p.type = SC_REMOVE_OBJECT;
+	p.ob_type = object_type;
 	do_send(&p);
 }
 
