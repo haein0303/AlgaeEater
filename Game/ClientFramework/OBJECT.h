@@ -35,6 +35,9 @@ public:
 	int			_max_shield = 0;
 	int			_shield = 0;
 
+	int			_stage1_target_id = 0;
+	bool		_stage1_target_alert_on = false;
+
 	BoundingBox _bounding_box{ XMFLOAT3(0.f, 0.f, 0.f) , XMFLOAT3(0.5f, 1.f, 0.5f) };
 	BoundingOrientedBox _attack;
 	BoundingOrientedBox _skill;

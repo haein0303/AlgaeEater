@@ -366,7 +366,9 @@ void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 	float ys = 50.f;
 	D2D1_RECT_F title_rect{ 640.f - 120.f, 40.f, 640.f + 120.f, 70.f };
 	D2D1_RECT_F minititle_rect{ 640.f - 120.f, 20.f, 640.f + 120.f, 40.f };
-	
+	D2D1_RECT_F alert_rect{ 0.f,130.f,200.f,200.f };
+
+
 	switch (stage) {
 	case 0:
 	case 1:
@@ -374,6 +376,16 @@ void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 
 		m_d2dDeviceContext->DrawTextW(L"전구 공장의 보스", wcslen(L"전구 공장의 보스"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
 		m_d2dDeviceContext->DrawTextW(L"타란튤라", wcslen(L"타란튤라"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
+		
+		if (boss_obj._stage1_target_alert_on) {
+			m_d2dDeviceContext->DrawBitmap(_alert_bg, { 0.f,90.f,230.f,200.f });
+			WCHAR tmp[20];
+			wsprintf(tmp, L"TARGET : %d", boss_obj._stage1_target_id);
+
+			m_d2dDeviceContext->DrawTextW(tmp, wcslen(tmp), m_boss_font.Get(), &alert_rect, mSolidColorBrush.Get());
+		}
+
+		
 		break;
 	case 2:
 		m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f + xs, 30.f + ys });

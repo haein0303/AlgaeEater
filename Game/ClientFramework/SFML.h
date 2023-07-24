@@ -346,6 +346,11 @@ public:
 			
 			break;
 		}
+		case SC_BOSS_RUSH_TARGET: {
+			SC_BOSS_RUSH_TARGET_PACKET* packet = reinterpret_cast<SC_BOSS_RUSH_TARGET_PACKET*>(ptr);
+			boss_obj._stage1_target_alert_on = packet->trigger;
+			boss_obj._stage1_target_id = packet->target_id;
+		}
 
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
