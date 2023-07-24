@@ -1456,7 +1456,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 						break;
 					}*/
 
-					if (pillars_data[i]._pillar_count == 0) {
+					if (pillars_data[i]._pillar_count <= 0) {
 						pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
 					}
 					else {
