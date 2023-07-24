@@ -1434,7 +1434,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				{
 					XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 					XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-					switch (pillars_data[i]._pillar_count)
+					/*switch (pillars_data[i]._pillar_count)
 					{
 					case 5:
 						pillars_data[i]._animation_time_pos = 0.f;
@@ -1454,6 +1454,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					default:
 						pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
 						break;
+					}*/
+
+					if (pillars_data[i]._pillar_count == 0) {
+						pillars_data[i]._animation_time_pos += timerPtr->_deltaTime;
+					}
+					else {
+						pillars_data[i]._animation_time_pos = (10 - pillars_data[i]._pillar_count) * 0.01f;
 					}
 					for (MESH_ASSET& piece_of_pillar : pillar)
 					{

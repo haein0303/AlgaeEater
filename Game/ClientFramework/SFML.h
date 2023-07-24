@@ -276,8 +276,16 @@ public:
 		case SC_REMOVE_OBJECT:
 		{
 			SC_REMOVE_OBJECT_PACKET* my_packet = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(ptr);
-			int id = getUSERid(my_packet->id);
-			playerArr[id]._on = false;
+			if (my_packet->ob_type == 0) { //0은 플레이어 1은 기둥
+				int id = getUSERid(my_packet->id);
+				playerArr[id]._on = false;
+			}
+
+			if (my_packet->ob_type == 1) { //0은 플레이어 1은 기둥
+				int id = my_packet->id;
+				pillars_data[id]._pillar_count = 0;
+			}
+			
 			break;
 		}
 		case SC_ADD_CUBE:
