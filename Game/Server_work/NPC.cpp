@@ -36,6 +36,7 @@ void initialize_npc()
 		clients[i].Lua_on = false;
 		clients[i].stage = 0;
 		clients[i].turn = 0;
+		clients[i].boss_shield = 100;
 		clients[i].first_pattern = false;
 		clients[i].second_pattern = false;
 		clients[i].boss_shield_trigger = false;

@@ -353,6 +353,16 @@ void do_timer()
 
 					send_cube(pl, clients[pl].x, clients[pl].y, clients[pl].z);
 
+					for (auto& player : clients[pl].room_list) {
+						if (player >= MAX_USER) continue;
+						SC_BOSS_SHIELD_PACKET p;
+						p.size = sizeof(SC_BOSS_SHIELD_PACKET);
+						p.type = SC_BOSS_SHIELD;
+						p.shield_hp = clients[pl].boss_shield;
+						p.trigger = true;
+						clients[player].do_send(&p);
+					}
+
 					srand((unsigned int)time(NULL));
 
 					for (int i = 0; i < 3; i++) {
@@ -362,8 +372,11 @@ void do_timer()
 					clients[pl].color_sequence[3] = 0;
 				}
 
-				clients[ev.target_id].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-					clients[pl].hp, clients[pl].char_state, clients[pl].color_sequence[clients[pl].eye_color], 0);
+				for (auto& player : clients[pl].room_list) {
+					if (player >= MAX_USER) continue;
+					clients[player].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+						clients[pl].hp, clients[pl].char_state, clients[pl].color_sequence[clients[pl].eye_color], 0);
+				}
 
 				cout << clients[pl].color_sequence[clients[pl].eye_color] << endl;
 

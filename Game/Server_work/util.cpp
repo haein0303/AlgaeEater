@@ -423,10 +423,30 @@ void process_packet(int c_id, char* packet)
 			if (p->attack_type == 2) { // ÀÏ¹İ °ø°İ
 				if (clients[p->target_id].boss_shield_trigger == true) { // º¸½º ±â¹Í Áß
 					clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
-					cout << "º¸½º ½¯µå ÆÄ±« Áß" << endl;
+
 					if (clients[p->target_id].boss_shield <= 0) {
 						clients[p->target_id].crash_sequence[3] = 0;
 						cout << "º¸½º ½¯µå ÆÄ±« : 0" << endl;
+						for (auto& player : clients[p->target_id].room_list) {
+							if (player >= MAX_USER) continue;
+							SC_BOSS_SHIELD_PACKET pac;
+							pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+							pac.type = SC_BOSS_SHIELD;
+							pac.shield_hp = clients[p->target_id].boss_shield;
+							pac.trigger = false;
+							clients[player].do_send(&pac);
+						}
+					}
+					else {
+						for (auto& player : clients[p->target_id].room_list) {
+							if (player >= MAX_USER) continue;
+							SC_BOSS_SHIELD_PACKET pac;
+							pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+							pac.type = SC_BOSS_SHIELD;
+							pac.shield_hp = clients[p->target_id].boss_shield;
+							pac.trigger = true;
+							clients[player].do_send(&pac);
+						}
 					}
 				}
 
@@ -468,10 +488,30 @@ void process_packet(int c_id, char* packet)
 				if (p->attack_type == 1) { // ½ºÅ³ °ø°İ
 					if (clients[p->target_id].boss_shield_trigger == true) { // º¸½º ±â¹Í Áß
 						clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
-						cout << "º¸½º ½¯µå ÆÄ±« Áß" << endl;
+
 						if (clients[p->target_id].boss_shield <= 0) {
 							clients[p->target_id].crash_sequence[3] = 0;
 							cout << "º¸½º ½¯µå ÆÄ±« : 0" << endl;
+							for (auto& player : clients[p->target_id].room_list) {
+								if (player >= MAX_USER) continue;
+								SC_BOSS_SHIELD_PACKET pac;
+								pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+								pac.type = SC_BOSS_SHIELD;
+								pac.shield_hp = 0;
+								pac.trigger = false;
+								clients[player].do_send(&pac);
+							}
+						}
+						else {
+							for (auto& player : clients[p->target_id].room_list) {
+								if (player >= MAX_USER) continue;
+								SC_BOSS_SHIELD_PACKET pac;
+								pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+								pac.type = SC_BOSS_SHIELD;
+								pac.shield_hp = clients[p->target_id].boss_shield;
+								pac.trigger = true;
+								clients[player].do_send(&pac);
+							}
 						}
 					}
 
