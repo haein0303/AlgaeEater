@@ -20,11 +20,6 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
 {
 	if (player._animation_state == AnimationOrder::Idle)
 		player._animation_time_pos += dt * 0.4f;
-	else if(player._animation_state == AnimationOrder::Attack1
-		|| player._animation_state == AnimationOrder::Attack2
-		|| player._animation_state == AnimationOrder::Attack3
-		|| player._animation_state == AnimationOrder::Attack4)
-		player._animation_time_pos += dt * 0.7f;
 	else
 		player._animation_time_pos += dt;
 

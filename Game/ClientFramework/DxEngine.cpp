@@ -476,13 +476,13 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 		case 0:
 		case 1:
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state));
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		case 2:
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state));
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		case 3:
-			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[0]._animation_state));
+			inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		default:
 			break;
@@ -504,12 +504,16 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	// 공격 세팅 및 파티클 동기화
 	for (OBJECT& player : playerArr)
 	{
-		if (player._animation_state != player._animation_state0)
-			player._can_attack = true;
+		//if (player._animation_state != player._animation_state0)
+		//	player._can_attack = true;
 
 		// 플레이어 기본 공격 콜라이더 on off
 		if (player._animation_state == AnimationOrder::Attack1
-			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.3f)
+			|| player._animation_state == AnimationOrder::Attack2
+			|| player._animation_state == AnimationOrder::Attack3
+			|| player._animation_state == AnimationOrder::Attack4
+			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f
+			)
 		{
 			player._attack.Center = XMFLOAT3(player._transform.x + 0.5f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
 				player._transform.y + 0.5f,
@@ -519,7 +523,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			XMStoreFloat4(&player._attack.Orientation, XMQuaternionRotationNormal(v, player._degree * XM_PI / 180.f));
 		}
 		else
+		{
 			player._attack.Center.y = -100.f;
+		}
 
 		// 플레이어 스킬 콜라이더 on off
 		if (player._animation_state == AnimationOrder::Skill
@@ -539,7 +545,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	// 파티클 동기화
 	for (OBJECT& player : playerArr)
 	{
-		if ((player._animation_state == AnimationOrder::Attack1 || player._animation_state == AnimationOrder::Skill)
+		if ((player._animation_state == AnimationOrder::Attack1 ||
+			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2 ||
+			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3 ||
+			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4 || 
+			player._animation_state == AnimationOrder::Skill)
 			&& player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f
 			&& player._can_attack2)
 		{
@@ -574,102 +584,87 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	// 플레이어 공격 충돌 감지
-	if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1
-		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2
-		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3
-		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4
-		|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
-		&& playerArr[networkPtr->myClientId]._can_attack)
 	{
-		for (int i = 0; i < NPCMAX; ++i)
+		if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1 ||
+			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2 ||
+			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3 || 
+			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4 || 
+			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
+			&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f
+			&& playerArr[networkPtr->myClientId]._can_attack)
 		{
-			// npc 평타 감지
-			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._attack.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
+			for (int i = 0; i < NPCMAX; ++i)
 			{
-				CS_COLLISION_PACKET p;
-				p.size = sizeof(p);
-				p.type = CS_COLLISION;
-				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-				p.target_id = npcArr[i]._my_server_id;
-				networkPtr->send_packet(&p);
-
-				cout << "player" << playerArr[networkPtr->myClientId]._my_server_id << endl;
-				cout << "npc" << i << " hp : " << npcArr[i]._hp << endl;
-				cout << "particle " << i << " : " << npcArr[i]._particle_count << endl;
-			}
-			
-			// npc 스킬 감지
-			if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._skill.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
-			{
-				CS_COLLISION_PACKET p;
-				p.size = sizeof(p);
-				p.type = CS_COLLISION;
-				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-				p.target_id = npcArr[i]._my_server_id;
-				networkPtr->send_packet(&p);
-
-				cout << "player" << playerArr[networkPtr->myClientId]._my_server_id << endl;
-				cout << "npc" << i << " hp : " << npcArr[i]._hp << endl;
-				cout << "particle " << i << " : " << npcArr[i]._particle_count << endl;
-			}
-		}
-
-		// 보스 대상 평타 충돌 감지
-		if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
-		{
-			CS_COLLISION_PACKET p;
-			p.size = sizeof(p);
-			p.type = CS_COLLISION;
-			p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-			p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-			p.target_id = boss_obj._my_server_id;
-			networkPtr->send_packet(&p);
-		}
-
-		// 보스 대상 스킬 충돌 감지
-		if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
-		{
-			CS_COLLISION_PACKET p;
-			p.size = sizeof(p);
-			p.type = CS_COLLISION;
-			p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-			p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-			p.target_id = boss_obj._my_server_id;
-			networkPtr->send_packet(&p);
-		}
-
-		// 보스1 다리 대상 공격&스킬 충돌 감지
-		if (Scene_num == 1)
-		{
-			for (int i = 0; i < 8; ++i)
-			{
-				if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
+				if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._attack.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
+				{
+					CS_COLLISION_PACKET p;
+					p.size = sizeof(p);
+					p.type = CS_COLLISION;
+					p.attack_type = AnimationOrder::Attack1 - 2;
+					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+					p.target_id = npcArr[i]._my_server_id;
+					networkPtr->send_packet(&p);
+				}
+				if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._skill.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 				{
 					CS_COLLISION_PACKET p;
 					p.size = sizeof(p);
 					p.type = CS_COLLISION;
 					p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
 					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-					p.target_id = boss_obj._my_server_id;
-					networkPtr->send_packet(&p);
-				}
-
-				if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
-				{
-					CS_COLLISION_PACKET p;
-					p.size = sizeof(p);
-					p.type = CS_COLLISION;
-					p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-					p.target_id = boss_obj._my_server_id;
+					p.target_id = npcArr[i]._my_server_id;
 					networkPtr->send_packet(&p);
 				}
 			}
-		}
 
-		playerArr[networkPtr->myClientId]._can_attack = false;
+			if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
+			{
+				CS_COLLISION_PACKET p;
+					p.size = sizeof(p);
+					p.type = CS_COLLISION;
+					p.attack_type = AnimationOrder::Attack1 - 2;
+					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+					p.target_id = boss_obj._my_server_id;
+					networkPtr->send_packet(&p);
+			}
+			if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_collision) && boss_obj._animation_state != AnimationOrder::Death)
+			{
+				CS_COLLISION_PACKET p;
+				p.size = sizeof(p);
+				p.type = CS_COLLISION;
+				p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+				p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+				p.target_id = boss_obj._my_server_id;
+				networkPtr->send_packet(&p);
+			}
+			if (Scene_num == 1)
+				for (int i = 0; i < 8; ++i)
+				{
+					if (playerArr[networkPtr->myClientId]._attack.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
+					{
+						CS_COLLISION_PACKET p;
+						p.size = sizeof(p);
+						p.type = CS_COLLISION;
+						p.attack_type = AnimationOrder::Attack1 - 2;
+						p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+						p.target_id = boss_obj._my_server_id;
+						networkPtr->send_packet(&p);
+					}
+					if (playerArr[networkPtr->myClientId]._skill.Intersects(boss_col[i]) && boss_obj._animation_state != AnimationOrder::Death)
+					{
+						CS_COLLISION_PACKET p;
+						p.size = sizeof(p);
+						p.type = CS_COLLISION;
+						p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+						p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+						p.target_id = boss_obj._my_server_id;
+						networkPtr->send_packet(&p);
+					}
+				}
+					
+
+			playerArr[networkPtr->myClientId]._can_attack = false;
+		}
 	}
 	
 	// npc 공격 충돌 감지
@@ -690,8 +685,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			p.target_id = playerArr[0]._my_server_id;
 			networkPtr->send_packet(&p);
 
-			cout << "player" << 0 << " hp : " << playerArr[0]._hp << endl;
-			cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
+			//cout << "player" << 0 << " hp : " << playerArr[0]._hp << endl;
+			//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 		}
 	}
 	
@@ -713,8 +708,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				p.target_id = playerArr[i]._my_server_id;
 				networkPtr->send_packet(&p);
 
-				cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
-				cout << "BOSS hp : " << boss_obj._hp << endl;
+				//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
+				//cout << "BOSS hp : " << boss_obj._hp << endl;
 			}
 		}
 	}

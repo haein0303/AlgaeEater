@@ -151,27 +151,30 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 			}
 			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1
 				&& _states[VK_LBUTTON] == 2
-				&& playerArr[networkPtr->myClientId]._animation_time_pos >= animation_end_time - 0.4f
-				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time * 0.99f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos >= (animation_end_time - 0.4f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f)
 			{
 				playerArr[networkPtr->myClientId]._next_combo = true;
 			}
 			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2
 				&& _states[VK_LBUTTON] == 2
-				&& playerArr[networkPtr->myClientId]._animation_time_pos >= animation_end_time - 0.4f
-				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time * 0.99f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos >= (animation_end_time - 0.4f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f)
 			{
 				playerArr[networkPtr->myClientId]._next_combo = true;
 			}
 			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3
 				&& _states[VK_LBUTTON] == 2
-				&& playerArr[networkPtr->myClientId]._animation_time_pos >= animation_end_time - 0.4f
-				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time * 0.99f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos >= (animation_end_time - 0.4f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f)
 			{
 				playerArr[networkPtr->myClientId]._next_combo = true;
 			}
 			else if (!(w == false && a == false && s == false && d == false)
 				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack1
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack2
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack3
+				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack4
 				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Skill) {
 
 				float pos_x0 = playerArr[networkPtr->myClientId]._transform.x;
