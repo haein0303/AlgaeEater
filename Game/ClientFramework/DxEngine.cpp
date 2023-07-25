@@ -121,25 +121,26 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	{
 		player_Mika_Astro_B_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		player_Mika_Astro_B_asset.Init("../Resources/Mika_Astro_B.txt", ObjectType::AnimationObjects);
-		player_Mika_Astro_B_asset.Add_texture(L"..\\Resources\\Texture\\P05re_skin_u1.png");
+		player_Mika_Astro_B_asset.Add_texture(L"..\\Resources\\Texture\\P05re_Cloth_B_u1.png");
 		player_Mika_Astro_B_asset.Make_SRV();
 		player_Mika_Astro_B_asset.CreatePSO();
 
 		player_Mika_Hair_B_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		player_Mika_Hair_B_asset.Init("../Resources/Mika_Hair_B.txt", ObjectType::AnimationObjects);
-		player_Mika_Hair_B_asset.Add_texture(L"..\\Resources\\Texture\\P05_Astro_A_u1.png");
+		player_Mika_Hair_B_asset.Add_texture(L"..\\Resources\\Texture\\P05_hair_A_u1.png");
 		player_Mika_Hair_B_asset.Make_SRV();
 		player_Mika_Hair_B_asset.CreatePSO();
 
 		player_Mika_Body_Astro_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		player_Mika_Body_Astro_asset.Init("../Resources/Mika_Body_Astro.txt", ObjectType::AnimationObjects);
-		player_Mika_Body_Astro_asset.Add_texture(L"..\\Resources\\Texture\\P05_hair_B_Flex_u1.png");
+		player_Mika_Body_Astro_asset.Add_texture(L"..\\Resources\\Texture\\P05re_skin_u1.png");
+		player_Mika_Body_Astro_asset.Add_texture(L"..\\Resources\\Texture\\P05_Astro_C_u1.png");
 		player_Mika_Body_Astro_asset.Make_SRV();
 		player_Mika_Body_Astro_asset.CreatePSO();
 
 		player_Mika_Sword_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		player_Mika_Sword_asset.Init("../Resources/Mika_Sword.txt", ObjectType::AnimationObjects);
-		player_Mika_Sword_asset.Add_texture(L"..\\Resources\\Texture\\Katana_Albedo.png");
+		player_Mika_Sword_asset.Add_texture(L"..\\Resources\\Texture\\T_Heavy_Full_Metal_Sword_AlbedoTransparency.png");
 		player_Mika_Sword_asset.Make_SRV();
 		player_Mika_Sword_asset.CreatePSO();
 	}
@@ -1340,17 +1341,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 			}
 		}
+
 		else
 		{
 			cmdList->SetPipelineState(player_Mika_Body_Astro_asset._pipelineState.Get());
 			cmdList->IASetVertexBuffers(0, 1, &player_Mika_Body_Astro_asset._vertexBufferView);
 			cmdList->IASetIndexBuffer(&player_Mika_Body_Astro_asset._indexBufferView);
 
-			//����
 			{
 				int i = 0;
 				{
-					//���� ��ȯ
 					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
 						* XMMatrixRotationX(-XM_PI / 2.f)
 						* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
@@ -1358,52 +1358,66 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-					// ��Ű�� �ִϸ��̼� ���? ������ ����
 					copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
-
-					//����
+					
+					int sum = 0;
+					int count = 0;
+					for (Subset i : player_Mika_Body_Astro_asset._animationPtr->mSubsets)
 					{
+						if (count == 4) {
+							player_Mika_Body_Astro_asset._tex._srvHandle = player_Mika_Body_Astro_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+							player_Mika_Body_Astro_asset._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+						}
+						else
+							player_Mika_Body_Astro_asset._tex._srvHandle = player_Mika_Body_Astro_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+
 						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-						player_Mika_Body_Astro_asset._tex._srvHandle = player_Mika_Body_Astro_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 						descHeapPtr->CopyDescriptor(player_Mika_Body_Astro_asset._tex._srvHandle, 5, devicePtr);
-					}
+						descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+						cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+						sum += i.FaceCount * 3;
 
-					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdList->DrawIndexedInstanced(player_Mika_Body_Astro_asset._indexCount, 1, 0, 0, 0);
+						count++;
+					}
 				}
 			}
 
 
-			for (int i = 1; i < PLAYERMAX; ++i) //�÷��̾� ����
+			for (int i = 1; i < PLAYERMAX; ++i)
 			{
 				if (playerArr[i]._on == true)
 				{
-					//�������� : �Ϲ����� �ֶ� �ִϸ��̼��̶� �޶� �׷�
-					//���°� �ٲ��� ���������� ������Ʈ ������Ʈ�� �ҷ��� �������ִ°�
-					//�̰� ��ĥ �� �ִ� �۾� ���� ������?			
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
+						* XMMatrixRotationX(-XM_PI / 2.f)
+						* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
+						* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+					int sum = 0;
+					int count = 0;
+					for (Subset i : player_Mika_Body_Astro_asset._animationPtr->mSubsets)
 					{
-						//���� ��ȯ
-						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
-							* XMMatrixRotationX(-XM_PI / 2.f)
-							* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
-							* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
-						XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-						XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-						// ��Ű�� �ִϸ��̼� ���? ������ ����
-						copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
-
-						//����
-						{
-							D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-							descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						if (count == 4) {
 							player_Mika_Body_Astro_asset._tex._srvHandle = player_Mika_Body_Astro_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-							descHeapPtr->CopyDescriptor(player_Mika_Body_Astro_asset._tex._srvHandle, 5, devicePtr);
+							player_Mika_Body_Astro_asset._tex._srvHandle.Offset(boss_obj._eye_color, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 						}
+						else
+							player_Mika_Body_Astro_asset._tex._srvHandle = player_Mika_Body_Astro_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
+
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						descHeapPtr->CopyDescriptor(player_Mika_Body_Astro_asset._tex._srvHandle, 5, devicePtr);
 						descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-						cmdList->DrawIndexedInstanced(player_Mika_Body_Astro_asset._indexCount, 1, 0, 0, 0);
+						cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+						sum += i.FaceCount * 3;
+
+						count++;
 					}
 				}
 			}
