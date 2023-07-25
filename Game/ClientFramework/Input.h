@@ -17,7 +17,7 @@ public:
 	bool d = false;
 	bool next_combo = false;
 
-	float move_speed = 10.f;
+	float move_speed;
 
 	bool _mouse_enable = false;
 	bool _mouse_chaged = false;
@@ -32,7 +32,7 @@ public:
 	void Init(WindowInfo windowInfo);
 
 	//Å° ÀÔ·Â
-	void InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes, float animation_end_time);
+	void InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes, int character_num, float animation_end_time);
 	void inputMouse(array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr);
 
 private:

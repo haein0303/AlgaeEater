@@ -85,6 +85,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	skybox.Make_SRV();
 	skybox.CreatePSO(L"..\\SkySphere.hlsl");
 
+	if(character_num == 1)
+		inputPtr->move_speed = 10.f;
+	else
+		inputPtr->move_speed = 7.f;
+
 	if (character_num == 1)
 	{
 		player_AKI_Body_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
@@ -515,21 +520,21 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		case 0:
 		case 1:
 			if(character_num == 1)
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			else
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		case 2:
 			if (character_num == 1)
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			else
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		case 3:
 			if (character_num == 1)
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			else
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		default:
 			break;

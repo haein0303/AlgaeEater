@@ -15,7 +15,7 @@ void Input::Init(WindowInfo windowInfo)
 
 bool send_toggle = false;
 int counter_toggle = 0;
-void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes, float animation_end_time)
+void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr, vector<BoundingBox>& bounding_boxes, int character_num, float animation_end_time)
 {
 		HWND hwnd = GetActiveWindow();
 		bool key_toggle = false;
@@ -159,14 +159,16 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2
 				&& _states[VK_LBUTTON] == 2
 				&& playerArr[networkPtr->myClientId]._animation_time_pos >= (animation_end_time - 0.4f)
-				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f
+				&& character_num == 1)
 			{
 				playerArr[networkPtr->myClientId]._next_combo = true;
 			}
 			else if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3
 				&& _states[VK_LBUTTON] == 2
 				&& playerArr[networkPtr->myClientId]._animation_time_pos >= (animation_end_time - 0.4f)
-				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f)
+				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f
+				&& character_num == 1)
 			{
 				playerArr[networkPtr->myClientId]._next_combo = true;
 			}
@@ -265,7 +267,6 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 						//playerArr[networkPtr->myClientId]._bounding_box.Center.z = pos_z0;
 					}
 				}
-				
 			}
 			else if (playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack1
 				&& playerArr[networkPtr->myClientId]._animation_state != AnimationOrder::Attack2
