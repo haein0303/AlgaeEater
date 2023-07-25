@@ -160,7 +160,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 				&& _states[VK_LBUTTON] == 2
 				&& playerArr[networkPtr->myClientId]._animation_time_pos >= (animation_end_time - 0.4f)
 				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f
-				&& character_num == 1)
+				&& character_num == 0)
 			{
 				playerArr[networkPtr->myClientId]._next_combo = true;
 			}
@@ -168,7 +168,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 				&& _states[VK_LBUTTON] == 2
 				&& playerArr[networkPtr->myClientId]._animation_time_pos >= (animation_end_time - 0.4f)
 				&& playerArr[networkPtr->myClientId]._animation_time_pos <= animation_end_time - 0.05f
-				&& character_num == 1)
+				&& character_num == 0)
 			{
 				playerArr[networkPtr->myClientId]._next_combo = true;
 			}

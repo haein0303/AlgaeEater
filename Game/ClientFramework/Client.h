@@ -127,7 +127,7 @@ public:
 	}
 	void single_init() {
 		cout << "try server connect" << endl;
-		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM, dxEngine.Scene_num)) {
+		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM, dxEngine.Scene_num, dxEngine.character_num)) {
 			cout << "SERVER CONNECT FAIL" << endl;
 			while (1);
 		}

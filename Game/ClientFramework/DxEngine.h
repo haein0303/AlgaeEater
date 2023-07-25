@@ -212,7 +212,7 @@ public:
 	int _render_thread_num = 0;
 
 	int Scene_num = 1;
-	int character_num = 2;
+	int character_num = 1;
 
 	SCENE* arrScene[SCENE::SceneTag::Count];
 	SCENE* m_pCurrScene;

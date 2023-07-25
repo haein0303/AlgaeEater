@@ -337,18 +337,22 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				switch (wParam) {
 				case VK_F1:
 					lobby_client._scene_select = 1;
+					lobby_client._char_select = 0;
 					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
 					break;
 				case VK_F2:
 					lobby_client._scene_select = 2;
+					lobby_client._char_select = 1;
 					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
 					break;
 				case VK_F3:
 					lobby_client._scene_select = 3;
+					lobby_client._char_select = 0;
 					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
 					break;
 				case VK_F4:
 					lobby_client._scene_select = 0;
+					lobby_client._char_select = 0;
 					cout << "SELECT SCENE : " << lobby_client._scene_select << endl;
 					break;
 				case VK_F5:
