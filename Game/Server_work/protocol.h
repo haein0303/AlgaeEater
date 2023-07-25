@@ -80,6 +80,7 @@ struct CS_LOGIN_PACKET {
 	char	type;
 	char	name[NAME_SIZE];
 	int		stage;
+	int		character_type;
 };
 
 struct CS_MOVE_PACKET {

@@ -18,7 +18,7 @@ public:
 
 	
 
-	int ConnectServer(int PortNum,int Scene_select) //서버에 접속시 보내주는 부분
+	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
 		wcout.imbue(locale("korean"));
 		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum);
@@ -34,6 +34,7 @@ public:
 		p.size = sizeof(CS_LOGIN_PACKET);
 		p.type = CS_LOGIN;
 		p.stage = Scene_select;
+		p.character_type = chat_type;
 		strcpy_s(p.name, "a");
 		send_packet(&p);
 		return 0;

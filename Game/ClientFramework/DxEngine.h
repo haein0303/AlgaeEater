@@ -213,6 +213,7 @@ public:
 
 	int Scene_num = 1;
 	int character_num = 2;
+
 	SCENE* arrScene[SCENE::SceneTag::Count];
 	SCENE* m_pCurrScene;
 
