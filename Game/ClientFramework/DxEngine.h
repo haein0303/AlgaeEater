@@ -86,6 +86,10 @@ public:
 	MESH_ASSET player_AKI_Hair_A_asset;
 	MESH_ASSET player_AKI_HeadPhone_asset;
 	MESH_ASSET player_AKI_Sword_asset;
+	MESH_ASSET player_Mika_Astro_B_asset;
+	MESH_ASSET player_Mika_Hair_B_asset;
+	MESH_ASSET player_Mika_Body_Astro_asset;
+	MESH_ASSET player_Mika_Sword_asset;
 	MESH_ASSET npc_asset;
 	MESH_ASSET boss;
 	MESH_ASSET boss2;
@@ -208,6 +212,7 @@ public:
 	int _render_thread_num = 0;
 
 	int Scene_num = 1;
+	int character_num = 2;
 	SCENE* arrScene[SCENE::SceneTag::Count];
 	SCENE* m_pCurrScene;
 
