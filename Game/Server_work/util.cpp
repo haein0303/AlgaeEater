@@ -454,6 +454,11 @@ void process_packet(int c_id, char* packet)
 					clients[p->target_id].hp -= clients[p->attacker_id].atk;
 					if (clients[p->target_id].hp <= 0) {
 						if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
+
+						for (auto& np : clients[p->target_id].room_list) {
+							clients[np].room_list.erase(p->target_id);
+						}
+
 						switch (clients[p->target_id].stage)
 						{
 						case 1:
@@ -519,6 +524,11 @@ void process_packet(int c_id, char* packet)
 						clients[p->target_id].hp -= clients[p->attacker_id].skill_atk;
 						if (clients[p->target_id].hp <= 0) {
 							if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
+
+							for (auto& np : clients[p->target_id].room_list) {
+								clients[np].room_list.erase(p->target_id);
+							}
+
 							switch (clients[p->target_id].stage)
 							{
 							case 1:
@@ -714,6 +724,7 @@ void process_packet(int c_id, char* packet)
 
 void disconnect(int c_id)
 {
+	int room_clean = 0;
 	cout << "disconnect" << endl;
 	clients[c_id]._sl.lock();
 	if (clients[c_id]._s_state == ST_FREE) {
@@ -724,26 +735,35 @@ void disconnect(int c_id)
 	clients[c_id]._s_state = ST_FREE;
 	clients[c_id]._sl.unlock();
 
-	if (clients[c_id].room_list.size() != 0) {
-		for (auto& pl : clients[c_id].room_list) {
-			if (pl > MAX_USER) {
-				clients[pl].room_list.erase(c_id);
-				continue;
-			}
-			clients[pl]._sl.lock();
-			if (clients[pl]._s_state != ST_INGAME) {
-				clients[pl]._sl.unlock();
-				continue;
-			}
-			SC_REMOVE_OBJECT_PACKET p;
-			p.id = c_id;
-			p.size = sizeof(p);
-			p.type = SC_REMOVE_OBJECT;
-			p.ob_type = 0;
-			clients[pl].do_send(&p);
-			clients[pl]._sl.unlock();
+	for (auto& pl : clients[c_id].room_list) {
+		if (pl >= MAX_USER) {
 			clients[pl].room_list.erase(c_id);
+			continue;
 		}
+
+		clients[pl]._sl.lock();
+		if (clients[pl]._s_state != ST_INGAME) {
+			clients[pl]._sl.unlock();
+			continue;
+		}
+
+		room_clean++;
+
+		SC_REMOVE_OBJECT_PACKET p;
+		p.id = c_id;
+		p.size = sizeof(p);
+		p.type = SC_REMOVE_OBJECT;
+		p.ob_type = 0;
+		clients[pl].do_send(&p);
+		clients[pl]._sl.unlock();
+		clients[pl].room_list.erase(c_id);
+	}
+
+	if (room_clean == 0) {
+		// 이러면 방에 아무도 없는 상황 -> 초기화 해줘야 함
+		auto ex_over = new OVER_EXP;
+		ex_over->_comp_type = OP_SET_NPC;
+		PostQueuedCompletionStatus(g_h_iocp, 1, c_id, &ex_over->_over);
 	}
 }
 
