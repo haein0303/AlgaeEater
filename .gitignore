@@ -16,6 +16,7 @@
 *.smod
 
 
+*.max
 
 .vs
 x64
