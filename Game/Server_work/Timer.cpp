@@ -403,19 +403,9 @@ void do_timer()
 
 						int field_num = ev.target_id * 20 + i;
 
-						SC_BOSS_SKILL_START_PACKET p;
-						p.char_state = AN_ATTACK_1;
-						p.fd_type = fields[field_num].type;
-						p.fd_id = field_num;
-						p.r = fields[field_num].r;
-						p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
-						p.type = SC_BOSS_SKILL_START;
-						p.x = fields[field_num].x;
-						p.z = fields[field_num].z;
+						clients[pl].send_field_add(field_num, fields[field_num].x, fields[field_num].r, fields[field_num].z, AN_ATTACK_1, fields[field_num].type);
 
-						clients[pl].do_send(&p);
-
-						float dec = abs(clients[ev.object_id].x - p.x) + abs(clients[ev.object_id].z - p.z);
+						float dec = abs(clients[ev.object_id].x - fields[field_num].x) + abs(clients[ev.object_id].z - fields[field_num].z);
 
 						add_timer(ev.object_id, dec * 100, EV_STAGE2_FIRST_BOSS, field_num);
 					}

@@ -72,6 +72,8 @@ constexpr char LSC_CONGAME = 42;
 constexpr char LSC_JOIN_OK = 43;
 constexpr char LSC_JOIN_FAIL = 44;
 
+constexpr char SC_GAME_END = 50;
+
 constexpr float PI = 3.1415926535;
 
 #pragma pack (push, 1)
@@ -320,6 +322,11 @@ struct LSC_JOIN_OK_PACKET {
 };
 
 struct LSC_JOIN_FAIL_PACKET {
+	unsigned char size;
+	char	type;
+};
+
+struct SC_GAME_END_PACKET {
 	unsigned char size;
 	char	type;
 };
