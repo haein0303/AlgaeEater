@@ -190,6 +190,10 @@ public:
 	MESH_ASSET Wall_I_4m_TurnIn;
 	MESH_ASSET Wall_O_4m;
 	MESH_ASSET Wall_O_4m_Door;
+	MESH_ASSET Environment_A_Base;
+	MESH_ASSET Environment_A_Middle;
+	MESH_ASSET Environment_A_Top;
+	MESH_ASSET Environment_A_Top_End;
 
 	MESH_ASSET floor;
 	MESH_ASSET skybox;
@@ -230,8 +234,8 @@ public:
 	vector<MapData> _map_data;
 	vector<MapData> _map_data2;
 	vector<MapData> _map_data3;
-	array<XMFLOAT3, 5> doorPos{ XMFLOAT3(-215.f / 2.f, 1.4f, -20.5f / 2.f), XMFLOAT3(-57.f / 2.f, 1.4f, -111.25f / 2.f)
-		, XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f), XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f), XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f) };
+	//array<XMFLOAT3, 5> doorPos{ XMFLOAT3(-215.f / 2.f, 1.4f, -20.5f / 2.f), XMFLOAT3(-57.f / 2.f, 1.4f, -111.25f / 2.f)
+	//	, XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f), XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f), XMFLOAT3(130.f / 2.f, 1.4f, -128.f / 2.f) };
 	array<XMFLOAT3, 5> doorPos0{XMFLOAT3(0.f, 0.f, 0.f)};
 
 	vector<BoundingBox> bounding_boxes;
@@ -577,14 +581,25 @@ public:
 					DrawMapObject(cmdList, Wall_Win_4m_B, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Win_4m_C") == 0)
 					DrawMapObject(cmdList, Wall_Win_4m_C, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Environment_A_Base") == 0)
+					DrawMapObject(cmdList, Environment_A_Base, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Environment_A_Middle") == 0)
+					DrawMapObject(cmdList, Environment_A_Middle, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Environment_A_Top") == 0)
+					DrawMapObject(cmdList, Environment_A_Top, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Environment_A_Top_End") == 0)
+					DrawMapObject(cmdList, Environment_A_Top_End, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Grid_Metal_door") == 0)
+				{
+					// door
+					if (inputPtr->_open_door[Scene_num - 1] == true)
+					{
+						inputPtr->_open_door[Scene_num - 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						bounding_boxes2[13].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+					}
+					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
 			}
-
-			// door
-			XMFLOAT3 scale = XMFLOAT3(2.85, 1, 4);
-			XMFLOAT3 rot = XMFLOAT3(0.f, 0.f, -90.f);
-			if (inputPtr->_open_door[Scene_num - 1] == true)
-				inputPtr->_open_door[Scene_num - 1] = OpenDoor(doorPos[1], doorPos0[Scene_num - 1], rot.x);
-			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[1], scale, rot);
 		}
 
 		else if (stage == 3)
@@ -703,21 +718,27 @@ public:
 					DrawMapObject(cmdList, Tube_Turn_L_B, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Line_4m_A") == 0)
 					DrawMapObject(cmdList, Wall_Line_4m_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Grid_Metal_door") == 0)
+				{
+					// door
+					if (inputPtr->_open_door[Scene_num - 1] == true)
+					{
+						inputPtr->_open_door[Scene_num - 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+					}
+					if (inputPtr->_open_door[Scene_num] == true)
+					{
+						inputPtr->_open_door[Scene_num] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+					}
+					if (inputPtr->_open_door[Scene_num + 1] == true)
+					{
+						inputPtr->_open_door[Scene_num + 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+					}
+					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
 			}
-
-			// door
-			XMFLOAT3 scale = XMFLOAT3(2.85, 1, 4.5);
-			XMFLOAT3 rot = XMFLOAT3(0.f, 0.f, -90.f);
-			if (inputPtr->_open_door[Scene_num - 1] == true)
-				OpenDoor(doorPos[Scene_num - 1], doorPos0[Scene_num - 1], rot.x);
-			if (inputPtr->_open_door[Scene_num] == true)
-				OpenDoor(doorPos[Scene_num], doorPos0[Scene_num], rot.x);
-			if (inputPtr->_open_door[Scene_num + 1] == true)
-				OpenDoor(doorPos[Scene_num + 1], doorPos0[Scene_num + 1], rot.x);
-			
-			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[2], scale, rot);
-			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[3], scale, rot);
-			DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, doorPos[4], scale, rot);
 		}
 	}
 

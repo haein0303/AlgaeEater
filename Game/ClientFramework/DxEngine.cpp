@@ -262,7 +262,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
-		doorPos0[Scene_num - 1] = doorPos[Scene_num - 1];
+		for (MapData& data : _map_data)
+		{
+			if (data.mesh_type.compare("Grid_Metal_door") == 0)
+				doorPos0[Scene_num - 1] = data.pos;
+		}
+		
 		break;
 	}
 	case 2:
@@ -345,6 +350,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_Turn_L_Out_¬³, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_Out_¬³.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_Win_4m_B, ObjectType::GeneralObjects, "../Resources/Wall_Win_4m_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_Win_4m_C, ObjectType::GeneralObjects, "../Resources/Wall_Win_4m_C.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Environment_A_Base, ObjectType::GeneralObjects, "../Resources/Environment_A_Base.txt", L"..\\Resources\\Texture\\Stage2\\Environment_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Environment_A_Middle, ObjectType::GeneralObjects, "../Resources/Environment_A_Middle.txt", L"..\\Resources\\Texture\\Stage2\\Environment_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Environment_A_Top, ObjectType::GeneralObjects, "../Resources/Environment_A_Top.txt", L"..\\Resources\\Texture\\Stage2\\Environment_A.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Environment_A_Top_End, ObjectType::GeneralObjects, "../Resources/Environment_A_Top_End.txt", L"..\\Resources\\Texture\\Stage2\\Environment_A.png", L"..\\Bricks.hlsl");
 
 		ImportMapdata("../Resources/MapData2.txt", _map_data2);
 		ImportCollisionObjectsData("../Resources/CollisionMapData2.txt", bounding_boxes2);
@@ -354,10 +363,16 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
-		doorPos0[Scene_num - 1] = doorPos[Scene_num - 1];
+		for (MapData& data : _map_data)
+		{
+			if (data.mesh_type.compare("Grid_Metal_door") == 0)
+				doorPos0[Scene_num - 1] = data.pos;
+		}
+
 		break;
 	}
 	case 3:
+	{
 		boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
 		boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
@@ -410,10 +425,19 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
-		doorPos0[Scene_num - 1] = doorPos[Scene_num - 1];
-		doorPos0[Scene_num] = doorPos[Scene_num];
-		doorPos0[Scene_num + 1] = doorPos[Scene_num + 1];
+
+		int count = 0;
+		for (MapData& data : _map_data)
+		{
+			if (data.mesh_type.compare("Grid_Metal_door") == 0)
+			{
+				doorPos0[Scene_num - 1 + count] = data.pos;
+				count++;
+			}
+		}
+
 		break;
+	}
 	default:
 		break;
 	}
