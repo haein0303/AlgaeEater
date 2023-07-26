@@ -239,7 +239,6 @@ struct SC_BOSS_RUSH_TARGET_PACKET {
 struct SC_BOSS_SKILL_START_PACKET {
 	unsigned char size;
 	char	type;
-	int		id;
 	int		fd_id;
 	float	x;
 	float	z;

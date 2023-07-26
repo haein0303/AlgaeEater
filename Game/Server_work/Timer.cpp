@@ -166,7 +166,7 @@ void do_timer()
 
 					clients[pl].do_send(&p);
 
-					add_timer(ev.object_id, 3000, EV_BOSS_FIELD_OFF, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_OFF, ev.target_id);
 				}
 				break;
 			}
@@ -406,7 +406,7 @@ void do_timer()
 						SC_BOSS_SKILL_START_PACKET p;
 						p.char_state = AN_ATTACK_1;
 						p.fd_type = fields[field_num].type;
-						p.id = field_num;
+						p.fd_id = field_num;
 						p.r = fields[field_num].r;
 						p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
 						p.type = SC_BOSS_SKILL_START;
