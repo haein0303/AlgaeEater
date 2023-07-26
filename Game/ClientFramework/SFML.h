@@ -16,7 +16,8 @@ public:
 	int npc_accept_counter = 0;
 	unordered_map<int, int> npc_map;
 
-	
+	int skill_accept_counter = 0;
+	unordered_map<int, int> skill_map;
 
 	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
@@ -103,12 +104,32 @@ public:
 		return npc_map.find(id_from_server)->second;		
 	}
 
+
+
 	int getUSERid(int id_from_server) {
 		if (user_map.count(id_from_server) == 0) {
 			cout << "getUSERid is fail" << endl;
 			return -1;
 		}
 		return user_map.find(id_from_server)->second;
+	}
+
+	int getSkillid(int id_from_server) {
+		if (skill_map.count(id_from_server) == 0) {
+			cout << "getNPCid is fail" << endl;
+			return -1;
+		}
+		return skill_map.find(id_from_server)->second;
+	}
+
+	//있으면 기존 값 반환 없으면 새로 만들어서 반환
+	int addSkillid(const int& id_from_server) {
+		if (skill_map.count(id_from_server) != 0) {
+			return skill_map.find(id_from_server)->second;
+		}
+
+		skill_map.insert({ id_from_server,skill_accept_counter });
+		return skill_accept_counter++;
 	}
 
 
@@ -291,8 +312,7 @@ public:
 
 			if (my_packet->ob_type == 2) { //0은 플레이어 1은 기둥 2는 장판
 				cout << "skill off : " << my_packet->id << endl;
-				int id = my_packet->id;
-				boss_obj.boss2_skill_vec[id].isOn = false;
+				boss_obj.boss2_skill_vec[getSkillid(my_packet->id)].isOn = false;
 			}
 			
 			break;
@@ -332,19 +352,33 @@ public:
 		}
 		case SC_BOSS_SKILL_START: {
 			SC_BOSS_SKILL_START_PACKET* packet = reinterpret_cast<SC_BOSS_SKILL_START_PACKET*>(ptr);
+			cout << "pre SKILL START : " << packet->fd_id << endl;
+			int tmp = addSkillid(packet->fd_id);
+			cout << "SKILL START : " << tmp << endl;
 			Boss2SkillData boss2_skill;
 			boss2_skill.pos.x = packet->x;
 			boss2_skill.pos.y = 0.01f;
 			boss2_skill.pos.z = packet->z;
 			boss2_skill.scale = packet->r;
 			boss2_skill.type = packet->fd_type;
-
-			boss_obj.boss2_skill_vec.emplace_back(boss2_skill);
+			boss2_skill.isOn = false;
+			//혹시 더 많이 보낼 수 있어
+			if (tmp > boss_obj.boss2_skill_vec.size()) { //멀쓰이기때문에 상당하게 위험
+				boss_obj.boss2_skill_vec.emplace_back(boss2_skill);
+			}
+			else {
+				boss_obj.boss2_skill_vec[tmp] = boss2_skill;
+				cout << "SKILL START - point : " << tmp << endl;
+			}
+			
 
 			break;
 		}
 		case SC_BOSS_SKILL_END: {
-			boss_obj.boss2_skill_vec[boss_obj._boss_skill_count].isOn = true;
+			SC_BOSS_SKILL_END_PACKET* packet = reinterpret_cast<SC_BOSS_SKILL_END_PACKET*>(ptr);
+			
+			boss_obj.boss2_skill_vec[getSkillid(packet->fd_id)].isOn = true;
+
 			boss_obj._boss_skill_count++;
 			break;
 		}

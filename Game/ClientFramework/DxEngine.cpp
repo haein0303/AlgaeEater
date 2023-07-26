@@ -485,7 +485,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss_obj._transform.z);
 	boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 
-	boss_obj.boss2_skill_vec.reserve(100);
+	boss_obj.boss2_skill_vec.resize(100);
 
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
