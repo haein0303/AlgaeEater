@@ -401,7 +401,7 @@ void do_timer()
 						}
 						clients[pl]._sl.unlock();
 
-						int field_num = i * ev.target_id;
+						int field_num = ev.target_id * 20 + i;
 
 						SC_BOSS_SKILL_START_PACKET p;
 						p.char_state = AN_ATTACK_1;
