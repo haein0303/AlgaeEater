@@ -38,7 +38,7 @@ public:
 	int			_stage1_target_id = 0;
 	bool		_stage1_target_alert_on = false;
 
-	int _boss_skill_count = 0;
+	int			_boss_skill_count = 0;
 
 	BoundingBox _bounding_box{ XMFLOAT3(0.f, 0.f, 0.f) , XMFLOAT3(0.5f, 1.f, 0.5f) };
 	BoundingOrientedBox _attack;
@@ -66,6 +66,8 @@ public:
 	shared_ptr<Timer> _logicTimerPtr;
 
 	vector<Boss2SkillData> boss2_skill_vec;
+
+	bool			_game_clear = false;
 	
 public:
 	//DX엔진 초기화

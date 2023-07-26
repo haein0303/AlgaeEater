@@ -2316,6 +2316,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		d11Ptr->draw_player_info(L"AKI", 100, playerArr[0]._hp, 0);
 		
 		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num,boss_obj);
+
+		if (boss_obj._game_clear) {
+			d11Ptr->draw_game_clear();
+		}
+
 	}
 	else {
 		d11Ptr->Loading_draw(timerPtr->_deltaTime);

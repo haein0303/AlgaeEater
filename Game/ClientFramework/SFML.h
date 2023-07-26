@@ -142,9 +142,9 @@ public:
 		case SC_LOGIN_OK:
 		{
 			SC_LOGIN_OK_PACKET* packet = reinterpret_cast<SC_LOGIN_OK_PACKET*>(ptr);
-			
+
 			user_map.insert({ packet->id,user_accept_counter });
-			cout << myClientId <<" : id : " << packet->id << " || user_accept_counter : " << user_accept_counter << " : " << user_map.count(packet->id) << endl;
+			cout << myClientId << " : id : " << packet->id << " || user_accept_counter : " << user_accept_counter << " : " << user_map.count(packet->id) << endl;
 			playerArr[myClientId]._on = true;
 			playerArr[myClientId]._my_server_id = packet->id;
 			playerArr[myClientId]._transform.x = packet->x;
@@ -158,7 +158,7 @@ public:
 		{
 			SC_ADD_OBJECT_PACKET* my_packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(ptr);
 			int id = my_packet->id;
-			
+
 			if (id < MAX_USER) { // MAX_USER·Î ±³Ã¼
 				user_map.insert({ id,user_accept_counter });
 				cout << "id : " << id << " || user_accept_counter : " << user_accept_counter << " : " << user_map.count(id) << endl;
@@ -270,7 +270,7 @@ public:
 					playerArr[id]._transform.z = my_packet->z;
 					playerArr[id]._degree = my_packet->degree;
 					playerArr[id]._animation_state = my_packet->char_state;
-					
+
 					if (playerArr[id]._animation_state0 != playerArr[id]._animation_state) {
 						playerArr[id]._animation_time_pos = 0.f;
 						playerArr[id]._animation_state0 = playerArr[id]._animation_state;
@@ -314,7 +314,7 @@ public:
 				cout << "skill off : " << my_packet->id << endl;
 				boss_obj.boss2_skill_vec[getSkillid(my_packet->id)].isOn = false;
 			}
-			
+
 			break;
 		}
 		case SC_ADD_CUBE:
@@ -370,13 +370,13 @@ public:
 				boss_obj.boss2_skill_vec[tmp] = boss2_skill;
 				cout << "SKILL START - point : " << tmp << endl;
 			}
-			
+
 
 			break;
 		}
 		case SC_BOSS_SKILL_END: {
 			SC_BOSS_SKILL_END_PACKET* packet = reinterpret_cast<SC_BOSS_SKILL_END_PACKET*>(ptr);
-			
+
 			boss_obj.boss2_skill_vec[getSkillid(packet->fd_id)].isOn = true;
 
 			boss_obj._boss_skill_count++;
@@ -389,17 +389,22 @@ public:
 				boss_obj._max_shield = packet->shield_hp;
 				cout << "MAX SHIELD : " << boss_obj._max_shield << endl;
 			}
-			
+
 			boss_obj._shield = packet->shield_hp;
 			cout << "MAX SHIELD : " << boss_obj._max_shield;
 			cout << "   SHIELD : " << boss_obj._shield << endl;
-			
+
 			break;
 		}
 		case SC_BOSS_RUSH_TARGET: {
 			SC_BOSS_RUSH_TARGET_PACKET* packet = reinterpret_cast<SC_BOSS_RUSH_TARGET_PACKET*>(ptr);
 			boss_obj._stage1_target_alert_on = packet->trigger;
 			boss_obj._stage1_target_id = packet->target_id;
+		}
+		break;
+
+		case SC_GAME_END: {
+			boss_obj._game_clear = true;
 		}
 
 		default:
