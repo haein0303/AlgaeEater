@@ -310,7 +310,8 @@ enum AnimationOrder
 	Attack1,
 	Attack2,
 	Attack3,
-	Attack4
+	Attack4,
+	BossDown
 };
 
 // 보스2 스킬

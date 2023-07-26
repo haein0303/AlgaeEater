@@ -221,6 +221,8 @@ public:
 			boss_obj._degree = my_packet->degree;
 			boss_obj._hp = my_packet->hp;
 			boss_obj._animation_state = my_packet->char_state;
+			if (my_packet->char_state == AnimationOrder::BossDown)
+				cout << "boss down" << endl;
 			boss_obj._eye_color = my_packet->eye_color; // 0,1,2,3,4
 			//cout << boss_obj._eye_color << endl;
 			break;
