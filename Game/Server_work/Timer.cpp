@@ -20,10 +20,11 @@ extern default_random_engine dre;
 extern uniform_int_distribution<> uid;
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
+extern array<FIELD, FIELD_NUM> fields;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 
-int fd_cont = 0;
+int skill_tic = 0;
 
 void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id)
 {
@@ -159,10 +160,13 @@ void do_timer()
 					clients[pl]._sl.unlock();
 
 					SC_BOSS_SKILL_END_PACKET p;
-					p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
-					p.type = SC_BOSS_SKILL_START;
+					p.size = sizeof(SC_BOSS_SKILL_END_PACKET);
+					p.type = SC_BOSS_SKILL_END;
+					p.fd_id = ev.target_id;
 
 					clients[pl].do_send(&p);
+
+					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_OFF, ev.target_id);
 				}
 				break;
 			}
@@ -312,36 +316,22 @@ void do_timer()
 					break;
 				}
 
-				if (clients[ev.object_id]._object_type == TY_BOSS_2 && fd_cont < 11) {
-					fd_cont++;
-					// 일단 여기서 보내자
-					for (auto& pl : clients[ev.object_id].room_list) {
-						if (pl >= MAX_USER) continue;
+				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.75 && clients[ev.object_id].first_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_2) {
 
-						clients[pl]._sl.lock();
-						if (clients[pl]._s_state != ST_INGAME) {
-							clients[pl]._sl.unlock();
-							continue;
-						}
-						clients[pl]._sl.unlock();
+					std::random_device rd;
+					std::uniform_int_distribution<int> dis(-20, 20);
 
-						SC_BOSS_SKILL_START_PACKET p;
-						p.char_state = AN_ATTACK_1;
-						p.fd_type = 0;
-						p.id = ev.object_id;
-						p.r = 3;
-						p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
-						p.type = SC_BOSS_SKILL_START;
-						p.x = clients[pl].x;
-						p.z = clients[pl].z;
-
-						clients[pl].do_send(&p);
-
-						// 여기서 시간 고려해서 타이머 세팅
-						float dec = abs(clients[ev.object_id].x - clients[pl].x) + abs(clients[ev.object_id].z - clients[pl].z);
-
-						add_timer(ev.object_id, dec * 100, EV_STAGE2_FIRST_BOSS, pl);
+					for (int i = clients[ev.object_id]._Room_Num * ROOM_FIELD; i < clients[ev.object_id]._Room_Num * ROOM_FIELD + ROOM_FIELD; i++) {
+						fields[i].type = FD_REC;
+						fields[i].r = 3;
+						fields[i].x = clients[ev.object_id].x + dis(rd);
+						fields[i].z = clients[ev.object_id].z + dis(rd);
 					}
+
+					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0);
+					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_ON, 1);
+					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_ON, 2);
+					clients[ev.object_id].first_pattern = true;
 				}
 
 				lua_getglobal(clients[ev.object_id].L, "wander_boss");
@@ -396,6 +386,55 @@ void do_timer()
 				}
 
 				add_timer(pl, 3000, EV_BOSS_EYE, ev.target_id);
+				break;
+			}
+			case EV_BOSS_FIELD_ON: {
+				for (int i = 0; i < 20; i++) {
+					clients[ev.object_id].char_state = AN_ATTACK_1;
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER) continue;
+
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state != ST_INGAME) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						int field_num = i * ev.target_id;
+
+						SC_BOSS_SKILL_START_PACKET p;
+						p.char_state = AN_ATTACK_1;
+						p.fd_type = fields[field_num].type;
+						p.id = field_num;
+						p.r = fields[field_num].r;
+						p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
+						p.type = SC_BOSS_SKILL_START;
+						p.x = fields[field_num].x;
+						p.z = fields[field_num].z;
+
+						clients[pl].do_send(&p);
+
+						float dec = abs(clients[ev.object_id].x - p.x) + abs(clients[ev.object_id].z - p.z);
+
+						add_timer(ev.object_id, dec * 100, EV_STAGE2_FIRST_BOSS, field_num);
+					}
+				}
+				break;
+			}
+			case EV_BOSS_FIELD_OFF: {
+				for (auto& pl : clients[ev.object_id].room_list) {
+					if (pl >= MAX_USER) continue;
+
+					clients[pl]._sl.lock();
+					if (clients[pl]._s_state != ST_INGAME) {
+						clients[pl]._sl.unlock();
+						continue;
+					}
+					clients[pl]._sl.unlock();
+
+					clients[pl].send_remove_object(ev.target_id, 2);
+				}
 				break;
 			}
 			default:

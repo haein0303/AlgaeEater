@@ -175,6 +175,12 @@ void process_packet(int c_id, char* packet)
 			clients[c_id].z = -230;
 			break;
 		}
+		case 2: {
+			clients[c_id].x = 155;
+			clients[c_id].y = 0;
+			clients[c_id].z = -90;
+			break;
+		}
 		default:
 			break;
 		}

@@ -24,7 +24,7 @@ constexpr int ROOM_USER = 4;
 constexpr int ROOM_NPC = 50;
 constexpr int ROOM_CUBE = 4;
 constexpr int ROOM_KEY = 4;
-constexpr int ROOM_FIELD = 10;
+constexpr int ROOM_FIELD = 60;
 
 constexpr int MAX_USER = ROOM_NUM * ROOM_USER;
 constexpr int NPC_NUM = ROOM_NUM * ROOM_NPC;

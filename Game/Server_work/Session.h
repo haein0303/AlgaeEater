@@ -108,7 +108,7 @@ public:
 
 struct FIELD {
 public:
-	float	x, y, z;
+	float	x, z, r;
 	int		type;
 	int		_Room_Num;
 };

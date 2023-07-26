@@ -228,7 +228,7 @@ void initialize_field()
 {
 	for (int i = 0; i < FIELD_NUM; i++) {
 		fields[i].x = 0.f;
-		fields[i].y = 0.f;
+		fields[i].r = 3.f;
 		fields[i].z = 0.f;
 		fields[i].type = FD_REC;
 		fields[i]._Room_Num = i / ROOM_FIELD;
