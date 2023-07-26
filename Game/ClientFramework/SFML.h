@@ -288,6 +288,12 @@ public:
 				int id = my_packet->id;
 				pillars_data[id]._pillar_count = 0;
 			}
+
+			if (my_packet->ob_type == 2) { //0은 플레이어 1은 기둥 2는 장판
+				cout << "skill off : " << my_packet->id << endl;
+				int id = my_packet->id;
+				boss_obj.boss2_skill_vec[id].isOn = false;
+			}
 			
 			break;
 		}
@@ -332,15 +338,14 @@ public:
 			boss2_skill.pos.z = packet->z;
 			boss2_skill.scale = packet->r;
 			boss2_skill.type = packet->fd_type;
-			boss2_skill.isOn = true;
 
 			boss_obj.boss2_skill_vec.emplace_back(boss2_skill);
 
 			break;
 		}
 		case SC_BOSS_SKILL_END: {
-			cout << "SC_BOSS_SKILL_END" << endl;
-
+			boss_obj.boss2_skill_vec[boss_obj._boss_skill_count].isOn = true;
+			boss_obj._boss_skill_count++;
 			break;
 		}
 		case SC_BOSS_SHIELD: {
