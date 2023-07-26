@@ -454,7 +454,7 @@ public:
 			}
 
 			// map
-			for (MapData data : _map_data2)
+			for (MapData& data : _map_data2)
 			{
 				if (data.mesh_type.compare("tube") == 0)
 					DrawMapObject(cmdList, Tube, i_now_render_index, data.pos, data.scale, data.rotation, 0.f);
@@ -466,19 +466,15 @@ public:
 					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("tank") == 0)
 				{
-					data.scale.x *= 2.f;
-					data.scale.y *= 2.f;
-					data.scale.z *= 2.f;
-					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, data.scale, data.rotation);
+					XMFLOAT3 scale = XMFLOAT3(data.scale.x * 2.f, data.scale.y * 2.f, data.scale.z * 2.f);
+					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, scale, data.rotation);
 				}
 				else if (data.mesh_type.compare("Plane002") == 0)
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Grid_Metal_tile") == 0 || data.mesh_type.compare("Plate_mettal_wall_HQ__2_") == 0)
 				{
-					data.scale.x *= 2.54f;
-					data.scale.y *= 2.54f;
-					data.scale.z *= 2.54f;
-					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+					XMFLOAT3 scale = XMFLOAT3(data.scale.x * 2.54f, data.scale.y * 2.54f, data.scale.z * 2.54f);
+					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, scale, data.rotation);
 				}
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
@@ -513,9 +509,7 @@ public:
 				else if (data.mesh_type.compare("Trap_A_Stairs") == 0)
 					DrawMapObject(cmdList, Trap_A_Stairs, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Column_BB_6m") == 0)
-				{
 					DrawMapObject(cmdList, Column_BB_6m, i_now_render_index, data.pos, data.scale, data.rotation);
-				}
 				else if (data.mesh_type.compare("Beam_B_4m") == 0)
 					DrawMapObject(cmdList, Beam_B_4m, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Column_A_2m") == 0)
@@ -594,7 +588,7 @@ public:
 					if (inputPtr->_open_door[Scene_num - 1] == true)
 					{
 						inputPtr->_open_door[Scene_num - 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
-						bounding_boxes2[13].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						bounding_boxes2[13].Center = XMFLOAT3(data.pos.x * 2.f, bounding_boxes2[13].Center.y, data.pos.z * 2.f);
 					}
 					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
 				}
@@ -623,7 +617,7 @@ public:
 			}
 
 			// map
-			for (MapData data : _map_data3)
+			for (MapData& data : _map_data3)
 			{
 				if (data.mesh_type.compare("tube") == 0)
 					DrawMapObject(cmdList, Tube, i_now_render_index, data.pos, data.scale, data.rotation, 0.f);
@@ -635,19 +629,15 @@ public:
 					DrawMapObject(cmdList, Clotch, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("tank") == 0)
 				{
-					data.scale.x *= 2.f;
-					data.scale.y *= 2.f;
-					data.scale.z *= 2.f;
-					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, data.scale, data.rotation);
+					XMFLOAT3 scale = XMFLOAT3(data.scale.x * 2.f, data.scale.y * 2.f, data.scale.z * 2.f);
+					DrawMapObject(cmdList, tank, i_now_render_index, data.pos, scale, data.rotation);
 				}
 				else if (data.mesh_type.compare("Plane002") == 0)
 					DrawMapObject(cmdList, Plane002, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Grid_Metal_tile") == 0 || data.mesh_type.compare("Plate_mettal_wall_HQ__2_") == 0)
 				{
-					data.scale.x *= 2.54f;
-					data.scale.y *= 2.54f;
-					data.scale.z *= 2.54f;
-					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, data.scale, data.rotation);
+					XMFLOAT3 scale = XMFLOAT3(data.scale.x * 2.54f, data.scale.y * 2.54f, data.scale.z * 2.54f);
+					DrawMapObject(cmdList, Grid_Metal_tile, i_now_render_index, data.pos, scale, data.rotation);
 				}
 				else if (data.mesh_type.compare("Cube") == 0)
 					DrawMapObject(cmdList, Cube, i_now_render_index, data.pos, data.scale, data.rotation);
