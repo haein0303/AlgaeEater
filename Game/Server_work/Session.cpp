@@ -195,12 +195,12 @@ void SESSION::send_field_add(int c_id, float x, float r, float z, int char_state
 {
 	SC_BOSS_SKILL_START_PACKET p;
 	p.size = sizeof(SC_BOSS_SKILL_START_PACKET);
-	p.type = SC_KEY;
+	p.type = SC_BOSS_SKILL_START;
 	p.x = x;
 	p.z = z;
 	p.r = r;
 	p.char_state = char_state;
 	p.fd_type = fd_type;
-	p.id = c_id;
+	p.fd_id = c_id;
 	do_send(&p);
 }
