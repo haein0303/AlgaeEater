@@ -92,7 +92,7 @@ void do_timer()
 					}*/
 
 					// 보스 그로기
-					clients[ev.object_id].char_state = AN_DEAD;
+					clients[ev.object_id].char_state = AN_DOWN;
 					clients[ev.object_id].boss_shield_trigger = false;
 
 					int pl = ev.object_id;

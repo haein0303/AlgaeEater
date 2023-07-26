@@ -341,11 +341,11 @@ void rush_npc(int c_id, float t_x, float t_z)
 
 	// 큐브랑 충돌 함 -> 기믹 성공
 	int cube_num = clients[c_id]._Room_Num * ROOM_CUBE + ROOM_CUBE - 1;
-	if (abs(x - cubes[cube_num].x) + abs(z - cubes[cube_num].z) <= 2) {
+	if (abs(x - cubes[cube_num].x) + abs(z - cubes[cube_num].z) <= 4) {
 		// 반복 설정은 여기서 해줘야 함
 		// 타겟 아이디 설정 해줘야 함 ㅇㅇ
 		cout << "기믹 성공" << endl;
-		clients[c_id].char_state = AN_DEAD;
+		clients[c_id].char_state = AN_DOWN;
 
 		for (auto& pl : clients[c_id].room_list) {
 			if (pl >= MAX_USER) continue;
