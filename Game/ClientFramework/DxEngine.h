@@ -748,7 +748,7 @@ public:
 		cmdList->IASetIndexBuffer(&obj._indexBufferView);
 
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * scale.x / 50.f, _scale * scale.y / 50.f, _scale * scale.z / 50.f)
-			* XMMatrixRotationX(rotation.x * XM_PI / 180.f) * XMMatrixRotationY(rotation.y * XM_PI / 180.f) * XMMatrixRotationZ(rotation.z * XM_PI / 180.f)
+			* XMMatrixRotationX(rotation.x * XM_PI / 180.f) * XMMatrixRotationZ(rotation.z * XM_PI / 180.f) * XMMatrixRotationY(rotation.y * XM_PI / 180.f)
 			* XMMatrixTranslation(pos.x * 2.f, pos.y * 2.f, pos.z * 2.f));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));

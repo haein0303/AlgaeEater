@@ -363,7 +363,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
-		for (MapData& data : _map_data)
+		for (MapData& data : _map_data2)
 		{
 			if (data.mesh_type.compare("Grid_Metal_door") == 0)
 				doorPos0[Scene_num - 1] = data.pos;
@@ -427,7 +427,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss_obj._transform.y += 1.f;
 
 		int count = 0;
-		for (MapData& data : _map_data)
+		for (MapData& data : _map_data3)
 		{
 			if (data.mesh_type.compare("Grid_Metal_door") == 0)
 			{
