@@ -321,6 +321,8 @@ struct Boss2SkillData
 	float scale;
 	int type;
 	bool isOn = false;
+	float time = 0.f;
+	int animation_count = 0;
 };
 
 

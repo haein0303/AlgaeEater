@@ -1850,12 +1850,12 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 
 			// boss2Skill
-			for (const Boss2SkillData& boss2_skill : boss_obj.boss2_skill_vec)
+			for (Boss2SkillData& boss2_skill : boss_obj.boss2_skill_vec)
 			{
 				if (boss2_skill.isOn)
 				{
 					XMFLOAT3 boss2_skill_scale = XMFLOAT3(boss2_skill.scale, boss2_skill.scale, boss2_skill.scale);
-					Boss2Skill(cmdList, boss2Skill, i_now_render_index, boss2_skill_time[0], boss2_skill.pos, boss2_skill_scale);
+					Boss2Skill(cmdList, boss2Skill, i_now_render_index, boss2_skill.time, boss2_skill.pos, boss2_skill_scale, boss2_skill.animation_count);
 				}
 			}
 
