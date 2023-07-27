@@ -36,7 +36,6 @@ void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkP
 		}
 
 		int is_circle = (atk.type/10) - 1;
-		int is_atk_type = atk.type % 10;
 
 		
 
@@ -48,10 +47,6 @@ void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkP
 				(atk.pos.z - player._transform.z) * (atk.pos.z - player._transform.z);
 			if (tmp < atk.scale * atk.scale) {
 				toggle = true;
-				cout << "ATK in Circle Type" << endl;
-				
-
-
 			}
 		}
 		else {
