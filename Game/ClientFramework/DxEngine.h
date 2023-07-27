@@ -822,8 +822,7 @@ public:
 
 	bool OpenDoor(XMFLOAT3& pos, XMFLOAT3 pos0, float angle)
 	{
-		// angle이 0일때 z, angle이 90일때 x
-		if (pow((pos.x - pos0.x), 2.f) + pow((pos.z - pos0.z), 2.f) < 9.f)
+		if (pow((pos.x - pos0.x), 2.f) + pow((pos.z - pos0.z), 2.f) < 25.f)
 		{
 			pos.x -= sinf(angle) * timerPtr->_deltaTime;
 			pos.z -= cosf(angle) * timerPtr->_deltaTime;
