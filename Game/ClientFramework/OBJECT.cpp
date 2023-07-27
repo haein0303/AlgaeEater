@@ -34,23 +34,21 @@ void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkP
 		else {
 			atk.atk_time = 0.f;
 		}
-
-		int is_circle = (atk.type/10) - 1;
-
-		
-
 		bool toggle = false;
+		switch (atk.type) {
+		case 0:
+		{
 
-		if (!is_circle) {
-			
 			float tmp = (atk.pos.x - player._transform.x) * (atk.pos.x - player._transform.x) +
 				(atk.pos.z - player._transform.z) * (atk.pos.z - player._transform.z);
 			if (tmp < atk.scale * atk.scale) {
 				toggle = true;
 			}
 		}
-		else {
-			
+		break;
+		case 1:case 2:
+		{
+
 			if (player._transform.x >= atk.pos.x - atk.scale &&
 				player._transform.x <= atk.pos.x + atk.scale &&
 				player._transform.z >= atk.pos.z - atk.scale &&
@@ -59,8 +57,11 @@ void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkP
 			{
 				toggle = true;
 			}
-		}
 
+		}
+		break;
+		}
+				
 		if (toggle) {
 			CS_OBJECT_COLLISION_PACKET p;
 			p.size = sizeof(p);
