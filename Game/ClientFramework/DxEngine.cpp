@@ -344,6 +344,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_Line_4m_¬³, ObjectType::GeneralObjects, "../Resources/Wall_Line_4m_¬³.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_Turn_L_In_A, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_In_A.txt", L"..\\Resources\\Texture\\Stage2\\Walls_A.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_Turn_L_In_B, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_In_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Wall_Turn_L_In_¬³, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_In_¬³.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_Turn_L_In_D, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_In_D.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_Turn_L_Out_B, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_Out_B.txt", L"..\\Resources\\Texture\\Stage2\\Walls_B.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_Turn_L_Out_D, ObjectType::GeneralObjects, "../Resources/Wall_Turn_L_Out_D.txt", L"..\\Resources\\Texture\\Stage2\\Walls_C.png", L"..\\Bricks.hlsl");

@@ -159,6 +159,7 @@ public:
 	MESH_ASSET Wall_Line_4m_¬³;
 	MESH_ASSET Wall_Turn_L_In_A;
 	MESH_ASSET Wall_Turn_L_In_B;
+	MESH_ASSET Wall_Turn_L_In_¬³;
 	MESH_ASSET Wall_Turn_L_In_D;
 	MESH_ASSET Wall_Turn_L_Out_B;
 	MESH_ASSET Wall_Turn_L_Out_D;
@@ -562,6 +563,8 @@ public:
 					DrawMapObject(cmdList, Wall_Turn_L_In_A, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Turn_L_In_B") == 0)
 					DrawMapObject(cmdList, Wall_Turn_L_In_B, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Wall_Turn_L_In_c") == 0)
+					DrawMapObject(cmdList, Wall_Turn_L_In_¬³, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Turn_L_In_D") == 0)
 					DrawMapObject(cmdList, Wall_Turn_L_In_D, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Turn_L_Out_B") == 0)
