@@ -439,7 +439,7 @@ Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 33.38 0 -8.660004 scale: 1 1 1 rotati
 Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 33.35 8.27 -8.900002 scale: 1 1 1 rotation: 90 0 0
 Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 30.01 8.27 -8.900002 scale: 1 1 1 rotation: 90 0 0
 Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 30.476 6.7 -2 scale: 1 1 1 rotation: 9.081439 179.5247 156.4966
-Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 32.20547 1.15 -5.431999 scale: 1 1 1 rotation: 25.23996 90 90
+Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 32.20547 1.15 -5.431999 scale: 1 1 1 rotation: 90 0 64.5
 Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 30.01 0 14.6 scale: 1 1 1 rotation: 0 0 0
 Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 33.38 0 14.6 scale: 1 1 1 rotation: 0 0 0
 Mesh: Column_BB_6m (UnityEngine.Mesh) pos: 33.35 8.27 14.36 scale: 1 1 1 rotation: 90 0 0
