@@ -679,6 +679,8 @@ void process_packet(int c_id, char* packet)
 			}
 			break;
 		case 1: // 2스테이지 장판
+			clients[c_id].hp--;
+			Update_Player(c_id);
 			break;
 		default:
 			break;

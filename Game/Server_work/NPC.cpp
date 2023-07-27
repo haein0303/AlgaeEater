@@ -230,7 +230,7 @@ void initialize_field()
 		fields[i].x = 0.f;
 		fields[i].r = 3.f;
 		fields[i].z = 0.f;
-		fields[i].type = FD_REC;
+		fields[i].type = 11;
 		fields[i]._Room_Num = i / ROOM_FIELD;
 	}
 	cout << "field ·Îµù ³¡" << endl;

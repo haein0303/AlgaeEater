@@ -322,7 +322,7 @@ void do_timer()
 					std::uniform_int_distribution<int> dis(-20, 20);
 
 					for (int i = clients[ev.object_id]._Room_Num * ROOM_FIELD; i < clients[ev.object_id]._Room_Num * ROOM_FIELD + ROOM_FIELD; i++) {
-						fields[i].type = FD_REC;
+						fields[i].type = 11;
 						fields[i].r = 3;
 						fields[i].x = clients[ev.object_id].x + dis(rd);
 						fields[i].z = clients[ev.object_id].z + dis(rd);
