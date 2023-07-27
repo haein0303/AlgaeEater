@@ -892,7 +892,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		//시간만 업데이트 하고 나온다네
 		boss2_skill_logical_update(boss_obj, logicTimerPtr);
 		//장판과 충돌 체크하고, 패킷까지 보내는 똑똑한 아이라네
-		boss2_skill_checker(playerArr[0], boss_obj,networkPtr);
+		_atked = boss2_skill_checker(playerArr[0], boss_obj,networkPtr);
 
 
 
@@ -900,6 +900,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			inputPtr->_open_door[Scene_num - 1] = true;
 		break;
 	case 3:
+
 		if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 1) && inputPtr->_open_door[Scene_num - 1] == false)
 			inputPtr->_open_door[Scene_num - 1] = true;
 		else if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 2) && inputPtr->_open_door[Scene_num - 1] == true && inputPtr->_open_door[Scene_num] == false)
@@ -2324,6 +2325,11 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 			
 		}
+		
+		if (_atked) {
+			d11Ptr->draw_stage2_atk();
+		}
+
 		d11Ptr->draw_player_info(L"AKI", 100, playerArr[0]._hp, 0);
 		
 		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num,boss_obj);

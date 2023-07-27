@@ -24,16 +24,13 @@ void OBJECT::Draw(WindowInfo windowInfo, int)
 }
 
 //자기 자신만 모든 보스 장판에 대하여 비교
-void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkPtr)
+bool boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkPtr)
 {
+	bool atked = false;
+
 	for (auto& atk : boss.boss2_skill_vec) {
 		if (atk.isOn == false) continue;
-		if (atk.atk_time < boss2_atk_delta_time_set) {
-			continue;
-		}
-		else {
-			atk.atk_time = 0.f;
-		}
+		
 		bool toggle = false;
 		switch (atk.type) {
 		case 0:
@@ -43,10 +40,11 @@ void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkP
 				(atk.pos.z - player._transform.z) * (atk.pos.z - player._transform.z);
 			if (tmp < atk.scale * atk.scale) {
 				toggle = true;
+				atked = true;
 			}
 		}
 		break;
-		case 1:case 2:
+		case 1:case 2:case 11:
 		{
 
 			if (player._transform.x >= atk.pos.x - atk.scale &&
@@ -56,13 +54,22 @@ void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkP
 				)
 			{
 				toggle = true;
+				atked = true;
 			}
 
 		}
 		break;
 		}
+
+		if (atk.atk_time < boss2_atk_delta_time_set) {
+			continue;
+		}
+		else {
+			atk.atk_time = 0.f;
+		}
 				
 		if (toggle) {
+			
 			CS_OBJECT_COLLISION_PACKET p;
 			p.size = sizeof(p);
 			p.type = CS_OBJECT_COLLISION;
@@ -73,6 +80,8 @@ void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkP
 		}	
 		
 	}
+	//cout << atked << endl;
+	return atked;
 
 }
 

@@ -364,10 +364,7 @@ public:
 			boss2_skill.type = packet->fd_type;
 			boss2_skill.atk_time = 0.f;
 			
-			//10의자리
-			//1 : 원형 / 2 : 사각형
-			//1의자리
-			//0 : 회복 / 1 부터 공격인데 강할 수록 높은 숫자 부여
+			//0 : 원형 회복 / 1 : 사각 기본 공격 / 2 : 사각 아픈 공격
 			boss2_skill.isOn = false;
 			//혹시 더 많이 보낼 수 있어
 			if (tmp > boss_obj.boss2_skill_vec.size()) { //멀쓰이기때문에 상당하게 위험
@@ -409,6 +406,12 @@ public:
 			boss_obj._stage1_target_id = packet->target_id;
 		}
 		break;
+
+		case SC_BOSS_PLAYER_CON: {
+			SC_BOSS_PLAYER_CON_PACKET* packet = reinterpret_cast<SC_BOSS_PLAYER_CON_PACKET*>(ptr);
+			boss_obj._stage3_boss_con = packet->con_num;
+
+		}break;
 
 		case SC_GAME_END: {
 			boss_obj._game_clear = true;

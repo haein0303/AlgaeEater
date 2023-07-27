@@ -285,6 +285,8 @@ void d11on12::Late_load()
 
 	_clear_bg = addResource(L"..\\Resources\\UserInterface\\clear2.png");
 
+	_stage2_boss_skill_bg = addResource(L"..\\Resources\\UserInterface\\is_attacked_boss2_skill.png");
+
 }
 
 ID2D1Bitmap* d11on12::addResource(LPCWSTR path)
@@ -365,6 +367,11 @@ void d11on12::draw_text(LPCWSTR text, D2D1_RECT_F rect)
 void d11on12::draw_game_clear()
 {
 	m_d2dDeviceContext->DrawBitmap(_clear_bg,{0,0,1280,720});
+}
+
+void d11on12::draw_stage2_atk()
+{
+	m_d2dDeviceContext->DrawBitmap(_stage2_boss_skill_bg, { 0,0,1280,720 });
 }
 
 void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)

@@ -247,6 +247,8 @@ private:
 	D3D12_VIEWPORT	_viewport;
 	D3D12_RECT		_scissorRect;
 
+	bool _atked = false;
+
 public:
 	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x, int scene_num) {
 		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0);

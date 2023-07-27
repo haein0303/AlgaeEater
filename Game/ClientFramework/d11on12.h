@@ -78,6 +78,8 @@ public:
 	ID2D1Bitmap* _boss_bg;
 	ID2D1Bitmap* _alert_bg;
 	ID2D1Bitmap* _clear_bg;
+	
+	ID2D1Bitmap* _stage2_boss_skill_bg;
 
 	vector<ID2D1Bitmap*> _v_Resource;
 	~d11on12() {
@@ -97,6 +99,7 @@ public:
 	void draw_UI(const UI_ASSET& draw);
 	void draw_text(LPCWSTR text, D2D1_RECT_F rect);
 	void draw_game_clear();
+	void draw_stage2_atk();
 
 	void draw_bossUI(int hp,int stage,const OBJECT& boss_obj);
 
