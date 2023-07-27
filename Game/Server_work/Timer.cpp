@@ -322,7 +322,7 @@ void do_timer()
 					std::uniform_int_distribution<int> dis(-20, 20);
 
 					for (int i = clients[ev.object_id]._Room_Num * ROOM_FIELD; i < clients[ev.object_id]._Room_Num * ROOM_FIELD + ROOM_FIELD; i++) {
-						fields[i].type = 11;
+						fields[i].type = FD_SM_DMG;
 						fields[i].r = 3;
 						fields[i].x = clients[ev.object_id].x + dis(rd);
 						fields[i].z = clients[ev.object_id].z + dis(rd);
@@ -330,8 +330,54 @@ void do_timer()
 
 					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0);
 					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_ON, 1);
-					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_ON, 2);
+					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 2);
 					clients[ev.object_id].first_pattern = true;
+				}
+
+				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.25 && clients[ev.object_id].second_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_2) {
+					for (int i = clients[ev.object_id]._Room_Num * ROOM_FIELD; i < clients[ev.object_id]._Room_Num * ROOM_FIELD + ROOM_FIELD; i++) {
+						if (i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 10) {
+							fields[i].type = FD_SM_DMG;
+							fields[i].r = 3;
+							fields[i].x = clients[ev.object_id].x - 50 + (i % ROOM_FIELD * 10);
+							fields[i].z = clients[ev.object_id].z;
+						}
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 10 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 20) {
+							fields[i].type = FD_SM_DMG;
+							fields[i].r = 3;
+							fields[i].x = clients[ev.object_id].x;
+							fields[i].z = clients[ev.object_id].z - 50 + ((i % ROOM_FIELD - 10) * 10);
+						}
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 20 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 30) {
+							fields[i].type = FD_SM_DMG;
+							fields[i].r = 3;
+							fields[i].x = clients[ev.object_id].x - 50 + ((i % ROOM_FIELD - 20) * 10);
+							fields[i].z = clients[ev.object_id].z - 50 + ((i % ROOM_FIELD - 20) * 10);
+						}
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 30 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 40) {
+							fields[i].type = FD_SM_DMG;
+							fields[i].r = 3;
+							fields[i].x = clients[ev.object_id].x - 50 + ((i % ROOM_FIELD - 30) * 10);
+							fields[i].z = clients[ev.object_id].z + 50 - ((i % ROOM_FIELD - 30) * 10);
+						}
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 40 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 50) {
+							fields[i].type = FD_SM_DMG;
+							fields[i].r = 3;
+							fields[i].x = clients[ev.object_id].x - 50 + ((i % ROOM_FIELD - 40) * 10);
+							fields[i].z = clients[ev.object_id].z;
+						}
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 50 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 60) {
+							fields[i].type = FD_SM_DMG;
+							fields[i].r = 3;
+							fields[i].x = clients[ev.object_id].x;
+							fields[i].z = clients[ev.object_id].z - 50 + ((i % ROOM_FIELD - 50) * 10);
+						}
+					}
+
+					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0);
+					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 1);
+					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_ON, 2);
+					clients[ev.object_id].second_pattern = true;
 				}
 
 				lua_getglobal(clients[ev.object_id].L, "wander_boss");

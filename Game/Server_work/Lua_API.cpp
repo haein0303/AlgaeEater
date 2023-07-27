@@ -6,7 +6,8 @@
 
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
-
+extern priority_queue<TIMER_EVENT> timer_queue;
+extern mutex timer_l;
 extern HANDLE g_h_iocp;
 
 int API_get_x(lua_State* L)
@@ -141,6 +142,10 @@ void reset_lua(int c_id)
 void close_lua(int c_id)
 {
 	cout << "방 초기화" << endl;
+
+	timer_l.lock();
+	timer_queue.empty();
+	timer_l.unlock();
 
 	int npc_start_num = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER;
 	int cube_num = clients[c_id]._Room_Num * ROOM_CUBE;
