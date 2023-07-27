@@ -246,6 +246,10 @@ struct SC_BOSS_SKILL_START_PACKET {
 	float	z;
 	float	r;
 	int		fd_type;
+			//10의자리
+			//1 : 원형 / 2 : 사각형
+			//1의자리
+			//0 : 회복 / 1 부터 공격인데 강할 수록 높은 숫자 부여
 	int		char_state;
 };
 

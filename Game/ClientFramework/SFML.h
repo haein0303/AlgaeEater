@@ -356,11 +356,18 @@ public:
 			int tmp = addSkillid(packet->fd_id);
 			cout << "SKILL START : " << tmp << endl;
 			Boss2SkillData boss2_skill;
+			boss2_skill.my_server_id = packet->fd_id;
 			boss2_skill.pos.x = packet->x;
 			boss2_skill.pos.y = 0.01f;
 			boss2_skill.pos.z = packet->z;
 			boss2_skill.scale = packet->r;
 			boss2_skill.type = packet->fd_type;
+			boss2_skill.atk_time = 0.f;
+			
+			//10의자리
+			//1 : 원형 / 2 : 사각형
+			//1의자리
+			//0 : 회복 / 1 부터 공격인데 강할 수록 높은 숫자 부여
 			boss2_skill.isOn = false;
 			//혹시 더 많이 보낼 수 있어
 			if (tmp > boss_obj.boss2_skill_vec.size()) { //멀쓰이기때문에 상당하게 위험

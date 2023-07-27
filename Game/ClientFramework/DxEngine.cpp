@@ -889,6 +889,13 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		break;
 	}
 	case 2:
+		//시간만 업데이트 하고 나온다네
+		boss2_skill_logical_update(boss_obj, logicTimerPtr);
+		//장판과 충돌 체크하고, 패킷까지 보내는 똑똑한 아이라네
+		boss2_skill_checker(playerArr[0], boss_obj,networkPtr);
+
+
+
 		if ((inputPtr->_states[VK_F8] == 2 || open_door_count > 0) && inputPtr->_open_door[Scene_num - 1] == false)
 			inputPtr->_open_door[Scene_num - 1] = true;
 		break;
@@ -1724,7 +1731,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x, Scene_num);
 			}
 			break;
-		case 1:
+		case 1: {
 			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
 
 			if (boss_obj._on == true)
@@ -1839,8 +1846,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					}
 				}
 			}
+		}
 			break;
-		case 2:
+		case 2: {
 			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
 
 			if (boss_obj._on == true)
@@ -1863,7 +1871,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			//XMFLOAT3 boss2_skill_pos2 = XMFLOAT3(167.f, 0.01f, -240.f);
 			//XMFLOAT3 boss2_skill_scale2 = XMFLOAT3(1.f, 1.f, 1.f);
 			//Boss2Skill(cmdList, boss2_skill_circle, i_now_render_index, boss2_skill_time[1], boss2_skill_pos2, boss2_skill_scale2);
+		}
 			break;
+
 		case 3:
 			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
 			break;

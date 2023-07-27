@@ -4,6 +4,7 @@
 struct WindowInfo;
 class MESH_ASSET;
 class Timer;
+class SFML;
 
 
 
@@ -29,6 +30,8 @@ public:
 	int			_player_color = -1;
 	int			_pillar_count = 5;
 	int			_pillar_color = 0;
+	int			_player_is_attacked_boss2_skill = 0;
+
 	int			_max_hp = 0;
 
 	bool		_shield_on = false;
@@ -81,3 +84,6 @@ public:
 	//매 프레임마다 그리기
 	virtual void Draw(WindowInfo windowInfo, int);
 };
+
+void boss2_skill_logical_update(OBJECT& boss, shared_ptr<Timer> timer);
+void boss2_skill_checker(OBJECT& player, OBJECT& boss, shared_ptr<SFML> networkPtr);
