@@ -363,6 +363,11 @@ public:
 			boss2_skill.scale = packet->r;
 			boss2_skill.type = packet->fd_type;
 			boss2_skill.atk_time = 0.f;
+			cout << "packet->fd_type : " << packet->fd_type << endl;
+			if (boss2_skill.type == 0 || boss2_skill.type == 1)
+				boss2_skill.animation_count = 0;
+			else if (boss2_skill.type == 2)
+				boss2_skill.animation_count = 5;
 			
 			//0 : 원형 회복 / 1 : 사각 기본 공격 / 2 : 사각 아픈 공격
 			boss2_skill.isOn = false;

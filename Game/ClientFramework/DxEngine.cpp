@@ -281,19 +281,26 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss2Skill.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk10.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk11.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk12.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk13.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk14.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk20.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk21.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk22.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk23.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk24.png");
 		boss2Skill.Make_SRV();
 		boss2Skill.CreatePSO(L"..\\Bricks.hlsl");
 
 		boss2_skill_circle.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		boss2_skill_circle.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
-		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Red_BaseColor_Eye.jpg");
-		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Blue_Color_Eye.jpg");
-		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_Green_Color_Eye.png");
-		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\spider_paint_White_Color_Eye.png");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal000.png");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal001.png");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal002.png");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal003.png");
+		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal004.png");
 		boss2_skill_circle.Make_SRV();
 		boss2_skill_circle.CreatePSO(L"..\\Circle.hlsl");
 
@@ -1860,12 +1867,14 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 
 			// boss2Skill
-			for (Boss2SkillData& boss2_skill : boss_obj.boss2_skill_vec)
+			for (Boss2SkillData& boss2_skill_data : boss_obj.boss2_skill_vec)
 			{
-				if (boss2_skill.isOn)
+				if (boss2_skill_data.isOn)
 				{
-					XMFLOAT3 boss2_skill_scale = XMFLOAT3(boss2_skill.scale, boss2_skill.scale, boss2_skill.scale);
-					Boss2Skill(cmdList, boss2Skill, i_now_render_index, boss2_skill.time, boss2_skill.pos, boss2_skill_scale, boss2_skill.animation_count);
+					if (boss2_skill_data.type == 0) // 원
+						Boss2Skill(cmdList, boss2_skill_circle, i_now_render_index, boss2_skill_data);
+					else // 사각형
+						Boss2Skill(cmdList, boss2Skill, i_now_render_index, boss2_skill_data);
 				}
 			}
 

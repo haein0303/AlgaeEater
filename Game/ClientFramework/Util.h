@@ -325,6 +325,7 @@ struct Boss2SkillData
 	float time = 0.f;
 	int animation_count = 0;
 	float atk_time = 0.f;
+	bool is_rewind = false;
 };
 
 

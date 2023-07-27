@@ -835,33 +835,65 @@ public:
 			return false;
 	}
 
-	void Boss2Skill(ComPtr<ID3D12GraphicsCommandList>& cmdList, const MESH_ASSET& boss2Skill, const int i_now_render_index, float& boss2_skill_time, const XMFLOAT3& pos, const XMFLOAT3& scale, int& animation_count)
+	void Boss2Skill(ComPtr<ID3D12GraphicsCommandList>& cmdList, const MESH_ASSET& boss2Skill, const int i_now_render_index, Boss2SkillData& boss2_skill_data)
 	{
 		cmdList->SetPipelineState(boss2Skill._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &boss2Skill._vertexBufferView);
 		cmdList->IASetIndexBuffer(&boss2Skill._indexBufferView);
 
-		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(pos.x, pos.y, pos.z));
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(boss2_skill_data.scale, boss2_skill_data.scale, boss2_skill_data.scale) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(boss2_skill_data.pos.x, boss2_skill_data.pos.y, boss2_skill_data.pos.z));
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-		boss2_skill_time += timerPtr->_deltaTime;
+		boss2_skill_data.time += timerPtr->_deltaTime;
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
 		srv_handle = boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-		srv_handle.Offset(animation_count, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+		srv_handle.Offset(boss2_skill_data.animation_count, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 
-		if (boss2_skill_time > 0.5f)
+		if (boss2_skill_data.time > 0.2f)
 		{
-			if (animation_count >= 3)
-				animation_count = 0;
-			else
-				animation_count++;
+			if (boss2_skill_data.type == 0 || boss2_skill_data.type == 1)
+			{
+				if (boss2_skill_data.animation_count >= 4)
+				{
+					boss2_skill_data.animation_count = 4;
+					boss2_skill_data.is_rewind = true;
+				}
+				if (boss2_skill_data.animation_count <= 0)
+				{
+					boss2_skill_data.animation_count = 0;
+					boss2_skill_data.is_rewind = false;
+				}
 
-			boss2_skill_time = 0.f;
+				if(boss2_skill_data.is_rewind)
+					boss2_skill_data.animation_count--;
+				else
+					boss2_skill_data.animation_count++;
+			}
+			else
+			{
+				if (boss2_skill_data.animation_count >= 9)
+				{
+					boss2_skill_data.animation_count = 9;
+					boss2_skill_data.is_rewind = true;
+				}
+				if (boss2_skill_data.animation_count <= 5)
+				{
+					boss2_skill_data.animation_count = 5;
+					boss2_skill_data.is_rewind = false;
+				}
+
+				if (boss2_skill_data.is_rewind)
+					boss2_skill_data.animation_count--;
+				else
+					boss2_skill_data.animation_count++;
+			}
+
+			boss2_skill_data.time = 0.f;
 		}
 		descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
 
