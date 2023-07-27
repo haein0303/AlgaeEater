@@ -85,12 +85,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	skybox.Make_SRV();
 	skybox.CreatePSO(L"..\\SkySphere.hlsl");
 
-	if(character_num == 0)
+	if(playerArr[0]._character_num == 0)
 		inputPtr->move_speed = 10.f;
 	else
 		inputPtr->move_speed = 7.f;
 
-	if (character_num == 0)
+	if (playerArr[0]._character_num == 0)
 	{
 		player_AKI_Body_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		player_AKI_Body_asset.Init("../Resources/AKI_Body.txt", ObjectType::AnimationObjects);
@@ -452,7 +452,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
-		if (character_num == 0)
+		if (playerArr[i]._character_num == 0)
 		{
 			playerArr[i]._final_transforms.resize(player_AKI_Body_asset._animationPtr->mBoneHierarchy.size());
 			playerArr[i]._weapon_final_transforms.resize(player_AKI_Sword_asset._animationPtr->mBoneHierarchy.size());
@@ -551,22 +551,22 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		{
 		case 0:
 		case 1:
-			if(character_num == 0)
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+			if(playerArr[0]._character_num == 0)
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, playerArr[0]._character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			else
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes, playerArr[0]._character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		case 2:
-			if (character_num == 0)
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+			if (playerArr[0]._character_num == 0)
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, playerArr[0]._character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			else
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes2, playerArr[0]._character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		case 3:
-			if (character_num == 0)
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+			if (playerArr[0]._character_num == 0)
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, playerArr[0]._character_num, player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			else
-				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
+				inputPtr->InputKey(logicTimerPtr, playerArr, networkPtr, bounding_boxes3, playerArr[0]._character_num, player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state));
 			break;
 		default:
 			break;
@@ -596,8 +596,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			|| player._animation_state == AnimationOrder::Attack2
 			|| player._animation_state == AnimationOrder::Attack3
 			|| player._animation_state == AnimationOrder::Attack4
-			&& ((character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
-			|| (character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
+			&& ((player._character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
+			|| (player._character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
 		{
 			player._attack.Center = XMFLOAT3(player._transform.x + 0.5f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
 				player._transform.y + 0.5f,
@@ -613,8 +613,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 		// ÇÃ·¹ÀÌ¾î ½ºÅ³ ÄÝ¶óÀÌ´õ on off
 		if (player._animation_state == AnimationOrder::Skill
-			&& ((character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
-			|| (character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
+			&& ((player._character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
+			|| (player._character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
 		{
 			player._skill.Center = XMFLOAT3(player._transform.x,
 				player._transform.y + 0.5f,
@@ -636,8 +636,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4 || 
 			player._animation_state == AnimationOrder::Skill)
 			&& player._can_attack2
-			&& ((character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
-				|| (character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
+			&& ((player._character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
+				|| (player._character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
 		{
 			for (int i = 0; i < NPCMAX; ++i)
 			{
@@ -676,8 +676,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3 || 
 			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4 || 
 			playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
-			&& ((character_num == 0 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
-				|| (character_num == 1 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f))
+			&& ((playerArr[networkPtr->myClientId]._character_num == 0 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+				|| (playerArr[networkPtr->myClientId]._character_num == 1 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f))
 			&& playerArr[networkPtr->myClientId]._can_attack)
 		{
 			for (int i = 0; i < NPCMAX; ++i)
@@ -874,8 +874,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
 				{
 					if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1)
-						&& ((character_num == 0 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
-							|| (character_num == 1 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f))
+						&& ((playerArr[networkPtr->myClientId]._character_num == 0 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+							|| (playerArr[networkPtr->myClientId]._character_num == 1 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f))
 						&& playerArr[networkPtr->myClientId]._can_attack3)
 					{
 						playerArr[networkPtr->myClientId]._can_attack3 = false;
@@ -1039,28 +1039,27 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 
 void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 {
-	
 	ComPtr<ID3D12CommandAllocator>		cmdAlloc = cmdQueuePtr->_arr_cmdAlloc[i_now_render_index];
 	ComPtr<ID3D12GraphicsCommandList>	cmdList = cmdQueuePtr->_arr_cmdList[i_now_render_index];
-	
 
 	if (_is_loading) {
 		//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½
 		for (int i = 0; i < PLAYERMAX; ++i)
 		{
-			if (character_num == 0 && playerArr[i]._on == true) {
-				player_AKI_Body_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 0);
-				player_AKI_Sword_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 1);
-			}
-			else if (character_num == 1 && playerArr[i]._on == true)
+			if (playerArr[i]._character_num == 0 && playerArr[i]._on == true)
 			{
-				player_Mika_Body_Astro_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 0);
-				player_Mika_Sword_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 1);
+				player_AKI_Body_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 0, playerArr[i]._character_num);
+				player_AKI_Sword_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 1, playerArr[i]._character_num);
+			}
+			else if (playerArr[i]._character_num == 1 && playerArr[i]._on == true)
+			{
+				player_Mika_Body_Astro_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 0, playerArr[i]._character_num);
+				player_Mika_Sword_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, playerArr[i], 1, playerArr[i]._character_num);
 			}
 		}
 		for (int i = 0; i < NPCMAX; ++i) {
 			if (npcArr[i]._on == true) {
-				npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0);
+				npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0, 0);
 			}
 		}
 
@@ -1096,7 +1095,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	if (_is_loading) {
 	
 #pragma region Player
-		if (character_num == 0)
+		if (playerArr[0]._character_num == 0)
 		{
 			cmdList->SetPipelineState(player_AKI_Body_asset._pipelineState.Get());
 			cmdList->IASetVertexBuffers(0, 1, &player_AKI_Body_asset._vertexBufferView);

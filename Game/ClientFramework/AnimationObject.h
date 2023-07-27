@@ -24,7 +24,7 @@ public:
 
 #pragma region 스키닝 애니메이션
 	// 매 프레임마다 스키닝 애니메이션을 진행
-	void UpdateSkinnedAnimation(float dt, OBJECT& player, int i);
+	void UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int character_num);
 
 	// 보간된 애니메이션 행렬들에 대해서 최종 행렬 연산
 	void GetFinalTransforms(const string& clipName, float timePos, vector<XMFLOAT4X4>& finalTransforms, int state);

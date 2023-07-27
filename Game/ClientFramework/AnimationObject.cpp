@@ -16,12 +16,28 @@ void AnimationObject::CreateVertexAnimationObject(vector<Vertex>& vertices, vect
 	ClipName = "VertexAnimtion";
 }
 
-void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i)
+void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int character_num)
 {
-	if (player._animation_state == AnimationOrder::Idle)
-		player._animation_time_pos += dt * 0.4f;
-	else
-		player._animation_time_pos += dt;
+	if (character_num == 0) // Aki
+	{
+		if (player._animation_state == AnimationOrder::Idle)
+			player._animation_time_pos += dt * 0.4f;
+		else
+			player._animation_time_pos += dt;
+	}
+	else // Mika
+	{
+		if (player._animation_state == AnimationOrder::Walk)
+			player._animation_time_pos += dt * 0.5f;
+		else if(player._animation_state == AnimationOrder::Attack1
+			|| player._animation_state == AnimationOrder::Attack2)
+			player._animation_time_pos += dt * 0.7f;
+		else if (player._animation_state == AnimationOrder::Skill)
+			player._animation_time_pos += dt * 0.7f;
+		else
+			player._animation_time_pos += dt;
+	}
+	
 
 	// 애니메이션이 끝나면 애니메이션 루프
 	if ((player._animation_state == AnimationOrder::Idle || player._animation_state == AnimationOrder::Walk) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {

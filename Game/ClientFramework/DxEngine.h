@@ -216,7 +216,6 @@ public:
 	int _render_thread_num = 0;
 
 	int Scene_num = 1;
-	int character_num = 1;
 
 	SCENE* arrScene[SCENE::SceneTag::Count];
 	SCENE* m_pCurrScene;
@@ -250,8 +249,9 @@ private:
 	bool _atked = false;
 
 public:
-	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x, int scene_num) {
-		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0);
+	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x, int scene_num)
+	{
+		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0, 0);
 
 		cmdList->SetPipelineState(boss._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);

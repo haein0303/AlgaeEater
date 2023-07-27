@@ -75,14 +75,14 @@ public:
 
 	void in_scene(int data, int char_sel) {
 		dxEngine.Scene_num = data;
-		dxEngine.character_num = char_sel;
+		dxEngine.playerArr[0]._character_num = char_sel;
 	}
 
 	//fixed_update
 	void Logic()
 	{
 		cout << "try server connect" << endl;
-		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM,dxEngine.Scene_num, dxEngine.character_num)) {
+		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM,dxEngine.Scene_num, dxEngine.playerArr[0]._character_num)) {
 			cout << "SERVER CONNECT FAIL" << endl;
 			while (1);
 		}
@@ -127,7 +127,7 @@ public:
 	}
 	void single_init() {
 		cout << "try server connect" << endl;
-		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM, dxEngine.Scene_num, dxEngine.character_num)) {
+		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM, dxEngine.Scene_num, dxEngine.playerArr[0]._character_num)) {
 			cout << "SERVER CONNECT FAIL" << endl;
 			while (1);
 		}

@@ -49,7 +49,7 @@ public:
 	void Make_SRV();
 	void CreatePSO();
 	void CreatePSO(const wchar_t* shader);
-	void UpdateSkinnedAnimation(float dt, OBJECT& player, int i);
+	void UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int character_num);
 	void UpdateVertexAnimation(float dt, OBJECT& player, XMVECTOR& P, XMVECTOR& Q);
 
 };

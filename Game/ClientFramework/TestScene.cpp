@@ -113,15 +113,15 @@ void TestScene::Draw(ComPtr<ID3D12CommandAllocator>	cmdAlloc, ComPtr<ID3D12Graph
 	for (int i = 0; i < PLAYERMAX; ++i)
 	{
 		if (_dxengine->playerArr[i]._on == true) {
-			_dxengine->player_AKI_Body_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->playerArr[i], 0);
+			//_dxengine->player_AKI_Body_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->playerArr[i], 0);
 		}
 	}
 	if (_dxengine->npcArr[0]._on == true) {
-		_dxengine->boss.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[0], 0);
+		//_dxengine->boss.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[0], 0);
 	}
 	for (int i = 1; i < NPCMAX; ++i) {
 		if (_dxengine->npcArr[i]._on == true) {
-			_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[i], 0);
+			//_dxengine->npc_asset.UpdateSkinnedAnimation(_dxengine->timerPtr->_deltaTime, _dxengine->npcArr[i], 0);
 		}
 	}
 
