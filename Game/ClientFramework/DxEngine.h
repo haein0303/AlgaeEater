@@ -550,13 +550,13 @@ public:
 					DrawMapObject(cmdList, Wall_Line_2m_B, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Line_2m_D") == 0)
 					DrawMapObject(cmdList, Wall_Line_2m_D, i_now_render_index, data.pos, data.scale, data.rotation);
-				else if (data.mesh_type.compare("Wall_Line_2m_¬³") == 0)
+				else if (data.mesh_type.compare("Wall_Line_2m_c") == 0)
 					DrawMapObject(cmdList, Wall_Line_2m_¬³, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Line_4m_B") == 0)
 					DrawMapObject(cmdList, Wall_Line_4m_B, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Line_4m_D") == 0)
 					DrawMapObject(cmdList, Wall_Line_4m_D, i_now_render_index, data.pos, data.scale, data.rotation);
-				else if (data.mesh_type.compare("Wall_Line_4m_¬³") == 0)
+				else if (data.mesh_type.compare("Wall_Line_4m_c") == 0)
 					DrawMapObject(cmdList, Wall_Line_4m_¬³, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Turn_L_In_A") == 0)
 					DrawMapObject(cmdList, Wall_Turn_L_In_A, i_now_render_index, data.pos, data.scale, data.rotation);
@@ -568,7 +568,7 @@ public:
 					DrawMapObject(cmdList, Wall_Turn_L_Out_B, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Turn_L_Out_D") == 0)
 					DrawMapObject(cmdList, Wall_Turn_L_Out_D, i_now_render_index, data.pos, data.scale, data.rotation);
-				else if (data.mesh_type.compare("Wall_Turn_L_Out_¬³") == 0)
+				else if (data.mesh_type.compare("Wall_Turn_L_Out_c") == 0)
 					DrawMapObject(cmdList, Wall_Turn_L_Out_¬³, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Win_4m_B") == 0)
 					DrawMapObject(cmdList, Wall_Win_4m_B, i_now_render_index, data.pos, data.scale, data.rotation);
