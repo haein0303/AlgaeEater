@@ -574,6 +574,7 @@ void process_packet(int c_id, char* packet)
 								SC_GAME_END_PACKET packet;
 								packet.size = sizeof(SC_GAME_END_PACKET);
 								packet.type = SC_GAME_END;
+								packet.e_type = true;
 
 								clients[pl].do_send(&packet);
 							}
@@ -727,12 +728,29 @@ void process_packet(int c_id, char* packet)
 		else {						// 공격자가 npc
 			if (clients[c_id].god_mod == true) break;
 			else {
+				int dead_cnt = 0;
 				clients[c_id].hp -= clients[p->attacker_id].atk;
 				if (clients[c_id].hp <= 0) {
 					clients[c_id].hp = 0;
 					clients[c_id].char_state = AN_DEAD;
 					for (auto& pl : clients[c_id].room_list) {
 						clients[pl].room_list.erase(c_id);
+					}
+					for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * ROOM_USER + ROOM_USER;i++) {
+						if (clients[i].char_state == AN_DEAD) {
+							dead_cnt++;
+						}
+					}
+
+					if (dead_cnt == ROOM_USER) {
+						for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * ROOM_USER + ROOM_USER; i++) {
+							SC_GAME_END_PACKET packet;
+							packet.size = sizeof(SC_GAME_END_PACKET);
+							packet.type = SC_GAME_END;
+							packet.e_type = false;
+
+							clients[i].do_send(&packet);
+						}
 					}
 				}
 			}

@@ -332,5 +332,6 @@ struct LSC_JOIN_FAIL_PACKET {
 struct SC_GAME_END_PACKET {
 	unsigned char size;
 	char	type;
+	bool	e_type;	// true : clear     false : all player dead
 };
 #pragma pack (pop)
