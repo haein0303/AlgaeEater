@@ -458,9 +458,9 @@ void process_packet(int c_id, char* packet)
 						}
 						else if ((i - MAX_USER) % ROOM_NPC >= 40 && (i - MAX_USER) % ROOM_NPC < 48) {
 							clients[i]._object_type = TY_BOSS_SKILL;
-							clients[i].x = STAGE3_MOB_POS[8].x + dis(rd);
+							clients[i].x = STAGE3_MOB_POS[1].x + dis(rd);
 							clients[i].start_x = clients[i].x;
-							clients[i].z = STAGE3_MOB_POS[8].z + dis(rd);
+							clients[i].z = STAGE3_MOB_POS[1].z + dis(rd);
 							clients[i].start_z = clients[i].z;
 						}
 						else if ((i - MAX_USER) % ROOM_NPC == 48) {
