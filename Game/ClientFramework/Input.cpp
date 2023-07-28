@@ -243,18 +243,20 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 
 				playerArr[networkPtr->myClientId]._bounding_box.Center.x = playerArr[networkPtr->myClientId]._transform.x;
 				playerArr[networkPtr->myClientId]._bounding_box.Center.z = playerArr[networkPtr->myClientId]._transform.z;
-
-				for (const BoundingBox& bounding_box : bounding_boxes)
-				{
-					if (playerArr[networkPtr->myClientId]._bounding_box.Intersects(bounding_box))
+				if (!_god_mod_on) {
+					for (const BoundingBox& bounding_box : bounding_boxes)
 					{
-						playerArr[networkPtr->myClientId]._transform.x = pos_x0;
-						playerArr[networkPtr->myClientId]._transform.z = pos_z0;
+						if (playerArr[networkPtr->myClientId]._bounding_box.Intersects(bounding_box))
+						{
+							playerArr[networkPtr->myClientId]._transform.x = pos_x0;
+							playerArr[networkPtr->myClientId]._transform.z = pos_z0;
 
-						playerArr[networkPtr->myClientId]._bounding_box.Center.x = pos_x0;
-						playerArr[networkPtr->myClientId]._bounding_box.Center.z = pos_z0;
+							playerArr[networkPtr->myClientId]._bounding_box.Center.x = pos_x0;
+							playerArr[networkPtr->myClientId]._bounding_box.Center.z = pos_z0;
+						}
 					}
 				}
+				
 
 				for (int i = 0; i < playerArr.size(); ++i)
 				{
