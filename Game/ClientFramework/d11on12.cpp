@@ -221,8 +221,11 @@ void d11on12::Loading_info()
 	_loading_msg.push_back(L"팀원 중 김경욱 학생만 흡연을 합니다.");
 	_loading_msg.push_back(L"덕현이는 최근 장트러블에 고생하고 있습니다.");
 	_loading_msg.push_back(L"해인이의 자취방에서 개발을 자주 진행합니다.");
-	_loading_msg.push_back(L"상남자 특 로딩 잘 기다림");
-	_loading_msg.push_back(L"상여자 특 로딩 잘 기다림");
+	_loading_msg.push_back(L"알지이터는 청소 물고기의 한 종입니다.");
+	_loading_msg.push_back(L"캐릭터의 이름은 AKI와 MIKA입니다.");
+	_loading_msg.push_back(L"1번 스테이지의 보스의 눈 색과 UI의 색을 집중해주세요.");
+	_loading_msg.push_back(L"2번 스테이지의 보스는 바닥의 화학물질로 공격을 합니다.");
+	_loading_msg.push_back(L"3번 스테이지의 보스는 해킹을 컨셉으로 공격을 진행합니다.");
 
 	_loading_rect.top = (_win_info.ClientHeight/2.f) - 250.0f;
 	_loading_rect.left = (_win_info.ClientWidth / 2.f) - 250.0f;
@@ -287,6 +290,12 @@ void d11on12::Late_load()
 	_fail_bg = addResource(L"..\\Resources\\UserInterface\\fail.png");
 
 	_stage2_boss_skill_bg = addResource(L"..\\Resources\\UserInterface\\is_attacked_boss2_skill.png");
+
+	glich_effect.push_back(addResource(L"..\\Resources\\UserInterface\\glitch_0.png"));
+	glich_effect.push_back(addResource(L"..\\Resources\\UserInterface\\glitch_1.png"));
+	glich_effect.push_back(addResource(L"..\\Resources\\UserInterface\\glitch_2.png"));
+	glich_effect.push_back(addResource(L"..\\Resources\\UserInterface\\glitch_3.png"));
+	glich_effect.push_back(addResource(L"..\\Resources\\UserInterface\\glitch_4.png"));
 
 }
 
@@ -458,6 +467,31 @@ void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 		m_d2dDeviceContext->FillRectangle(progressRect2, mBlueBrush);
 	}
 	
+}
+
+void d11on12::logic_update_glich()
+{
+	
+
+	if (glitch_draw2 > 6) {
+		glitch_draw2++;
+	}
+	else {
+		glitch_draw += rand() % 10;
+		glitch_draw2 = 0;
+	}		
+	
+
+	if (glitch_draw > 200) {
+		glitch_draw = 0;
+	}
+}
+
+void d11on12::draw_glich()
+{
+	if (glitch_draw < glich_effect.size()) {
+		m_d2dDeviceContext->DrawBitmap(glich_effect[glitch_draw], {0,0,1280,720});
+	}
 }
 
 void d11on12::draw_infotext(LPCWSTR text, D2D1_RECT_F rect)

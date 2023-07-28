@@ -547,6 +547,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		if (playerArr[0]._stage3_boss_con == 2) {
 			inputPtr->move_speed = 0.f;
 		}
+		d11Ptr->logic_update_glich();
 	}
 	else {
 		inputPtr->move_speed = playerArr[0]._move_speed;
@@ -2021,6 +2022,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		
 		if (_atked) {
 			d11Ptr->draw_stage2_atk();
+		}
+
+		if (boss_obj._stage3_boss_on) {
+			d11Ptr->draw_glich();
 		}
 
 		d11Ptr->draw_player_info(L"AKI", 100, playerArr[0]._hp, 0);

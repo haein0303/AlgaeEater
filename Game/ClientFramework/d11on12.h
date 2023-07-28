@@ -73,6 +73,10 @@ private:
 
 	vector<ID2D1Bitmap*> stage1_boss_bg;
 	vector<ID2D1Bitmap*> user_icon;
+	vector<ID2D1Bitmap*> glich_effect;
+
+	int glitch_draw = 0;
+	int glitch_draw2 = 0;
 	
 public:
 	ID2D1Bitmap* _boss_bg;
@@ -103,6 +107,8 @@ public:
 	void draw_stage2_atk();
 
 	void draw_bossUI(int hp,int stage,const OBJECT& boss_obj);
+	void logic_update_glich();
+	void draw_glich();
 
 	void draw_infotext(LPCWSTR text, D2D1_RECT_F rect);
 	void ExcuteUI(int mCurrBackbufferIndex);
