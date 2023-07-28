@@ -169,6 +169,8 @@ void close_lua(int c_id)
 		clients[i].boss_shield = 100;
 		clients[i].first_pattern = false;
 		clients[i].second_pattern = false;
+		clients[i].third_pattern = false;
+		clients[i].fourth_pattern = false;
 		clients[i].boss_shield_trigger = false;
 		clients[i].room_list.clear();
 		clients[i].object_list.clear();
