@@ -284,6 +284,7 @@ void d11on12::Late_load()
 	_alert_bg = addResource(L"..\\Resources\\UserInterface\\alert.png");
 
 	_clear_bg = addResource(L"..\\Resources\\UserInterface\\clear2.png");
+	_fail_bg = addResource(L"..\\Resources\\UserInterface\\fail.png");
 
 	_stage2_boss_skill_bg = addResource(L"..\\Resources\\UserInterface\\is_attacked_boss2_skill.png");
 
@@ -364,9 +365,15 @@ void d11on12::draw_text(LPCWSTR text, D2D1_RECT_F rect)
 	m_d2dDeviceContext->DrawTextW(text, wcslen(text), mDWriteTextFormat.Get(), &rect, mSolidColorBrush.Get());
 }
 
-void d11on12::draw_game_clear()
+void d11on12::draw_game_clear(bool win)
 {
-	m_d2dDeviceContext->DrawBitmap(_clear_bg,{0,0,1280,720});
+	if (win) {
+		m_d2dDeviceContext->DrawBitmap(_clear_bg, { 0,0,1280,720 });
+	}
+	else {
+		m_d2dDeviceContext->DrawBitmap(_fail_bg, { 0,0,1280,720 });
+	}
+	
 }
 
 void d11on12::draw_stage2_atk()

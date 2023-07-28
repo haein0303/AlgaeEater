@@ -2028,7 +2028,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num,boss_obj);
 
 		if (boss_obj._game_clear) {
-			d11Ptr->draw_game_clear();
+			d11Ptr->draw_game_clear(boss_obj._clear_type);
 		}
 
 	}

@@ -76,6 +76,7 @@ public:
 	vector<Boss2SkillData> boss2_skill_vec;
 
 	bool			_game_clear = false;
+	bool			_clear_type = false;
 	
 public:
 	//DX엔진 초기화

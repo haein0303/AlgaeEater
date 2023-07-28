@@ -430,7 +430,9 @@ public:
 		}break;
 
 		case SC_GAME_END: {
+			SC_GAME_END_PACKET* packet = reinterpret_cast<SC_GAME_END_PACKET*>(ptr);
 			boss_obj._game_clear = true;
+			boss_obj._clear_type = packet->e_type;
 		}
 
 		default:
