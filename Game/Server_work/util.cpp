@@ -31,6 +31,7 @@ array<stage_npc_death_counts, ROOM_NUM> death_counts;
 
 array<point, 10> STAGE1_MOB_POS;
 array<point, 10> STAGE2_MOB_POS;
+array<point, 6> STAGE3_MOB_POS;
 
 void stage() {
 	for (int i = 0; i < 10; i++) {
@@ -127,6 +128,37 @@ void stage() {
 			break;
 		}
 	}
+	for (int i = 0; i < 6; i++) {
+		switch (i)
+		{
+		case 0:
+			STAGE3_MOB_POS[i].x = 75;
+			STAGE3_MOB_POS[i].z = -70;
+			break;
+		case 1:	 
+			STAGE3_MOB_POS[i].x = -35;
+			STAGE3_MOB_POS[i].z = -175;
+			break;
+		case 2:	 
+			STAGE3_MOB_POS[i].x = 0;
+			STAGE3_MOB_POS[i].z = 0;
+			break;
+		case 3:	 
+			STAGE3_MOB_POS[i].x = 100;
+			STAGE3_MOB_POS[i].z = 0;
+			break;
+		case 4:	 
+			STAGE3_MOB_POS[i].x = 200;
+			STAGE3_MOB_POS[i].z = 0;
+			break;
+		case 5:	 
+			STAGE3_MOB_POS[i].x = 300;
+			STAGE3_MOB_POS[i].z = 0;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 int get_new_client_id()
@@ -179,6 +211,12 @@ void process_packet(int c_id, char* packet)
 			clients[c_id].x = 155;
 			clients[c_id].y = 0;
 			clients[c_id].z = -90;
+			break;
+		}
+		case 3: {
+			clients[c_id].x = 150;
+			clients[c_id].y = 0;
+			clients[c_id].z = -80;
 			break;
 		}
 		default:
@@ -374,8 +412,72 @@ void process_packet(int c_id, char* packet)
 						}
 						break;
 					}
-					case 3:
+					case 3:{
+						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
+							clients[i]._object_type = TY_BOSS_3;
+						}
+						if ((i - MAX_USER) % ROOM_NPC < 10) {
+							clients[i].x = STAGE3_MOB_POS[0].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[0].z + dis(rd);
+							clients[i].start_z = clients[i].z;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC >= 10 && (i - MAX_USER) % ROOM_NPC < 20) {
+							clients[i].x = STAGE3_MOB_POS[1].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[1].z + dis(rd);
+							clients[i].start_z = clients[i].z;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC >= 20 && (i - MAX_USER) % ROOM_NPC < 25) {
+							clients[i]._object_type = TY_NPC_OTHER;
+							clients[i].x = STAGE3_MOB_POS[2].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[2].z + dis(rd);
+							clients[i].start_z = clients[i].z;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC >= 25 && (i - MAX_USER) % ROOM_NPC < 30) {
+							clients[i]._object_type = TY_NPC_OTHER;
+							clients[i].x = STAGE3_MOB_POS[3].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[3].z + dis(rd);
+							clients[i].start_z = clients[i].z;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC >= 30 && (i - MAX_USER) % ROOM_NPC < 35) {
+							clients[i]._object_type = TY_NPC_OTHER;
+							clients[i].x = STAGE3_MOB_POS[4].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[4].z + dis(rd);
+							clients[i].start_z = clients[i].z;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC >= 35 && (i - MAX_USER) % ROOM_NPC < 40) {
+							clients[i]._object_type = TY_NPC_OTHER;
+							clients[i].x = STAGE3_MOB_POS[5].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[5].z + dis(rd);
+							clients[i].start_z = clients[i].z;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC >= 40 && (i - MAX_USER) % ROOM_NPC < 48) {
+							clients[i]._object_type = TY_BOSS_SKILL;
+							clients[i].x = STAGE3_MOB_POS[8].x + dis(rd);
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[8].z + dis(rd);
+							clients[i].start_z = clients[i].z;
+						}
+						else if ((i - MAX_USER) % ROOM_NPC == 48) {
+							clients[i]._object_type = TY_BOSS_1;
+							clients[i].x = STAGE3_MOB_POS[0].x;
+							clients[i].start_x = clients[i].x;
+							clients[i].z = STAGE3_MOB_POS[0].z;
+							clients[i].start_z = clients[i].z;
+						}
+						else {
+							clients[i].x = -35;
+							clients[i].start_x = -35;
+							clients[i].z = -175;
+							clients[i].start_z = -175;
+						}
 						break;
+					}
 					default:
 						break;
 					}
