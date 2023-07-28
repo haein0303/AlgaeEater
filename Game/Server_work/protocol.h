@@ -259,7 +259,8 @@ struct SC_BOSS_SKILL_END_PACKET {
 struct SC_BOSS_PLAYER_CON_PACKET {
 	unsigned char size;
 	char	type;
-	int		con_num;   // 0 은 슬로우 1은 역조작 2는 마비
+	int		con_num;   // 0 은 슬로우 1은 역조작 2는 마비 3텔포
+	bool	trigger;
 };
 
 struct SS_CONNECT_SERVER_PACKET {
