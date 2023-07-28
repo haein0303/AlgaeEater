@@ -135,8 +135,11 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	RECT logo_rc = { 540,140,740,340 };
 
 	RECT login_button_rc = { 460,450,600,500 };
+	RECT login_GuestLogin_btn_rc = { 20,10,90,100 };
+
 	RECT join_button_rc = { 660,450,810,500 };
 	RECT join2_button_rc = { 550,450,700,500 };
+	RECT join_back_btn_rc = { 1212,11,1262,61 };
 
 	RECT login_id_rc = { 480, 260,800,300 };
 	RECT login_pw_rc = { 480, 370,800,400 };
@@ -144,6 +147,9 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 	RECT ready_btn_rc = { 990, 480, 990 + 256, 480 + 192 };
 	RECT ready_scene_rc = { 740, 80, 740+500, 380 };
 	RECT ready_char_rc = { 150, 100, 300+ 150, 600 + 100 };
+
+	
+	
 
 	RECT login_bg_rc = { 250,300,780,476 };
 	switch (iMsg)
@@ -299,7 +305,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 			break;
 		case SCENE_STATE::READY:
 			basic_BG.Draw(memDC, 0, 0, 1280, 720);
-
+			i_logo.Draw(memDC, login_GuestLogin_btn_rc);
 			i_stage_info[lobby_client._scene_select].Draw(memDC, 740, -20, 500, 500);
 
 			i_lobby_ready[lobby_client._ready_state].Draw(memDC, 990, 480, 256, 192);
@@ -527,6 +533,11 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				login_select = 0;
 				HideCaret(hwnd);
 			}
+
+			if (onClicK_check(login_GuestLogin_btn_rc, x, y)) {
+				g_scene_state = SCENE_STATE::READY;
+			}
+
 		}
 			break;
 		case SCENE_STATE::ACOUNT:
@@ -557,6 +568,10 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 				login_select = 0;
 				HideCaret(hwnd);
 			}
+
+			if (onClicK_check(join_back_btn_rc, x, y)) {
+				g_scene_state = SCENE_STATE::LOG_IN;
+			}
 		}
 		break;
 		case SCENE_STATE::READY:
@@ -581,7 +596,12 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 					lobby_client._char_select = 1;
 				}
 			}
+			if (onClicK_check(login_GuestLogin_btn_rc, x, y)) {
+				PostQuitMessage(0);
+				DestroyWindow(lobby_client._hwnd);
+			}
 		}
+		break;
 		}
 		cout << "g_scene_state : " << g_scene_state << endl;
 		InvalidateRect(hwnd, NULL, false);
