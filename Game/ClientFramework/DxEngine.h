@@ -303,14 +303,6 @@ public:
 				++count;
 			}
 		}
-		/*else if (scene_num == 3)
-		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(boss._indexCount, 1, 0, 0, 0);
-		}*/
 		else
 		{
 			for (const Subset& i : boss._animationPtr->mSubsets)
@@ -772,7 +764,7 @@ public:
 			cmdList->IASetVertexBuffers(0, 1, &Plane._vertexBufferView);
 			cmdList->IASetIndexBuffer(&Plane._indexBufferView);
 
-			XMFLOAT3 scale = XMFLOAT3(10, 10, 10);
+			XMFLOAT3 scale = XMFLOAT3(15, 15, 15);
 			for (int i = 0; i < 4; ++i)
 			{
 				for (int j = 0; j < 5; ++j)
