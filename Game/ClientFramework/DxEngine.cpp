@@ -85,13 +85,17 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	skybox.Make_SRV();
 	skybox.CreatePSO(L"..\\SkySphere.hlsl");
 
-	for (int i = 0; i < PLAYERMAX; ++i)
-	{
-		if (playerArr[i]._character_num == 0)
-			inputPtr->move_speed = 10.f;
-		else
-			inputPtr->move_speed = 7.f;
+	
+	if (playerArr[0]._character_num == 0) {
+		playerArr[0]._move_speed = 10.f;
+		inputPtr->move_speed = 10.f;
+	}		
+	else {
+		playerArr[0]._move_speed = 7.f;
+		inputPtr->move_speed = 7.f;
 	}
+		
+	
 	
 	player_AKI_Body_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_AKI_Body_asset.Init("../Resources/AKI_Body.txt", ObjectType::AnimationObjects);
@@ -511,6 +515,19 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, open_door_count);
+	
+	if (playerArr[0]._stage3_boss_on) {
+		if (playerArr[0]._stage3_boss_con == 1) {
+			inputPtr->move_speed = playerArr[0]._move_speed / 2;
+		}
+		if (playerArr[0]._stage3_boss_con == 2) {
+			inputPtr->move_speed = playerArr[0]._move_speed * -1.f;
+		}
+	}
+	else {
+		inputPtr->move_speed = playerArr[0]._move_speed;
+	}
+
 
 	//보간을 위해서 사용하는 초기 세팅이란다
 	for (OBJECT& p : playerArr) {

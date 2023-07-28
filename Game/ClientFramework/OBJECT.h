@@ -42,8 +42,10 @@ public:
 	bool		_stage1_target_alert_on = false;
 
 	int			_stage3_boss_con = 0;
+	bool		_stage3_boss_on = false;
 
 	int			_boss_skill_count = 0;
+	float		_move_speed = 10.f;
 
 	BoundingBox _bounding_box{ XMFLOAT3(0.f, 0.f, 0.f) , XMFLOAT3(0.5f, 1.f, 0.5f) };
 	BoundingOrientedBox _attack;

@@ -168,6 +168,7 @@ public:
 				playerArr[user_accept_counter]._transform.y = my_packet->y;
 				playerArr[user_accept_counter]._transform.z = my_packet->z;
 				playerArr[user_accept_counter]._degree = my_packet->degree;
+				playerArr[user_accept_counter]._character_num = my_packet->object_type;
 
 				playerArr[user_accept_counter]._prev_degree = playerArr[user_accept_counter]._degree;
 				playerArr[user_accept_counter]._prev_transform = playerArr[user_accept_counter]._transform;
@@ -415,6 +416,16 @@ public:
 		case SC_BOSS_PLAYER_CON: {
 			SC_BOSS_PLAYER_CON_PACKET* packet = reinterpret_cast<SC_BOSS_PLAYER_CON_PACKET*>(ptr);
 			boss_obj._stage3_boss_con = packet->con_num;
+			boss_obj._stage3_boss_on = packet->trigger;
+			playerArr[myClientId]._stage3_boss_con = packet->con_num;
+			playerArr[myClientId]._stage3_boss_on = packet->trigger;
+			
+			if (packet->con_num == 3) {
+				playerArr[myClientId]._transform.x = packet->x;
+				playerArr[myClientId]._transform.y = packet->y;
+				playerArr[myClientId]._transform.z = packet->z;
+			}
+
 
 		}break;
 
