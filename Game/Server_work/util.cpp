@@ -248,8 +248,8 @@ void process_packet(int c_id, char* packet)
 			}
 			if (pl._Room_Num == clients[c_id]._Room_Num) {
 				pl.send_add_object(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, 
-					clients[c_id]._name, clients[c_id].hp, clients[c_id].char_state, clients[i]._object_type);
-				clients[c_id].send_add_object(pl._id, pl.x, pl.y, pl.z, pl.degree, pl._name, pl.hp, pl.char_state, clients[i]._object_type);
+					clients[c_id]._name, clients[c_id].hp, clients[c_id].char_state, clients[c_id]._object_type);
+				clients[c_id].send_add_object(pl._id, pl.x, pl.y, pl.z, pl.degree, pl._name, pl.hp, pl.char_state, pl._object_type);
 				pl.room_list.insert(c_id);
 				clients[c_id].room_list.insert(pl._id);
 			}
