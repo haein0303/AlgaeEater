@@ -170,6 +170,118 @@ void do_timer()
 				}
 				break;
 			}
+			case EV_STAGE3_BOSS: {
+				SC_BOSS_PLAYER_CON_PACKET p;
+				p.type = SC_BOSS_PLAYER_CON;
+				p.size = sizeof(SC_BOSS_PLAYER_CON_PACKET);
+				p.con_num = ev.target_id;
+				p.trigger = true;
+				p.x = 0;
+				p.y = 0;
+				p.z = 0;
+				switch (ev.target_id)
+				{
+				case 0: { // 이속 감소
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						clients[pl].do_send(&p);
+					}
+					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					break;
+				}
+				case 1: { // 조작 반전
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						clients[pl].do_send(&p);
+					}
+					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					break;
+				}
+				case 2: { // 마비
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						clients[pl].do_send(&p);
+					}
+					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					break;
+				}
+				case 3: { // 텔포
+					int room_cnt = 0;
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+						// 텔포방 좌표 넣어줘야 함
+						switch (room_cnt)
+						{
+						case 0:
+							p.x = 0;
+							p.y = 0;
+							p.z = 0;
+							room_cnt++;
+							break;
+						case 1:
+							p.x = 100;
+							p.y = 0;
+							p.z = 0;
+							room_cnt++;
+							break;
+						case 2:
+							p.x = 200;
+							p.y = 0;
+							p.z = 0;
+							room_cnt++;
+							break;
+						case 3:
+							p.x = 300;
+							p.y = 0;
+							p.z = 0;
+							room_cnt++;
+							break;
+						default:
+							break;
+						}
+						
+						clients[pl].do_send(&p);
+					}
+					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					break;
+				}
+				case 4: { // 회복
+					clients[ev.object_id].hp = BOSS_HP[2] * 0.75;
+					clients[ev.object_id].third_pattern = true;
+					break;
+				}
+				default:
+					break;
+				}
+				break;
+			}
 			case EV_NPC_CON:
 				clients[ev.object_id]._sl.lock();
 				if (clients[ev.object_id]._s_state == ST_FREE) {
@@ -316,7 +428,7 @@ void do_timer()
 					break;
 				}
 
-				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.75 && clients[ev.object_id].first_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_2) {
+				if (clients[ev.object_id].hp <= BOSS_HP[1] * 0.75 && clients[ev.object_id].first_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_2) {
 
 					std::random_device rd;
 					std::uniform_int_distribution<int> dis(-20, 20);
@@ -334,7 +446,7 @@ void do_timer()
 					clients[ev.object_id].first_pattern = true;
 				}
 
-				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.25 && clients[ev.object_id].second_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_2) {
+				if (clients[ev.object_id].hp <= BOSS_HP[1] * 0.25 && clients[ev.object_id].second_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_2) {
 					for (int i = clients[ev.object_id]._Room_Num * ROOM_FIELD; i < clients[ev.object_id]._Room_Num * ROOM_FIELD + ROOM_FIELD; i++) {
 						if (i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 10) {
 							fields[i].type = FD_SM_DMG;
@@ -378,6 +490,25 @@ void do_timer()
 					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 1);
 					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_ON, 2);
 					clients[ev.object_id].second_pattern = true;
+				}
+
+				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.75 && clients[ev.object_id].first_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_3) {
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 0);
+					clients[ev.object_id].first_pattern = true;
+				}
+
+				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.5 && clients[ev.object_id].second_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_3) {
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 1);
+					clients[ev.object_id].second_pattern = true;
+				}
+
+				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.25 && clients[ev.object_id].third_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_3) {
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 4);
+				}
+
+				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.25 && clients[ev.object_id].fourth_pattern == false && clients[ev.object_id].third_pattern == true && clients[ev.object_id]._object_type == TY_BOSS_3) {
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 3);
+					clients[ev.object_id].fourth_pattern = true;
 				}
 
 				lua_getglobal(clients[ev.object_id].L, "wander_boss");
@@ -470,6 +601,102 @@ void do_timer()
 					clients[pl]._sl.unlock();
 
 					clients[pl].send_remove_object(ev.target_id, 2);
+				}
+				break;
+			}
+			case EV_BOSS_PLAYER_CON_OFF: {
+				SC_BOSS_PLAYER_CON_PACKET p;
+				p.type = SC_BOSS_PLAYER_CON;
+				p.size = sizeof(SC_BOSS_PLAYER_CON_PACKET);
+				p.con_num = ev.target_id;
+				p.trigger = false;
+				p.x = 0;
+				p.y = 0;
+				p.z = 0;
+				switch (ev.target_id)
+				{
+				case 0: { // 이속 감소
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						clients[pl].do_send(&p);
+					}
+					
+					break;
+				}
+				case 1: { // 조작 반전
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						clients[pl].do_send(&p);
+					}
+					
+					break;
+				}
+				case 2: { // 마비
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						clients[pl].do_send(&p);
+					}
+					
+					break;
+				}
+				case 3: { // 텔포
+					// 좌표 업데이트 해야함
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						p.x = -35;
+						p.y = 0;
+						p.z = -175;
+
+						clients[pl].do_send(&p);
+					}
+					
+					break;
+				}
+				case 4: { // 회복
+					for (auto& pl : clients[ev.object_id].room_list) {
+						if (pl >= MAX_USER)continue;
+						clients[pl]._sl.lock();
+						if (clients[pl]._s_state == ST_FREE) {
+							clients[pl]._sl.unlock();
+							continue;
+						}
+						clients[pl]._sl.unlock();
+
+						clients[pl].do_send(&p);
+					}
+					
+					break;
+				}
+				default:
+					break;
 				}
 				break;
 			}

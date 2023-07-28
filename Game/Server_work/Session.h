@@ -49,6 +49,8 @@ public:
 	// 보스용 변수
 	bool first_pattern;		// 전멸기 수행 여부
 	bool second_pattern;
+	bool third_pattern;
+	bool fourth_pattern;
 
 	// 스테이지 1 변수
 	int color;

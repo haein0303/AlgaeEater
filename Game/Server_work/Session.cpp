@@ -33,6 +33,8 @@ SESSION::SESSION()
 	boss_shield_trigger = false;
 	first_pattern = false;
 	second_pattern = false;
+	third_pattern = false;
+	fourth_pattern = false;
 	_object_type = TY_PLAYER_AKI;
 	Lua_on = false;
 }

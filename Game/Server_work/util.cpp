@@ -271,6 +271,7 @@ void process_packet(int c_id, char* packet)
 						clients[i].stage = clients[c_id].stage;
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_1;
+							clients[i].hp = BOSS_HP[0];
 						}
 						if ((i - MAX_USER) % ROOM_NPC < 5) {
 							clients[i].x = STAGE1_MOB_POS[0].x + dis(rd);
@@ -343,6 +344,7 @@ void process_packet(int c_id, char* packet)
 					case 2: {
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_2;
+							clients[i].hp = BOSS_HP[1];
 						}
 						if ((i - MAX_USER) % ROOM_NPC < 5) {
 							clients[i].x = STAGE2_MOB_POS[0].x + dis(rd);
@@ -415,6 +417,7 @@ void process_packet(int c_id, char* packet)
 					case 3:{
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_3;
+							clients[i].hp = BOSS_HP[2];
 						}
 						if ((i - MAX_USER) % ROOM_NPC < 10) {
 							clients[i].x = STAGE3_MOB_POS[0].x + dis(rd);
@@ -465,6 +468,7 @@ void process_packet(int c_id, char* packet)
 						}
 						else if ((i - MAX_USER) % ROOM_NPC == 48) {
 							clients[i]._object_type = TY_BOSS_1;
+							clients[i].hp = BOSS_HP[3];
 							clients[i].x = STAGE3_MOB_POS[0].x;
 							clients[i].start_x = clients[i].x;
 							clients[i].z = STAGE3_MOB_POS[0].z;
