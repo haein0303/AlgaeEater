@@ -476,9 +476,9 @@ void move_npc(int player_id, int c_id)
 			}
 
 			for (auto& pl : clients[c_id].room_list) {
-				if (clients[pl]._object_type == TY_BOSS_SKILL && clients[pl].x == 1000 && clients[pl].y == 1000) {
-					clients[pl].x = clients[c_id].x + 0.3f * -sin(de);
-					clients[pl].z = clients[c_id].z + 0.3f * -cos(de);
+				if (clients[pl]._object_type == TY_BOSS_SKILL && clients[pl].x == 1000 && clients[pl].z == 1000) {
+					clients[pl].x = clients[c_id].x + 0.5f * -sin(de);
+					clients[pl].z = clients[c_id].z + 0.5f * -cos(de);
 					break;
 				}
 			}
@@ -493,9 +493,15 @@ void move_npc(int player_id, int c_id)
 			clients[c_id].char_state = AN_IDLE;
 			clients[c_id].degree = nde;
 
-			clients[player_id].hp -= 3;
+			if (clients[player_id].god_mod == true);
+			else {
+				clients[player_id].hp -= 3;
+			}
 
 			Update_Player(player_id);
+
+			clients[c_id].x = 1000;
+			clients[c_id].z = 1000;
 
 			for (auto& pl : clients[c_id].room_list) {
 				if (pl >= MAX_USER) continue;
@@ -509,14 +515,17 @@ void move_npc(int player_id, int c_id)
 				clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
 			}
 
-			clients[c_id].x = 1000;
-			clients[c_id].y = 1000;
-
 			return;
 		}
 		else {
 			x += 0.3f * -sin(de);
 			z += 0.3f * -cos(de);
+
+			clients[c_id].x = x;
+			clients[c_id].z = z;
+			clients[c_id].degree = nde;
+
+
 			clients[c_id].char_state = AN_WALK;
 
 			for (auto& pl : clients[c_id].room_list) {
