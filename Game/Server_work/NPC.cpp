@@ -455,6 +455,27 @@ void move_npc(int player_id, int c_id)
 		}
 		else clients[c_id].char_state = AN_WALK;
 	}
+	else if (clients[c_id]._object_type == TY_BOSS_SKILL) {
+		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 1.5f) {
+			clients[c_id].char_state = AN_ATTACK_1;
+			clients[c_id].degree = nde;
+
+			for (auto& pl : clients[c_id].room_list) {
+				if (pl >= MAX_USER) continue;
+				clients[pl]._sl.lock();
+				if (clients[pl]._s_state != ST_INGAME) {
+					clients[pl]._sl.unlock();
+					continue;
+				}
+				clients[pl]._sl.unlock();
+
+				clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
+			}
+
+			return;
+		}
+		else clients[c_id].char_state = AN_WALK;
+	}
 
 	x += 0.3f * -sin(de);
 	z += 0.3f * -cos(de);

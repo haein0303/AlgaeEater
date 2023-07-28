@@ -735,14 +735,10 @@ void process_packet(int c_id, char* packet)
 					clients[c_id].char_state = AN_DEAD;
 					for (auto& pl : clients[c_id].room_list) {
 						clients[pl].room_list.erase(c_id);
-					}
-					for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * ROOM_USER + ROOM_USER;i++) {
-						if (clients[i].char_state == AN_DEAD) {
-							dead_cnt++;
-						}
+						if (pl <= MAX_USER) dead_cnt++;
 					}
 
-					if (dead_cnt == ROOM_USER) {
+					if (dead_cnt == 0) {
 						for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * ROOM_USER + ROOM_USER; i++) {
 							SC_GAME_END_PACKET packet;
 							packet.size = sizeof(SC_GAME_END_PACKET);
@@ -1029,12 +1025,19 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_CON: {
-			if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 10) {
-				move_npc(ex_over->target_id, key);
+			if (clients[key]._object_type != TY_BOSS_SKILL) {
+				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 10) {
+					move_npc(ex_over->target_id, key);
+				}
+				else {
+					if (clients[key].start_x != clients[key].x || clients[key].start_z != clients[key].z) {
+						return_npc(key);
+					}
+				}
 			}
 			else {
-				if (clients[key].start_x != clients[key].x || clients[key].start_z != clients[key].z) {
-					return_npc(key);
+				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 15) {
+					move_npc(ex_over->target_id, key);
 				}
 			}
 			delete ex_over;
