@@ -461,9 +461,9 @@ void process_packet(int c_id, char* packet)
 						}
 						else if ((i - MAX_USER) % ROOM_NPC >= 40 && (i - MAX_USER) % ROOM_NPC < 48) {
 							clients[i]._object_type = TY_BOSS_SKILL;
-							clients[i].x = STAGE3_MOB_POS[1].x + dis(rd);
+							clients[i].x = 1000;
 							clients[i].start_x = clients[i].x;
-							clients[i].z = STAGE3_MOB_POS[1].z + dis(rd);
+							clients[i].z = 1000;
 							clients[i].start_z = clients[i].z;
 						}
 						else if ((i - MAX_USER) % ROOM_NPC == 48) {
@@ -1025,7 +1025,7 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_CON: {
-			if (clients[key]._object_type != TY_BOSS_SKILL) {
+			if (clients[key]._object_type == TY_MOVE_NPC) {
 				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 10) {
 					move_npc(ex_over->target_id, key);
 				}
@@ -1035,7 +1035,7 @@ void do_worker()
 					}
 				}
 			}
-			else {
+			else if (clients[key]._object_type == TY_BOSS_1 || clients[key]._object_type == TY_BOSS_2 || clients[key]._object_type == TY_BOSS_3 || clients[key]._object_type == TY_BOSS_SKILL) {
 				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 15) {
 					move_npc(ex_over->target_id, key);
 				}
