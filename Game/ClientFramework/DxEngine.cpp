@@ -383,12 +383,35 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	}
 	case 3:
 	{
-		boss2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		boss2.Init("../Resources/Boss2.txt", ObjectType::AnimationObjects);
-		boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
-		boss2.Add_texture(L"..\\Resources\\Texture\\Robot_01_Base_AlbedoTransparency.png");
-		boss2.Make_SRV();
-		boss2.CreatePSO();
+		boss3_Body.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss3_Body.Init("../Resources/boss3_Body.txt", ObjectType::AnimationObjects);
+		boss3_Body.Add_texture(L"..\\Resources\\Texture\\Stage3\\P03_Skin_gt.png");
+		boss3_Body.Make_SRV();
+		boss3_Body.CreatePSO();
+
+		boss3_Cloth_B.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss3_Cloth_B.Init("../Resources/boss3_Cloth_B.txt", ObjectType::AnimationObjects);
+		boss3_Cloth_B.Add_texture(L"..\\Resources\\Texture\\Stage3\\P03_Cloth_B.png");
+		boss3_Cloth_B.Make_SRV();
+		boss3_Cloth_B.CreatePSO();
+
+		boss3_Cloth_C2.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss3_Cloth_C2.Init("../Resources/boss3_Cloth_C2.txt", ObjectType::AnimationObjects);
+		boss3_Cloth_C2.Add_texture(L"..\\Resources\\Texture\\Stage3\\P03_Cloth_C2_gt.png");
+		boss3_Cloth_C2.Make_SRV();
+		boss3_Cloth_C2.CreatePSO();
+
+		boss3_Hair_A.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss3_Hair_A.Init("../Resources/boss3_Hair_A.txt", ObjectType::AnimationObjects);
+		boss3_Hair_A.Add_texture(L"..\\Resources\\Texture\\Stage3\\P03_Hair_A_gt.png");
+		boss3_Hair_A.Make_SRV();
+		boss3_Hair_A.CreatePSO();
+
+		boss3_Mask.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss3_Mask.Init("../Resources/boss3_Mask.txt", ObjectType::AnimationObjects);
+		boss3_Mask.Add_texture(L"..\\Resources\\Texture\\Stage3\\P03_Mask_gt.png");
+		boss3_Mask.Make_SRV();
+		boss3_Mask.CreatePSO();
 
 		InitMeshAsset(floor, ObjectType::GeneralObjects, "../Resources/Floor.txt", L"..\\Resources\\Texture\\Floor.jpg", L"..\\Bricks.hlsl");
 		InitMeshAsset(Grid_Metal_tile, ObjectType::GeneralObjects, "../Resources/Grid_Metal_tile.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
@@ -434,7 +457,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
 		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
 
-		boss_obj._final_transforms.resize(boss2._animationPtr->mBoneHierarchy.size());
+		boss_obj._final_transforms.resize(boss3_Body._animationPtr->mBoneHierarchy.size());
+		cout << "boss3_Body._animationPtr->mBoneHierarchy.size() : " << boss3_Body._animationPtr->mBoneHierarchy.size() << endl;
 		boss_obj._transform.y += 1.f;
 
 		int count = 0;
@@ -1535,6 +1559,16 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 		case 3:
 			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
+			if (boss_obj._on == true)
+			{
+				XMFLOAT3 boss3_scale = XMFLOAT3(100.f, 100.f, 100.f);
+				float boss2_default_rot_x = -90.f;
+				Boss(cmdList, boss3_Body, i_now_render_index, boss3_scale, boss2_default_rot_x, Scene_num);
+				Boss(cmdList, boss3_Cloth_B, i_now_render_index, boss3_scale, boss2_default_rot_x, Scene_num);
+				Boss(cmdList, boss3_Cloth_C2, i_now_render_index, boss3_scale, boss2_default_rot_x, Scene_num);
+				Boss(cmdList, boss3_Hair_A, i_now_render_index, boss3_scale, boss2_default_rot_x, Scene_num);
+				Boss(cmdList, boss3_Mask, i_now_render_index, boss3_scale, boss2_default_rot_x, Scene_num);
+			}
 			break;
 		default:
 			break;

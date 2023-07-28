@@ -93,6 +93,11 @@ public:
 	MESH_ASSET npc_asset;
 	MESH_ASSET boss;
 	MESH_ASSET boss2;
+	MESH_ASSET boss3_Body;
+	MESH_ASSET boss3_Cloth_B;
+	MESH_ASSET boss3_Cloth_C2;
+	MESH_ASSET boss3_Hair_A;
+	MESH_ASSET boss3_Mask;
 	MESH_ASSET hp_bar;
 	MESH_ASSET color_pattern;
 	array <MESH_ASSET, 20> pillar;
@@ -298,9 +303,17 @@ public:
 				++count;
 			}
 		}
+		/*else if (scene_num == 3)
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(boss._indexCount, 1, 0, 0, 0);
+		}*/
 		else
 		{
-			for (Subset i : boss._animationPtr->mSubsets)
+			for (const Subset& i : boss._animationPtr->mSubsets)
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
