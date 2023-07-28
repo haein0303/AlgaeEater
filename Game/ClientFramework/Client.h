@@ -76,6 +76,7 @@ public:
 	void in_scene(int data, int char_sel) {
 		dxEngine.Scene_num = data;
 		dxEngine.playerArr[0]._character_num = char_sel;
+		cout << "in_Scene : " << char_sel << endl;
 	}
 
 	//fixed_update

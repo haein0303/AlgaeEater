@@ -36,6 +36,9 @@ public:
 		p.type = CS_LOGIN;
 		p.stage = Scene_select;
 		p.character_type = chat_type;
+		
+		cout << "CONNECTSERVER char select : " << chat_type << endl;
+
 		strcpy_s(p.name, "a");
 		send_packet(&p);
 		return 0;
@@ -168,8 +171,17 @@ public:
 				playerArr[user_accept_counter]._transform.y = my_packet->y;
 				playerArr[user_accept_counter]._transform.z = my_packet->z;
 				playerArr[user_accept_counter]._degree = my_packet->degree;
-				playerArr[user_accept_counter]._character_num = my_packet->object_type;
-
+				switch (my_packet->object_type) {
+				case SESSION_TYPE::TY_PLAYER_AKI:
+					playerArr[user_accept_counter]._character_num = 0;
+					break;
+				case SESSION_TYPE::TY_PLAYER_MIKA:
+					playerArr[user_accept_counter]._character_num = 1;
+					break;
+				default:
+					playerArr[user_accept_counter]._character_num = 0;
+				}
+				cout << "SC_ADD_OBJECT : " << my_packet->object_type << endl;
 				playerArr[user_accept_counter]._prev_degree = playerArr[user_accept_counter]._degree;
 				playerArr[user_accept_counter]._prev_transform = playerArr[user_accept_counter]._transform;
 				playerArr[user_accept_counter]._prev_delta_time = playerArr[user_accept_counter]._delta_time;
