@@ -594,16 +594,27 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		if (player._animation_state == AnimationOrder::Attack1
 			|| player._animation_state == AnimationOrder::Attack2
 			|| player._animation_state == AnimationOrder::Attack3
-			|| player._animation_state == AnimationOrder::Attack4
-			&& ((player._character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
-			|| (player._character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
+			|| player._animation_state == AnimationOrder::Attack4)
 		{
-			player._attack.Center = XMFLOAT3(player._transform.x + 0.5f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
-				player._transform.y + 0.5f,
-				player._transform.z + 0.5f * sinf((-player._degree + 90.f) * XM_PI / 180.f));
-			player._attack.Extents = XMFLOAT3(1.f, 1.f, 1.f);
-			XMVECTOR v{ 0, 1, 0, 0 };
-			XMStoreFloat4(&player._attack.Orientation, XMQuaternionRotationNormal(v, player._degree * XM_PI / 180.f));
+			if ((player._character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f))
+			{
+				player._attack.Center = XMFLOAT3(player._transform.x + 1.f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
+					player._transform.y + 0.5f,
+					player._transform.z + 1.f * sinf((-player._degree + 90.f) * XM_PI / 180.f));
+				player._attack.Extents = XMFLOAT3(0.7f, 1.f, 0.7f);
+				XMVECTOR v{ 0, 1, 0, 0 };
+				XMStoreFloat4(&player._attack.Orientation, XMQuaternionRotationNormal(v, player._degree * XM_PI / 180.f));
+			}
+			else if ((player._character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f))
+			{
+				player._attack.Center = XMFLOAT3(player._transform.x + 1.f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
+					player._transform.y + 0.5f,
+					player._transform.z + 1.f * sinf((-player._degree + 90.f) * XM_PI / 180.f));
+				player._attack.Extents = XMFLOAT3(1.f, 1.f, 1.f);
+				XMVECTOR v{ 0, 1, 0, 0 };
+				XMStoreFloat4(&player._attack.Orientation, XMQuaternionRotationNormal(v, player._degree * XM_PI / 180.f));
+			}
+			
 		}
 		else
 		{
@@ -611,16 +622,27 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		}
 
 		// 플레이어 스킬 콜라이더 on off
-		if (player._animation_state == AnimationOrder::Skill
-			&& ((player._character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)
-			|| (player._character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f)))
+		if (player._animation_state == AnimationOrder::Skill)
 		{
-			player._skill.Center = XMFLOAT3(player._transform.x,
-				player._transform.y + 0.5f,
-				player._transform.z);
-			player._skill.Extents = XMFLOAT3(3.f, 1.f, 3.f);
-			XMVECTOR v{ 0, 1, 0, 0 };
-			XMStoreFloat4(&player._skill.Orientation, XMQuaternionRotationNormal(v, player._degree * XM_PI / 180.f));
+			if ((player._character_num == 0 && player._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f))
+			{
+				player._skill.Center = XMFLOAT3(player._transform.x,
+					player._transform.y + 0.5f,
+					player._transform.z);
+				player._skill.Extents = XMFLOAT3(3.f, 1.f, 3.f);
+				XMVECTOR v{ 0, 1, 0, 0 };
+				XMStoreFloat4(&player._skill.Orientation, XMQuaternionRotationNormal(v, player._degree* XM_PI / 180.f));
+			}
+			else if ((player._character_num == 1 && player._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(player._animation_state) * 0.5f))
+			{
+				player._skill.Center = XMFLOAT3(player._transform.x + 1.f * cosf((-player._degree + 90.f) * XM_PI / 180.f),
+					player._transform.y + 0.5f,
+					player._transform.z + 1.f * sinf((-player._degree + 90.f) * XM_PI / 180.f));
+				player._skill.Extents = XMFLOAT3(1.f, 1.f, 1.f);
+				XMVECTOR v{ 0, 1, 0, 0 };
+				XMStoreFloat4(&player._skill.Orientation, XMQuaternionRotationNormal(v, player._degree* XM_PI / 180.f));
+			}
+			
 		}
 		else
 			player._skill.Center.y = -100.f;
@@ -1201,49 +1223,98 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 #pragma endregion
 
 		/*// 캐릭터 공격 콜라이더
-		if(playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack
-			&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+		if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1
+			|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2
+			|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3
+			|| playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4)
 		{
-			cmdList->SetPipelineState(testCube._pipelineState.Get());
-			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
-			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+			if (playerArr[networkPtr->myClientId]._character_num == 0 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+			{
+				cmdList->SetPipelineState(testCube._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+				cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(playerArr[networkPtr->myClientId]._attack.Extents.x, playerArr[networkPtr->myClientId]._attack.Extents.y, playerArr[networkPtr->myClientId]._attack.Extents.z)
+					* XMMatrixRotationQuaternion(XMLoadFloat4(&playerArr[networkPtr->myClientId]._attack.Orientation))
+					* XMMatrixTranslation(playerArr[networkPtr->myClientId]._attack.Center.x, playerArr[networkPtr->myClientId]._attack.Center.y, playerArr[networkPtr->myClientId]._attack.Center.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+			}
+			else if(playerArr[networkPtr->myClientId]._character_num == 1 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+			{
+				cmdList->SetPipelineState(testCube._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+				cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(playerArr[networkPtr->myClientId]._attack.Extents.x, playerArr[networkPtr->myClientId]._attack.Extents.y, playerArr[networkPtr->myClientId]._attack.Extents.z)
+					* XMMatrixRotationQuaternion(XMLoadFloat4(&playerArr[networkPtr->myClientId]._attack.Orientation))
+					* XMMatrixTranslation(playerArr[networkPtr->myClientId]._attack.Center.x, playerArr[networkPtr->myClientId]._attack.Center.y, playerArr[networkPtr->myClientId]._attack.Center.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+			}
 			
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(testCharacter.Extents.x, testCharacter.Extents.y, testCharacter.Extents.z)
-				*XMMatrixRotationQuaternion(XMLoadFloat4(&testCharacter.Orientation))
-				* XMMatrixTranslation(testCharacter.Center.x, testCharacter.Center.y, testCharacter.Center.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
-
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
-
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
 		}
 
 		// 캐릭터 스킬 콜라이더
-		if(playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill
-			&& playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+		if (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Skill)
 		{
-			cmdList->SetPipelineState(testCube._pipelineState.Get());
-			cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
-			cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+			if (playerArr[networkPtr->myClientId]._character_num == 0 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+			{
+				cmdList->SetPipelineState(testCube._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+				cmdList->IASetIndexBuffer(&testCube._indexBufferView);
 
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(testCharacter2.Extents.x, testCharacter2.Extents.y, testCharacter2.Extents.z)
-				*XMMatrixRotationQuaternion(XMLoadFloat4(&testCharacter2.Orientation))
-				* XMMatrixTranslation(testCharacter2.Center.x, testCharacter2.Center.y, testCharacter2.Center.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(playerArr[networkPtr->myClientId]._skill.Extents.x, playerArr[networkPtr->myClientId]._skill.Extents.y, playerArr[networkPtr->myClientId]._skill.Extents.z)
+					* XMMatrixRotationQuaternion(XMLoadFloat4(&playerArr[networkPtr->myClientId]._skill.Orientation))
+					* XMMatrixTranslation(playerArr[networkPtr->myClientId]._skill.Center.x, playerArr[networkPtr->myClientId]._skill.Center.y, playerArr[networkPtr->myClientId]._skill.Center.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-			testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-			descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
 
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+			}
+			else if (playerArr[networkPtr->myClientId]._character_num == 1 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
+			{
+				cmdList->SetPipelineState(testCube._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &testCube._vertexBufferView);
+				cmdList->IASetIndexBuffer(&testCube._indexBufferView);
+
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(playerArr[networkPtr->myClientId]._skill.Extents.x, playerArr[networkPtr->myClientId]._skill.Extents.y, playerArr[networkPtr->myClientId]._skill.Extents.z)
+					* XMMatrixRotationQuaternion(XMLoadFloat4(&playerArr[networkPtr->myClientId]._skill.Orientation))
+					* XMMatrixTranslation(playerArr[networkPtr->myClientId]._skill.Center.x, playerArr[networkPtr->myClientId]._skill.Center.y, playerArr[networkPtr->myClientId]._skill.Center.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				testCube._tex._srvHandle = testCube._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(testCube._tex._srvHandle, 5, devicePtr);
+
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(testCube._indexCount, 1, 0, 0, 0);
+			}
+			
 		}
 
 		// 보스 다리 콜라이더
