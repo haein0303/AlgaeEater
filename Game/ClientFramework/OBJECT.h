@@ -49,7 +49,7 @@ public:
 	BoundingOrientedBox _attack;
 	BoundingOrientedBox _skill;
 	bool				_next_combo = false;
-	int					_character_num = 1;
+	int					_character_num = 0;
 
 	XMFLOAT4	_prev_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	XMFLOAT4	_delta_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);

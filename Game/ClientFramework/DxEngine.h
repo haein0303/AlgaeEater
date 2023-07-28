@@ -969,4 +969,45 @@ public:
 		mesh_asset.Make_SRV();
 		mesh_asset.CreatePSO(shader_path);
 	}
+
+	void DrawCharacter(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& obj, const int i_now_render_index, OBJECT& player, int i, int isSword = false)
+	{
+		cmdList->SetPipelineState(obj._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &obj._vertexBufferView);
+		cmdList->IASetIndexBuffer(&obj._indexBufferView);
+
+		if (i == 0)
+		{
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
+				* XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(player._degree * XM_PI / 180.f)
+				* XMMatrixTranslation(player._transform.x, player._transform.y, player._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+		}
+		else
+		{
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
+				* XMMatrixRotationX(-XM_PI / 2.f)
+				* XMMatrixRotationY(player._prev_degree * XM_PI / 180.f)
+				* XMMatrixTranslation(player._prev_transform.x, player._prev_transform.y, player._prev_transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+		}
+		if(!isSword)
+			copy(begin(player._final_transforms), end(player._final_transforms), &_transform.BoneTransforms[0]);
+		else
+			copy(begin(player._weapon_final_transforms), end(player._weapon_final_transforms), &_transform.BoneTransforms[0]);
+
+		//����
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+			obj._tex._srvHandle = obj._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(obj._tex._srvHandle, 5, devicePtr);
+		}
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(obj._indexCount, 1, 0, 0, 0);
+	}
 };
