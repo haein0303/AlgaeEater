@@ -191,6 +191,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
+		boss_obj._object_type = TY_BOSS_1;
 		break;
 	case 1:
 	{
@@ -270,6 +271,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 				doorPos0[Scene_num - 1] = data.pos;
 		}
 		
+		boss_obj._object_type = TY_BOSS_1;
+
 		break;
 	}
 	case 2:
@@ -378,6 +381,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 			if (data.mesh_type.compare("Grid_Metal_door") == 0)
 				doorPos0[Scene_num - 1] = data.pos;
 		}
+
+		boss_obj._object_type = TY_BOSS_2;
 
 		break;
 	}
@@ -489,6 +494,8 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss_obj._final_transforms.resize(boss3_Body._animationPtr->mBoneHierarchy.size());
 		cout << "boss3_Body._animationPtr->mBoneHierarchy.size() : " << boss3_Body._animationPtr->mBoneHierarchy.size() << endl;
 		boss_obj._transform.y += 1.f;
+
+		boss_obj._object_type = TY_BOSS_3;
 
 		int count = 0;
 		for (MapData& data : _map_data3)
@@ -1162,7 +1169,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 		for (int i = 0; i < NPCMAX; ++i) {
 			if (npcArr[i]._on == true && npcArr[i]._object_type == TY_MOVE_NPC) {
-				npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0, 0);
+				npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0, npcArr[i]._object_type);
 			}
 		}
 
@@ -1743,7 +1750,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				XMFLOAT3 boss_scale = XMFLOAT3(500.f, 500.f, 500.f);
 				float boss_default_rot_x = -XM_PI * 0.5f;
-				boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0, 0);
+				boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0, boss_obj._object_type);
 
 				cmdList->SetPipelineState(boss._pipelineState.Get());
 				cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
@@ -1751,8 +1758,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(boss_scale.x * _scale / 100.f, boss_scale.y * _scale / 100.f, boss_scale.z * _scale / 100.f)
 					* XMMatrixRotationX(boss_default_rot_x)
-					* XMMatrixRotationY(boss_obj._prev_degree* XM_PI / 180.f - XM_PI)
-					* XMMatrixTranslation(boss_obj._prev_transform.x, boss_obj._prev_transform.y, boss_obj._prev_transform.z));
+					* XMMatrixRotationY(npcArr[i]._prev_degree* XM_PI / 180.f - XM_PI)
+					* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y, npcArr[i]._prev_transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));

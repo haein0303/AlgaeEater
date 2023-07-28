@@ -16,16 +16,16 @@ void AnimationObject::CreateVertexAnimationObject(vector<Vertex>& vertices, vect
 	ClipName = "VertexAnimtion";
 }
 
-void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int character_num)
+void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int object_type)
 {
-	if (character_num == 0) // Aki
+	if (object_type == TY_PLAYER_AKI) // Aki
 	{
 		if (player._animation_state == AnimationOrder::Idle)
 			player._animation_time_pos += dt * 0.4f;
 		else
 			player._animation_time_pos += dt;
 	}
-	else // Mika
+	else if(object_type == TY_PLAYER_MIKA) // Mika
 	{
 		if (player._animation_state == AnimationOrder::Walk)
 			player._animation_time_pos += dt * 0.5f;
@@ -36,6 +36,24 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, in
 			player._animation_time_pos += dt * 0.7f;
 		else
 			player._animation_time_pos += dt;
+	}
+	else if (object_type == TY_BOSS_3) // boss3
+	{
+		if (player._animation_state == AnimationOrder::Idle)
+			player._animation_time_pos += dt * 0.1f;
+		else if (player._animation_state == AnimationOrder::Walk)
+			player._animation_time_pos += dt * 0.1f;
+		else if (player._animation_state == AnimationOrder::Attack1
+			|| player._animation_state == AnimationOrder::Attack2)
+			player._animation_time_pos += dt * 0.1f;
+		else if (player._animation_state == AnimationOrder::Skill)
+			player._animation_time_pos += dt * 0.1f;
+		else
+			player._animation_time_pos += dt;
+	}
+	else
+	{
+		player._animation_time_pos += dt;
 	}
 	
 

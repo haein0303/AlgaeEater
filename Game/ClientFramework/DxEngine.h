@@ -257,7 +257,7 @@ private:
 public:
 	void Boss(ComPtr<ID3D12GraphicsCommandList>& cmdList, MESH_ASSET& boss, const int i_now_render_index, const XMFLOAT3& scale, const float default_rot_x, int scene_num)
 	{
-		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0, 0);
+		boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0, boss_obj._object_type);
 
 		cmdList->SetPipelineState(boss._pipelineState.Get());
 		cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);

@@ -140,9 +140,9 @@ void MESH_ASSET::CreatePSO()
 
 }
 
-void MESH_ASSET::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int character_num)
+void MESH_ASSET::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int object_type)
 {
-	_animationPtr->UpdateSkinnedAnimation(dt, player, i, character_num);
+	_animationPtr->UpdateSkinnedAnimation(dt, player, i, object_type);
 }
 
 void MESH_ASSET::UpdateVertexAnimation(float dt, OBJECT& player, XMVECTOR& P, XMVECTOR& Q)
