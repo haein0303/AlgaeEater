@@ -1101,7 +1101,55 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				if (playerArr[i]._character_num == 0)
 					DrawCharacter(cmdList, player_AKI_Body_asset, i_now_render_index, playerArr[i], i);
 				else
-					DrawCharacter(cmdList, player_Mika_Body_Astro_asset, i_now_render_index, playerArr[i], i);
+				{
+					cmdList->SetPipelineState(player_Mika_Body_Astro_asset._pipelineState.Get());
+					cmdList->IASetVertexBuffers(0, 1, &player_Mika_Body_Astro_asset._vertexBufferView);
+					cmdList->IASetIndexBuffer(&player_Mika_Body_Astro_asset._indexBufferView);
+
+					{
+						if (i == 0)
+						{
+							XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
+								* XMMatrixRotationX(-XM_PI / 2.f)
+								* XMMatrixRotationY(playerArr[i]._degree * XM_PI / 180.f)
+								* XMMatrixTranslation(playerArr[i]._transform.x, playerArr[i]._transform.y, playerArr[i]._transform.z));
+							XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+							XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+						}
+						else
+						{
+							XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale, _scale, _scale)
+								* XMMatrixRotationX(-XM_PI / 2.f)
+								* XMMatrixRotationY(playerArr[i]._prev_degree * XM_PI / 180.f)
+								* XMMatrixTranslation(playerArr[i]._prev_transform.x, playerArr[i]._prev_transform.y, playerArr[i]._prev_transform.z));
+							XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+							XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+						}
+
+						copy(begin(playerArr[i]._final_transforms), end(playerArr[i]._final_transforms), &_transform.BoneTransforms[0]);
+
+						int sum = 0;
+						int count = 0;
+						for (Subset i : player_Mika_Body_Astro_asset._animationPtr->mSubsets)
+						{
+							if (count == 4) {
+								player_Mika_Body_Astro_asset._tex._srvHandle = player_Mika_Body_Astro_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+								player_Mika_Body_Astro_asset._tex._srvHandle.Offset(1, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+							}
+							else
+								player_Mika_Body_Astro_asset._tex._srvHandle = player_Mika_Body_Astro_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+							D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+							descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+							descHeapPtr->CopyDescriptor(player_Mika_Body_Astro_asset._tex._srvHandle, 5, devicePtr);
+							descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+							cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+							sum += i.FaceCount * 3;
+
+							count++;
+						}
+					}
+				}
 			}
 		}
 
