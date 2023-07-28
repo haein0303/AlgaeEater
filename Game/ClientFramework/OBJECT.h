@@ -53,6 +53,11 @@ public:
 	bool				_next_combo = false;
 	int					_character_num = 0;
 
+	int _object_type = 0;
+	float _boss3_skill_time = 0.f; // 장판이 된 npc의 텍스처 애니메이션을 위한 시간
+	int _animation_count = 0; // 장판이 된 npc의 텍스처 애니메이션을 위한 카운트
+	bool _is_rewind = false;
+
 	XMFLOAT4	_prev_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	XMFLOAT4	_delta_transform = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	float		_prev_degree;
