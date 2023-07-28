@@ -269,7 +269,7 @@ void do_timer()
 						
 						clients[pl].do_send(&p);
 					}
-					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
 					break;
 				}
 				case 4: { // È¸º¹
