@@ -728,6 +728,13 @@ void process_packet(int c_id, char* packet)
 			if (clients[c_id].god_mod == true) break;
 			else {
 				clients[c_id].hp -= clients[p->attacker_id].atk;
+				if (clients[c_id].hp <= 0) {
+					clients[c_id].hp = 0;
+					clients[c_id].char_state = AN_DEAD;
+					for (auto& pl : clients[c_id].room_list) {
+						clients[pl].room_list.erase(c_id);
+					}
+				}
 			}
 			Update_Player(c_id);
 		}
