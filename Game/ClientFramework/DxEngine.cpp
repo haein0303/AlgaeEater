@@ -427,6 +427,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_I_4m_TurnIn, ObjectType::GeneralObjects, "../Resources/Wall_I_4m_TurnIn.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_4m_TurnIn.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_O_4m, ObjectType::GeneralObjects, "../Resources/Wall_O_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_O_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(Plane, ObjectType::Stage3Room, "../Resources/Wall.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
 
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
 		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);

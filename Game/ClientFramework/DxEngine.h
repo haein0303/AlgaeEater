@@ -200,6 +200,7 @@ public:
 	MESH_ASSET skybox;
 	MESH_ASSET map_asset;
 	MESH_ASSET stage0_map;
+	MESH_ASSET Plane;
 
 	MESH_ASSET cube_asset;
 
@@ -712,6 +713,10 @@ public:
 					DrawMapObject(cmdList, Tube_Turn_L_B, i_now_render_index, data.pos, data.scale, data.rotation);
 				else if (data.mesh_type.compare("Wall_Line_4m_A") == 0)
 					DrawMapObject(cmdList, Wall_Line_4m_A, i_now_render_index, data.pos, data.scale, data.rotation);
+				else if (data.mesh_type.compare("Plane") == 0)
+				{
+					
+				}
 				else if (data.mesh_type.compare("Grid_Metal_door") == 0)
 				{
 					// door
@@ -731,6 +736,61 @@ public:
 						bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 					}
 					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
+				}
+			}
+			/*cout << "Wall Load" << endl;
+
+
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(2, 2, 2)
+						* XMMatrixRotationX(0)* XMMatrixRotationZ(0)* XMMatrixRotationY(0)
+						* XMMatrixTranslation(data.pos.x * 2.f, 0.f, data.pos.z * 2.f));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+					Plane._tex._srvHandle = Plane._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					descHeapPtr->CopyDescriptor(Plane._tex._srvHandle, 5, devicePtr);
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(Plane._indexCount, 1, 0, 0, 0);*/
+
+			cmdList->SetPipelineState(Plane._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &Plane._vertexBufferView);
+			cmdList->IASetIndexBuffer(&Plane._indexBufferView);
+
+			XMFLOAT3 scale = XMFLOAT3(10, 10, 10);
+			for (int i = 0; i < 4; ++i)
+			{
+				for (int j = 0; j < 5; ++j)
+				{
+					if (j == 0) {
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(100.f * i, 0.01f, 0));
+					}
+					if (j == 1) {
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixTranslation(100.f * i, scale.y / 2.f + 0.01f, -scale.z));
+					}
+					else if (j == 2) {
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixTranslation(100.f * i, scale.y / 2.f + 0.01f, scale.z));
+					}
+					else if (j == 3) {
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(100.f * i + scale.x, scale.y / 2.f + 0.01f, 0));
+					}
+					else if (j == 4) {
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(100.f * i - scale.x, scale.y / 2.f + 0.01f, 0));
+					}
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+					Plane._tex._srvHandle = Plane._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+					Plane._tex._srvHandle = Plane._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+					descHeapPtr->CopyDescriptor(Plane._tex._srvHandle, 5, devicePtr);
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(Plane._indexCount, 1, 0, 0, 0);
 				}
 			}
 		}
