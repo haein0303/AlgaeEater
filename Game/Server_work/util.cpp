@@ -184,6 +184,7 @@ void process_packet(int c_id, char* packet)
 		default:
 			break;
 		}
+		clients[c_id]._object_type = p->character_type;
 		clients[c_id].degree = 30;
 		clients[c_id].char_state = AN_IDLE;
 		clients[c_id].color = 0;
@@ -373,6 +374,8 @@ void process_packet(int c_id, char* packet)
 						}
 						break;
 					}
+					case 3:
+						break;
 					default:
 						break;
 					}

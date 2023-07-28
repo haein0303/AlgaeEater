@@ -17,7 +17,7 @@ extern "C" {
 
 enum SESSION_STATE { ST_FREE, ST_ACCEPTED, ST_INGAME };
 
-enum SESSION_TYPE { TY_PLAYER, TY_MOVE_NPC, TY_BOSS_1, TY_BOSS_2, TY_BOSS_3, TY_BOSS_SKILL, TY_NPC_OTHER };
+enum SESSION_TYPE { TY_PLAYER_AKI, TY_PLAYER_MIKA, TY_MOVE_NPC, TY_BOSS_1, TY_BOSS_2, TY_BOSS_3, TY_BOSS_SKILL, TY_NPC_OTHER };
 
 enum FIELD_TYPE { FD_HEAL, FD_SM_DMG, FD_LG_DMG };
 
@@ -41,7 +41,7 @@ public:
 	int		atk;
 	int		skill_atk;
 	unsigned int client_time;
-	SESSION_TYPE _object_type;
+	int _object_type;
 
 	// °«¸ðµå º¯¼ö
 	bool god_mod;

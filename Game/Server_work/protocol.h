@@ -261,6 +261,7 @@ struct SC_BOSS_PLAYER_CON_PACKET {
 	char	type;
 	int		con_num;   // 0 은 슬로우 1은 역조작 2는 마비 3텔포
 	bool	trigger;
+	float	x, y, z;
 };
 
 struct SS_CONNECT_SERVER_PACKET {
