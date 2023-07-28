@@ -847,7 +847,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	// 보스 공격 충돌 감지
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
-		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 26.f) {
+		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 26.f
+			&& Scene_num != 3)
+		{
 			if (boss_obj._animation_state == AnimationOrder::Attack1
 				&& boss_obj._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(boss_obj._animation_state) * 0.5f
 				&& boss_obj._can_attack) {
@@ -861,9 +863,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				p.attacker_id = boss_obj._my_server_id;
 				p.target_id = playerArr[i]._my_server_id;
 				networkPtr->send_packet(&p);
-
-				//cout << "player" << i << " hp : " << playerArr[i]._hp << endl;
-				//cout << "BOSS hp : " << boss_obj._hp << endl;
 			}
 		}
 	}
