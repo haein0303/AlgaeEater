@@ -43,62 +43,109 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 					_states[key] = 0;
 			}
 		}
-
-		//捞悼 贸府
-		if (_states['W'] == 1)
-		{
-			key_toggle = true;
+		if (playerArr[networkPtr->myClientId]._stage3_boss_on && playerArr[networkPtr->myClientId]._stage3_boss_con == 1) {
+			//捞悼 贸府
+			if (_states['W'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['S'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['A'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['D'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['W'] == 2)
+			{
+				s = true;
+			}
+			if (_states['W'] == 3)
+			{
+				s = false;
+			}
+			if (_states['S'] == 2)
+			{
+				w = true;
+			}
+			if (_states['S'] == 3)
+			{
+				w = false;
+			}
+			if (_states['A'] == 2)
+			{
+				d = true;
+			}
+			if (_states['A'] == 3)
+			{
+				d = false;
+			}
+			if (_states['D'] == 2)
+			{
+				a = true;
+			}
+			if (_states['D'] == 3)
+			{
+				a = false;
+			}
 		}
-		if (_states['S'] == 1)
-		{
-			key_toggle = true;
+		else {
+			//捞悼 贸府
+			if (_states['W'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['S'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['A'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['D'] == 1)
+			{
+				key_toggle = true;
+			}
+			if (_states['W'] == 2)
+			{
+				w = true;
+			}
+			if (_states['W'] == 3)
+			{
+				w = false;
+			}
+			if (_states['S'] == 2)
+			{
+				s = true;
+			}
+			if (_states['S'] == 3)
+			{
+				s = false;
+			}
+			if (_states['A'] == 2)
+			{
+				a = true;
+			}
+			if (_states['A'] == 3)
+			{
+				a = false;
+			}
+			if (_states['D'] == 2)
+			{
+				d = true;
+			}
+			if (_states['D'] == 3)
+			{
+				d = false;
+			}
 		}
-		if (_states['A'] == 1)
-		{
-			key_toggle = true;
-		}
-		if (_states['D'] == 1)
-		{
-			key_toggle = true;
-		}
-		if (_states['W'] == 2)
-		{
-			w = true;
-		}
-		if (_states['W'] == 3)
-		{
-			w = false;
-		}
-		if (_states['S'] == 2)
-		{
-			s = true;
-
-		}
-		if (_states['S'] == 3)
-		{
-			s = false;
-
-		}
-		if (_states['A'] == 2)
-		{
-			a = true;
-
-		}
-		if (_states['A'] == 3)
-		{
-			a = false;
-
-		}
-		if (_states['D'] == 2)
-		{
-			d = true;
-
-		}
-		if (_states['D'] == 3)
-		{
-			d = false;
-
-		}
+		
 		if (_states['1'] == 2)
 		{
 			CS_CONSOLE_PACKET p;

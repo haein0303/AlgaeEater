@@ -541,11 +541,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, open_door_count);
 	
 	if (playerArr[0]._stage3_boss_on) {
-		if (playerArr[0]._stage3_boss_con == 1) {
+		if (playerArr[0]._stage3_boss_con == 0) {
 			inputPtr->move_speed = playerArr[0]._move_speed / 2;
 		}
 		if (playerArr[0]._stage3_boss_con == 2) {
-			inputPtr->move_speed = playerArr[0]._move_speed * -1.f;
+			inputPtr->move_speed = 0.f;
 		}
 	}
 	else {
