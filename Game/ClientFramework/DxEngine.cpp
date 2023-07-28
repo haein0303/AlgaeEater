@@ -552,6 +552,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->move_speed = playerArr[0]._move_speed;
 	}
 
+	if (inputPtr->_god_mod_on) {
+		inputPtr->move_speed = 50.f;
+	}
+
 
 	//보간을 위해서 사용하는 초기 세팅이란다
 	for (OBJECT& p : playerArr) {
@@ -1971,7 +1975,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			
 		}
 
-
+		//2D 코드라네
 		//갓 모드 온
 		wsprintf(text, L"BOSS HP : %d", boss_obj._hp);
 		float height = 0.f;
@@ -1980,11 +1984,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			_swprintf(text, L"[GOD(DEV) MODE ON]  ");
 			d11Ptr->draw_infotext(text, _tmp);
 			height = 15.f;
-
-			inputPtr->move_speed = 50.f;
 		}
-		else
-			inputPtr->move_speed = 10.f;
+		
 
 
 
