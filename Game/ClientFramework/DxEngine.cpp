@@ -492,7 +492,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
 
 		boss_obj._final_transforms.resize(boss3_Body._animationPtr->mBoneHierarchy.size());
-		cout << "boss3_Body._animationPtr->mBoneHierarchy.size() : " << boss3_Body._animationPtr->mBoneHierarchy.size() << endl;
 		boss_obj._transform.y += 1.f;
 
 		boss_obj._object_type = TY_BOSS_3;
@@ -527,10 +526,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		}
 	}
 	
-	for (int i = 0; i < NPCMAX; ++i) {
-		
-			npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
-			npcArr[i]._transform.y += 0.2f;
+	for (int i = 0; i < NPCMAX; ++i)
+	{
+		npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
+		npcArr[i]._transform.y += 0.2f;
 	}
 
 	/*for (int i = 0; i < KEYMAX; ++i) {
@@ -575,6 +574,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, open_door_count);
+	for(const OBJECT& npc : npcArr)
+		if(Scene_num == 3 && npc._object_type == TY_BOSS_1)
+			cout << "my_packet->char_state : " << npc._animation_state << endl;
 	
 	if (playerArr[0]._stage3_boss_on) {
 		if (playerArr[0]._stage3_boss_con == 0) {
@@ -593,6 +595,15 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		inputPtr->move_speed = 50.f;
 	}
 
+	for (OBJECT& npc : npcArr)
+	{
+		if (Scene_num == 3 && npc._object_type == TY_BOSS_1)
+		{
+			if (npc._final_transforms.size() == npc_asset._animationPtr->mBoneHierarchy.size())
+				npc._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
+		}
+	}
+	
 
 	//보간을 위해서 사용하는 초기 세팅이란다
 	for (OBJECT& p : playerArr) {
@@ -910,31 +921,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 		}
 	}
-
-	/*// key 충돌처리
-	for (int i = 0; i < PLAYERMAX; ++i)
-	{
-		for (int j = 0; j < KEYMAX; ++j) {
-			if (key_data[j]._on == true) {
-				if (pow(playerArr[i]._transform.x - key_data[j]._transform.x, 2) + pow(playerArr[i]._transform.z - key_data[j]._transform.z, 2) <= 1.f)
-				{
-					playerArr[i]._player_color = key_data[j]._key;
-					key_data[j]._on = false;
-
-
-					CS_KEY_PACKET p;
-					p.size = sizeof(p);
-					p.type = CS_KEY;
-					p.color = key_data[j]._key;
-					p.key_id = key_data[j]._my_server_id;
-
-					cout << "GET KEY : " << j << "[" << key_data[j]._my_server_id << "]" << endl;
-
-					networkPtr->send_packet(&p);
-				}
-			}			
-		}		
-	}*/
 
 	switch (Scene_num)
 	{
@@ -1750,7 +1736,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			{
 				XMFLOAT3 boss_scale = XMFLOAT3(500.f, 500.f, 500.f);
 				float boss_default_rot_x = -XM_PI * 0.5f;
-				boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0, boss_obj._object_type);
+				boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0, npcArr[i]._object_type);
 
 				cmdList->SetPipelineState(boss._pipelineState.Get());
 				cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
@@ -1764,24 +1750,24 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 				XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-				copy(begin(boss_obj._final_transforms), end(boss_obj._final_transforms), &_transform.BoneTransforms[0]);
+				copy(begin(npcArr[i]._final_transforms), end(npcArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
 				boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
 
 				int sum = 0;
 				int count = 0;
-				for (Subset i : boss._animationPtr->mSubsets)
+				for (Subset j : boss._animationPtr->mSubsets)
 				{
 					D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
 					descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 					descHeapPtr->CopyDescriptor(boss._tex._srvHandle, 5, devicePtr);
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-					cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
-					sum += i.FaceCount * 3;
+					cmdList->DrawIndexedInstanced(j.FaceCount * 3, 1, sum, 0, 0);
+					sum += j.FaceCount * 3;
 
 					if (count == 2) { // eye, 조건에 boss별 type추가 필요
 						boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-						boss._tex._srvHandle.Offset(3 + boss_obj._eye_color, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+						boss._tex._srvHandle.Offset(3 + npcArr[i]._eye_color, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 					}
 					else if (count == 3) { // wire
 						boss._tex._srvHandle = boss._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();

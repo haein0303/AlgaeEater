@@ -203,7 +203,6 @@ public:
 				npcArr[npc_accept_counter]._hp = my_packet->hp;
 				npcArr[npc_accept_counter]._max_hp = my_packet->hp;
 				npcArr[npc_accept_counter]._object_type = my_packet->object_type;
-				cout << "my_packet->object_type : " << my_packet->object_type << endl;
 
 				npcArr[npc_accept_counter]._prev_degree = npcArr[npc_accept_counter]._degree;
 				npcArr[npc_accept_counter]._prev_transform = npcArr[npc_accept_counter]._transform;
@@ -254,6 +253,7 @@ public:
 			boss_obj._transform.x = my_packet->x;
 			boss_obj._transform.y = my_packet->y;
 			boss_obj._transform.z = my_packet->z;
+			cout << "pos : " << my_packet->x << "pos : " << my_packet->z << endl;
 			boss_obj._degree = my_packet->degree;
 			boss_obj._hp = my_packet->hp;
 			boss_obj._animation_state = my_packet->char_state;
