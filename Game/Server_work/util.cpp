@@ -735,7 +735,7 @@ void process_packet(int c_id, char* packet)
 					clients[c_id].char_state = AN_DEAD;
 					for (auto& pl : clients[c_id].room_list) {
 						clients[pl].room_list.erase(c_id);
-						if (pl <= MAX_USER) dead_cnt++;
+						if (pl < MAX_USER) dead_cnt++;
 					}
 
 					if (dead_cnt == 0) {

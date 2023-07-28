@@ -315,6 +315,7 @@ void do_timer()
 					}
 					if (dead_player == ev.target_id) {
 						cout << "타겟 지정 불가" << endl;
+						break;
 					}
 				}
 
@@ -359,6 +360,7 @@ void do_timer()
 					}
 					if (dead_player == ev.target_id) {
 						cout << "타겟 지정 불가" << endl;
+						break;
 					}
 				}
 
