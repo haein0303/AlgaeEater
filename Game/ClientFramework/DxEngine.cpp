@@ -739,11 +739,13 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				if (npcArr[i]._on == true && player._attack.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 				{
-					npcArr[i]._particle_count += 100;
+					if(npcArr[i]._object_type != TY_BOSS_SKILL)
+						npcArr[i]._particle_count += 100;
 				}
 				if (npcArr[i]._on == true && player._skill.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 				{
-					npcArr[i]._particle_count += 100;
+					if (npcArr[i]._object_type != TY_BOSS_SKILL)
+						npcArr[i]._particle_count += 100;
 				}
 			}
 
@@ -780,23 +782,29 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._attack.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 				{
-					CS_COLLISION_PACKET p;
-					p.size = sizeof(p);
-					p.type = CS_COLLISION;
-					p.attack_type = AnimationOrder::Attack1 - 2;
-					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-					p.target_id = npcArr[i]._my_server_id;
-					networkPtr->send_packet(&p);
+					if (npcArr[i]._object_type != TY_BOSS_SKILL)
+					{
+						CS_COLLISION_PACKET p;
+						p.size = sizeof(p);
+						p.type = CS_COLLISION;
+						p.attack_type = AnimationOrder::Attack1 - 2;
+						p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+						p.target_id = npcArr[i]._my_server_id;
+						networkPtr->send_packet(&p);
+					}
 				}
 				if (npcArr[i]._on == true && playerArr[networkPtr->myClientId]._skill.Intersects(npcArr[i]._bounding_box) && npcArr[i]._animation_state != AnimationOrder::Death)
 				{
-					CS_COLLISION_PACKET p;
-					p.size = sizeof(p);
-					p.type = CS_COLLISION;
-					p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
-					p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
-					p.target_id = npcArr[i]._my_server_id;
-					networkPtr->send_packet(&p);
+					if (npcArr[i]._object_type != TY_BOSS_SKILL)
+					{
+						CS_COLLISION_PACKET p;
+						p.size = sizeof(p);
+						p.type = CS_COLLISION;
+						p.attack_type = playerArr[networkPtr->myClientId]._animation_state - 2;
+						p.attacker_id = playerArr[networkPtr->myClientId]._my_server_id;
+						p.target_id = npcArr[i]._my_server_id;
+						networkPtr->send_packet(&p);
+					}
 				}
 			}
 
@@ -856,7 +864,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 4.f
 			&& npcArr[j]._animation_state == AnimationOrder::Attack1
 			&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
-			&& npcArr[j]._can_attack)
+			&& npcArr[j]._can_attack && npcArr[j]._object_type != TY_BOSS_SKILL)
 		{
 			npcArr[j]._can_attack = false;
 
@@ -1697,7 +1705,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->IASetVertexBuffers(0, 1, &boss2Skill._vertexBufferView);
 				cmdList->IASetIndexBuffer(&boss2Skill._indexBufferView);
 
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1, 1, 1)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(npcArr[i]._transform.x, 0.01f, npcArr[i]._transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(3, 3, 3)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(npcArr[i]._transform.x, 0.01f, npcArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -1733,7 +1741,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			}
 			case TY_BOSS_1:
 			{
-				XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
+				XMFLOAT3 boss_scale = XMFLOAT3(500.f, 500.f, 500.f);
 				float boss_default_rot_x = -XM_PI * 0.5f;
 				boss.UpdateSkinnedAnimation(timerPtr->_deltaTime, boss_obj, 0, 0);
 
@@ -1741,7 +1749,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->IASetVertexBuffers(0, 1, &boss._vertexBufferView);
 				cmdList->IASetIndexBuffer(&boss._indexBufferView);
 
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(boss_scale.x* _scale / 100.f, boss_scale.y* _scale / 100.f, boss_scale.z* _scale / 100.f)
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(boss_scale.x * _scale / 100.f, boss_scale.y * _scale / 100.f, boss_scale.z * _scale / 100.f)
 					* XMMatrixRotationX(boss_default_rot_x)
 					* XMMatrixRotationY(boss_obj._prev_degree* XM_PI / 180.f - XM_PI)
 					* XMMatrixTranslation(boss_obj._prev_transform.x, boss_obj._prev_transform.y, boss_obj._prev_transform.z));
