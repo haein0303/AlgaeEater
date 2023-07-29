@@ -225,6 +225,8 @@ void process_packet(int c_id, char* packet)
 		clients[c_id]._state = 1;
 		clients[c_id]._stage = p->stage;
 
+		cout << "match : " << p->stage << endl;
+
 		// p->stage = 0이면 테스트, 1이면 스테이지 1
 		switch (clients[c_id]._stage)
 		{
@@ -637,6 +639,8 @@ int main()
 
 	test_match_list.empty();
 	stage1_match_list.empty();
+	stage2_match_list.empty();
+	stage3_match_list.empty();
 	add_timer(0, 1000, EV_MATCH, 0);
 
 	// 게임 서버와 커넥트
