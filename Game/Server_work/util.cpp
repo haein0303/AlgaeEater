@@ -1027,7 +1027,7 @@ void do_worker()
 			break;
 		}
 		case OP_NPC_CON: {
-			if (clients[key]._object_type == TY_MOVE_NPC) {
+			if (clients[key]._object_type == TY_MOVE_NPC || clients[key]._object_type == TY_NPC_OTHER) {
 				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 10) {
 					move_npc(ex_over->target_id, key);
 				}
