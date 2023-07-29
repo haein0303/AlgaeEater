@@ -571,11 +571,22 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		case SCENE_STATE::READY:
 		{
 			if (onClicK_check(ready_btn_rc, x, y)) {
-				if (lobby_client._ready_state) {
-					lobby_client._ready_state = 0;
+				if (lobby_client._ready_state == 0) {
+					LCS_OUT_PACKET p_MATCH_OUT;
+					p_MATCH_OUT.size = sizeof(p_MATCH_OUT);
+					p_MATCH_OUT.type = LCS_OUT;
+					lobby_client.Lobby_network->send_packet(&p_MATCH_OUT);
+					lobby_client.draw_text(L"SEND MATCH CANCLE PACKET");
+					lobby_client._ready_state = 1;
 				}
 				else {
-					lobby_client._ready_state = 1;
+					LCS_MATCH_PACKET p_MATCH;
+					p_MATCH.size = sizeof(p_MATCH);
+					p_MATCH.type = LCS_MATCH;
+					p_MATCH.stage = lobby_client._scene_select;
+					lobby_client.Lobby_network->send_packet(&p_MATCH);
+					lobby_client.draw_text(L"SEND MATCH PACKET");
+					lobby_client._ready_state = 0;
 				}
 			}
 			if (onClicK_check(ready_scene_rc, x, y)) {
