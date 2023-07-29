@@ -1087,7 +1087,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			break;
 		case 1:
 			tmp = (playerArr[0]._transform.x - (-335.f)) * (playerArr[0]._transform.x - (-335.f)) + (playerArr[0]._transform.z - (-64.f)) * (playerArr[0]._transform.z - (-64.f));
-			for (int i = 1; i < MAX_USER; ++i) {
+			for (int i = 1; i < PLAYERMAX; ++i) {
+				if (playerArr[i]._on == false) continue;
 				if (100.f > (playerArr[i]._transform.x - (-335.f)) * (playerArr[i]._transform.x - (-335.f)) + (playerArr[i]._transform.z - (-64.f)) * (playerArr[i]._transform.z - (-64.f))) {
 					_others_boss_icon = true;
 				}				
