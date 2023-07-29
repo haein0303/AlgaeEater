@@ -23,7 +23,7 @@ public:
 	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
 		wcout.imbue(locale("korean"));
-		sf::Socket::Status status = socket.connect("59.14.135.128", PortNum);
+		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum); // 59.14.135.128
 		socket.setBlocking(false);
 
 		if (status != sf::Socket::Done) {
@@ -48,7 +48,7 @@ public:
 	int ConnectServer(int PortNum) 
 	{
 		wcout.imbue(locale("korean"));
-		sf::Socket::Status status = socket.connect("59.14.135.128", PortNum);
+		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum); // 59.14.135.128
 		socket.setBlocking(false);
 
 		if (status != sf::Socket::Done) {
@@ -447,8 +447,22 @@ public:
 			SC_GAME_END_PACKET* packet = reinterpret_cast<SC_GAME_END_PACKET*>(ptr);
 			boss_obj._game_clear = true;
 			boss_obj._clear_type = packet->e_type;
-		}
 
+			break;
+		}
+		case SC_NPC_TARGET: {
+			SC_NPC_TARGET_PACKET* my_packet = reinterpret_cast<SC_NPC_TARGET_PACKET*>(ptr);
+			int id = my_packet->npc_id;
+			if (id >= MAX_USER) {// MAX_USER로 교체
+				id = getNPCid(my_packet->npc_id);
+				if(id == -1)
+					boss_obj._who_target = my_packet->player_id;
+				else
+					npcArr[id]._who_target = my_packet->player_id;
+			}
+
+			break;
+		}
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 		}

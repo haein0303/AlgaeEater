@@ -882,7 +882,8 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 4.f
 			&& npcArr[j]._animation_state == AnimationOrder::Attack1
 			&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
-			&& npcArr[j]._can_attack && npcArr[j]._object_type != TY_BOSS_SKILL)
+			&& npcArr[j]._can_attack && npcArr[j]._object_type != TY_BOSS_SKILL
+			&& npcArr[j]._who_target == playerArr[0]._my_server_id)
 		{
 			npcArr[j]._can_attack = false;
 
@@ -903,6 +904,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	if (boss_obj._on == true) {
 		int i = networkPtr->myClientId;
 		if (pow(playerArr[i]._transform.x - boss_obj._transform.x, 2) + pow(playerArr[i]._transform.z - boss_obj._transform.z, 2) <= 26.f
+			&& boss_obj._who_target == playerArr[i]._my_server_id
 			&& Scene_num != 3)
 		{
 			if (boss_obj._animation_state == AnimationOrder::Attack1
