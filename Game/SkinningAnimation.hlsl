@@ -88,7 +88,7 @@ LightInfo CalculateLightColor(float3 viewNormal, float3 viewPos)
         color.diffuse = lightInfo.diffuse * diffuseRatio * distanceRatio;
     }
 
-    //color.diffuse = ceil(lightInfo.diffuse * diffuseRatio * distanceRatio * 2.5) / 1.0f;
+    color.diffuse = ceil(lightInfo.diffuse * diffuseRatio * distanceRatio * 2.5) / 1.0f;
     color.ambient = ceil(lightInfo.ambient * distanceRatio * 2.5) / 2.0f;
     color.specular = ceil(lightInfo.specular * specularRatio * distanceRatio * 2.5) / 2.0f;
 
