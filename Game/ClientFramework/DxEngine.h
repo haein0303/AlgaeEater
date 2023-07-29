@@ -215,6 +215,8 @@ public:
 
 	int open_door_count = 0;
 
+	int watching_user = 0;
+
 	// 상수버퍼로 넘길 데이터
 	Constants _transform = {};
 

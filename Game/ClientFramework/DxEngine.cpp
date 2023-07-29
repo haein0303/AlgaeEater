@@ -604,7 +604,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				npc._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 		}
 	}
-	
 
 	//º¸°£À» À§ÇØ¼­ »ç¿ëÇÏ´Â ÃÊ±â ¼¼ÆÃÀÌ¶õ´Ù
 	for (OBJECT& p : playerArr) {
@@ -1032,19 +1031,50 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	}
 
 	//VP ï¿½ï¿½È¯
-	float zoom = 3.f * _scale / 100.f;
-	cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - zoom * cosf(inputPtr->angle.x*XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
-		playerArr[networkPtr->myClientId]._transform.y + 1.35f * _scale / 100.f + zoom * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
-		playerArr[networkPtr->myClientId]._transform.z - zoom * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
-	XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x, playerArr[networkPtr->myClientId]._transform.y + 1.35f * _scale / 100.f,
-		playerArr[networkPtr->myClientId]._transform.z,
-		playerArr[networkPtr->myClientId]._transform.w);
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
-	XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
+	
 
-	XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
-	XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
+	if (inputPtr->_states[VK_F7] == 2)
+	{
+		cout << "f7" << endl;
+		watching_user++;
+		if (watching_user >= PLAYERMAX)
+			watching_user = 0;
+	}
+
+	if (playerArr[0]._hp > 0)
+	{
+		float zoom = 3.f * _scale / 100.f;
+		cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - zoom * cosf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+			playerArr[networkPtr->myClientId]._transform.y + 1.35f * _scale / 100.f + zoom * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+			playerArr[networkPtr->myClientId]._transform.z - zoom * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
+		XMVECTOR target = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x, playerArr[networkPtr->myClientId]._transform.y + 1.35f * _scale / 100.f,
+			playerArr[networkPtr->myClientId]._transform.z,
+			playerArr[networkPtr->myClientId]._transform.w);
+		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
+		XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
+
+		XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
+		XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
+
+		
+	}
+	else
+	{
+		float zoom = 3.f * _scale / 100.f;
+		cameraPtr->pos = XMVectorSet(playerArr[watching_user]._transform.x - zoom * cosf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+			playerArr[watching_user]._transform.y + 1.35f * _scale / 100.f + zoom * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+			playerArr[watching_user]._transform.z - zoom * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
+		XMVECTOR target = XMVectorSet(playerArr[watching_user]._transform.x, playerArr[watching_user]._transform.y + 1.35f * _scale / 100.f,
+			playerArr[watching_user]._transform.z,
+			playerArr[watching_user]._transform.w);
+		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
+		XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
+
+		XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
+		XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
+	}
 
 	//Light
 	LightInfo lightInfo;
