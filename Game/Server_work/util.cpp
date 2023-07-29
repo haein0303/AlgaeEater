@@ -510,11 +510,13 @@ void process_packet(int c_id, char* packet)
 			if (clients[c_id]._Room_Num == clients[i]._Room_Num) {
 				clients[c_id].room_list.insert(i);
 				clients[i].room_list.insert(c_id);
+				clients[c_id]._DE.lock();
 				if (i % ROOM_NPC != ROOM_NPC - 1)
 					clients[c_id].send_add_object(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state, clients[i]._object_type);
 				else {
 					clients[c_id].send_boss_add(i, clients[i].x, clients[i].y, clients[i].z, clients[i].degree, clients[i]._name, clients[i].hp, clients[i].char_state);
 				}
+				clients[c_id]._DE.unlock();
 			}
 		}
 
@@ -615,8 +617,6 @@ void process_packet(int c_id, char* packet)
 							break;
 						}
 
-						clients[p->target_id]._DE.unlock();
-
 						clients[p->target_id].char_state = AN_DEAD;
 						clients[p->target_id]._sl.lock();
 						clients[p->target_id]._s_state = ST_FREE;
@@ -700,8 +700,6 @@ void process_packet(int c_id, char* packet)
 							default:
 								break;
 							}
-
-							clients[p->target_id]._DE.unlock();
 
 							clients[p->target_id].char_state = AN_DEAD;
 							clients[p->target_id]._sl.lock();
