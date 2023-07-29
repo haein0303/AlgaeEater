@@ -969,7 +969,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			{
 				if (pow(playerArr[networkPtr->myClientId]._transform.x - pillars_data[i]._transform.x, 2) + pow(playerArr[networkPtr->myClientId]._transform.z - pillars_data[i]._transform.z, 2) <= 9.f) //&& pillars_data[i]._pillar_color == playerArr[networkPtr->myClientId]._player_color
 				{
-					if ((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1)
+					if (((playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack1)
+						|| (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack2)
+						|| (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack3)
+						|| (playerArr[networkPtr->myClientId]._animation_state == AnimationOrder::Attack4))
 						&& ((playerArr[networkPtr->myClientId]._character_num == 0 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_AKI_Body_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f)
 							|| (playerArr[networkPtr->myClientId]._character_num == 1 && playerArr[networkPtr->myClientId]._animation_time_pos >= player_Mika_Body_Astro_asset._animationPtr->GetClipEndTime(playerArr[networkPtr->myClientId]._animation_state) * 0.5f))
 						&& playerArr[networkPtr->myClientId]._can_attack3)
