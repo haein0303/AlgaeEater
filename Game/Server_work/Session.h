@@ -34,7 +34,8 @@ public:
 	float	degree;
 	char	_name[NAME_SIZE];
 	int		_prev_remain;
-	std::mutex	_sl;
+	std::mutex	_sl; // 스테이트 체크용
+	std::mutex _DE; // 피격 처리 시 사용
 	int		hp;
 	int		char_state;
 	int		stage;

@@ -76,6 +76,7 @@ constexpr char LSC_JOIN_OK = 43;
 constexpr char LSC_JOIN_FAIL = 44;
 
 constexpr char SC_GAME_END = 50;
+constexpr char SC_BROAD_CAST = 51;
 
 constexpr float PI = 3.1415926535;
 
@@ -342,5 +343,11 @@ struct SC_GAME_END_PACKET {
 	unsigned char size;
 	char	type;
 	bool	e_type;	// true : clear     false : all player dead
+};
+
+struct SC_BROAD_CAST_PACKET {
+	unsigned char size;
+	char	type;
+	int		pri;
 };
 #pragma pack (pop)
