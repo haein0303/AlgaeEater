@@ -91,6 +91,7 @@ public:
 	MESH_ASSET player_Mika_Body_Astro_asset;
 	MESH_ASSET player_Mika_Sword_asset;
 	MESH_ASSET npc_asset;
+	MESH_ASSET stage3_npc_asset;
 	MESH_ASSET boss;
 	MESH_ASSET boss2;
 	MESH_ASSET boss3_Body;

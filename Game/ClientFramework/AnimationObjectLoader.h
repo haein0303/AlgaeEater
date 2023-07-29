@@ -11,4 +11,7 @@ public:
 	// 정점 애니메이션 오브젝트 데이터 파일로부터 데이터를 파싱 및 처리하고 로드
 	void LoadVertexAnimationObject(const string& filename, vector<Vertex>& vertices, vector<UINT>& indices, vector<Subset>& subsets,
 		vector<int>& mBoneHierarchy, vector<XMFLOAT4X4>& mBoneOffsets, vector<vector<vector<Keyframe>>>& animations);
+
+	void LoadVertexAnimationObjectForPillar(const string& filename, vector<Vertex>& vertices, vector<UINT>& indices, vector<Subset>& subsets,
+		vector<int>& mBoneHierarchy, vector<XMFLOAT4X4>& mBoneOffsets, vector<vector<vector<Keyframe>>>& animations);
 };

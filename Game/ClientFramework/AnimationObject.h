@@ -22,6 +22,8 @@ public:
 
 	void CreateVertexAnimationObject(vector<Vertex>& vertices, vector<UINT>& indices, const string& filePath);
 
+	void CreateVertexAnimationObjectForPillar(vector<Vertex>& vertices, vector<UINT>& indices, const string& filePath);
+
 #pragma region 스키닝 애니메이션
 	// 매 프레임마다 스키닝 애니메이션을 진행
 	void UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int character_num);
@@ -35,7 +37,7 @@ public:
 
 #pragma region 정점 애니메이션
 	// 매 프레임마다 정점 애니메이션을 진행
-	void UpdateVertexAnimation(float dt, OBJECT& player, XMVECTOR& P, XMVECTOR& Q);
+	void UpdateVertexAnimation(OBJECT& player, XMVECTOR& P, XMVECTOR& Q, ObjectType obj_type);
 
 	// 보간된 애니메이션 행렬들에 대해서 최종 행렬 연산
 	void GetFinalTransforms_VertexAnimation(const string& clipName, float timePos, int state, XMVECTOR& P, XMVECTOR& Q);

@@ -253,7 +253,6 @@ public:
 			boss_obj._transform.x = my_packet->x;
 			boss_obj._transform.y = my_packet->y;
 			boss_obj._transform.z = my_packet->z;
-			cout << "pos : " << my_packet->x << "pos : " << my_packet->z << endl;
 			boss_obj._degree = my_packet->degree;
 			boss_obj._hp = my_packet->hp;
 			boss_obj._animation_state = my_packet->char_state;

@@ -227,7 +227,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		for (int i = 0; i < 10; ++i)
 		{
 			pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-			pillar[i].Init(a, ObjectType::VertexAnimationObjects);
+			pillar[i].Init(a, ObjectType::VertexAnimationObjectsForPillar);
 			pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 			pillar[i].Make_SRV();
 			pillar[i].CreatePSO(L"..\\Color.hlsl");
@@ -237,7 +237,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		for (int i = 10; i < 20; ++i)
 		{
 			pillar[i].Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-			pillar[i].Init(b, ObjectType::VertexAnimationObjects);
+			pillar[i].Init(b, ObjectType::VertexAnimationObjectsForPillar);
 			pillar[i].Add_texture(L"..\\Resources\\Texture\\bricks.dds");
 			pillar[i].Make_SRV();
 			pillar[i].CreatePSO(L"..\\Color.hlsl");
@@ -487,6 +487,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_O_4m, ObjectType::GeneralObjects, "../Resources/Wall_O_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_O_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Plane, ObjectType::Stage3Room, "../Resources/Wall.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_asset, ObjectType::VertexAnimationObjects, "../Resources/stage3npc_idle.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
 
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
 		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
@@ -574,9 +575,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, open_door_count);
-	for(const OBJECT& npc : npcArr)
-		if(Scene_num == 3 && npc._object_type == TY_BOSS_1)
-			cout << "my_packet->char_state : " << npc._animation_state << endl;
 	
 	if (playerArr[0]._stage3_boss_on) {
 		if (playerArr[0]._stage3_boss_con == 0) {
@@ -1528,7 +1526,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					{
 						float scale = 3.f;
 
-						piece_of_pillar.UpdateVertexAnimation(timerPtr->_deltaTime, pillars_data[i], P, Q);
+						piece_of_pillar.UpdateVertexAnimation(pillars_data[i], P, Q, ObjectType::VertexAnimationObjectsForPillar);
 
 						cmdList->SetPipelineState(piece_of_pillar._pipelineState.Get());
 						cmdList->IASetVertexBuffers(0, 1, &piece_of_pillar._vertexBufferView);
@@ -1781,6 +1779,67 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 				break;
 			}
+			case TY_NPC_OTHER:
+				if (npcArr[i]._on == true)
+				{
+					{
+						npcArr[i]._animation_time_pos += timerPtr->_deltaTime;
+						XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+						XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+						float scale = 3.f;
+
+						stage3_npc_asset.UpdateVertexAnimation(npcArr[i], P, Q, ObjectType::VertexAnimationObjects); // 변경 필요
+
+						cmdList->SetPipelineState(stage3_npc_asset._pipelineState.Get());
+						cmdList->IASetVertexBuffers(0, 1, &stage3_npc_asset._vertexBufferView);
+						cmdList->IASetIndexBuffer(&stage3_npc_asset._indexBufferView);
+
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
+							* XMMatrixRotationQuaternion(Q)
+							* XMMatrixTranslation(npcArr[i]._transform.x + P.m128_f32[0] * scale, npcArr[i]._transform.y + P.m128_f32[1] * scale, npcArr[i]._transform.z + P.m128_f32[2] * scale));
+						XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+						XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+						D3D12_CPU_DESCRIPTOR_HANDLE srv_handle = stage3_npc_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+						descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+
+						descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+						cmdList->DrawIndexedInstanced(stage3_npc_asset._indexCount, 1, 0, 0, 0);
+					}
+
+					// npc hp bar
+					cmdList->SetPipelineState(hp_bar._pipelineState.Get());
+					cmdList->IASetVertexBuffers(0, 1, &hp_bar._vertexBufferView);
+					cmdList->IASetIndexBuffer(&hp_bar._indexBufferView);
+
+					XMStoreFloat4x4(&_transform.world, XMMatrixScaling(_scale * 0.5 * 0.01f, _scale * 0.001f, _scale * 0.001f)
+						* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (npcArr[i]._prev_transform.y + 0.01f),
+							sqrt(pow(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, 2) + pow(cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z, 2))))
+						* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - npcArr[i]._prev_transform.x, cameraPtr->pos.m128_f32[2] - npcArr[i]._prev_transform.z))
+						* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y + _scale / 100.f, npcArr[i]._prev_transform.z));
+					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+					_transform.hp_bar_size = 2.f;
+					_transform.hp_bar_start_pos = npcArr[i]._transform;
+					_transform.hp_bar_start_pos.x -= _transform.hp_bar_size / 2.f;
+					_transform.current_hp = npcArr[i]._hp;
+					_transform.max_hp = npcArr[i]._max_hp;
+
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+						hp_bar._tex._srvHandle = hp_bar._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+						descHeapPtr->CopyDescriptor(hp_bar._tex._srvHandle, 5, devicePtr);
+					}
+
+					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+					cmdList->DrawIndexedInstanced(hp_bar._indexCount, 1, 0, 0, 0);
+				}
+				break;
 			default:
 				break;
 			}

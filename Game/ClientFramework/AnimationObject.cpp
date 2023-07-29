@@ -16,6 +16,14 @@ void AnimationObject::CreateVertexAnimationObject(vector<Vertex>& vertices, vect
 	ClipName = "VertexAnimtion";
 }
 
+void AnimationObject::CreateVertexAnimationObjectForPillar(vector<Vertex>& vertices, vector<UINT>& indices, const string& filePath)
+{
+	AnimationObjectLoader animationObjectLoader;
+	animationObjectLoader.LoadVertexAnimationObjectForPillar(filePath, vertices, indices, mSubsets, mBoneHierarchy, mBoneOffsets, animations);
+
+	ClipName = "VertexAnimtion";
+}
+
 void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int object_type)
 {
 	if (object_type == TY_PLAYER_AKI) // Aki
@@ -95,11 +103,14 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, in
 	}
 }
 
-void AnimationObject::UpdateVertexAnimation(float dt, OBJECT& obj, XMVECTOR& P, XMVECTOR& Q)
+void AnimationObject::UpdateVertexAnimation(OBJECT& obj, XMVECTOR& P, XMVECTOR& Q, ObjectType obj_type)
 {
 	// 애니메이션이 끝나면 애니메이션 루프
 	if ((obj._animation_state == AnimationOrder::Idle) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state)) {
-		obj._on = false;
+		if (obj_type == ObjectType::VertexAnimationObjectsForPillar)
+			obj._on = false;
+		else if (obj_type == ObjectType::VertexAnimationObjects)
+			obj._animation_time_pos = 0.f;
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산

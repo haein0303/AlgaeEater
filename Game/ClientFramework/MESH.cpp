@@ -38,6 +38,11 @@ void MESH_ASSET::Init(const char* path, ObjectType obj_type)
 		_animationPtr->CreateVertexAnimationObject(_VertexVec, _IndexVec, path);
 		_vertexBufferPtr->CreateVertexAnimationVertexBuffer(_vertexBuffer, _vertexBufferView, _VertexVec, _devicePtr);
 	}
+	else if (obj_type == ObjectType::VertexAnimationObjectsForPillar)
+	{
+		_animationPtr->CreateVertexAnimationObjectForPillar(_VertexVec, _IndexVec, path);
+		_vertexBufferPtr->CreateVertexAnimationVertexBuffer(_vertexBuffer, _vertexBufferView, _VertexVec, _devicePtr);
+	}
 	else
 	{
 		_fbxLoaderPtr->LoadObject(_VertexVec, _IndexVec, path);
@@ -145,9 +150,9 @@ void MESH_ASSET::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, int obj
 	_animationPtr->UpdateSkinnedAnimation(dt, player, i, object_type);
 }
 
-void MESH_ASSET::UpdateVertexAnimation(float dt, OBJECT& player, XMVECTOR& P, XMVECTOR& Q)
+void MESH_ASSET::UpdateVertexAnimation(OBJECT& player, XMVECTOR& P, XMVECTOR& Q, ObjectType obj_type)
 {
-	_animationPtr->UpdateVertexAnimation(dt, player, P, Q);
+	_animationPtr->UpdateVertexAnimation(player, P, Q, obj_type);
 }
 
 void MESH_ASSET::CreatePSO(const wchar_t* shader)

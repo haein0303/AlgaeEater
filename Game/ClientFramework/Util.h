@@ -147,7 +147,8 @@ enum ObjectType
 	AnimationObjects, // 스키닝 애니메이션 오브젝트, Skinned Mesh
 	VertexAnimationObjects, // 정점 애니메이션 오브젝트
 	SkyBox, // 스카이 박스
-	Stage3Room
+	Stage3Room,
+	VertexAnimationObjectsForPillar
 };
 
 struct LIGHT
