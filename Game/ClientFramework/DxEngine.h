@@ -102,6 +102,7 @@ public:
 	MESH_ASSET hp_bar;
 	MESH_ASSET color_pattern;
 	array <MESH_ASSET, 20> pillar;
+	array <MESH_ASSET, 4> stage3_npc_dead;
 
 	BoundingBox test;
 	MESH_ASSET testCube;

@@ -33,11 +33,11 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, in
 		else
 			player._animation_time_pos += dt;
 	}
-	else if(object_type == TY_PLAYER_MIKA) // Mika
+	else if (object_type == TY_PLAYER_MIKA) // Mika
 	{
 		if (player._animation_state == AnimationOrder::Walk)
 			player._animation_time_pos += dt * 0.5f;
-		else if(player._animation_state == AnimationOrder::Attack1
+		else if (player._animation_state == AnimationOrder::Attack1
 			|| player._animation_state == AnimationOrder::Attack2)
 			player._animation_time_pos += dt * 0.7f;
 		else if (player._animation_state == AnimationOrder::Skill)
@@ -63,7 +63,7 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, in
 	{
 		player._animation_time_pos += dt;
 	}
-	
+
 
 	// 애니메이션이 끝나면 애니메이션 루프
 	if ((player._animation_state == AnimationOrder::Idle || player._animation_state == AnimationOrder::Walk) && player._animation_time_pos >= GetClipEndTime(player._animation_state)) {
@@ -105,12 +105,32 @@ void AnimationObject::UpdateSkinnedAnimation(float dt, OBJECT& player, int i, in
 
 void AnimationObject::UpdateVertexAnimation(OBJECT& obj, XMVECTOR& P, XMVECTOR& Q, ObjectType obj_type)
 {
-	// 애니메이션이 끝나면 애니메이션 루프
-	if ((obj._animation_state == AnimationOrder::Idle) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state)) {
-		if (obj_type == ObjectType::VertexAnimationObjectsForPillar)
+	if (obj_type == ObjectType::VertexAnimationObjectsForPillar)
+	{
+		if ((obj._animation_state == AnimationOrder::Idle) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state))
+		{
 			obj._on = false;
-		else if (obj_type == ObjectType::VertexAnimationObjects)
+		}
+		if ((obj._animation_state == AnimationOrder::Death) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state))
+		{
+			obj._is_stage3_npc_dead = false;
+			obj._animation_time_pos = GetClipEndTime(obj._animation_state);
+		}
+	}
+	if (obj_type == ObjectType::VertexAnimationObjects)
+	{
+		if ((obj._animation_state == AnimationOrder::Idle || obj._animation_state == AnimationOrder::Idle) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state))
+		{
 			obj._animation_time_pos = 0.f;
+		}
+		if ((obj._animation_state == AnimationOrder::Attack1
+			|| obj._animation_state == AnimationOrder::Attack2
+			|| obj._animation_state == AnimationOrder::Attack3
+			|| obj._animation_state == AnimationOrder::Attack4)
+			&& obj._animation_time_pos >= GetClipEndTime(obj._animation_state))
+		{
+			obj._animation_time_pos = 0.f;
+		}
 	}
 
 	// 현재 프레임에 대해 최종행렬 연산

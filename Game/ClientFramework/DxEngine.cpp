@@ -488,6 +488,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_O_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Plane, ObjectType::Stage3Room, "../Resources/Wall.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
 		InitMeshAsset(stage3_npc_asset, ObjectType::VertexAnimationObjects, "../Resources/stage3npc_idle.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[0], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[1], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(1).txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[2], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(2).txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[3], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(3).txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
 
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
 		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
@@ -578,6 +582,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, open_door_count);
+
+	for(OBJECT& obj : npcArr)
+		if(obj._object_type == TY_NPC_OTHER)
+			cout << "obj._object_type == TY_NPC_OTHER : " << obj._object_type << " << obj._animation_state : " << obj._animation_state << endl;
 	
 	if (playerArr[0]._stage3_boss_on) {
 		if (playerArr[0]._stage3_boss_con == 0) {
@@ -1864,7 +1872,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 						npcArr[i]._animation_time_pos += timerPtr->_deltaTime;
 						XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 						XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-						float scale = 3.f;
+						float scale = 1.f;
 
 						stage3_npc_asset.UpdateVertexAnimation(npcArr[i], P, Q, ObjectType::VertexAnimationObjects); // 변경 필요
 
@@ -1873,8 +1881,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 						cmdList->IASetIndexBuffer(&stage3_npc_asset._indexBufferView);
 
 						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
-							* XMMatrixRotationQuaternion(Q)
-							* XMMatrixTranslation(npcArr[i]._transform.x + P.m128_f32[0] * scale, npcArr[i]._transform.y + P.m128_f32[1] * scale, npcArr[i]._transform.z + P.m128_f32[2] * scale));
+							* XMMatrixRotationZ(-XM_PI / 2.f)
+							* XMMatrixRotationY(npcArr[i]._degree* XM_PI / 180.f - XM_PI / 2.f)
+							* XMMatrixTranslation(npcArr[i]._transform.x + P.m128_f32[0], npcArr[i]._transform.y + P.m128_f32[1], npcArr[i]._transform.z + P.m128_f32[2]));
 						XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 						XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
@@ -1916,6 +1925,42 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 					descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
 					cmdList->DrawIndexedInstanced(hp_bar._indexCount, 1, 0, 0, 0);
+				}
+				else
+				{
+					{
+						for (MESH_ASSET& piece_of_npc : stage3_npc_dead)
+						{
+							if (npcArr[i]._is_stage3_npc_dead)
+							{
+								XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+								XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+								npcArr[i]._animation_time_pos += timerPtr->_deltaTime;
+
+								float scale = 1.f;
+								piece_of_npc.UpdateVertexAnimation(npcArr[i], P, Q, ObjectType::VertexAnimationObjectsForPillar);
+
+								cmdList->SetPipelineState(piece_of_npc._pipelineState.Get());
+								cmdList->IASetVertexBuffers(0, 1, &piece_of_npc._vertexBufferView);
+								cmdList->IASetIndexBuffer(&piece_of_npc._indexBufferView);
+
+								XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
+									* XMMatrixRotationQuaternion(Q)
+									* XMMatrixTranslation(npcArr[i]._transform.x + P.m128_f32[0] * scale, npcArr[i]._transform.y + P.m128_f32[1] * scale, npcArr[i]._transform.z + P.m128_f32[2] * scale));
+								XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+								XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+								D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+								descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+								D3D12_CPU_DESCRIPTOR_HANDLE srv_handle = piece_of_npc._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+								descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+
+								descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+								cmdList->DrawIndexedInstanced(piece_of_npc._indexCount, 1, 0, 0, 0);
+							}
+						}
+					}
+					
 				}
 				break;
 			default:

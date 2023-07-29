@@ -53,6 +53,7 @@ public:
 	bool				_next_combo = false;
 	int					_character_num = 0;
 	int					_who_target = 0;
+	bool				_is_stage3_npc_dead = true;
 
 	int _object_type = 0;
 	float _boss3_skill_time = 0.f; // 장판이 된 npc의 텍스처 애니메이션을 위한 시간
