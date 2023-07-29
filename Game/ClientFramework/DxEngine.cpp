@@ -2211,8 +2211,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		if (boss_obj._stage3_boss_on) {
 			d11Ptr->draw_glich();
 		}
-
-		d11Ptr->draw_player_info(L"AKI", 100, playerArr[0]._hp, 0);
+		if (playerArr[0]._character_num == 0) {
+			d11Ptr->draw_player_info(L"AKI", 100, playerArr[0]._hp, 0);
+		}
+		else {
+			d11Ptr->draw_player_info(L"MIKA", 100, playerArr[0]._hp, 1);
+		}
+		
 		
 		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num,boss_obj);
 
