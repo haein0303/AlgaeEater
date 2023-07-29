@@ -25,11 +25,13 @@ uniform_int_distribution<> uid{ 0, 3 };
 
 priority_queue<TIMER_EVENT> timer_queue;
 mutex timer_l;
+array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
 
 int main()
 {
 	stage();
 	//initialize_key();
+	set_room();
 	initialize_cube();
 	initialize_npc();
 	initialize_field();

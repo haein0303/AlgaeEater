@@ -15,6 +15,7 @@ extern array<CUBE, CUBE_NUM> cubes;
 //extern array<KEY, KEY_NUM> keys;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
+extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
 
 class stage_npc_death_counts {
 public:
@@ -262,6 +263,7 @@ void process_packet(int c_id, char* packet)
 		// npc 세팅 부분
 		if (clients[c_id]._Room_Num != 9999) {
 			if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1].Lua_on == false) {
+				RESET_ROOM_NUM[clients[c_id]._Room_Num] = false;
 				for (int i = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER; i < clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC; i++) {
 					switch (clients[c_id].stage)
 					{
@@ -489,11 +491,11 @@ void process_packet(int c_id, char* packet)
 					}
 
 					if (i % ROOM_NPC != ROOM_NPC - 1) {
-						add_timer(i, 10000, EV_NPC_CON, c_id);
+						add_timer(i, 10000, EV_NPC_CON, c_id, clients[i]._Room_Num);
 						clients[i].y = 0.3f;
 					}
 					else {
-						add_timer(i, 10000, EV_BOSS_CON, c_id);
+						add_timer(i, 10000, EV_BOSS_CON, c_id, clients[i]._Room_Num);
 					}
 					clients[i].Lua_on = true;
 				}
@@ -917,6 +919,7 @@ void disconnect(int c_id)
 
 	if (room_clean == 0) {
 		// 이러면 방에 아무도 없는 상황 -> 초기화 해줘야 함
+		RESET_ROOM(clients[c_id]._Room_Num);
 		auto ex_over = new OVER_EXP;
 		ex_over->_comp_type = OP_SET_NPC;
 		PostQueuedCompletionStatus(g_h_iocp, 1, c_id, &ex_over->_over);

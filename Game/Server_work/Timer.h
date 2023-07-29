@@ -13,6 +13,7 @@ struct TIMER_EVENT {
 	EVENT_TYPE ev;
 	chrono::system_clock::time_point act_time;
 	int target_id;
+	int room_num;
 
 	constexpr bool operator < (const TIMER_EVENT& _Left) const
 	{
@@ -21,7 +22,10 @@ struct TIMER_EVENT {
 
 };
 
-
-void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id);
+void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id, int room_num);
 
 void do_timer();
+
+void RESET_ROOM(int room_num);
+
+void set_room();

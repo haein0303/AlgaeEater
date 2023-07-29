@@ -23,16 +23,18 @@ extern array<CUBE, CUBE_NUM> cubes;
 extern array<FIELD, FIELD_NUM> fields;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
+extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
 
 int skill_tic = 0;
 
-void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id)
+void add_timer(int obj_id, int act_time, EVENT_TYPE e_type, int target_id, int room_num)
 {
 	TIMER_EVENT ev;
 	ev.act_time = system_clock::now() + milliseconds(act_time);
 	ev.object_id = obj_id;
 	ev.ev = e_type;
 	ev.target_id = target_id;
+	ev.room_num = room_num;
 
 	timer_l.lock();
 	timer_queue.push(ev);
@@ -58,6 +60,13 @@ void do_timer()
 				timer_l.unlock();
 				break;
 			}
+
+			if (true == RESET_ROOM_NUM[timer_queue.top().room_num])
+			{
+				timer_l.unlock();
+				break;
+			}
+
 
 			TIMER_EVENT ev = timer_queue.top();
 			timer_queue.pop();
@@ -103,7 +112,7 @@ void do_timer()
 							clients[pl].hp, clients[pl].char_state, 0, 0);
 					}
 					
-					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_BOSS_CON, ev.target_id, clients[ev.object_id]._Room_Num);
 					break;
 				}
 				else { // 보스 기믹 실패
@@ -128,7 +137,7 @@ void do_timer()
 					}
 
 					clients[ev.object_id].boss_shield_trigger = false;
-					add_timer(ev.object_id, 1000, EV_BOSS_CON, ev.target_id);
+					add_timer(ev.object_id, 1000, EV_BOSS_CON, ev.target_id, clients[ev.object_id]._Room_Num);
 
 					break;
 
@@ -166,7 +175,7 @@ void do_timer()
 
 					clients[pl].do_send(&p);
 
-					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_OFF, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_OFF, ev.target_id, clients[ev.object_id]._Room_Num);
 				}
 				break;
 			}
@@ -193,7 +202,7 @@ void do_timer()
 
 						clients[pl].do_send(&p);
 					}
-					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id, clients[ev.object_id]._Room_Num);
 					break;
 				}
 				case 1: { // 조작 반전
@@ -208,7 +217,7 @@ void do_timer()
 
 						clients[pl].do_send(&p);
 					}
-					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id, clients[ev.object_id]._Room_Num);
 					break;
 				}
 				case 2: { // 마비
@@ -223,7 +232,7 @@ void do_timer()
 
 						clients[pl].do_send(&p);
 					}
-					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					add_timer(ev.object_id, 30000, EV_BOSS_PLAYER_CON_OFF, ev.target_id, clients[ev.object_id]._Room_Num);
 					break;
 				}
 				case 3: { // 텔포
@@ -269,7 +278,7 @@ void do_timer()
 						
 						clients[pl].do_send(&p);
 					}
-					add_timer(ev.object_id, 10000, EV_BOSS_PLAYER_CON_OFF, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_BOSS_PLAYER_CON_OFF, ev.target_id, clients[ev.object_id]._Room_Num);
 					break;
 				}
 				case 4: { // 회복
@@ -323,7 +332,7 @@ void do_timer()
 				ex_over->target_id = ev.target_id;
 				PostQueuedCompletionStatus(g_h_iocp, 1, ev.object_id, &ex_over->_over);
 
-				add_timer(ev.object_id, 100, EV_NPC_CON, ev.target_id);
+				add_timer(ev.object_id, 100, EV_NPC_CON, ev.target_id, clients[ev.object_id]._Room_Num);
 
 				break;
 			case EV_BOSS_CON:
@@ -379,8 +388,8 @@ void do_timer()
 						clients[pl].send_msg(msg);*/
 					}
 
-					add_timer(ev.object_id, 40000, EV_STAGE1_FIRST_BOSS, ev.target_id);
-					add_timer(ev.object_id, 1000, EV_BOSS_EYE, ev.target_id);
+					add_timer(ev.object_id, 40000, EV_STAGE1_FIRST_BOSS, ev.target_id, clients[ev.object_id]._Room_Num);
+					add_timer(ev.object_id, 1000, EV_BOSS_EYE, ev.target_id, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].first_pattern = true;
 					break;
 				}
@@ -425,7 +434,7 @@ void do_timer()
 					}
 
 					send_second_cube(ev.object_id, clients[ev.object_id].x, clients[ev.object_id].y, clients[ev.object_id].z);
-					add_timer(ev.object_id, 10000, EV_STAGE1_SECOND_BOSS, ev.target_id);
+					add_timer(ev.object_id, 10000, EV_STAGE1_SECOND_BOSS, ev.target_id, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].second_pattern = true;
 					break;
 				}
@@ -442,9 +451,9 @@ void do_timer()
 						fields[i].z = clients[ev.object_id].z + dis(rd);
 					}
 
-					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0);
-					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_ON, 1);
-					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 2);
+					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0, clients[ev.object_id]._Room_Num);
+					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_ON, 1, clients[ev.object_id]._Room_Num);
+					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 2, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].first_pattern = true;
 				}
 
@@ -488,28 +497,28 @@ void do_timer()
 						}
 					}
 
-					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0);
-					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 1);
-					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_ON, 2);
+					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0, clients[ev.object_id]._Room_Num);
+					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 1, clients[ev.object_id]._Room_Num);
+					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_ON, 2, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].second_pattern = true;
 				}
 
 				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.75 && clients[ev.object_id].first_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_3) {
-					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 0);
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 0, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].first_pattern = true;
 				}
 
 				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.5 && clients[ev.object_id].second_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_3) {
-					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 1);
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 1, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].second_pattern = true;
 				}
 
 				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.25 && clients[ev.object_id].third_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_3) {
-					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 4);
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 4, clients[ev.object_id]._Room_Num);
 				}
 
 				if (clients[ev.object_id].hp <= BOSS_HP[2] * 0.25 && clients[ev.object_id].fourth_pattern == false && clients[ev.object_id].third_pattern == true && clients[ev.object_id]._object_type == TY_BOSS_3) {
-					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 3);
+					add_timer(ev.object_id, 100, EV_STAGE3_BOSS, 3, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].fourth_pattern = true;
 				}
 
@@ -517,7 +526,7 @@ void do_timer()
 				lua_pushnumber(clients[ev.object_id].L, ev.target_id);
 				lua_pcall(clients[ev.object_id].L, 1, 0, 0);
 
-				add_timer(ev.object_id, 100, EV_BOSS_CON, ev.target_id);
+				add_timer(ev.object_id, 100, EV_BOSS_CON, ev.target_id, clients[ev.object_id]._Room_Num);
 				break;
 			}
 			case EV_BOSS_EYE: {
@@ -564,7 +573,7 @@ void do_timer()
 					break;
 				}
 
-				add_timer(pl, 3000, EV_BOSS_EYE, ev.target_id);
+				add_timer(pl, 3000, EV_BOSS_EYE, ev.target_id, clients[pl]._Room_Num);
 				break;
 			}
 			case EV_BOSS_FIELD_ON: {
@@ -586,7 +595,7 @@ void do_timer()
 
 						float dec = abs(clients[ev.object_id].x - fields[field_num].x) + abs(clients[ev.object_id].z - fields[field_num].z);
 
-						add_timer(ev.object_id, dec * 100, EV_STAGE2_FIRST_BOSS, field_num);
+						add_timer(ev.object_id, dec * 100, EV_STAGE2_FIRST_BOSS, field_num, clients[ev.object_id]._Room_Num);
 					}
 				}
 				break;
@@ -706,5 +715,17 @@ void do_timer()
 				break;
 			}
 		}
+	}
+}
+
+void RESET_ROOM(int room_num)
+{
+	RESET_ROOM_NUM[room_num] = true;
+}
+
+void set_room()
+{
+	for (int i = 0; i < ROOM_NUM; i++) {
+		RESET_ROOM_NUM[i] = false;
 	}
 }

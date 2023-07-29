@@ -58,6 +58,7 @@ constexpr char SC_BOSS_RUSH_TARGET = 21;
 constexpr char SC_BOSS_SKILL_START = 22;
 constexpr char SC_BOSS_SKILL_END = 23;
 constexpr char SC_BOSS_PLAYER_CON = 24;
+constexpr char SC_NPC_TARGET = 25;
 ///////////////////////////////////////////
 
 constexpr char SS_CONNECT_SERVER = 28;
@@ -264,6 +265,12 @@ struct SC_BOSS_PLAYER_CON_PACKET {
 	int		con_num;   // 0 은 슬로우 1은 역조작 2는 마비 3텔포
 	bool	trigger;
 	float	x, y, z;
+};
+
+struct SC_NPC_TARGET_PACKET {
+	unsigned char size;
+	char	type;
+	int		player_id;
 };
 
 struct SS_CONNECT_SERVER_PACKET {

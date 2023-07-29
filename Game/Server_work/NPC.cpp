@@ -18,6 +18,7 @@ extern array<CUBE, CUBE_NUM> cubes;
 extern array<FIELD, FIELD_NUM> fields;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
+extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
 
 void initialize_npc()
 {
@@ -335,7 +336,7 @@ void rush_npc(int c_id, float t_x, float t_z)
 			clients[pl].do_send(&p);
 		}
 
-		add_timer(c_id, 10000, EV_STAGE1_SECOND_BOSS, tar_id);
+		add_timer(c_id, 10000, EV_STAGE1_SECOND_BOSS, tar_id, clients[c_id]._Room_Num);
 		return;
 	}
 
@@ -376,7 +377,7 @@ void rush_npc(int c_id, float t_x, float t_z)
 			break;
 		}
 
-		add_timer(c_id, 10000, EV_BOSS_CON, tar_id);
+		add_timer(c_id, 10000, EV_BOSS_CON, tar_id, clients[c_id]._Room_Num);
 		return;
 	}
 
@@ -418,6 +419,11 @@ void move_npc(int player_id, int c_id)
 			clients[c_id].char_state = AN_ATTACK_1;
 			clients[c_id].degree = nde;
 
+			SC_NPC_TARGET_PACKET tar_pac;
+			tar_pac.player_id = player_id;
+			tar_pac.size = sizeof(SC_NPC_TARGET_PACKET);
+			tar_pac.type = SC_NPC_TARGET;
+
 			for (auto& pl : clients[c_id].room_list) {
 				if (pl >= MAX_USER) continue;
 				clients[pl]._sl.lock();
@@ -428,6 +434,8 @@ void move_npc(int player_id, int c_id)
 				clients[pl]._sl.unlock();
 
 				clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
+
+				clients[pl].do_send(&tar_pac);
 			}
 
 			return;
@@ -439,6 +447,11 @@ void move_npc(int player_id, int c_id)
 			// 공격 처리 관련, 여기서 안 할 수도 있음
 			clients[c_id].char_state = AN_ATTACK_1;
 			clients[c_id].degree = nde;
+
+			SC_NPC_TARGET_PACKET tar_pac;
+			tar_pac.player_id = player_id;
+			tar_pac.size = sizeof(SC_NPC_TARGET_PACKET);
+			tar_pac.type = SC_NPC_TARGET;
 
 			for (auto& pl : clients[c_id].room_list) {
 				if (pl >= MAX_USER) continue;
@@ -452,6 +465,8 @@ void move_npc(int player_id, int c_id)
 				if (clients[c_id].stage == 3) clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
 				else
 					clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+
+				clients[pl].do_send(&tar_pac);
 			}
 
 			return;
