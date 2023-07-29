@@ -649,7 +649,7 @@ void process_packet(int c_id, char* packet)
 					else { // ÀÏ¹Ý
 						clients[p->target_id].hp -= clients[p->attacker_id].skill_atk;
 						if (clients[p->target_id].hp <= 0) {
-							if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
+							if (clients[p->target_id]._object_type == TY_MOVE_NPC && clients[p->target_id].char_state != AN_DEAD) death_counts[clients[p->target_id]._Room_Num].counts++;
 							if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
 								for (auto& pl : clients[p->target_id].room_list) {
 									SC_GAME_END_PACKET packet;
@@ -736,7 +736,6 @@ void process_packet(int c_id, char* packet)
 					clients[c_id].hp = 0;
 					clients[c_id].char_state = AN_DEAD;
 					for (auto& pl : clients[c_id].room_list) {
-						clients[pl].room_list.erase(c_id);
 						if (pl < MAX_USER) dead_cnt++;
 					}
 
