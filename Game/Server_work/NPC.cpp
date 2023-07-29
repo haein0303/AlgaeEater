@@ -449,7 +449,9 @@ void move_npc(int player_id, int c_id)
 				}
 				clients[pl]._sl.unlock();
 
-				clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+				if (clients[c_id].stage == 3) clients[pl].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, 0);
+				else
+					clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
 			}
 
 			return;

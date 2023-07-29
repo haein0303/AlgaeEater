@@ -342,6 +342,7 @@ void process_packet(int c_id, char* packet)
 						break;
 					}
 					case 2: {
+						clients[i].stage = clients[c_id].stage;
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_2;
 							clients[i].hp = BOSS_HP[1];
@@ -415,6 +416,7 @@ void process_packet(int c_id, char* packet)
 						break;
 					}
 					case 3:{
+						clients[i].stage = clients[c_id].stage;
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_3;
 							clients[i].hp = BOSS_HP[2];
