@@ -272,6 +272,7 @@ struct SC_NPC_TARGET_PACKET {
 	unsigned char size;
 	char	type;
 	int		player_id;
+	int		npc_id;
 };
 
 struct SS_CONNECT_SERVER_PACKET {

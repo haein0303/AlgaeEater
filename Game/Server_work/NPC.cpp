@@ -423,6 +423,7 @@ void move_npc(int player_id, int c_id)
 			tar_pac.player_id = player_id;
 			tar_pac.size = sizeof(SC_NPC_TARGET_PACKET);
 			tar_pac.type = SC_NPC_TARGET;
+			tar_pac.npc_id = c_id;
 
 			for (auto& pl : clients[c_id].room_list) {
 				if (pl >= MAX_USER) continue;
@@ -452,6 +453,7 @@ void move_npc(int player_id, int c_id)
 			tar_pac.player_id = player_id;
 			tar_pac.size = sizeof(SC_NPC_TARGET_PACKET);
 			tar_pac.type = SC_NPC_TARGET;
+			tar_pac.npc_id = c_id;
 
 			for (auto& pl : clients[c_id].room_list) {
 				if (pl >= MAX_USER) continue;

@@ -543,7 +543,6 @@ void process_packet(int c_id, char* packet)
 				if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
 					clients[p->target_id]._DE.lock();
 					clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
-					clients[p->target_id]._DE.unlock();
 
 					if (clients[p->target_id].boss_shield <= 0) {
 						clients[p->target_id].crash_sequence[3] = 0;
@@ -569,10 +568,13 @@ void process_packet(int c_id, char* packet)
 							clients[player].do_send(&pac);
 						}
 					}
+					clients[p->target_id]._DE.unlock();
 				}
 
 				else { // 일반
+					clients[p->target_id]._DE.lock();
 					clients[p->target_id].hp -= clients[p->attacker_id].atk;
+
 					if (clients[p->target_id].hp <= 0) {
 						if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
 						if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
@@ -612,16 +614,22 @@ void process_packet(int c_id, char* packet)
 						default:
 							break;
 						}
+
+						clients[p->target_id]._DE.unlock();
+
 						clients[p->target_id].char_state = AN_DEAD;
 						clients[p->target_id]._sl.lock();
 						clients[p->target_id]._s_state = ST_FREE;
 						clients[p->target_id]._sl.unlock();
 					}
+
+					clients[p->target_id]._DE.unlock();
 				}
 			}
 			else { // 스킬 공격
 				if (p->attack_type == 1) { // 스킬 공격
 					if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
+						clients[p->target_id]._DE.lock();
 						clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
 
 						if (clients[p->target_id].boss_shield <= 0) {
@@ -648,9 +656,11 @@ void process_packet(int c_id, char* packet)
 								clients[player].do_send(&pac);
 							}
 						}
+						clients[p->target_id]._DE.unlock();
 					}
 
 					else { // 일반
+						clients[p->target_id]._DE.lock();
 						clients[p->target_id].hp -= clients[p->attacker_id].skill_atk;
 						if (clients[p->target_id].hp <= 0) {
 							if (clients[p->target_id]._object_type == TY_MOVE_NPC && clients[p->target_id].char_state != AN_DEAD) death_counts[clients[p->target_id]._Room_Num].counts++;
@@ -690,11 +700,16 @@ void process_packet(int c_id, char* packet)
 							default:
 								break;
 							}
+
+							clients[p->target_id]._DE.unlock();
+
 							clients[p->target_id].char_state = AN_DEAD;
 							clients[p->target_id]._sl.lock();
 							clients[p->target_id]._s_state = ST_FREE;
 							clients[p->target_id]._sl.unlock();
 						}
+
+						clients[p->target_id]._DE.unlock();
 					}
 				}
 			}
