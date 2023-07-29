@@ -1079,6 +1079,26 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	//Light
 	LightInfo lightInfo;
 	_transform.lnghtInfo = lightInfo;
+
+
+	if (!_boss_icon) {
+		float tmp = 10.f;
+		switch (Scene_num) {
+		case 0:
+			break;
+		case 1:
+			tmp = (playerArr[0]._transform.x - (-335.f)) * (playerArr[0]._transform.x - (-335.f)) + (playerArr[0]._transform.z - (-64.f)) * (playerArr[0]._transform.z - (-64.f));
+
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		}
+		if (tmp < 100.f) {
+			_boss_icon = true;
+		}
+	}
 }
 
 void DxEngine::Update(WindowInfo windowInfo, bool isActive)
@@ -2248,8 +2268,10 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			d11Ptr->draw_player_info(L"MIKA", 100, playerArr[0]._hp, 1);
 		}
 		
+		if (_boss_icon) {
+			d11Ptr->draw_bossUI(boss_obj._hp, Scene_num, boss_obj);
+		}
 		
-		d11Ptr->draw_bossUI(boss_obj._hp, Scene_num,boss_obj);
 
 		if (boss_obj._game_clear) {
 			d11Ptr->draw_game_clear(boss_obj._clear_type);

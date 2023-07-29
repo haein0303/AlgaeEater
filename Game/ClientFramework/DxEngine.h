@@ -239,6 +239,8 @@ public:
 
 	float _scale = 100.f; // 게임 세계 단위
 
+	bool _boss_icon = false;
+
 	vector<MapData> _map_data;
 	vector<MapData> _map_data2;
 	vector<MapData> _map_data3;
