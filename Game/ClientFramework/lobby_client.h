@@ -1,4 +1,13 @@
 #pragma once
+
+enum SCENE_STATE {
+	LOADING,
+	FAIL,
+	LOG_IN,
+	ACOUNT,
+	READY
+};
+
 class LOBBY_CLIENT
 {
 public:

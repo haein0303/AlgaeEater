@@ -10,13 +10,7 @@
 extern LOBBY_CLIENT lobby_client;
 void CALLBACK TimerProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime);
 
-enum SCENE_STATE {
-	LOADING,
-	FAIL,
-	LOG_IN,
-	ACOUNT,
-	READY
-};
+
 
 int g_scene_state = 0;
 
@@ -398,11 +392,11 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 					break;
 				case VK_RETURN:
 					if (login_select == 1 || login_select == 2) {
-						if (0 == strcmp(masterid, c_id.c_str()) && 0 == strcmp(masterpw, c_pw.c_str())) {
+						/*if (0 == strcmp(masterid, c_id.c_str()) && 0 == strcmp(masterpw, c_pw.c_str())) {
 							cout << "MASTER LOGIN" << endl;
 							g_scene_state = SCENE_STATE::READY;
 							break;
-						}
+						}*/
 						if ((c_id.length() > 1) && (c_pw.length() > 1)) {
 							LCS_LOGIN_PACKET p;
 							p.size = sizeof(p);
@@ -618,7 +612,7 @@ void CALLBACK TimerProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 {
 	switch (idEvent) {
 	case 1:
-		lobby_client.Lobby_network->ReceiveServer(lobby_client._ready_state);
+		lobby_client.Lobby_network->ReceiveServer(lobby_client._ready_state, g_scene_state);
 		if (lobby_client._ready_state == -1) {
 			PostQuitMessage(0);
 			DestroyWindow(lobby_client._hwnd);

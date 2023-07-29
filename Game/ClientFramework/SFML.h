@@ -3,6 +3,7 @@
 #include <iostream>
 #include "OBJECT.h"
 #include <unordered_map>
+#include "lobby_client.h"
 
 class SFML
 {
@@ -22,7 +23,7 @@ public:
 	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
 		wcout.imbue(locale("korean"));
-		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum);
+		sf::Socket::Status status = socket.connect("59.14.135.128", PortNum);
 		socket.setBlocking(false);
 
 		if (status != sf::Socket::Done) {
@@ -47,7 +48,7 @@ public:
 	int ConnectServer(int PortNum) 
 	{
 		wcout.imbue(locale("korean"));
-		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum);
+		sf::Socket::Status status = socket.connect("59.14.135.128", PortNum);
 		socket.setBlocking(false);
 
 		if (status != sf::Socket::Done) {
@@ -465,7 +466,7 @@ public:
 
 
 
-	void process_data(char* net_buf, size_t io_byte, int& data)
+	void process_data(char* net_buf, size_t io_byte, int& data,int &scene_num)
 	{
 		char* ptr = net_buf;
 		static size_t in_packet_size = 0;
@@ -476,7 +477,7 @@ public:
 			if (0 == in_packet_size) in_packet_size = ptr[0];
 			if (io_byte + saved_packet_size >= in_packet_size) {
 				memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
-				ProcessPacket(packet_buffer, data);
+				ProcessPacket(packet_buffer, data, scene_num);
 				ptr += in_packet_size - saved_packet_size;
 				io_byte -= in_packet_size - saved_packet_size;
 				in_packet_size = 0;
@@ -490,7 +491,7 @@ public:
 		}
 	}
 
-	void ReceiveServer(int &data) //서버에서 받는거, clientMain
+	void ReceiveServer(int &data,int &scene_num) //서버에서 받는거, clientMain
 	{
 		char net_buf[BUF_SIZE];
 		size_t	received;
@@ -502,17 +503,20 @@ public:
 			while (true);
 		}
 		if (recv_result != sf::Socket::NotReady)
-			if (received > 0) process_data(net_buf, received, data);
+			if (received > 0) process_data(net_buf, received, data, scene_num);
 	}
 
 
 
-	void ProcessPacket(char* ptr, int& data) {
+	void ProcessPacket(char* ptr, int& data,int&scene_num) {
 		switch (ptr[1])
 		{
 			case LSC_LOGIN_OK: 
 			{
 				LSC_LOGIN_OK_PACKET* packet = reinterpret_cast<LSC_LOGIN_OK_PACKET*>(ptr);
+				scene_num = SCENE_STATE::READY;
+
+
 				cout << "로그인 OK" << endl;
 			}
 			break;
