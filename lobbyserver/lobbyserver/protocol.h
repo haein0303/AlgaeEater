@@ -12,8 +12,9 @@ enum BOSS_NUM {
 	STAGE3,
 	COUNT
 };
-constexpr int BOSS_HP[4] = { 200000,200000,200000,200000 };
+constexpr int BOSS_HP[4] = { 5000,5000,5000,5000 };
 
+enum SESSION_TYPE { TY_PLAYER_AKI, TY_PLAYER_MIKA, TY_MOVE_NPC, TY_BOSS_1, TY_BOSS_2, TY_BOSS_3, TY_BOSS_SKILL, TY_NPC_OTHER };
 
 #define LOBBY_SERVER_IP "127.0.0.1"
 #define GAME_SERVER_IP "127.0.0.1"
@@ -22,10 +23,10 @@ constexpr int LOBBY_SERVER_PORT_NUM = 4001;
 
 constexpr int ROOM_NUM = 100;
 constexpr int ROOM_USER = 4;
-constexpr int ROOM_NPC = 20;
+constexpr int ROOM_NPC = 50;
 constexpr int ROOM_CUBE = 4;
 constexpr int ROOM_KEY = 4;
-constexpr int ROOM_FIELD = 10;
+constexpr int ROOM_FIELD = 60;
 
 constexpr int MAX_USER = ROOM_NUM * ROOM_USER;
 constexpr int NPC_NUM = ROOM_NUM * ROOM_NPC;
@@ -52,9 +53,12 @@ constexpr char SC_MOVE_BOSS = 16;
 constexpr char SC_MSG = 17;
 constexpr char SC_KEY = 18;
 constexpr char SC_DOOR = 19;
-///////////////////////////////
-constexpr char SC_BOSS_SKILL_START = 20;
-constexpr char SC_BOSS_SKILL_END = 21;
+constexpr char SC_BOSS_SHIELD = 20;
+constexpr char SC_BOSS_RUSH_TARGET = 21;
+constexpr char SC_BOSS_SKILL_START = 22;
+constexpr char SC_BOSS_SKILL_END = 23;
+constexpr char SC_BOSS_PLAYER_CON = 24;
+///////////////////////////////////////////
 
 constexpr char SS_CONNECT_SERVER = 28;
 constexpr char SS_DATA_PASS = 29;
@@ -70,6 +74,8 @@ constexpr char LSC_CONGAME = 42;
 constexpr char LSC_JOIN_OK = 43;
 constexpr char LSC_JOIN_FAIL = 44;
 
+constexpr char SC_GAME_END = 50;
+
 constexpr float PI = 3.1415926535;
 
 #pragma pack (push, 1)
@@ -78,6 +84,7 @@ struct CS_LOGIN_PACKET {
 	char	type;
 	char	name[NAME_SIZE];
 	int		stage;
+	int		character_type;
 };
 
 struct CS_MOVE_PACKET {
@@ -149,6 +156,7 @@ struct SC_ADD_OBJECT_PACKET {
 struct SC_REMOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;
+	int		ob_type;
 	int		id;
 };
 
@@ -218,20 +226,44 @@ struct SC_DOOR_PACKET {
 	char	type;
 };
 
+struct SC_BOSS_SHIELD_PACKET {
+	unsigned char size;
+	char	type;
+	int		shield_hp;
+	bool	trigger;
+};
+
+struct SC_BOSS_RUSH_TARGET_PACKET {
+	unsigned char size;
+	char	type;
+	int		target_id;
+	bool	trigger;
+};
+
 struct SC_BOSS_SKILL_START_PACKET {
 	unsigned char size;
 	char	type;
-	int		id;
+	int		fd_id;
 	float	x;
 	float	z;
 	float	r;
 	int		fd_type;
+	//0 : 원형 회복 / 1 : 사각 기본 공격 / 2 : 사각 아픈 공격
 	int		char_state;
 };
 
 struct SC_BOSS_SKILL_END_PACKET {
 	unsigned char size;
 	char	type;
+	int		fd_id;
+};
+
+struct SC_BOSS_PLAYER_CON_PACKET {
+	unsigned char size;
+	char	type;
+	int		con_num;   // 0 은 슬로우 1은 역조작 2는 마비 3텔포
+	bool	trigger;
+	float	x, y, z;
 };
 
 struct SS_CONNECT_SERVER_PACKET {
@@ -297,5 +329,11 @@ struct LSC_JOIN_OK_PACKET {
 struct LSC_JOIN_FAIL_PACKET {
 	unsigned char size;
 	char	type;
+};
+
+struct SC_GAME_END_PACKET {
+	unsigned char size;
+	char	type;
+	bool	e_type;	// true : clear     false : all player dead
 };
 #pragma pack (pop)

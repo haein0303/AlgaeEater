@@ -125,6 +125,8 @@ SOCKET g_s_socket;
 SOCKET ss_socket;
 list<int> test_match_list;
 list<int> stage1_match_list;
+list<int> stage2_match_list;
+list<int> stage3_match_list;
 
 int get_new_client_id()
 {
@@ -232,6 +234,12 @@ void process_packet(int c_id, char* packet)
 			case 1:
 				stage1_match_list.push_back(c_id);
 				break;
+			case 2:
+				stage2_match_list.push_back(c_id);
+				break;
+			case 3:
+				stage3_match_list.push_back(c_id);
+				break;
 			default:
 				break;
 		}
@@ -246,6 +254,12 @@ void process_packet(int c_id, char* packet)
 			break;
 		case 1:
 			stage1_match_list.remove(c_id);
+			break;
+		case 2:
+			stage2_match_list.remove(c_id);
+			break;
+		case 3:
+			stage3_match_list.remove(c_id);
 			break;
 		default:
 			break;
@@ -430,8 +444,8 @@ void do_worker()
 			delete ex_over;
 			break;
 		case OP_UPDATE:
-			if (test_match_list.size() >= 3) {
-				for (int i = 0; i < 3; ++i) {
+			if (test_match_list.size() >= 4) {
+				for (int i = 0; i < 4; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;
 					p.size = sizeof(LSC_CONGAME_PACKET);
@@ -440,14 +454,34 @@ void do_worker()
 					test_match_list.pop_front();
 				}
 			}
-			if (stage1_match_list.size() >= 3) {
-				for (int i = 0; i < 3; ++i) {
+			if (stage1_match_list.size() >= 4) {
+				for (int i = 0; i < 4; ++i) {
 					LSC_CONGAME_PACKET p;
 					p.connect = true;
 					p.size = sizeof(LSC_CONGAME_PACKET);
 					p.type = LSC_CONGAME;
 					clients[stage1_match_list.front()].do_send(&p);
 					stage1_match_list.pop_front();
+				}
+			}
+			if (stage2_match_list.size() >= 4) {
+				for (int i = 0; i < 4; ++i) {
+					LSC_CONGAME_PACKET p;
+					p.connect = true;
+					p.size = sizeof(LSC_CONGAME_PACKET);
+					p.type = LSC_CONGAME;
+					clients[stage2_match_list.front()].do_send(&p);
+					stage2_match_list.pop_front();
+				}
+			}
+			if (stage3_match_list.size() >= 4) {
+				for (int i = 0; i < 4; ++i) {
+					LSC_CONGAME_PACKET p;
+					p.connect = true;
+					p.size = sizeof(LSC_CONGAME_PACKET);
+					p.type = LSC_CONGAME;
+					clients[stage3_match_list.front()].do_send(&p);
+					stage3_match_list.pop_front();
 				}
 			}
 			break;
@@ -573,6 +607,10 @@ void Data_read() {
 int main()
 {
 	Data_read();
+	char cmp[20] = "admin";
+	strcpy(user_datas[MAX_USER - 1].user_id, cmp);
+	strcpy(user_datas[MAX_USER - 1].user_passward, cmp);
+	user_datas[MAX_USER - 1].user_level = 88;
 
 	cout << "데이터 로딩 완료" << endl;
 	WSADATA WSAData;

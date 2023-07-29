@@ -232,7 +232,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].skill_atk = 50;
 		clients[c_id].send_login_ok_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp);
 		clients[c_id]._s_state = ST_INGAME;
-		if (clients[0]._Room_Num != 999) clients[c_id]._Room_Num = c_id / ROOM_USER;
+		if (clients[0]._Room_Num != 9999) clients[c_id]._Room_Num = c_id / ROOM_USER;
 		else clients[c_id]._Room_Num = (c_id - 1) / ROOM_USER;
 		clients[c_id].room_list.clear();
 		clients[c_id]._sl.unlock();
@@ -260,7 +260,7 @@ void process_packet(int c_id, char* packet)
 		std::uniform_int_distribution<int> dis(-10, 10);
 
 		// npc 세팅 부분
-		if (clients[c_id]._Room_Num != 999) {
+		if (clients[c_id]._Room_Num != 9999) {
 			if (clients[c_id].room_list.size() == 0 && clients[clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1].Lua_on == false) {
 				for (int i = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER; i < clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC; i++) {
 					switch (clients[c_id].stage)
@@ -853,7 +853,7 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].z = 0;
 		clients[c_id].degree = 0;
 		clients[c_id]._s_state = ST_INGAME;
-		clients[c_id]._Room_Num = 999;
+		clients[c_id]._Room_Num = 9999;
 		clients[c_id].room_list.clear();
 		clients[c_id].char_state = AN_DEAD;
 		clients[c_id]._sl.unlock();
@@ -880,6 +880,7 @@ void process_packet(int c_id, char* packet)
 void disconnect(int c_id)
 {
 	int room_clean = 0;
+	if (clients[c_id]._Room_Num == 9999) return;
 	cout << "disconnect" << endl;
 	clients[c_id]._sl.lock();
 	if (clients[c_id]._s_state == ST_FREE) {

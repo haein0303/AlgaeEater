@@ -79,7 +79,7 @@ void do_timer()
 
 				if (cnt_ck == 4) { // 보스 기믹 성공
 					int pl_num = 0;
-					if (clients[0]._Room_Num != 999)
+					if (clients[0]._Room_Num != 9999)
 						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER;
 					else
 						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER + 1;
@@ -108,7 +108,7 @@ void do_timer()
 				}
 				else { // 보스 기믹 실패
 					int pl_num = 0;
-					if (clients[0]._Room_Num != 999)
+					if (clients[0]._Room_Num != 9999)
 						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER;
 					else
 						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER + 1;
