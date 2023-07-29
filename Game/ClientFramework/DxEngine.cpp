@@ -1040,12 +1040,17 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		cout << "f7" << endl;
 		if (playerArr[0]._hp == 0) {
 			
+			if (_others_boss_icon) {
+				_boss_icon = true;
+			}
+
 			watching_user++;
+			if (watching_user >= PLAYERMAX)	watching_user = 0;
 			while (playerArr[watching_user]._on != true) {
 				watching_user++;
 				if (watching_user >= PLAYERMAX)	watching_user = 0;
 			}
-			if (watching_user >= PLAYERMAX)	watching_user = 0;
+			
 		}
 		
 	}
@@ -1082,7 +1087,11 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			break;
 		case 1:
 			tmp = (playerArr[0]._transform.x - (-335.f)) * (playerArr[0]._transform.x - (-335.f)) + (playerArr[0]._transform.z - (-64.f)) * (playerArr[0]._transform.z - (-64.f));
-
+			for (int i = 1; i < MAX_USER; ++i) {
+				if (100.f > (playerArr[i]._transform.x - (-335.f)) * (playerArr[i]._transform.x - (-335.f)) + (playerArr[i]._transform.z - (-64.f)) * (playerArr[i]._transform.z - (-64.f))) {
+					_others_boss_icon = true;
+				}				
+			}
 			break;
 		case 2:
 			break;
