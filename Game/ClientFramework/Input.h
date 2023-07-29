@@ -10,6 +10,7 @@ public:
 	vector<int> _states;
 	//화면회전(이후에 캐릭터 요소로 옮길 예정)
 	POINT angle = { 0,0 };
+	WindowInfo _winInfo;
 
 	bool w = false;
 	bool a = false;

@@ -9,6 +9,8 @@ void Input::Init(WindowInfo windowInfo)
 	m_ptOldCursorPos.x = windowInfo.ClientWidth / 2 + 100;
 	m_ptOldCursorPos.y = windowInfo.ClientHeight / 2 + 100;
 
+	_winInfo = windowInfo;
+
 	//::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
 	//ShowCursor(false);
 }
@@ -377,7 +379,15 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 
 void Input::inputMouse(array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr)
 {
-	HWND hwnd = GetActiveWindow();	
+	HWND hwnd = GetActiveWindow();
+	
+	// 윈도우 크기와 위치 정보를 얻어옵니다.
+	RECT windowRect;
+	GetWindowRect(_winInfo.hwnd, &windowRect);
+
+	// 윈도우의 가운데 좌표를 계산합니다.
+	m_ptOldCursorPos.x = (windowRect.left + windowRect.right) / 2;
+	m_ptOldCursorPos.y = (windowRect.top + windowRect.bottom) / 2;
 
 	bool key_toggle = false;
 
@@ -394,6 +404,7 @@ void Input::inputMouse(array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> net
 
 
 	if (GetCapture() == hwnd) {
+		
 		::SetCursor(NULL);
 		POINT ptCursorPos;
 		::GetCursorPos(&ptCursorPos);
