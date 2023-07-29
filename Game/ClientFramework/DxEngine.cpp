@@ -558,6 +558,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	boss_obj.boss2_skill_vec.resize(100);
 
+	for (OBJECT& obj : npcArr)
+		obj._bounding_box.Extents = XMFLOAT3(0.5f, 1.f, 1.f);
+
 	//d11Ptr->addResource(L"..\\Resources\\UserInterface\\test.png");
 
 	ID2D1Bitmap* _i_tmp;
