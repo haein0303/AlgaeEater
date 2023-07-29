@@ -497,14 +497,14 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 		{
 
 			if (onClicK_check(login_button_rc, x, y)) {
-				cout << "strcmp(masterid, c_id.c_str()) : " << strcmp(masterid, c_id.c_str()) << endl;
-				cout << "strcmp(masterpw, c_pw.c_str()) : " << strcmp(masterpw, c_pw.c_str()) << endl;
+				/*cout << "strcmp(masterid, c_id.c_str()) : " << strcmp(masterid, c_id.c_str()) << endl;
+				cout << "strcmp(masterpw, c_pw.c_str()) : " << strcmp(masterpw, c_pw.c_str()) << endl;*/
 
-				if (0 == strcmp(masterid, c_id.c_str()) && 0 == strcmp(masterpw, c_pw.c_str())) {
+				/*if (0 == strcmp(masterid, c_id.c_str()) && 0 == strcmp(masterpw, c_pw.c_str())) {
 					cout << "MASTER LOGIN" << endl;
 					g_scene_state = SCENE_STATE::READY;
 					break;
-				}
+				}*/
 				LCS_LOGIN_PACKET p;
 				p.size = sizeof(p);
 				p.type = LCS_LOGIN;
