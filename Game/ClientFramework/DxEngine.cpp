@@ -1030,18 +1030,24 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		networkPtr->send_packet(&p);
 	}
 
-	//VP ï¿½ï¿½È¯
-	
+	//VP º¯È¯Çà·Ä
 
 	if (inputPtr->_states[VK_F7] == 2)
 	{
 		cout << "f7" << endl;
-		watching_user++;
-		if (watching_user >= PLAYERMAX)
-			watching_user = 0;
+		if (playerArr[0]._hp == 0) {
+			
+			watching_user++;
+			while (playerArr[watching_user]._on != true) {
+				watching_user++;
+				if (watching_user >= PLAYERMAX)	watching_user = 0;
+			}
+			if (watching_user >= PLAYERMAX)	watching_user = 0;
+		}
+		
 	}
 
-	if (playerArr[0]._hp > 0)
+	if (watching_user == 0)
 	{
 		float zoom = 3.f * _scale / 100.f;
 		cameraPtr->pos = XMVectorSet(playerArr[networkPtr->myClientId]._transform.x - zoom * cosf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
@@ -1059,22 +1065,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 		
 	}
-	else
-	{
-		float zoom = 3.f * _scale / 100.f;
-		cameraPtr->pos = XMVectorSet(playerArr[watching_user]._transform.x - zoom * cosf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
-			playerArr[watching_user]._transform.y + 1.35f * _scale / 100.f + zoom * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
-			playerArr[watching_user]._transform.z - zoom * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
-		XMVECTOR target = XMVectorSet(playerArr[watching_user]._transform.x, playerArr[watching_user]._transform.y + 1.35f * _scale / 100.f,
-			playerArr[watching_user]._transform.z,
-			playerArr[watching_user]._transform.w);
-		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
-		XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
-
-		XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
-		XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
-	}
+	
 
 	//Light
 	LightInfo lightInfo;
@@ -1105,81 +1096,100 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 {
 	if (_is_loading) {
 
-	
-	//º¸°£À» À§ÇØ¼­ Å¸ÀÌ¸Ó¶û °¢Á¾ °ªµé ¼¼ÆÃÇÏ´Â ¿µ¿ª
-	//¿©±â¼­ À§ÇØ¼­ º°µµ·Î ¿ÀÆÛ·¹ÀÌÅÍ ¿À¹ö·Îµù ÁßÀÌ´Ï Âü°íÇÏ¼Í
-	for (int i = 1; i < PLAYERMAX; ++i) {
-		if (playerArr[i]._on) {
+
+		//º¸°£À» À§ÇØ¼­ Å¸ÀÌ¸Ó¶û °¢Á¾ °ªµé ¼¼ÆÃÇÏ´Â ¿µ¿ª
+		//¿©±â¼­ À§ÇØ¼­ º°µµ·Î ¿ÀÆÛ·¹ÀÌÅÍ ¿À¹ö·Îµù ÁßÀÌ´Ï Âü°íÇÏ¼Í
+		for (int i = 1; i < PLAYERMAX; ++i) {
+			if (playerArr[i]._on) {
+				float dt = timerPtr->_deltaTime;
+				playerArr[i]._delta_percent = dt / playerArr[i]._prev_delta_time;
+
+				if (playerArr[i]._prev_delta_time > 0) {
+					playerArr[i]._prev_delta_time -= dt;
+				}
+				else {
+					playerArr[i]._prev_delta_time = 0;
+					playerArr[i]._delta_percent = 0;
+				}
+
+
+				playerArr[i]._delta_transform = playerArr[i]._transform - playerArr[i]._prev_transform;
+
+				playerArr[i]._delta_transform = playerArr[i]._delta_transform * playerArr[i]._delta_percent;
+
+				playerArr[i]._prev_transform = playerArr[i]._prev_transform + playerArr[i]._delta_transform;
+				//ÃßÈÄ Àû¿ë ÇÊ¿ä
+				//playerArr[i]._prev_degree = playerArr[i]._prev_degree + (playerArr[i]._prev_degree - playerArr[i]._degree) * playerArr[i]._delta_percent;
+				playerArr[i]._prev_degree = playerArr[i]._degree;
+			}
+
+		}
+		for (OBJECT& p : npcArr) {
+			if (p._on) {
+				float dt = timerPtr->_deltaTime;
+				p._delta_percent = dt / p._prev_delta_time;
+
+				if (p._prev_delta_time > 0) {
+					p._prev_delta_time -= dt;
+				}
+				else {
+					p._prev_delta_time = 0;
+					p._delta_percent = 0;
+				}
+
+
+				p._delta_transform = p._transform - p._prev_transform;
+
+				p._delta_transform = p._delta_transform * p._delta_percent;
+
+				p._prev_transform = p._prev_transform + p._delta_transform;
+				//ÃßÈÄ Àû¿ë ÇÊ¿ä
+				//p._prev_degree = p._prev_degree + (p._prev_degree - p._degree) * p._delta_percent;
+				p._prev_degree = p._degree;
+			}
+		}
+		{
 			float dt = timerPtr->_deltaTime;
-			playerArr[i]._delta_percent = dt / playerArr[i]._prev_delta_time;
-			
-			if (playerArr[i]._prev_delta_time > 0) {
-				playerArr[i]._prev_delta_time -= dt;
+			boss_obj._delta_percent = dt / boss_obj._prev_delta_time;
+
+			if (boss_obj._prev_delta_time > 0) {
+				boss_obj._prev_delta_time -= dt;
 			}
 			else {
-				playerArr[i]._prev_delta_time = 0;
-				playerArr[i]._delta_percent = 0;
+				boss_obj._prev_delta_time = 0;
+				boss_obj._delta_percent = 0;
 			}
-			
-			
-			playerArr[i]._delta_transform = playerArr[i]._transform - playerArr[i]._prev_transform;
-			
-			playerArr[i]._delta_transform = playerArr[i]._delta_transform * playerArr[i]._delta_percent;
-			
-			playerArr[i]._prev_transform = playerArr[i]._prev_transform + playerArr[i]._delta_transform;
+
+
+			boss_obj._delta_transform = boss_obj._transform - boss_obj._prev_transform;
+
+			boss_obj._delta_transform = boss_obj._delta_transform * boss_obj._delta_percent;
+
+			boss_obj._prev_transform = boss_obj._prev_transform + boss_obj._delta_transform;
 			//ÃßÈÄ Àû¿ë ÇÊ¿ä
-			//playerArr[i]._prev_degree = playerArr[i]._prev_degree + (playerArr[i]._prev_degree - playerArr[i]._degree) * playerArr[i]._delta_percent;
-			playerArr[i]._prev_degree = playerArr[i]._degree;
+			//boss_obj._prev_degree = boss_obj._prev_degree + (boss_obj._prev_degree - boss_obj._degree) * boss_obj._delta_percent;
+			boss_obj._prev_degree = boss_obj._degree;
 		}
 
-	}
-	for (OBJECT& p : npcArr) {
-		if (p._on) {
-			float dt = timerPtr->_deltaTime;
-			p._delta_percent = dt / p._prev_delta_time;
+		if (watching_user != 0)
+		{
+			float zoom = 3.f * _scale / 100.f;
+			cameraPtr->pos = XMVectorSet(playerArr[watching_user]._prev_transform.x - zoom * cosf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+				playerArr[watching_user]._prev_transform.y + 1.35f * _scale / 100.f + zoom * cosf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f),
+				playerArr[watching_user]._prev_transform.z - zoom * sinf(inputPtr->angle.x * XM_PI / 180.f) * sinf(XM_PI / 2.0f - inputPtr->angle.y * XM_PI / 180.f), 0.0f);
+			XMVECTOR target = XMVectorSet(playerArr[watching_user]._prev_transform.x, playerArr[watching_user]._prev_transform.y + 1.35f * _scale / 100.f,
+				playerArr[watching_user]._prev_transform.z,
+				playerArr[watching_user]._prev_transform.w);
+			XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+			XMMATRIX view = XMMatrixLookAtLH(cameraPtr->pos, target, up); //ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
+			XMStoreFloat4x4(&_transform.view, XMMatrixTranspose(view));
 
-			if (p._prev_delta_time > 0) {
-				p._prev_delta_time -= dt;
-			}
-			else {
-				p._prev_delta_time = 0;
-				p._delta_percent = 0;
-			}
-
-
-			p._delta_transform = p._transform - p._prev_transform;
-
-			p._delta_transform = p._delta_transform * p._delta_percent;
-
-			p._prev_transform = p._prev_transform + p._delta_transform;
-			//ÃßÈÄ Àû¿ë ÇÊ¿ä
-			//p._prev_degree = p._prev_degree + (p._prev_degree - p._degree) * p._delta_percent;
-			p._prev_degree = p._degree;
+			XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
+			XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
 		}
 	}
-	{
-		float dt = timerPtr->_deltaTime;
-		boss_obj._delta_percent = dt / boss_obj._prev_delta_time;
-
-		if (boss_obj._prev_delta_time > 0) {
-			boss_obj._prev_delta_time -= dt;
-		}
-		else {
-			boss_obj._prev_delta_time = 0;
-			boss_obj._delta_percent = 0;
-		}
 
 
-		boss_obj._delta_transform = boss_obj._transform - boss_obj._prev_transform;
-
-		boss_obj._delta_transform = boss_obj._delta_transform * boss_obj._delta_percent;
-
-		boss_obj._prev_transform = boss_obj._prev_transform + boss_obj._delta_transform;
-		//ÃßÈÄ Àû¿ë ÇÊ¿ä
-		//boss_obj._prev_degree = boss_obj._prev_degree + (boss_obj._prev_degree - boss_obj._degree) * boss_obj._delta_percent;
-		boss_obj._prev_degree = boss_obj._degree;
-	}
-	}
 }
 
 
