@@ -419,6 +419,10 @@ void process_packet(int c_id, char* packet)
 						break;
 					}
 					case 3:{
+						for (int j = 40; j < 48; j++) {
+							clients[i].room_list.erase(j);
+						}
+
 						clients[i].stage = clients[c_id].stage;
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_3;
