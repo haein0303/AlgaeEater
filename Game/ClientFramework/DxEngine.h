@@ -744,18 +744,27 @@ public:
 
 					if (inputPtr->_open_door[2] == true)
 					{
-						inputPtr->_open_door[2] = OpenDoor(data.pos, doorPos0[2], data.rotation.x);
-						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						if (pow((data.pos.x - doorPos0[2].x), 2.f) + pow((data.pos.z - doorPos0[2].z), 2.f) < 25.f)
+						{
+							data.pos.x -= sinf(0) * timerPtr->_deltaTime;
+							data.pos.z -= cosf(0) * timerPtr->_deltaTime;
+						}
 					}
 					if (inputPtr->_open_door[3] == true)
 					{
-						inputPtr->_open_door[3] = OpenDoor(data.pos, doorPos0[3], data.rotation.x);
-						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						if (pow((data.pos.x - doorPos0[3].x), 2.f) + pow((data.pos.z - doorPos0[3].z), 2.f) < 25.f)
+						{
+							data.pos.x -= sinf(XM_PI * 0.5f) * timerPtr->_deltaTime;
+							data.pos.z -= cosf(XM_PI * 0.5f) * timerPtr->_deltaTime;
+						}
 					}
 					if (inputPtr->_open_door[4] == true)
 					{
-						inputPtr->_open_door[4] = OpenDoor(data.pos, doorPos0[4], data.rotation.x);
-						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						if (pow((data.pos.x - doorPos0[4].x), 2.f) + pow((data.pos.z - doorPos0[4].z), 2.f) < 25.f)
+						{
+							data.pos.x += sinf(0) * timerPtr->_deltaTime;
+							data.pos.z += cosf(0) * timerPtr->_deltaTime;
+						}
 					}
 					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
 				}
