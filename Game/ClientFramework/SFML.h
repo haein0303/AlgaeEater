@@ -19,6 +19,8 @@ public:
 
 	int skill_accept_counter = 0;
 	unordered_map<int, int> skill_map;
+	
+	int stage3_mini_boss_num = 0;
 
 	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
@@ -204,6 +206,9 @@ public:
 				npcArr[npc_accept_counter]._hp = my_packet->hp;
 				npcArr[npc_accept_counter]._max_hp = my_packet->hp;
 				npcArr[npc_accept_counter]._object_type = my_packet->object_type;
+				if (my_packet->object_type == TY_NPC_OTHER) {
+					stage3_mini_boss_num = npc_accept_counter;
+				}
 
 				npcArr[npc_accept_counter]._prev_degree = npcArr[npc_accept_counter]._degree;
 				npcArr[npc_accept_counter]._prev_transform = npcArr[npc_accept_counter]._transform;

@@ -1134,8 +1134,38 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			}
 			break;
 		case 2:
+			tmp = (playerArr[0]._transform.x - (-110.f)) * (playerArr[0]._transform.x - (-110.f)) + (playerArr[0]._transform.z - (-110.f)) * (playerArr[0]._transform.z - (-110.f));
+			for (int i = 1; i < PLAYERMAX; ++i) {
+				if (playerArr[i]._on == false) continue;
+				if (100.f > (playerArr[i]._transform.x - (-110.f)) * (playerArr[i]._transform.x - (-110.f)) + (playerArr[i]._transform.z - (-110.f)) * (playerArr[i]._transform.z - (-110.f))) {
+					_others_boss_icon = true;
+				}
+			}
 			break;
 		case 3:
+
+			tmp = (playerArr[0]._transform.x - (11.f)) * (playerArr[0]._transform.x - (11.f)) + (playerArr[0]._transform.z - (-198.f)) * (playerArr[0]._transform.z - (-198.f));
+			for (int i = 1; i < PLAYERMAX; ++i) {
+				if (playerArr[i]._on == false) continue;
+				if (100.f > (playerArr[i]._transform.x - (11.f)) * (playerArr[i]._transform.x - (11.f)) + (playerArr[i]._transform.z - (-198.f)) * (playerArr[i]._transform.z - (-198.f))) {
+					_others_boss_icon = true;
+				}
+			}
+
+			
+			for (int i = 0; i < PLAYERMAX; ++i) {
+				if (playerArr[i]._on == false) continue;
+				if (100.f > (playerArr[i]._transform.x - (119.f)) * (playerArr[i]._transform.x - (119.f)) + (playerArr[i]._transform.z - (-92.f)) * (playerArr[i]._transform.z - (-92.f))) {
+					_mini_boss_icon = true;
+				}
+			}
+			if (_mini_boss_icon) {
+				if (npcArr[networkPtr->stage3_mini_boss_num]._hp == 0) {
+					_mini_boss_icon = 0;
+				}
+			}
+
+
 			break;
 		}
 		if (tmp < 100.f) {
@@ -2368,9 +2398,21 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		}
 		
 		if (_boss_icon) {
-			d11Ptr->draw_bossUI(boss_obj._hp, Scene_num, boss_obj);
+			if (Scene_num != 3) {
+				d11Ptr->draw_bossUI(boss_obj._hp, Scene_num, boss_obj);
+			}			
 		}
 		
+		if (Scene_num == 3) {
+			if (_boss_icon) {
+				d11Ptr->draw_bossUI(boss_obj._hp, Scene_num, boss_obj);
+			}
+
+			if (!_boss_icon && _mini_boss_icon) {
+				d11Ptr->draw_bossUI(npcArr[networkPtr->stage3_mini_boss_num]._hp, 4, npcArr[networkPtr->stage3_mini_boss_num]);
+			}
+			
+		}
 
 		if (boss_obj._game_clear) {
 			d11Ptr->draw_game_clear(boss_obj._clear_type);
