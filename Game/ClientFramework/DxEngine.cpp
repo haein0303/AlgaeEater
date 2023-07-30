@@ -486,12 +486,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_I_4m_TurnIn, ObjectType::GeneralObjects, "../Resources/Wall_I_4m_TurnIn.txt", L"..\\Resources\\Texture\\Stage3\\Wall_I_4m_TurnIn.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_O_4m, ObjectType::GeneralObjects, "../Resources/Wall_O_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_O_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
-		InitMeshAsset(Plane, ObjectType::Stage3Room, "../Resources/Wall.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
-		InitMeshAsset(stage3_npc_asset, ObjectType::VertexAnimationObjects, "../Resources/stage3npc_idle.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
-		InitMeshAsset(stage3_npc_dead[0], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead.txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
-		InitMeshAsset(stage3_npc_dead[1], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(1).txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
-		InitMeshAsset(stage3_npc_dead[2], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(2).txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
-		InitMeshAsset(stage3_npc_dead[3], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(3).txt", L"..\\Resources\\Texture\\bricks.dds", L"..\\Bricks.hlsl");
+		InitMeshAsset(Plane, ObjectType::Stage3Room, "../Resources/Wall.txt", L"..\\Resources\\Texture\\Stage3\\Stage3RoomTexture.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_asset, ObjectType::VertexAnimationObjects, "../Resources/stage3npc_idle.txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[0], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead.txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[1], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(1).txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[2], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(2).txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
+		InitMeshAsset(stage3_npc_dead[3], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(3).txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
 
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
 		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
