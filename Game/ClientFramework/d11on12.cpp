@@ -429,6 +429,13 @@ void d11on12::draw_bossUI(int hp,int stage, const OBJECT& boss_obj)
 		m_d2dDeviceContext->DrawTextW(L"TENEBRO", wcslen(L"TENEBRO"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
 
 		break;
+
+	case 4:
+		m_d2dDeviceContext->DrawBitmap(_boss_bg, { 640.f - xs, 30.f, 640.f + xs, 30.f + ys });
+		m_d2dDeviceContext->DrawTextW(L"중간 보스", wcslen(L"중간 보스"), m_mini_boss_font.Get(), &minititle_rect, mSolidColorBrush.Get());
+		m_d2dDeviceContext->DrawTextW(L"타란튤라02", wcslen(L"타란튤라02"), m_boss_font.Get(), &title_rect, mSolidColorBrush.Get());
+
+		break;
 	}
 	
 
