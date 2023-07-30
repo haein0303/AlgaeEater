@@ -27,7 +27,7 @@ public:
 	bool _show_info = false;
 	bool _god_mod_on = false;
 
-	array<bool, 5> _open_door{false};
+	array<bool, 6> _open_door{false};
 
 	//벡터 사이즈 초기화
 	void Init(WindowInfo windowInfo);

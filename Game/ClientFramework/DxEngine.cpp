@@ -1107,15 +1107,15 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 				open_door_count = 3;
 				break;
 			case 3:
-				inputPtr->_open_door[4] = false;
+				inputPtr->_open_door[5] = true;
 				open_door_count = 4;
 				break;
 			}
 		}
 		
-		if (open_door_count == 4) {
-			inputPtr->_open_door[4] = false;
-		}
+		//if (open_door_count == 4) {
+		//	inputPtr->_open_door[4] = false;
+		//}
 	}
 
 		break;
