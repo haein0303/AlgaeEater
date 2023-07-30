@@ -244,7 +244,7 @@ void send_cube(int c_id, float x, float y, float z)
 	int cnt = 0;
 
 	std::random_device rd;
-	std::uniform_int_distribution<int> dis(20, 50);
+	std::uniform_int_distribution<int> dis(20, 30);
 
 	for (int i = s_num; i < s_num + ROOM_CUBE - 1; i++) {
 		switch (cnt)
@@ -821,7 +821,7 @@ void send_second_cube(int c_id, float x, float y, float z)
 	int s_num = clients[c_id]._Room_Num * ROOM_CUBE + ROOM_CUBE - 1;
 
 	std::random_device rd;
-	std::uniform_int_distribution<int> dis(30, 80);
+	std::uniform_int_distribution<int> dis(10, 30);
 
 	cubes[s_num].x = x + dis(rd);
 	cubes[s_num].y = y;
