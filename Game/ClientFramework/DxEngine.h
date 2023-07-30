@@ -278,9 +278,10 @@ public:
 		cmdList->IASetIndexBuffer(&boss._indexBufferView);
 
 		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x * _scale / 100.f, scale.y * _scale / 100.f, scale.z * _scale / 100.f)
-			* XMMatrixRotationX(default_rot_x)
+			* XMMatrixRotationX(default_rot_x * XM_PI / 180.f)
 			* XMMatrixRotationY(boss_obj._prev_degree * XM_PI / 180.f - XM_PI)
 			* XMMatrixTranslation(boss_obj._prev_transform.x, boss_obj._prev_transform.y, boss_obj._prev_transform.z));
+
 		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 		XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
