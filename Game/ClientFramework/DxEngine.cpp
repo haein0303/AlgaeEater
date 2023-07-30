@@ -2383,6 +2383,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 							particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
 						particles[index].alive = 1;
 						--npcArr[i]._particle_count;
+
+						particle_pos0[index] = XMFLOAT3(particles[index].pos.m128_f32[0], particles[index].pos.m128_f32[1], particles[index].pos.m128_f32[2]);
 					}
 					else {
 						++index;
@@ -2408,6 +2410,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 							particles[index].dir.m128_f32[1] * particles[index].moveSpeed, particles[index].dir.m128_f32[2] * particles[index].moveSpeed, 1.f);
 						particles[index].alive = 1;
 						--npcArr[i]._particle_count;
+
+						particle_pos0[index] = XMFLOAT3(particles[index].pos.m128_f32[0], particles[index].pos.m128_f32[1], particles[index].pos.m128_f32[2]);
 					}
 					else {
 						++index;
@@ -2525,6 +2529,66 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 					else {
 						particles[i].velocity.m128_f32[2] = 0.f;
 					}
+				}
+
+				// 캐릭터와 파티클 상호작용
+				if (particle_pos0[i].x != particles[i].pos.m128_f32[0] || particle_pos0[i].y != particles[i].pos.m128_f32[1] || particle_pos0[i].z != particles[i].pos.m128_f32[2])
+				{
+					for (OBJECT& player : playerArr)
+					{
+						if (player._on)
+						{
+							if (particle_pos0[i].x < player._transform.x - 0.3f && player._transform.x - 0.3f < particles[i].pos.m128_f32[0])
+							{
+								if (player._transform.z - 0.3f < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + 0.3f // 정면
+									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
+								{
+									particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] * -coefficient_of_restitution;
+									particles[i].pos.m128_f32[0] = particle_pos0[i].x;
+								}
+							}
+							if (particle_pos0[i].x > player._transform.x + 0.3f && player._transform.x + 0.3f > particles[i].pos.m128_f32[0])
+							{
+								if (player._transform.z - 0.3f < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + 0.3f // 후면
+									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
+								{
+									particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] * -coefficient_of_restitution;
+									particles[i].pos.m128_f32[0] = particle_pos0[i].x;
+								}
+							}
+
+							if (particle_pos0[i].z < player._transform.z - 0.3f && player._transform.z - 0.3f < particles[i].pos.m128_f32[2])
+							{
+								if (player._transform.x - 0.3f < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + 0.3f // 왼쪽측면
+									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
+								{
+									particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] * -coefficient_of_restitution;
+									particles[i].pos.m128_f32[2] = particle_pos0[i].z;
+								}
+							}
+							if (particle_pos0[i].z > player._transform.z + 0.3f && player._transform.z + 0.3f > particles[i].pos.m128_f32[2])
+							{
+								if (player._transform.x - 0.3f < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + 0.3f // 오른쪽 측면
+									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
+								{
+									particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] * -coefficient_of_restitution;
+									particles[i].pos.m128_f32[2] = particle_pos0[i].z;
+								}
+							}
+							if (particle_pos0[i].y > 1.f && 1.f > particles[i].pos.m128_f32[1])
+							{
+								if (player._transform.x - 0.3f < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + 0.3f // 윗면
+									&& player._transform.z - 0.3f < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + 0.3f)
+								{
+									particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] * -coefficient_of_restitution;
+									particles[i].pos.m128_f32[1] = particle_pos0[i].y;
+								}
+							}
+						}
+					}
+					particle_pos0[i].x = particles[i].pos.m128_f32[0];
+					particle_pos0[i].y = particles[i].pos.m128_f32[1];
+					particle_pos0[i].z = particles[i].pos.m128_f32[2];
 				}
 
 				particles[i].pos.m128_f32[0] = particles[i].pos.m128_f32[0] + particles[i].velocity.m128_f32[0] * timerPtr->_deltaTime; // x?꽦遺? ?씠?룞

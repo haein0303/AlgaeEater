@@ -77,6 +77,8 @@ public:
 
 	// 파티클 데이터
 	ParticleData particles[PARTICLE_NUM];
+	//array<array<bool, PARTICLE_NUM>, 6> is_pass{false};
+	array<XMFLOAT3, PARTICLE_NUM> particle_pos0{XMFLOAT3(0,0,0)};
 	float coefficient_of_restitution = 0.7f;	// 반발계수
 	float friction_coefficient = 0.9f;			// 마찰계수
 	float gravitational_acceleration = -4.f;	// 중력가속도
