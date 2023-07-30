@@ -520,14 +520,14 @@ void Data_read() {
 				SQLSetConnectAttr(hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
 
 				// Connect to data source  
-				retcode = SQLConnect(hdbc, (SQLWCHAR*)L"AlgaeEater_ODBC", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+				retcode = SQLConnect(hdbc, (SQLWCHAR*)L"Algeater", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
 
 				// Allocate statement handle  
 				if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 					cout << "db 로딩 완료" << endl;
 					retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 
-					retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"SELECT user_id, user_passward, user_level FROM user_data ORDER BY 1", SQL_NTS);
+					retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", SQL_NTS);
 					if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 						cout << "select OK" << endl;
 						// Bind columns 1, 2, and 3  
