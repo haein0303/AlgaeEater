@@ -537,7 +537,6 @@ void move_npc(int player_id, int c_id)
 			clients[c_id].z = z;
 			clients[c_id].degree = nde;
 
-
 			clients[c_id].char_state = AN_WALK;
 
 			for (auto& pl : clients[c_id].room_list) {
