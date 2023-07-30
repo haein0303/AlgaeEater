@@ -14,7 +14,9 @@ public:
 	DxEngine dxEngine; //DX엔진
 	WindowInfo windowInfo; //화면 관련 정보 객체
 	atomic<int> _render_thread_num = 0;
-	
+	atomic<bool> _is_single = false;
+	int i_now_render_index_for_single = 0;
+
 	void Init(HINSTANCE hInst, int nCmdShow)
 	{
 
@@ -130,7 +132,7 @@ public:
 		cout << "try server connect" << endl;
 		if (-1 == dxEngine.networkPtr->ConnectServer(GAME_PORT_NUM, dxEngine.Scene_num, dxEngine.playerArr[0]._character_num)) {
 			cout << "SERVER CONNECT FAIL" << endl;
-			while (1);
+			//while (1);
 		}
 		cout << "complite server connect" << endl;
 
@@ -138,30 +140,29 @@ public:
 		dxEngine.late_Init(windowInfo);
 		cout << "Complite Model data Loading" << endl;
 
-		cout << "LOGIC CALL" << endl;
 	}
 	void single_work() {
-		int i_now_render_index = 0;
-		while (g_isLive) {
-			dxEngine.FixedUpdate(windowInfo, isActive);
+		
+		dxEngine.logicTimerPtr->TimerUpdate();
+		dxEngine.FixedUpdate(windowInfo, isActive);
 
-			::WaitForSingleObject(dxEngine._renderEvent, INFINITE);
+		::WaitForSingleObject(dxEngine._renderEvent, INFINITE);
 
-			dxEngine.timerPtr->TimerUpdate();
+		dxEngine.timerPtr->TimerUpdate();
 
 
-			dxEngine.timerPtr->ShowFps(windowInfo);
+		dxEngine.timerPtr->ShowFps(windowInfo);
 
-			dxEngine.Update(windowInfo, isActive);
+		dxEngine.Update(windowInfo, isActive);
 
-			dxEngine.Draw_multi(windowInfo, i_now_render_index);
-			if (i_now_render_index) {
-				i_now_render_index = 0;
-			}
-			else {
-				i_now_render_index = 1;
-			}
+		dxEngine.Draw_multi(windowInfo, i_now_render_index_for_single);
+		if (i_now_render_index_for_single) {
+			i_now_render_index_for_single = 0;
 		}
+		else {
+			i_now_render_index_for_single = 1;
+		}
+		
 	}
 
 	void life_control(bool input) {
@@ -188,7 +189,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			isActive = true;
 		}
 		return 0;
-	case WM_DESTROY: case WM_QUIT:
+	case WM_DESTROY:
+		g_isLive = false;
+		PostQuitMessage(0);
+		break;
+	case WM_QUIT:
 		g_isLive = false;
 		ExitProcess(0);
 		break;
