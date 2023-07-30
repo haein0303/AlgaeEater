@@ -514,7 +514,7 @@ public:
 			case 34:
 				stage3_last_pass_user_count++;
 				cout << "통과인원 " << stage3_last_pass_user_count << endl;
-				if (stage3_last_pass_user_count > user_accept_counter) {
+				if (stage3_last_pass_user_count >= user_accept_counter) {
 					open_door_count = 4;
 				}
 				break;
