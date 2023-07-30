@@ -1062,7 +1062,9 @@ void do_worker()
 					move_npc(ex_over->target_id, key);
 			}
 			else if (clients[key]._object_type == TY_BOSS_SKILL) {
-				move_npc(ex_over->target_id, key);
+				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 200) {
+					move_npc(ex_over->target_id, key);
+				}
 			}
 			delete ex_over;
 			break;
