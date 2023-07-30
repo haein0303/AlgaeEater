@@ -53,6 +53,7 @@ public:
 	bool third_pattern;
 	bool fourth_pattern;
 
+
 	// 스테이지 1 변수
 	int color;
 	int eye_color;
@@ -61,6 +62,9 @@ public:
 	int crash_count;
 	int boss_shield;
 	bool boss_shield_trigger;
+
+	// 스테이지 3 변수
+	bool cooltime;
 
 	// 임시 변수
 	float start_x, start_z;
