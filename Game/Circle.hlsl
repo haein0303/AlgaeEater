@@ -56,11 +56,12 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float4 color = tex_0.Sample(sam_0, input.uv);
-    float r = distance(input.uv, float2(0.5f, 0.5f));
+    float4 diffuse_albedo = float4(1, 1, 1, tex_0.Sample(sam_0, input.uv).a);
+    float4 color = tex_0.Sample(sam_0, input.uv) * diffuse_albedo;
+    /*float r = distance(input.uv, float2(0.5f, 0.5f));
     if (r > 0.5f) {
         color = float4(0.f, 0.f, 0.f, 0.f);
-    }
+    }*/
     clip(color.a - 0.1f);
 
     return color;

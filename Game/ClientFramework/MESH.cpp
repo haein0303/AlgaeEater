@@ -258,6 +258,45 @@ void MESH_ASSET::CreatePSO(const wchar_t* shader)
 
 		_devicePtr->_device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState));
 	}
+	else if (_obj_type == ObjectType::Blend) {
+
+		//인풋레이아웃 서술
+		D3D12_INPUT_ELEMENT_DESC desc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		};
+
+		//PSO 서술 및 생성
+		_pipelineDesc.InputLayout = { desc, _countof(desc) };
+		_pipelineDesc.pRootSignature = _rootSignaturePtr->_signature.Get();
+
+		_pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		_pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		_pipelineDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		_pipelineDesc.SampleMask = UINT_MAX;
+		_pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		_pipelineDesc.NumRenderTargets = 1;
+		_pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		_pipelineDesc.SampleDesc.Count = 1;
+		_pipelineDesc.DSVFormat = _dsvPtr->_dsvFormat;
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC transparentPsoDesc = _pipelineDesc;
+		D3D12_RENDER_TARGET_BLEND_DESC transparencyBlendDesc;
+		transparencyBlendDesc.BlendEnable = true;
+		transparencyBlendDesc.LogicOpEnable = false;
+		transparencyBlendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		transparencyBlendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		transparencyBlendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+		transparencyBlendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+		transparencyBlendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+		transparencyBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		transparencyBlendDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
+		transparencyBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+		transparentPsoDesc.BlendState.RenderTarget[0] = transparencyBlendDesc;
+		_devicePtr->_device->CreateGraphicsPipelineState(&transparentPsoDesc, IID_PPV_ARGS(&_pipelineState));
+	}
 	else {		
 
 		//인풋레이아웃 서술

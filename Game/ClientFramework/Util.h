@@ -148,7 +148,8 @@ enum ObjectType
 	VertexAnimationObjects, // 정점 애니메이션 오브젝트
 	SkyBox, // 스카이 박스
 	Stage3Room,
-	VertexAnimationObjectsForPillar
+	VertexAnimationObjectsForPillar,
+	Blend
 };
 
 struct LIGHT
@@ -221,6 +222,7 @@ struct Constants
 	float hp_bar_size;
 	int max_hp;
 	XMVECTOR color;
+	XMFLOAT4 diffuse_albedo;
 };
 
 struct Point

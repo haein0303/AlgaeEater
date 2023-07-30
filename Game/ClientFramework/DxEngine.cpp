@@ -285,7 +285,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss2.CreatePSO();
 
 		boss2Skill.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
+		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::Blend); // type을 바꿔서 지정
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk10.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk11.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk12.png");
@@ -297,10 +297,10 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk23.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk24.png");
 		boss2Skill.Make_SRV();
-		boss2Skill.CreatePSO(L"..\\Bricks.hlsl");
+		boss2Skill.CreatePSO(L"..\\Circle.hlsl"); // 블렌드pso구현
 
 		boss2_skill_circle.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		boss2_skill_circle.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
+		boss2_skill_circle.Init("../Resources/Boss2Skill.txt", ObjectType::Blend);
 		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal000.png");
 		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal001.png");
 		boss2_skill_circle.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_heal002.png");
@@ -419,7 +419,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss3_Mask.CreatePSO();
 
 		boss2Skill.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
-		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
+		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::Blend);
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_0.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_1.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_2.png");
@@ -431,7 +431,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk23.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk24.png");
 		boss2Skill.Make_SRV();
-		boss2Skill.CreatePSO(L"..\\Bricks.hlsl");
+		boss2Skill.CreatePSO(L"..\\Circle.hlsl");
 
 		boss.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		boss.Init("../Resources/mechanical_spider.txt", ObjectType::AnimationObjects);
