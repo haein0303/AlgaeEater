@@ -588,7 +588,6 @@ void process_packet(int c_id, char* packet)
 						if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
 							if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
 								death_counts[clients[p->target_id]._Room_Num].counts++;
-								clients[p->target_id].char_state = AN_DEAD;
 							}
 							else {
 								for (auto& pl : clients[p->target_id].room_list) {
@@ -685,7 +684,6 @@ void process_packet(int c_id, char* packet)
 							if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
 								if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
 									death_counts[clients[p->target_id]._Room_Num].counts++;
-									clients[p->target_id].char_state = AN_DEAD;
 								}
 								else {
 									for (auto& pl : clients[p->target_id].room_list) {
@@ -755,8 +753,12 @@ void process_packet(int c_id, char* packet)
 						continue;
 					}
 					
-					clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
-						clients[pl].hp, clients[pl].char_state, clients[pl].eye_color, 0);
+					if (clients[pl]._object_type == TY_BOSS_1 && clients[pl].stage == 3) clients[i].send_move_packet(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+						clients[pl].hp, clients[pl].char_state, 0);
+					else
+						clients[i].send_boss_move(pl, clients[pl].x, clients[pl].y, clients[pl].z, clients[pl].degree,
+							clients[pl].hp, clients[pl].char_state, clients[pl].eye_color, 0);
+
 					clients[pl_id]._sl.unlock();
 				}
 			}
