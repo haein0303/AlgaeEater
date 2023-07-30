@@ -586,13 +586,19 @@ void process_packet(int c_id, char* packet)
 					if (clients[p->target_id].hp <= 0) {
 						if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
 						if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
-							for (auto& pl : clients[p->target_id].room_list) {
-								SC_GAME_END_PACKET packet;
-								packet.size = sizeof(SC_GAME_END_PACKET);
-								packet.type = SC_GAME_END;
-								packet.e_type = true;
+							if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
+								death_counts[clients[p->target_id]._Room_Num].counts++;
+								clients[p->target_id].char_state = AN_DEAD;
+							}
+							else {
+								for (auto& pl : clients[p->target_id].room_list) {
+									SC_GAME_END_PACKET packet;
+									packet.size = sizeof(SC_GAME_END_PACKET);
+									packet.type = SC_GAME_END;
+									packet.e_type = true;
 
-								clients[pl].do_send(&packet);
+									clients[pl].do_send(&packet);
+								}
 							}
 						}
 						for (auto& np : clients[p->target_id].room_list) {
@@ -618,6 +624,12 @@ void process_packet(int c_id, char* packet)
 							}
 							break;
 						case 3:
+							if (death_counts[clients[p->target_id]._Room_Num].counts >= 11) {
+								for (auto& pl : clients[p->target_id].room_list) {
+									if (pl >= MAX_USER) continue;
+									clients[pl].send_door();
+								}
+							}
 							break;
 						default:
 							break;
@@ -673,6 +685,7 @@ void process_packet(int c_id, char* packet)
 							if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
 								if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
 									death_counts[clients[p->target_id]._Room_Num].counts++;
+									clients[p->target_id].char_state = AN_DEAD;
 								}
 								else {
 									for (auto& pl : clients[p->target_id].room_list) {
