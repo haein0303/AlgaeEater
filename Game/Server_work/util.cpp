@@ -840,6 +840,7 @@ void process_packet(int c_id, char* packet)
 			clients[c_id].atk *= 100;
 			clients[c_id].skill_atk *= 100;
 			clients[c_id].god_mod = true;
+			clients[c_id].hp = 100;
 			cout << "°«¸ğµå on" << endl;
 		}
 		else {
