@@ -41,6 +41,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 		
 
 		cout << "create threads" << endl;
+		//½Ì±Û
 		//client.single_init();
 		ShowCursor(false);
 		msg.message = 0;

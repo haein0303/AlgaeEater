@@ -379,6 +379,7 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 
 void Input::inputMouse(array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> networkPtr)
 {
+	
 	HWND hwnd = GetActiveWindow();
 	
 	// 윈도우 크기와 위치 정보를 얻어옵니다.
@@ -403,8 +404,7 @@ void Input::inputMouse(array<OBJECT, PLAYERMAX>& playerArr, shared_ptr<SFML> net
 	}
 
 
-	if (GetCapture() == hwnd) {
-		
+	{
 		::SetCursor(NULL);
 		POINT ptCursorPos;
 		::GetCursorPos(&ptCursorPos);

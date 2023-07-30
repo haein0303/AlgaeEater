@@ -142,7 +142,7 @@ public:
 	}
 	void single_work() {
 		
-		dxEngine.logicTimerPtr->TimerUpdate();
+		dxEngine.logicTimerPtr->fixed_update_tic();
 		dxEngine.FixedUpdate(windowInfo, isActive);
 
 		::WaitForSingleObject(dxEngine._renderEvent, INFINITE);
