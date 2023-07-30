@@ -120,7 +120,6 @@ public:
 
 			dxEngine.timerPtr->TimerUpdate();
 			
-
 			dxEngine.timerPtr->ShowFps(windowInfo);
 
 			dxEngine.Update(windowInfo, isActive);

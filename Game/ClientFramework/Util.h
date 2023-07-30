@@ -322,6 +322,8 @@ enum AnimationOrder
 struct Boss2SkillData
 {
 	XMFLOAT3 pos;
+	XMFLOAT3 delta_pos;
+	XMFLOAT3 start_pos;
 	int my_server_id;
 	float scale;
 	int type;
@@ -330,6 +332,8 @@ struct Boss2SkillData
 	int animation_count = 0;
 	float atk_time = 0.f;
 	bool is_rewind = false;
+	double goal_time = 0.f;
+	double delta_time = 0.f;
 };
 
 

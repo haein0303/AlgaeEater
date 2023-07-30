@@ -391,24 +391,45 @@ public:
 			
 			//0 : 원형 회복 / 1 : 사각 기본 공격 / 2 : 사각 아픈 공격
 			boss2_skill.isOn = false;
-			//혹시 더 많이 보낼 수 있어
-			if (tmp > boss_obj.boss2_skill_vec.size()) { //멀쓰이기때문에 상당하게 위험
-				boss_obj.boss2_skill_vec.emplace_back(boss2_skill);
-			}
-			else {
-				boss_obj.boss2_skill_vec[tmp] = boss2_skill;
-				cout << "SKILL START - point : " << tmp << endl;
-			}
 
 			Boss2SkillData boss2_skill_fire_data;
 			boss2_skill_fire_data.my_server_id = packet->fd_id;
 			boss2_skill_fire_data.pos.x = boss_obj._transform.x + 3.5f * sinf((boss_obj._degree - 150.f) * XM_PI / 180.f);
 			boss2_skill_fire_data.pos.y = boss_obj._transform.y + 3.f;
 			boss2_skill_fire_data.pos.z = boss_obj._transform.z + 3.5f * cosf((boss_obj._degree - 150.f) * XM_PI / 180.f);
+			boss2_skill_fire_data.start_pos = boss2_skill_fire_data.pos;
 			boss2_skill_fire_data.scale = 1.f;
 			boss2_skill_fire_data.animation_count = 0;
 			boss2_skill_fire_data.isOn = true;
-			boss_obj.boss2_skill_fire_vec.emplace_back(boss2_skill_fire_data);
+			
+			boss2_skill_fire_data.delta_time = 0.f;
+			
+			
+			//연산 파트
+			{
+				float dec = abs(boss2_skill.pos.x - boss2_skill_fire_data.pos.x) +
+					abs(boss2_skill.pos.z - boss2_skill_fire_data.pos.z);
+
+				boss2_skill_fire_data.goal_time = dec * 100;
+				boss2_skill_fire_data.goal_time /= 1000; // 서버는 ms가 기준이지만 클라는 s가 기준
+
+				boss2_skill_fire_data.delta_pos.x = boss2_skill.pos.x - boss2_skill_fire_data.pos.x;
+				boss2_skill_fire_data.delta_pos.y = boss2_skill.pos.y - boss2_skill_fire_data.pos.y;
+				boss2_skill_fire_data.delta_pos.z = boss2_skill.pos.z - boss2_skill_fire_data.pos.z;
+
+			}
+			
+
+			//혹시 더 많이 보낼 수 있어
+			if (tmp > boss_obj.boss2_skill_vec.size()) { //멀쓰이기때문에 상당하게 위험
+				boss_obj.boss2_skill_vec.emplace_back(boss2_skill);
+				boss_obj.boss2_skill_fire_vec.emplace_back(boss2_skill_fire_data);
+			}
+			else {
+				boss_obj.boss2_skill_vec[tmp] = boss2_skill;
+				boss_obj.boss2_skill_fire_vec[tmp] = boss2_skill_fire_data;
+				//cout << "SKILL START - point : " << tmp << endl;
+			}			
 
 			break;
 		}

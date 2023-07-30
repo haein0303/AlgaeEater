@@ -1280,6 +1280,27 @@ void DxEngine::Update(WindowInfo windowInfo, bool isActive)
 			XMMATRIX proj = XMLoadFloat4x4(&cameraPtr->mProj); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿?
 			XMStoreFloat4x4(&_transform.proj, XMMatrixTranspose(proj));
 		}
+
+
+		if (Scene_num == 2) {
+			for (int i = 0; i < boss_obj.boss2_skill_vec.size(); ++i) {
+				if (boss_obj.boss2_skill_fire_vec[i].isOn) {
+					//ÁøÇà ÆÛ¼¾Æ® ÃÖ´ë 1
+					double tmp;
+					if (boss_obj.boss2_skill_fire_vec[i].delta_time > boss_obj.boss2_skill_fire_vec[i].goal_time) {
+						tmp = 1.0;
+					}
+					else {
+						tmp = boss_obj.boss2_skill_fire_vec[i].delta_time / boss_obj.boss2_skill_fire_vec[i].goal_time;
+					}
+					
+					boss_obj.boss2_skill_fire_vec[i].pos.x = boss_obj.boss2_skill_fire_vec[i].start_pos.x + boss_obj.boss2_skill_fire_vec[i].delta_pos.x * tmp;
+					boss_obj.boss2_skill_fire_vec[i].pos.y = boss_obj.boss2_skill_fire_vec[i].start_pos.y + boss_obj.boss2_skill_fire_vec[i].delta_pos.y * tmp + (sin((tmp)*3.141592) * 3);
+					boss_obj.boss2_skill_fire_vec[i].pos.z = boss_obj.boss2_skill_fire_vec[i].start_pos.z + boss_obj.boss2_skill_fire_vec[i].delta_pos.z * tmp;
+					boss_obj.boss2_skill_fire_vec[i].delta_time += timerPtr->_deltaTime * 0.9;
+				}				
+			}
+		}
 	}
 
 
