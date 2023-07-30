@@ -558,7 +558,7 @@ void process_packet(int c_id, char* packet)
 		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
 			if (p->attack_type == 2) { // 일반 공격
 				if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
-					if (shield_trigger_33 != 2) {
+					if (shield_trigger_33 != 3) {
 						cout << "기둥이 살아있음" << endl;
 					}
 					else {
@@ -663,7 +663,7 @@ void process_packet(int c_id, char* packet)
 			else { // 스킬 공격
 				if (p->attack_type == 1) { // 스킬 공격
 					if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
-						if (shield_trigger_33 != 2) {
+						if (shield_trigger_33 != 3) {
 							cout << "기둥이 살아있음" << endl;
 						}
 						else {
@@ -763,7 +763,10 @@ void process_packet(int c_id, char* packet)
 				}
 			}
 
-			int pl_id = clients[p->attacker_id]._Room_Num * ROOM_USER;
+			int pl_id = 0;
+
+			if (clients[0]._Room_Num != 9999) pl_id = clients[p->attacker_id]._Room_Num * ROOM_USER;
+			else pl_id = clients[p->attacker_id]._Room_Num * ROOM_USER + 1;
 			int pl = p->target_id;
 
 			if (clients[pl]._object_type == TY_BOSS_1 ||
@@ -814,7 +817,8 @@ void process_packet(int c_id, char* packet)
 					}
 
 					if (dead_cnt == 0) {
-						for (int i = clients[c_id]._Room_Num * ROOM_USER; i < clients[c_id]._Room_Num * ROOM_USER + ROOM_USER; i++) {
+						for (auto& i : clients[p->target_id].room_list) {
+							if (i >= MAX_USER) continue;
 							SC_GAME_END_PACKET packet;
 							packet.size = sizeof(SC_GAME_END_PACKET);
 							packet.type = SC_GAME_END;
