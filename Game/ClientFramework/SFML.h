@@ -22,6 +22,8 @@ public:
 	
 	int stage3_mini_boss_num = 0;
 	int stage3_last_pass_user_count = 0;
+	bool stage1_target_is_me = false;
+
 
 	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
@@ -324,11 +326,13 @@ public:
 			if (my_packet->ob_type == 0) { //0은 플레이어 1은 기둥
 				int id = getUSERid(my_packet->id);
 				playerArr[id]._on = false;
+				stage1_target_is_me = false;
 			}
 
 			if (my_packet->ob_type == 1) { //0은 플레이어 1은 기둥
 				int id = my_packet->id;
 				pillars_data[id]._pillar_count = 0;
+				stage1_target_is_me = false;
 			}
 
 			if (my_packet->ob_type == 2) { //0은 플레이어 1은 기둥 2는 장판
@@ -460,7 +464,13 @@ public:
 		case SC_BOSS_RUSH_TARGET: {
 			SC_BOSS_RUSH_TARGET_PACKET* packet = reinterpret_cast<SC_BOSS_RUSH_TARGET_PACKET*>(ptr);
 			boss_obj._stage1_target_alert_on = packet->trigger;
-			boss_obj._stage1_target_id = packet->target_id;
+			boss_obj._stage1_target_id = getUSERid(packet->target_id);
+			if (playerArr[0]._my_server_id == packet->target_id) {
+				stage1_target_is_me = true;
+			}
+			else {
+				stage1_target_is_me = false;
+			}
 		}
 		break;
 

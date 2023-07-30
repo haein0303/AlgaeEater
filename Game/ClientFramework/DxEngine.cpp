@@ -2684,7 +2684,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		if (boss_obj._game_clear) {
 			d11Ptr->draw_game_clear(boss_obj._clear_type);
 		}
-
+		if (networkPtr->stage1_target_is_me) {
+			d11Ptr->draw_stage2_atk();
+		}
 	}
 	else {
 		d11Ptr->Loading_draw(timerPtr->_deltaTime);
