@@ -572,7 +572,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	
 	for (int i = 0; i < NPCMAX; ++i)
 	{
-		npcArr[i]._final_transforms.resize(npc_asset._animationPtr->mBoneHierarchy.size());
+		npcArr[i]._final_transforms.resize(96);
 		npcArr[i]._transform.y += 0.2f;
 	}
 
@@ -642,15 +642,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 
 	if (inputPtr->_god_mod_on) {
 		inputPtr->move_speed = 50.f;
-	}
-
-	for (OBJECT& npc : npcArr)
-	{
-		if (Scene_num == 3 && npc._object_type == TY_BOSS_1)
-		{
-			if (npc._final_transforms.size() == npc_asset._animationPtr->mBoneHierarchy.size())
-				npc._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
-		}
 	}
 
 	//보간을 위해서 사용하는 초기 세팅이란다
