@@ -41,6 +41,7 @@ constexpr char CS_CONSOLE = 2;
 constexpr char CS_COLLISION = 3;
 constexpr char CS_KEY = 4;
 constexpr char CS_OBJECT_COLLISION = 5;
+constexpr char CS_BROAD_CAST = 6;
 constexpr char CS_GOD_MOD = 9;
 
 constexpr char SC_LOGIN_OK = 10;
@@ -347,6 +348,12 @@ struct SC_GAME_END_PACKET {
 };
 
 struct SC_BROAD_CAST_PACKET {
+	unsigned char size;
+	char	type;
+	int		pri;
+};
+
+struct CS_BROAD_CAST_PACKET {
 	unsigned char size;
 	char	type;
 	int		pri;

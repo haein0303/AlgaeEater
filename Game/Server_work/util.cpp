@@ -893,6 +893,22 @@ void process_packet(int c_id, char* packet)
 		}
 		break;
 	}
+	case CS_BROAD_CAST: {
+		CS_BROAD_CAST_PACKET* pac = reinterpret_cast<CS_BROAD_CAST_PACKET*>(packet);
+		SC_BROAD_CAST_PACKET p;
+
+		p.pri = pac->pri;
+		p.size = sizeof(SC_BROAD_CAST_PACKET);
+		p.type = SC_BROAD_CAST;
+
+		clients[c_id].do_send(&p);
+
+		for (auto& pl : clients[c_id].room_list) {
+			if (pl >= MAX_USER)continue;
+			clients[pl].do_send(&p);
+		}
+		break;
+	}
 	case CS_GOD_MOD: {
 		if (clients[c_id].god_mod == false) {
 			clients[c_id].atk *= 100;
