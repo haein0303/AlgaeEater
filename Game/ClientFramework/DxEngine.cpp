@@ -1490,7 +1490,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 	if (_is_loading) {
 	
 #pragma region Player
-		for (int i = 0; i < PLAYERMAX; ++i) //�÷��̾� ����
+		for (int i = 0; i < PLAYERMAX; ++i) 
 		{
 			if (playerArr[i]._on == true)
 			{

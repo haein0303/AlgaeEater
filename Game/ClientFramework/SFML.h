@@ -610,6 +610,7 @@ public:
 			case LSC_JOIN_OK:
 			{
 				LSC_LOGIN_FAIL_PACKET* packet = reinterpret_cast<LSC_LOGIN_FAIL_PACKET*>(ptr);
+				scene_num = SCENE_STATE::LOG_IN;
 				cout << "LSC_JOIN_OK" << endl;
 			}
 			break;
