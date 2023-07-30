@@ -495,6 +495,32 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
 		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 1; j < 5; ++j)
+			{
+				BoundingBox bounding_box;
+				
+				if (j == 1) {
+					bounding_box.Center = XMFLOAT3(100.f * i, 1.f, -15.f);
+					bounding_box.Extents = XMFLOAT3(15.f, 1, 3.f);
+				}
+				else if (j == 2) {
+					bounding_box.Center = XMFLOAT3(100.f * i, 1.f, 15.f);
+					bounding_box.Extents = XMFLOAT3(15.f, 1, 3.f);
+				}
+				else if (j == 3) {
+					bounding_box.Center = XMFLOAT3(100.f * i + 15, 1.f, 0);
+					bounding_box.Extents = XMFLOAT3(3.f, 1, 15.f);
+				}
+				else if (j == 4) {
+					bounding_box.Center = XMFLOAT3(100.f * i - 15.f, 1.f, 0);
+					bounding_box.Extents = XMFLOAT3(3.f, 1, 15.f);
+				}
+				
+				bounding_boxes3.push_back(bounding_box);
+			}
+		}
 
 		boss_obj._final_transforms.resize(boss3_Body._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
@@ -1677,6 +1703,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 		case 3:
 			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
+			for (BoundingBox& box : bounding_boxes3)
+			{
+			}
 			if (boss_obj._on == true)
 			{
 				XMFLOAT3 boss3_scale = XMFLOAT3(100.f, 100.f, 100.f);

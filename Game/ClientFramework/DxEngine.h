@@ -777,19 +777,19 @@ public:
 				for (int j = 0; j < 5; ++j)
 				{
 					if (j == 0) {
-						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(100.f * i, 0.01f, 0));
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(100.f * i, 0.02f, 0));
 					}
 					if (j == 1) {
-						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixTranslation(100.f * i, scale.y / 2.f + 0.01f, -scale.z));
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixTranslation(100.f * i, scale.y / 2.f + 0.02f, -scale.z));
 					}
 					else if (j == 2) {
-						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixTranslation(100.f * i, scale.y / 2.f + 0.01f, scale.z));
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixTranslation(100.f * i, scale.y / 2.f + 0.02f, scale.z));
 					}
 					else if (j == 3) {
-						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(100.f * i + scale.x, scale.y / 2.f + 0.01f, 0));
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(100.f * i + scale.x, scale.y / 2.f + 0.02f, 0));
 					}
 					else if (j == 4) {
-						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(100.f * i - scale.x, scale.y / 2.f + 0.01f, 0));
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale.x, scale.y, scale.z) * XMMatrixRotationY(XM_PI / 2.f) * XMMatrixTranslation(100.f * i - scale.x, scale.y / 2.f + 0.02f, 0));
 					}
 					XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 					XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
