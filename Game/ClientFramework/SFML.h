@@ -206,7 +206,7 @@ public:
 				npcArr[npc_accept_counter]._hp = my_packet->hp;
 				npcArr[npc_accept_counter]._max_hp = my_packet->hp;
 				npcArr[npc_accept_counter]._object_type = my_packet->object_type;
-				if (my_packet->object_type == TY_NPC_OTHER) {
+				if (my_packet->object_type == TY_BOSS_1) {
 					stage3_mini_boss_num = npc_accept_counter;
 				}
 
