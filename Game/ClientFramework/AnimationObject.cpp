@@ -111,11 +111,11 @@ void AnimationObject::UpdateVertexAnimation(OBJECT& obj, XMVECTOR& P, XMVECTOR& 
 		{
 			obj._on = false;
 		}
-		if ((obj._animation_state == AnimationOrder::Death) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state))
+		/*if ((obj._animation_state == AnimationOrder::Death) && obj._animation_time_pos >= GetClipEndTime(obj._animation_state))
 		{
 			obj._is_stage3_npc_dead = false;
 			obj._animation_time_pos = GetClipEndTime(obj._animation_state);
-		}
+		}*/
 	}
 	if (obj_type == ObjectType::VertexAnimationObjects)
 	{

@@ -71,6 +71,7 @@ public:
 	OBJECT npcArr[NPCMAX];
 	OBJECT boss_obj;
 	OBJECT pillars_data[CubeMax];
+	array<array<OBJECT, 4>, NPCMAX> stage3_npc_dead_data;
 	//float _key_rotation_time = 0.f;
 	//OBJECT key_data[KEYMAX];
 

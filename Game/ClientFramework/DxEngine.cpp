@@ -1920,9 +1920,13 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		{
 			if (npcArr[i]._hp <= 0)
 			{
-				npcArr[i]._animation_state = AnimationOrder::Death; // 패킷 체크
+				npcArr[i]._animation_state = AnimationOrder::Death;
 
-				if (npcArr[i]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[i]._animation_state))
+				if (npcArr[i]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[i]._animation_state) && npcArr[i]._object_type != TY_NPC_OTHER)
+				{
+					npcArr[i]._on = false;
+				}
+				else if (npcArr[i]._object_type == TY_NPC_OTHER)
 				{
 					npcArr[i]._on = false;
 				}
@@ -2155,17 +2159,26 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 				else
 				{
+					if (npcArr[i].stage3_npc_dead_once)
 					{
-						for (MESH_ASSET& piece_of_npc : stage3_npc_dead)
+						for (int j = 0; j < 4; ++j)
+							stage3_npc_dead_data[i][j]._on = true;
+
+						npcArr[i].stage3_npc_dead_once = false;
+					}
+
+					for (int j = 0; j < 4; ++j)
+					{
+						if (stage3_npc_dead_data[i][j]._on == true)
 						{
-							if (npcArr[i]._is_stage3_npc_dead)
+							stage3_npc_dead_data[i][j]._animation_time_pos += timerPtr->_deltaTime;
+							for (MESH_ASSET& piece_of_npc : stage3_npc_dead)
 							{
 								XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 								XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-								npcArr[i]._animation_time_pos += timerPtr->_deltaTime;
 
-								float scale = 1.f;
-								piece_of_npc.UpdateVertexAnimation(npcArr[i], P, Q, ObjectType::VertexAnimationObjectsForPillar);
+								float scale = 0.4f;
+								piece_of_npc.UpdateVertexAnimation(stage3_npc_dead_data[i][j], P, Q, ObjectType::VertexAnimationObjectsForPillar);
 
 								cmdList->SetPipelineState(piece_of_npc._pipelineState.Get());
 								cmdList->IASetVertexBuffers(0, 1, &piece_of_npc._vertexBufferView);
@@ -2173,6 +2186,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 								XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
 									* XMMatrixRotationQuaternion(Q)
+									* XMMatrixRotationY((npcArr[i]._prev_degree + 180.f) * XM_PI / 180.f)
 									* XMMatrixTranslation(npcArr[i]._transform.x + P.m128_f32[0] * scale, npcArr[i]._transform.y + P.m128_f32[1] * scale, npcArr[i]._transform.z + P.m128_f32[2] * scale));
 								XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 								XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
@@ -2187,7 +2201,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 							}
 						}
 					}
-					
 				}
 				break;
 			default:
