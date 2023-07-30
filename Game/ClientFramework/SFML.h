@@ -400,6 +400,15 @@ public:
 				cout << "SKILL START - point : " << tmp << endl;
 			}
 
+			Boss2SkillData boss2_skill_fire_data;
+			boss2_skill_fire_data.my_server_id = packet->fd_id;
+			boss2_skill_fire_data.pos.x = boss_obj._transform.x + 3.5f * sinf((boss_obj._degree - 150.f) * XM_PI / 180.f);
+			boss2_skill_fire_data.pos.y = boss_obj._transform.y + 3.f;
+			boss2_skill_fire_data.pos.z = boss_obj._transform.z + 3.5f * cosf((boss_obj._degree - 150.f) * XM_PI / 180.f);
+			boss2_skill_fire_data.scale = 1.f;
+			boss2_skill_fire_data.animation_count = 0;
+			boss2_skill_fire_data.isOn = true;
+			boss_obj.boss2_skill_fire_vec.emplace_back(boss2_skill_fire_data);
 
 			break;
 		}
@@ -407,6 +416,7 @@ public:
 			SC_BOSS_SKILL_END_PACKET* packet = reinterpret_cast<SC_BOSS_SKILL_END_PACKET*>(ptr);
 
 			boss_obj.boss2_skill_vec[getSkillid(packet->fd_id)].isOn = true;
+			boss_obj.boss2_skill_fire_vec[getSkillid(packet->fd_id)].isOn = false;
 
 			boss_obj._boss_skill_count++;
 			break;

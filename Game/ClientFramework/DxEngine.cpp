@@ -309,6 +309,16 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss2_skill_circle.Make_SRV();
 		boss2_skill_circle.CreatePSO(L"..\\Circle.hlsl");
 
+		boss2_skill_fire.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		boss2_skill_fire.Init("../Resources/Boss2Skill.txt", ObjectType::Blend);
+		boss2_skill_fire.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_atk_bill_board0.png");
+		boss2_skill_fire.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_atk_bill_board1.png");
+		boss2_skill_fire.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_atk_bill_board2.png");
+		boss2_skill_fire.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_atk_bill_board3.png");
+		boss2_skill_fire.Add_texture(L"..\\Resources\\Texture\\Stage2\\circle_atk_bill_board4.png");
+		boss2_skill_fire.Make_SRV();
+		boss2_skill_fire.CreatePSO(L"..\\Circle.hlsl");
+
 		InitMeshAsset(floor, ObjectType::GeneralObjects, "../Resources/Floor.txt", L"..\\Resources\\Texture\\Floor.jpg", L"..\\Bricks.hlsl");
 		InitMeshAsset(Grid_Metal_tile, ObjectType::GeneralObjects, "../Resources/Grid_Metal_tile.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
 		InitMeshAsset(Plate_mettal_wall_HQ__2_, ObjectType::GeneralObjects, "../Resources/Plate_mettal_wall_HQ__2_.txt", L"..\\Resources\\Texture\\Atlass_albedo.tga", L"..\\Wall.hlsl");
@@ -590,6 +600,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 
 	boss_obj.boss2_skill_vec.resize(100);
+	boss_obj.boss2_skill_fire_vec.resize(100);
 
 	for (OBJECT& obj : npcArr)
 		obj._bounding_box.Extents = XMFLOAT3(0.5f, 1.f, 1.f);
@@ -1714,6 +1725,15 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				XMFLOAT3 boss2_scale = XMFLOAT3(1.f, 1.f, 1.f);
 				float boss2_default_rot_x = 0.f;
 				Boss(cmdList, boss2, i_now_render_index, boss2_scale, boss2_default_rot_x, Scene_num);
+			}
+
+			// fire boss2 skill
+			for (Boss2SkillData& boss2_skill_fire_data : boss_obj.boss2_skill_fire_vec)
+			{
+				if (boss2_skill_fire_data.isOn)
+				{
+					FireBoss2Skill(cmdList, boss2_skill_fire, i_now_render_index, boss2_skill_fire_data);
+				}
 			}
 
 			// boss2Skill

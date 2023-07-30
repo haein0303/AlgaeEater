@@ -81,6 +81,7 @@ public:
 	shared_ptr<Timer> _logicTimerPtr;
 
 	vector<Boss2SkillData> boss2_skill_vec;
+	vector<Boss2SkillData> boss2_skill_fire_vec;
 
 	bool			_game_clear = false;
 	bool			_clear_type = false;

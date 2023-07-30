@@ -213,6 +213,7 @@ public:
 
 	MESH_ASSET boss2Skill;
 	MESH_ASSET boss2_skill_circle;
+	MESH_ASSET boss2_skill_fire;
 
 	int open_door_count = 0;
 
@@ -967,6 +968,55 @@ public:
 			}
 
 			boss2_skill_data.time = 0.f;
+		}
+		descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+
+		descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+		cmdList->DrawIndexedInstanced(boss2Skill._indexCount, 1, 0, 0, 0);
+	}
+
+	void FireBoss2Skill(ComPtr<ID3D12GraphicsCommandList>& cmdList, const MESH_ASSET& boss2Skill, const int i_now_render_index, Boss2SkillData& boss2_skill_fire_data)
+	{
+		cmdList->SetPipelineState(boss2Skill._pipelineState.Get());
+		cmdList->IASetVertexBuffers(0, 1, &boss2Skill._vertexBufferView);
+		cmdList->IASetIndexBuffer(&boss2Skill._indexBufferView);
+
+		XMStoreFloat4x4(&_transform.world, XMMatrixScaling(boss2_skill_fire_data.scale, boss2_skill_fire_data.scale, boss2_skill_fire_data.scale)
+			* XMMatrixRotationX(-atan2f(cameraPtr->pos.m128_f32[1] - (boss2_skill_fire_data.pos.y + 0.01f),
+				sqrt(pow(cameraPtr->pos.m128_f32[0] - boss2_skill_fire_data.pos.x, 2) + pow(cameraPtr->pos.m128_f32[2] - boss2_skill_fire_data.pos.z, 2))))
+			* XMMatrixRotationY(atan2f(cameraPtr->pos.m128_f32[0] - boss2_skill_fire_data.pos.x, cameraPtr->pos.m128_f32[2] - boss2_skill_fire_data.pos.z))
+			* XMMatrixTranslation(boss2_skill_fire_data.pos.x, boss2_skill_fire_data.pos.y, boss2_skill_fire_data.pos.z));
+		XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+		XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+		descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+		boss2_skill_fire_data.time += timerPtr->_deltaTime;
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
+		srv_handle = boss2Skill._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+		srv_handle.Offset(boss2_skill_fire_data.animation_count, devicePtr->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+		if (boss2_skill_fire_data.time > 0.2f)
+		{
+			if (boss2_skill_fire_data.animation_count >= 4)
+			{
+				boss2_skill_fire_data.animation_count = 4;
+				boss2_skill_fire_data.is_rewind = true;
+			}
+			if (boss2_skill_fire_data.animation_count <= 0)
+			{
+				boss2_skill_fire_data.animation_count = 0;
+				boss2_skill_fire_data.is_rewind = false;
+			}
+
+			if (boss2_skill_fire_data.is_rewind)
+				boss2_skill_fire_data.animation_count--;
+			else
+				boss2_skill_fire_data.animation_count++;
+
+			boss2_skill_fire_data.time = 0.f;
 		}
 		descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
 
