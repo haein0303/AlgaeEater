@@ -764,7 +764,7 @@ public:
 							bounding_boxes3[18].Center = XMFLOAT3(data.pos.x * 2.f, bounding_boxes3[18].Center.y, data.pos.z * 2.f);
 						}
 					}
-					if (inputPtr->_open_door[4] == true)
+					if (inputPtr->_open_door[4] == true && inputPtr->_open_door[5] != true)
 					{
 						if (pow((data.pos.x - doorPos0[4].x), 2.f) + pow((data.pos.z - doorPos0[4].z), 2.f) < 25.f)
 						{

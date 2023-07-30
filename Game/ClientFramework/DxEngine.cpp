@@ -1197,9 +1197,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			int i = 0;
 			//첫번째 문 조건
 			if (100.f > (playerArr[i]._transform.x - (135.f)) * (playerArr[i]._transform.x - (135.f)) + (playerArr[i]._transform.z - (-128.f)) * (playerArr[i]._transform.z - (-128.f))) {
-				SC_BROAD_CAST_PACKET p;
+				CS_BROAD_CAST_PACKET p;
 				p.size = sizeof(p);
-				p.type = SC_BROAD_CAST;
+				p.type = CS_BROAD_CAST;
 				p.pri = 31;
 				networkPtr->send_packet(&p);
 				open_door_count = 1;
@@ -1210,9 +1210,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		if (open_door_count == 2) {
 			int i = 0;
 			if (100.f > (playerArr[i]._transform.x - (15.f)) * (playerArr[i]._transform.x - (15.f)) + (playerArr[i]._transform.z - (-197.f)) * (playerArr[i]._transform.z - (-197.f))) {
-				SC_BROAD_CAST_PACKET p;
+				CS_BROAD_CAST_PACKET p;
 				p.size = sizeof(p);
-				p.type = SC_BROAD_CAST;
+				p.type = CS_BROAD_CAST;
 				p.pri = 33;
 				networkPtr->send_packet(&p);
 				open_door_count = 3;
@@ -1223,9 +1223,9 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		if (open_door_count == 3) {
 			int i = 0;
 			if (100.f > (playerArr[i]._transform.x - (0.f)) * (playerArr[i]._transform.x - (0.f)) + (playerArr[i]._transform.z - (-197.f)) * (playerArr[i]._transform.z - (-197.f))) {
-				SC_BROAD_CAST_PACKET p;
+				CS_BROAD_CAST_PACKET p;
 				p.size = sizeof(p);
-				p.type = SC_BROAD_CAST;
+				p.type = CS_BROAD_CAST;
 				p.pri = 34;
 				networkPtr->send_packet(&p);
 				open_door_count = 4;
@@ -1302,7 +1302,7 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			inputPtr->_open_door[4] = true;
 			break;
 		case 4:
-			inputPtr->_open_door[4] = false;
+			inputPtr->_open_door[5] = true;
 			break;
 		default:
 			break;

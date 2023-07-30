@@ -28,7 +28,7 @@ public:
 	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
 		wcout.imbue(locale("korean"));
-		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum); // 59.14.135.128
+		sf::Socket::Status status = socket.connect("59.14.135.128", PortNum); // 59.14.135.128
 		socket.setBlocking(false);
 
 		if (status != sf::Socket::Done) {
@@ -53,7 +53,7 @@ public:
 	int ConnectServer(int PortNum) 
 	{
 		wcout.imbue(locale("korean"));
-		sf::Socket::Status status = socket.connect("127.0.0.1", PortNum); // 59.14.135.128
+		sf::Socket::Status status = socket.connect("59.14.135.128", PortNum); // 59.14.135.128
 		socket.setBlocking(false);
 
 		if (status != sf::Socket::Done) {
@@ -524,8 +524,9 @@ public:
 			case 34:
 				stage3_last_pass_user_count++;
 				cout << "통과인원 " << stage3_last_pass_user_count << endl;
-				if (stage3_last_pass_user_count >= user_accept_counter) {
+				if (stage3_last_pass_user_count == user_accept_counter) {
 					open_door_count = 4;
+					cout << "문닫아요옹" << endl;
 				}
 				break;
 			}
