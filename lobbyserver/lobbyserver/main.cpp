@@ -25,6 +25,7 @@ using namespace std;
 
 #define DATA_LEN 30
 
+int add_user(const char* id, const char* pw);
 
 enum COMP_TYPE { OP_ACCEPT, OP_RECV, OP_SEND, OP_NPC_MOVE, OP_NPC_RUSH, OP_CREATE_CUBE, OP_UPDATE };
 
@@ -45,14 +46,14 @@ public:
 		_wsabuf.len = BUF_SIZE;
 		_wsabuf.buf = _send_buf;
 		_comp_type = OP_RECV;
-		ZeroMemory(&_over, sizeof(_over));
+		::ZeroMemory(&_over, sizeof(_over));
 	}
 
 	OVER_EXP(char* packet)
 	{
 		_wsabuf.len = packet[0];
 		_wsabuf.buf = _send_buf;
-		ZeroMemory(&_over, sizeof(_over));
+		::ZeroMemory(&_over, sizeof(_over));
 		_comp_type = OP_SEND;
 		memcpy(_send_buf, packet, packet[0]);
 	}
@@ -87,7 +88,7 @@ public:
 	void do_recv()
 	{
 		DWORD recv_flag = 0;
-		memset(&_recv_over._over, 0, sizeof(_recv_over._over));
+		::memset(&_recv_over._over, 0, sizeof(_recv_over._over));
 		_recv_over._wsabuf.len = BUF_SIZE - _prev_remain;
 		_recv_over._wsabuf.buf = _recv_over._send_buf + _prev_remain;
 		WSARecv(_socket, &_recv_over._wsabuf, 1, 0, &recv_flag, &_recv_over._over, 0);
@@ -270,6 +271,8 @@ void process_packet(int c_id, char* packet)
 	}
 	case LCS_JOIN: {
 		LCS_JOIN_PACKET* p = reinterpret_cast<LCS_JOIN_PACKET*>(packet);
+		p->id;
+		p->passward;
 
 		cout << "아무튼 회원가입 하려함" << endl;
 		break;
@@ -415,7 +418,7 @@ void do_worker()
 			}
 			else cout << "Max user exceeded.\n";
 
-			ZeroMemory(&ex_over->_over, sizeof(ex_over->_over));
+			::ZeroMemory(&ex_over->_over, sizeof(ex_over->_over));
 			ex_over->_wsabuf.buf = reinterpret_cast<CHAR*>(c_socket);
 			int addr_size = sizeof(SOCKADDR_IN);
 			AcceptEx(g_s_socket, c_socket, ex_over->_send_buf, 0, addr_size + 16, addr_size + 16, 0, &ex_over->_over);
@@ -495,14 +498,184 @@ void show_error() {
 	printf("error\n");
 }
 
+SQLHENV henv;
+SQLHDBC hdbc;
+SQLHSTMT hstmt = 0;
+SQLRETURN retcode;
+SQLWCHAR szuser_id[DATA_LEN], szuser_passward[DATA_LEN];
+SQLINTEGER duser_level;
+SQLLEN cbID = 0, cbPASSWARD = 0, cbLEVEL = 0;
+
+void DB_init() {
+	// Allocate environment handle  
+	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
+
+	// Set the ODBC version environment attribute  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
+
+		// Allocate connection handle  
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+			retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
+
+			// Set login timeout to 5 seconds  
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+				SQLSetConnectAttr(hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
+
+				// Connect to data source  
+				retcode = SQLConnect(hdbc, (SQLWCHAR*)L"Algeater", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+
+				// Allocate statement handle  
+				if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+					cout << "db 로딩 완료" << endl;
+					retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+
+					retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", SQL_NTS);
+					if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+						cout << "select OK" << endl;
+						// Bind columns 1, 2, and 3  
+						retcode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, szuser_id, DATA_LEN, &cbID);
+						retcode = SQLBindCol(hstmt, 2, SQL_C_WCHAR, szuser_passward, DATA_LEN, &cbPASSWARD);
+						retcode = SQLBindCol(hstmt, 3, SQL_C_LONG, &duser_level, 100, &cbLEVEL);
+						// Fetch and print each row of data. On an error, display a message and exit.  
+						for (int i = 0; ; i++) {
+							retcode = SQLFetch(hstmt);
+							if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+								show_error();
+							if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+							{
+								//replace wprintf with printf
+								//%S with %ls
+								//warning C4477: 'wprintf' : format string '%S' requires an argument of type 'char *'
+								//but variadic argument 2 has type 'SQLWCHAR *'
+								//wprintf(L"%d: %S %S %S\n", i + 1, sCustID, szName, szPhone);  
+								wprintf(L"%d: %ls %ls %d\n", i + 1, szuser_id, szuser_passward, duser_level);
+
+								wchar_t* t = reinterpret_cast<wchar_t*>(szuser_id);
+								int t_len = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
+								char* ptr;
+								ptr = new char[t_len];
+								WideCharToMultiByte(CP_ACP, 0, t, -1, ptr, t_len, 0, 0);
+								strcpy(user_datas[i].user_id, ptr);
+								delete ptr;
+
+								t = reinterpret_cast<wchar_t*>(szuser_passward);
+								t_len = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
+								ptr = new char[t_len];
+								WideCharToMultiByte(CP_ACP, 0, t, -1, ptr, t_len, 0, 0);
+								strcpy(user_datas[i].user_passward, ptr);
+								delete ptr;
+
+								user_datas[i].user_level = duser_level;
+
+								int len = strlen(user_datas[i].user_id);
+								int index = 0;
+								for (int j = 0; j < len; j++) {
+									if (!std::isspace(user_datas[i].user_id[j])) {
+										user_datas[i].user_id[index++] = user_datas[i].user_id[j];
+									}
+								}
+								user_datas[i].user_id[index] = '\0';
+
+								len = strlen(user_datas[i].user_passward);
+								index = 0;
+								for (int j = 0; j < len; j++) {
+									if (!std::isspace(user_datas[i].user_passward[j])) {
+										user_datas[i].user_passward[index++] = user_datas[i].user_passward[j];
+									}
+								}
+								user_datas[i].user_passward[index] = '\0';
+
+								cout << "데이터 로드 성공" << endl;
+							}
+							else
+								break;
+						}
+					}
+
+					//// Process data  
+					//if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+					//	SQLCancel(hstmt);
+					//	SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+					//}
+				}
+			}
+		}
+	}
+
+}
+
+void DB_end() {
+	SQLDisconnect(hdbc);
+	SQLFreeHandle(SQL_HANDLE_DBC, hdbc);
+	SQLFreeHandle(SQL_HANDLE_ENV, henv);
+}
+
+SQLWCHAR* CharToSQLWCHAR(const char* str) {
+	int len = strlen(str);
+	int bufferSize = MultiByteToWideChar(CP_ACP, 0, str, len, nullptr, 0);
+	SQLWCHAR* sqlWStr = new SQLWCHAR[bufferSize + 1];
+	MultiByteToWideChar(CP_ACP, 0, str, len, sqlWStr, bufferSize);
+	sqlWStr[bufferSize] = L'\0'; // NULL 문자 추가
+	return sqlWStr;
+}
+
+void PrintODBCError(SQLHANDLE handle, SQLSMALLINT handleType) {
+	SQLWCHAR sqlState[6];
+	SQLINTEGER nativeError;
+	SQLWCHAR messageText[256];
+	SQLSMALLINT textLength;
+
+	SQLRETURN ret;
+	SQLSMALLINT i = 1;
+
+	while ((ret = SQLGetDiagRec(handleType, handle, i, sqlState, &nativeError,
+		messageText, sizeof(messageText), &textLength)) != SQL_NO_DATA) {
+		std::wcout << "ODBC Error: " << sqlState << ", Native Error: " << nativeError << ", Message: " << messageText << std::endl;
+		i++;
+	}
+}
+
+int add_user(const char* id, const char* pw) {
+	char tmp[100];
+	sprintf(tmp, "SELECT user_id FROM user_datas WHERE user_id = \\\'abcd\\\'", id);
+
+	//sprintf(tmp, "SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", id);
+	cout << "main :: 626 :: " << tmp << endl;
+	retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", SQL_NTS);
+
+	if (retcode == SQL_NO_DATA) {
+		cout << "값이 없대? " << endl;
+	}
+	if (retcode == SQL_ERROR) {
+		cout << "썸띵 프라블럼? " << endl;
+		if (retcode == SQL_ERROR) {
+			PrintODBCError(hstmt, SQL_HANDLE_STMT);
+		}
+	}
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, szuser_id, DATA_LEN, &cbID);
+
+		for (int i = 0; ; i++) {
+			retcode = SQLFetch(hstmt);
+			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+				show_error();
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+			{
+				cout << "경축 해치웠나" << endl;
+			}
+			else {
+				break;
+			}
+		}
+	}
+	return 1;
+}
+
+
+
 void Data_read() {
-	SQLHENV henv;
-	SQLHDBC hdbc;
-	SQLHSTMT hstmt = 0;
-	SQLRETURN retcode;
-	SQLWCHAR szuser_id[DATA_LEN], szuser_passward[DATA_LEN];
-	SQLINTEGER duser_level;
-	SQLLEN cbID = 0, cbPASSWARD = 0, cbLEVEL = 0;
+	
 
 	// Allocate environment handle  
 	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
@@ -608,7 +781,10 @@ void Data_read() {
 
 int main()
 {
-	Data_read();
+	//Data_read();
+
+	DB_init();
+	add_user("efg", "1234");
 	char cmp[20] = "admin";
 	strcpy(user_datas[MAX_USER - 1].user_id, cmp);
 	strcpy(user_datas[MAX_USER - 1].user_passward, cmp);
@@ -619,7 +795,7 @@ int main()
 	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	g_s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN server_addr;
-	memset(&server_addr, 0, sizeof(server_addr));
+	::memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(LOBBY_SERVER_PORT_NUM);
 	server_addr.sin_addr.S_un.S_addr = INADDR_ANY;
@@ -647,7 +823,7 @@ int main()
 
 	ss_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN serverAddr;
-	memset(&serverAddr, 0, sizeof(serverAddr));
+	::memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(GAME_SERVER_PORT_NUM);
 	serverAddr.sin_addr.S_un.S_addr = inet_addr(GAME_SERVER_IP);
@@ -676,7 +852,7 @@ int main()
 		}
 		else cout << "Max user exceeded.\n";
 
-		ZeroMemory(&ss_over._over, sizeof(ss_over._over));
+		::ZeroMemory(&ss_over._over, sizeof(ss_over._over));
 		ss_over._wsabuf.buf = reinterpret_cast<CHAR*>(c_socket);
 		int addr_size = sizeof(SOCKADDR_IN);
 		AcceptEx(g_s_socket, c_socket, ss_over._send_buf, 0, addr_size + 16, addr_size + 16, 0, &ss_over._over);
@@ -701,6 +877,7 @@ int main()
 	for (auto& th : worker_threads)
 		th.join();
 
+	DB_end();
 	closesocket(g_s_socket);
 	WSACleanup();
 }
