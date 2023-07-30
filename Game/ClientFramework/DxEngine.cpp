@@ -420,11 +420,11 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 		boss2Skill.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::GeneralObjects);
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk10.png");
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk11.png");
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk12.png");
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk13.png");
-		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk14.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_0.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_1.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_2.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_3.png");
+		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_4.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk20.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk21.png");
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage2\\rect_atk22.png");
@@ -1811,7 +1811,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->IASetVertexBuffers(0, 1, &boss2Skill._vertexBufferView);
 				cmdList->IASetIndexBuffer(&boss2Skill._indexBufferView);
 
-				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(3, 3, 3)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(npcArr[i]._transform.x, 0.01f, npcArr[i]._transform.z));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1.5f, 1.5f, 1.5f)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(npcArr[i]._transform.x, 0.01f, npcArr[i]._transform.z));
 				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
