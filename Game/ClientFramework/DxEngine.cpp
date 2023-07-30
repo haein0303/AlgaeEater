@@ -162,6 +162,12 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	npc_asset.Make_SRV();
 	npc_asset.CreatePSO();
 
+	shadow.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+	shadow.Init("../Resources/Boss2Skill.txt", ObjectType::Blend);
+	shadow.Add_texture(L"..\\Resources\\Texture\\shadow.png");
+	shadow.Make_SRV();
+	shadow.CreatePSO(L"..\\Circle.hlsl");
+
 	switch (Scene_num)
 	{
 	case 0:
@@ -2247,6 +2253,86 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				cmdList->DrawIndexedInstanced(key._indexCount, 1, 0, 0, 0);
 			}
 		}*/
+
+		// shadow
+		for (OBJECT& player : playerArr)
+		{
+			cmdList->SetPipelineState(shadow._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
+			cmdList->IASetIndexBuffer(&shadow._indexBufferView);
+
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5,0.5,0.5) * XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(player._transform.x, 0.01f, player._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
+			srv_handle = shadow._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(shadow._indexCount, 1, 0, 0, 0);
+		}
+
+		for (OBJECT& npc : npcArr)
+		{
+			cmdList->SetPipelineState(shadow._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
+			cmdList->IASetIndexBuffer(&shadow._indexBufferView);
+
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.3, 0.3, 0.3) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(npc._transform.x, 0.01f, npc._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
+			srv_handle = shadow._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(shadow._indexCount, 1, 0, 0, 0);
+		}
+
+		XMFLOAT3 shadow_boss_scale{1,1,1};
+		switch (Scene_num)
+		{
+		case 0:
+		case 1:
+			shadow_boss_scale = XMFLOAT3(5, 5, 5);
+			break;
+		case 2:
+			shadow_boss_scale = XMFLOAT3(3, 3, 3);
+			break;
+		case 3:
+			shadow_boss_scale = XMFLOAT3(0.5, 0.5, 0.5);
+			break;
+		default:
+			break;
+		}
+		if(Scene_num == 1)
+		{
+			cmdList->SetPipelineState(shadow._pipelineState.Get());
+			cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
+			cmdList->IASetIndexBuffer(&shadow._indexBufferView);
+
+			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(shadow_boss_scale.x, shadow_boss_scale.y, shadow_boss_scale.z) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(boss_obj._transform.x, 0.01f, boss_obj._transform.z));
+			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
+			srv_handle = shadow._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+			descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+
+			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+			cmdList->DrawIndexedInstanced(shadow._indexCount, 1, 0, 0, 0);
+		}
 
 		// skybox
 		{

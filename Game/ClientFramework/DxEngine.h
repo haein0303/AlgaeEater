@@ -216,6 +216,8 @@ public:
 	MESH_ASSET boss2_skill_circle;
 	MESH_ASSET boss2_skill_fire;
 
+	MESH_ASSET shadow;
+
 	int open_door_count = 0;
 
 	int watching_user = 0;
