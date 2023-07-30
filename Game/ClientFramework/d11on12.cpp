@@ -213,13 +213,11 @@ void d11on12::Loading_info()
 	_loading_msg.push_back(L"LOADING...");
 	_loading_msg.push_back(L"기다리다가 지친다~");
 	_loading_msg.push_back(L"교수님 감사합니다.");
-	_loading_msg.push_back(L"우리팀 최고 미남 김덕현");
 	_loading_msg.push_back(L"저희의 지도교수님은 정내훈 교수님입니다.");
 	_loading_msg.push_back(L"팀원은 클라 1.3명 서버 1.3명 기획 0.2명 아트 0.2명으로 구성되었습니다.");
 	_loading_msg.push_back(L"고양이는 귀엽습니다.");
 	_loading_msg.push_back(L"덕현이는 찍먹파입니다.");
 	_loading_msg.push_back(L"팀원 중 김경욱 학생만 흡연을 합니다.");
-	_loading_msg.push_back(L"덕현이는 최근 장트러블에 고생하고 있습니다.");
 	_loading_msg.push_back(L"해인이의 자취방에서 개발을 자주 진행합니다.");
 	_loading_msg.push_back(L"알지이터는 청소 물고기의 한 종입니다.");
 	_loading_msg.push_back(L"캐릭터의 이름은 AKI와 MIKA입니다.");

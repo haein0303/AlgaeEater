@@ -77,7 +77,6 @@ public:
 
 	// 파티클 데이터
 	ParticleData particles[PARTICLE_NUM];
-	//array<array<bool, PARTICLE_NUM>, 6> is_pass{false};
 	array<XMFLOAT3, PARTICLE_NUM> particle_pos0{XMFLOAT3(0,0,0)};
 	float coefficient_of_restitution = 0.7f;	// 반발계수
 	float friction_coefficient = 0.9f;			// 마찰계수
@@ -753,7 +752,7 @@ public:
 						{
 							data.pos.x -= sinf(0) * timerPtr->_deltaTime;
 							data.pos.z -= cosf(0) * timerPtr->_deltaTime;
-							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+							bounding_boxes3[17].Center = XMFLOAT3(data.pos.x * 2.f, bounding_boxes3[17].Center.y, data.pos.z * 2.f);
 						}
 					}
 					if (inputPtr->_open_door[3] == true)
@@ -762,7 +761,7 @@ public:
 						{
 							data.pos.x -= sinf(XM_PI * 0.5f) * timerPtr->_deltaTime;
 							data.pos.z -= cosf(XM_PI * 0.5f) * timerPtr->_deltaTime;
-							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+							bounding_boxes3[18].Center = XMFLOAT3(data.pos.x * 2.f, bounding_boxes3[18].Center.y, data.pos.z * 2.f);
 						}
 					}
 					if (inputPtr->_open_door[4] == true)
@@ -771,7 +770,7 @@ public:
 						{
 							data.pos.x += sinf(0) * timerPtr->_deltaTime;
 							data.pos.z += cosf(0) * timerPtr->_deltaTime;
-							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+							bounding_boxes3[19].Center = XMFLOAT3(data.pos.x * 2.f, bounding_boxes3[19].Center.y, data.pos.z * 2.f);
 						}
 					}
 					if (inputPtr->_open_door[5] == true)
@@ -780,7 +779,7 @@ public:
 						{
 							data.pos.x -= sinf(0) * timerPtr->_deltaTime;
 							data.pos.z -= cosf(0) * timerPtr->_deltaTime;
-							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+							bounding_boxes3[19].Center = XMFLOAT3(data.pos.x * 2.f, bounding_boxes3[19].Center.y, data.pos.z * 2.f);
 						}
 						//data.pos = doorPos0[4];
 					}
