@@ -243,27 +243,30 @@ void send_cube(int c_id, float x, float y, float z)
 	int s_num = clients[c_id]._Room_Num * ROOM_CUBE;
 	int cnt = 0;
 
+	std::random_device rd;
+	std::uniform_int_distribution<int> dis(20, 50);
+
 	for (int i = s_num; i < s_num + ROOM_CUBE - 1; i++) {
 		switch (cnt)
 		{
 		case 0:
-			cubes[i].x = x;
+			cubes[i].x = x + dis(rd);
 			cubes[i].y = y;
-			cubes[i].z = z - 10.0f;
+			cubes[i].z = z - dis(rd);
 			cubes[i].degree = 0;
 			cubes[i].color = cnt + 1;
 			break;
 		case 1:
-			cubes[i].x = x - 10.0f;
+			cubes[i].x = x - dis(rd);
 			cubes[i].y = y;
-			cubes[i].z = z;
+			cubes[i].z = z + dis(rd);
 			cubes[i].degree = 0;
 			cubes[i].color = cnt + 1;
 			break;
 		case 2:
-			cubes[i].x = x;
+			cubes[i].x = x + dis(rd);
 			cubes[i].y = y;
-			cubes[i].z = z + 10.0f;
+			cubes[i].z = z + dis(rd);
 			cubes[i].degree = 0;
 			cubes[i].color = cnt + 1;
 			break;
@@ -848,9 +851,12 @@ void send_second_cube(int c_id, float x, float y, float z)
 {
 	int s_num = clients[c_id]._Room_Num * ROOM_CUBE + ROOM_CUBE - 1;
 
-	cubes[s_num].x = x;
+	std::random_device rd;
+	std::uniform_int_distribution<int> dis(30, 80);
+
+	cubes[s_num].x = x + dis(rd);
 	cubes[s_num].y = y;
-	cubes[s_num].z = z - 10.0f;
+	cubes[s_num].z = z - dis(rd);
 	cubes[s_num].degree = 0;
 	cubes[s_num].color = 0;
 		

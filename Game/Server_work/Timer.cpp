@@ -405,17 +405,6 @@ void do_timer()
 
 				if (clients[ev.object_id].hp <= BOSS_HP[0] * 0.25 && clients[ev.object_id].second_pattern == false && clients[ev.object_id]._object_type == TY_BOSS_1) { 
 					// µÎ¹øÂ° Àü¸ê±â
-					//for (auto& pl : clients[ev.object_id].room_list) {
-					//	if (pl >= MAX_USER) continue;
-					//	clients[pl]._sl.lock();
-					//	if (clients[pl]._s_state != ST_INGAME) {
-					//		clients[pl]._sl.unlock();
-					//		continue;
-					//	}
-					//	clients[pl]._sl.unlock();
-					//	char msg[NAME_SIZE] = "±âµÕ µ¹Áø";
-					//	//clients[pl].send_msg(msg);
-					//}
 
 					for (auto& pl : clients[ev.object_id].room_list) {
 						if (pl >= MAX_USER) continue;

@@ -230,8 +230,14 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].color = 0;
 		clients[c_id].god_mod = false;
 		clients[c_id].hp = 100;
-		clients[c_id].atk = 10;
-		clients[c_id].skill_atk = 50;
+		if (clients[c_id]._object_type == 0) {
+			clients[c_id].atk = 10;
+			clients[c_id].skill_atk = 50;
+		}
+		else {
+			clients[c_id].atk = 25;
+			clients[c_id].skill_atk = 100;
+		}
 		clients[c_id].send_login_ok_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp);
 		clients[c_id]._s_state = ST_INGAME;
 		if (clients[0]._Room_Num != 9999) clients[c_id]._Room_Num = c_id / ROOM_USER;
@@ -584,7 +590,10 @@ void process_packet(int c_id, char* packet)
 					clients[p->target_id].hp -= clients[p->attacker_id].atk;
 
 					if (clients[p->target_id].hp <= 0) {
-						if (clients[p->target_id]._object_type == TY_MOVE_NPC) death_counts[clients[p->target_id]._Room_Num].counts++;
+						if (clients[p->target_id]._object_type == TY_MOVE_NPC) {
+							death_counts[clients[p->target_id]._Room_Num].counts++;
+							cout << "데스 카운트 : " << death_counts[clients[p->target_id]._Room_Num].counts << endl;
+						}
 						if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
 							if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
 								death_counts[clients[p->target_id]._Room_Num].counts++;
@@ -682,8 +691,9 @@ void process_packet(int c_id, char* packet)
 						if (clients[p->target_id].hp <= 0) {
 							if (clients[p->target_id]._object_type == TY_MOVE_NPC && clients[p->target_id].char_state != AN_DEAD) death_counts[clients[p->target_id]._Room_Num].counts++;
 							if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
-								if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
+								if (clients[p->target_id]._object_type == TY_MOVE_NPC) {
 									death_counts[clients[p->target_id]._Room_Num].counts++;
+									cout << "데스 카운트 : " << death_counts[clients[p->target_id]._Room_Num].counts << endl;
 								}
 								else {
 									for (auto& pl : clients[p->target_id].room_list) {
