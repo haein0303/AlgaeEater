@@ -117,7 +117,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 
 	player_AKI_HeadPhone_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 	player_AKI_HeadPhone_asset.Init("../Resources/AKI_HeadPhone.txt", ObjectType::AnimationObjects);
-	player_AKI_HeadPhone_asset.Add_texture(L"..\\Resources\\Texture\\bricks.dds");
+	player_AKI_HeadPhone_asset.Add_texture(L"..\\Resources\\Texture\\headphone.png");
 	player_AKI_HeadPhone_asset.Make_SRV();
 	player_AKI_HeadPhone_asset.CreatePSO();
 
@@ -431,6 +431,22 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss3_Mask.Make_SRV();
 		boss3_Mask.CreatePSO();
 
+		/*npc_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		npc_asset.Init("../Resources/OrangeSpider.txt", ObjectType::AnimationObjects);
+		npc_asset.Add_texture(L"..\\Resources\\Texture\\NPCSpider_DefaultMaterial_AlbedoTransparency.png");
+		npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_paint_black_BaseColor.png");
+		npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+		npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+		npc_asset.Add_texture(L"..\\Resources\\Texture\\spider_bare_metal_BaseColor.png");
+		npc_asset.Make_SRV();
+		npc_asset.CreatePSO();*/
+
+		stage3_npc_asset.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
+		stage3_npc_asset.Init("../Resources/Npc3.txt", ObjectType::AnimationObjects);
+		stage3_npc_asset.Add_texture(L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png");
+		stage3_npc_asset.Make_SRV();
+		stage3_npc_asset.CreatePSO();
+
 		boss2Skill.Link_ptr(devicePtr, fbxLoaderPtr, vertexBufferPtr, indexBufferPtr, cmdQueuePtr, rootSignaturePtr, dsvPtr);
 		boss2Skill.Init("../Resources/Boss2Skill.txt", ObjectType::Blend);
 		boss2Skill.Add_texture(L"..\\Resources\\Texture\\Stage3\\boss3_0.png");
@@ -500,7 +516,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(Wall_O_4m, ObjectType::GeneralObjects, "../Resources/Wall_O_4m.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Wall_O_4m_Door, ObjectType::GeneralObjects, "../Resources/Wall_O_4m_Door.txt", L"..\\Resources\\Texture\\Stage3\\Wall_O.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(Plane, ObjectType::Stage3Room, "../Resources/Wall.txt", L"..\\Resources\\Texture\\Stage3\\Stage3RoomTexture.png", L"..\\Bricks.hlsl");
-		InitMeshAsset(stage3_npc_asset, ObjectType::VertexAnimationObjects, "../Resources/stage3npc_idle.txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(stage3_npc_dead[0], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead.txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(stage3_npc_dead[1], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(1).txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
 		InitMeshAsset(stage3_npc_dead[2], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(2).txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
@@ -1438,6 +1453,9 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			if (npcArr[i]._on == true && npcArr[i]._object_type == TY_MOVE_NPC) {
 				npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0, npcArr[i]._object_type);
 			}
+			else if (npcArr[i]._on == true && npcArr[i]._object_type == TY_NPC_OTHER) {
+				stage3_npc_asset.UpdateSkinnedAnimation(timerPtr->_deltaTime, npcArr[i], 0, npcArr[i]._object_type);
+			}
 		}
 
 	}
@@ -2075,31 +2093,34 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				if (npcArr[i]._on == true)
 				{
 					{
-						npcArr[i]._animation_time_pos += timerPtr->_deltaTime;
-						XMVECTOR P = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-						XMVECTOR Q = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-						float scale = 1.f;
-
-						stage3_npc_asset.UpdateVertexAnimation(npcArr[i], P, Q, ObjectType::VertexAnimationObjects); // º¯°æ ÇÊ¿ä
-
 						cmdList->SetPipelineState(stage3_npc_asset._pipelineState.Get());
 						cmdList->IASetVertexBuffers(0, 1, &stage3_npc_asset._vertexBufferView);
 						cmdList->IASetIndexBuffer(&stage3_npc_asset._indexBufferView);
 
-						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(scale, scale, scale)
-							* XMMatrixRotationZ(-XM_PI / 2.f)
-							* XMMatrixRotationY(npcArr[i]._degree* XM_PI / 180.f - XM_PI / 2.f)
-							* XMMatrixTranslation(npcArr[i]._transform.x + P.m128_f32[0], npcArr[i]._transform.y + P.m128_f32[1], npcArr[i]._transform.z + P.m128_f32[2]));
+						//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+						XMStoreFloat4x4(&_transform.world, XMMatrixScaling(1, 1, 1)
+							* XMMatrixRotationY((npcArr[i]._prev_degree + 180.f) * XM_PI / 180.f)
+							* XMMatrixTranslation(npcArr[i]._prev_transform.x, npcArr[i]._prev_transform.y, npcArr[i]._prev_transform.z));
 						XMMATRIX world = XMLoadFloat4x4(&_transform.world);
 						XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+						XMStoreFloat4x4(&_transform.TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-						D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-						descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
-						D3D12_CPU_DESCRIPTOR_HANDLE srv_handle = stage3_npc_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-						descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+						// ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+						copy(begin(npcArr[i]._final_transforms), end(npcArr[i]._final_transforms), &_transform.BoneTransforms[0]);
 
-						descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-						cmdList->DrawIndexedInstanced(stage3_npc_asset._indexCount, 1, 0, 0, 0);
+						//ï¿½ï¿½ï¿½ï¿½
+						stage3_npc_asset._tex._srvHandle = stage3_npc_asset._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+
+						int sum = 0;
+						for (Subset i : stage3_npc_asset._animationPtr->mSubsets)
+						{
+							D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+							descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+							descHeapPtr->CopyDescriptor(stage3_npc_asset._tex._srvHandle, 5, devicePtr);
+							descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+							cmdList->DrawIndexedInstanced(i.FaceCount * 3, 1, sum, 0, 0);
+							sum += i.FaceCount * 3;
+						}
 					}
 
 					// npc hp bar
