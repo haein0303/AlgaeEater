@@ -748,6 +748,7 @@ public:
 						{
 							data.pos.x -= sinf(0) * timerPtr->_deltaTime;
 							data.pos.z -= cosf(0) * timerPtr->_deltaTime;
+							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 						}
 					}
 					if (inputPtr->_open_door[3] == true)
@@ -756,6 +757,7 @@ public:
 						{
 							data.pos.x -= sinf(XM_PI * 0.5f) * timerPtr->_deltaTime;
 							data.pos.z -= cosf(XM_PI * 0.5f) * timerPtr->_deltaTime;
+							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 						}
 					}
 					if (inputPtr->_open_door[4] == true)
@@ -764,7 +766,18 @@ public:
 						{
 							data.pos.x += sinf(0) * timerPtr->_deltaTime;
 							data.pos.z += cosf(0) * timerPtr->_deltaTime;
+							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 						}
+					}
+					else {
+
+						if (pow((data.pos.x - doorPos0[4].x), 2.f) + pow((data.pos.z - doorPos0[4].z), 2.f) > 1.f)
+						{
+							data.pos.x -= sinf(0) * timerPtr->_deltaTime;
+							data.pos.z -= cosf(0) * timerPtr->_deltaTime;
+							//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						}
+						//data.pos = doorPos0[4];
 					}
 					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
 				}
@@ -915,14 +928,12 @@ public:
 
 	bool OpenDoor(XMFLOAT3& pos, XMFLOAT3 pos0, float angle)
 	{
-		if (pow((pos.x - pos0.x), 2.f) + pow((pos.z - pos0.z), 2.f) < 25.f)
+		if ((pos.x - pos0.x)* (pos.x - pos0.x) + (pos.z - pos0.z)* (pos.z - pos0.z) < 25.f)
 		{
 			pos.x -= sinf(angle) * timerPtr->_deltaTime;
-			pos.z -= cosf(angle) * timerPtr->_deltaTime;
-			//cout << true;
+			pos.z -= cosf(angle) * timerPtr->_deltaTime;			
 			return true;
 		}
-		//cout << false;
 		return false;
 	}
 
