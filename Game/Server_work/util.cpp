@@ -18,6 +18,9 @@ extern mutex timer_l;
 extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
 extern array<BOOL, ROOM_NUM> RELOAD_LUA;
 
+
+int shield_trigger_33 = 0;
+
 class stage_npc_death_counts {
 public:
 	int counts;
@@ -555,34 +558,39 @@ void process_packet(int c_id, char* packet)
 		if (p->attacker_id < MAX_USER) {	// 공격자가 플레이어
 			if (p->attack_type == 2) { // 일반 공격
 				if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
-					clients[p->target_id]._DE.lock();
-					clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
-
-					if (clients[p->target_id].boss_shield <= 0) {
-						clients[p->target_id].crash_sequence[3] = 0;
-						cout << "보스 쉴드 파괴 : 0" << endl;
-						for (auto& player : clients[p->target_id].room_list) {
-							if (player >= MAX_USER) continue;
-							SC_BOSS_SHIELD_PACKET pac;
-							pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
-							pac.type = SC_BOSS_SHIELD;
-							pac.shield_hp = clients[p->target_id].boss_shield;
-							pac.trigger = false;
-							clients[player].do_send(&pac);
-						}
+					if (shield_trigger_33 != 2) {
+						cout << "기둥이 살아있음" << endl;
 					}
 					else {
-						for (auto& player : clients[p->target_id].room_list) {
-							if (player >= MAX_USER) continue;
-							SC_BOSS_SHIELD_PACKET pac;
-							pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
-							pac.type = SC_BOSS_SHIELD;
-							pac.shield_hp = clients[p->target_id].boss_shield;
-							pac.trigger = true;
-							clients[player].do_send(&pac);
+						clients[p->target_id]._DE.lock();
+						clients[p->target_id].boss_shield -= clients[p->attacker_id].atk;
+
+						if (clients[p->target_id].boss_shield <= 0) {
+							clients[p->target_id].crash_sequence[3] = 0;
+							cout << "보스 쉴드 파괴 : 0" << endl;
+							for (auto& player : clients[p->target_id].room_list) {
+								if (player >= MAX_USER) continue;
+								SC_BOSS_SHIELD_PACKET pac;
+								pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+								pac.type = SC_BOSS_SHIELD;
+								pac.shield_hp = clients[p->target_id].boss_shield;
+								pac.trigger = false;
+								clients[player].do_send(&pac);
+							}
 						}
+						else {
+							for (auto& player : clients[p->target_id].room_list) {
+								if (player >= MAX_USER) continue;
+								SC_BOSS_SHIELD_PACKET pac;
+								pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+								pac.type = SC_BOSS_SHIELD;
+								pac.shield_hp = clients[p->target_id].boss_shield;
+								pac.trigger = true;
+								clients[player].do_send(&pac);
+							}
+						}
+						clients[p->target_id]._DE.unlock();
 					}
-					clients[p->target_id]._DE.unlock();
 				}
 
 				else { // 일반
@@ -655,34 +663,39 @@ void process_packet(int c_id, char* packet)
 			else { // 스킬 공격
 				if (p->attack_type == 1) { // 스킬 공격
 					if (clients[p->target_id].boss_shield_trigger == true) { // 보스 기믹 중
-						clients[p->target_id]._DE.lock();
-						clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
-
-						if (clients[p->target_id].boss_shield <= 0) {
-							clients[p->target_id].crash_sequence[3] = 0;
-							cout << "보스 쉴드 파괴 : 0" << endl;
-							for (auto& player : clients[p->target_id].room_list) {
-								if (player >= MAX_USER) continue;
-								SC_BOSS_SHIELD_PACKET pac;
-								pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
-								pac.type = SC_BOSS_SHIELD;
-								pac.shield_hp = 0;
-								pac.trigger = false;
-								clients[player].do_send(&pac);
-							}
+						if (shield_trigger_33 != 2) {
+							cout << "기둥이 살아있음" << endl;
 						}
 						else {
-							for (auto& player : clients[p->target_id].room_list) {
-								if (player >= MAX_USER) continue;
-								SC_BOSS_SHIELD_PACKET pac;
-								pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
-								pac.type = SC_BOSS_SHIELD;
-								pac.shield_hp = clients[p->target_id].boss_shield;
-								pac.trigger = true;
-								clients[player].do_send(&pac);
+							clients[p->target_id]._DE.lock();
+							clients[p->target_id].boss_shield -= clients[p->attacker_id].skill_atk;
+
+							if (clients[p->target_id].boss_shield <= 0) {
+								clients[p->target_id].crash_sequence[3] = 0;
+								cout << "보스 쉴드 파괴 : 0" << endl;
+								for (auto& player : clients[p->target_id].room_list) {
+									if (player >= MAX_USER) continue;
+									SC_BOSS_SHIELD_PACKET pac;
+									pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+									pac.type = SC_BOSS_SHIELD;
+									pac.shield_hp = 0;
+									pac.trigger = false;
+									clients[player].do_send(&pac);
+								}
 							}
+							else {
+								for (auto& player : clients[p->target_id].room_list) {
+									if (player >= MAX_USER) continue;
+									SC_BOSS_SHIELD_PACKET pac;
+									pac.size = sizeof(SC_BOSS_SHIELD_PACKET);
+									pac.type = SC_BOSS_SHIELD;
+									pac.shield_hp = clients[p->target_id].boss_shield;
+									pac.trigger = true;
+									clients[player].do_send(&pac);
+								}
+							}
+							clients[p->target_id]._DE.unlock();
 						}
-						clients[p->target_id]._DE.unlock();
 					}
 
 					else { // 일반
@@ -866,6 +879,7 @@ void process_packet(int c_id, char* packet)
 			}
 			
 			if (cubes[p->target_id].hp == 0) {
+				shield_trigger_33++;
 				clients[boss_num].crash_sequence[clients[boss_num].crash_count] = cubes[p->target_id].color;
 				clients[boss_num].crash_count++;
 			}
