@@ -192,6 +192,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss_obj._final_transforms.resize(boss._animationPtr->mBoneHierarchy.size());
 		boss_obj._transform.y += 1.f;
 		boss_obj._object_type = TY_BOSS_1;
+		boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 		break;
 	case 1:
 	{
@@ -272,6 +273,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		}
 		
 		boss_obj._object_type = TY_BOSS_1;
+		boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 
 		break;
 	}
@@ -393,6 +395,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		}
 
 		boss_obj._object_type = TY_BOSS_2;
+		boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 
 		break;
 	}
@@ -539,6 +542,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		boss_obj._transform.y += 1.f;
 
 		boss_obj._object_type = TY_BOSS_3;
+		boss_collision.Extents = XMFLOAT3(1.f, 1.f, 1.f);
 
 		int count = 0;
 		for (MapData& data : _map_data3)
@@ -553,6 +557,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		break;
 	}
 	default:
+		boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 		break;
 	}
 
@@ -597,7 +602,6 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 	boss_collision.Center = XMFLOAT3(boss_obj._transform.x,
 		boss_obj._transform.y,
 		boss_obj._transform.z);
-	boss_collision.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 
 	boss_obj.boss2_skill_vec.resize(100);
 	boss_obj.boss2_skill_fire_vec.resize(100);
@@ -643,6 +647,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	if (inputPtr->_god_mod_on) {
 		inputPtr->move_speed = 50.f;
 	}
+
+	for (OBJECT& obj : npcArr)
+		if(Scene_num == 3 && obj._object_type == TY_BOSS_1)
+			obj._bounding_box.Extents = XMFLOAT3(3.f, 1.5f, 3.f);
 
 	//보간을 위해서 사용하는 초기 세팅이란다
 	for (OBJECT& p : playerArr) {
@@ -918,11 +926,19 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	// npc 공격 충돌 감지
 	for (int j = 0; j < NPCMAX; ++j)
 	{
-		if (pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 4.f
+		if ((pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 4.f
 			&& npcArr[j]._animation_state == AnimationOrder::Attack1
 			&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
 			&& npcArr[j]._can_attack && npcArr[j]._object_type != TY_BOSS_SKILL
-			&& npcArr[j]._who_target == playerArr[0]._my_server_id)
+			&& npcArr[j]._who_target == playerArr[0]._my_server_id
+			&& npcArr[j]._object_type != TY_BOSS_1)
+			||
+			(pow(playerArr[0]._transform.x - npcArr[j]._transform.x, 2) + pow(playerArr[0]._transform.z - npcArr[j]._transform.z, 2) <= 26.f
+			&& npcArr[j]._animation_state == AnimationOrder::Attack1
+			&& npcArr[j]._animation_time_pos >= npc_asset._animationPtr->GetClipEndTime(npcArr[j]._animation_state) * 0.5f
+			&& npcArr[j]._can_attack && npcArr[j]._object_type != TY_BOSS_SKILL
+			&& npcArr[j]._who_target == playerArr[0]._my_server_id
+			&& npcArr[j]._object_type == TY_BOSS_1))
 		{
 			npcArr[j]._can_attack = false;
 
@@ -933,9 +949,6 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 			p.attacker_id = npcArr[j]._my_server_id;
 			p.target_id = playerArr[0]._my_server_id;
 			networkPtr->send_packet(&p);
-
-			//cout << "player" << 0 << " hp : " << playerArr[0]._hp << endl;
-			//cout << "npc" << j << " hp : " << npcArr[j]._hp << endl;
 		}
 	}
 	
