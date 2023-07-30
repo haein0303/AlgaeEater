@@ -755,11 +755,13 @@ void process_packet(int c_id, char* packet)
 			else {
 				int dead_cnt = 0;
 				clients[c_id].hp -= clients[p->attacker_id].atk;
+
 				if (clients[c_id].hp <= 0) {
 					clients[c_id].hp = 0;
 					clients[c_id].char_state = AN_DEAD;
 					for (auto& pl : clients[c_id].room_list) {
-						if (pl < MAX_USER) dead_cnt++;
+						if (pl >= MAX_USER) continue;
+						if (clients[pl].char_state != AN_DEAD) dead_cnt++;
 					}
 
 					if (dead_cnt == 0) {

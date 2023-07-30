@@ -12,6 +12,13 @@ extern HANDLE g_h_iocp;
 extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
 extern array<BOOL, ROOM_NUM> RELOAD_LUA;
 
+extern class stage_npc_death_counts {
+public:
+	int counts;
+};
+
+extern array<stage_npc_death_counts, ROOM_NUM> death_counts;
+
 int API_get_x(lua_State* L)
 {
 	int obj_id = lua_tonumber(L, -1);
@@ -154,6 +161,13 @@ void close_lua(int c_id)
 
 	int npc_start_num = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER;
 	int cube_num = clients[c_id]._Room_Num * ROOM_CUBE;
+
+
+	for (int i = 0; i < ROOM_NUM; i++) {
+		death_counts[i].counts = 0;
+	}
+
+	set_room();
 
 	for (int i = npc_start_num; i < npc_start_num + ROOM_NPC; i++) {
 		if (i == npc_start_num + ROOM_NPC - 1)lua_close(clients[i].L);
