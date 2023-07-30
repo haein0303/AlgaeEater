@@ -195,6 +195,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	case WM_QUIT:
 		g_isLive = false;
 		ExitProcess(0);
+
 		break;
 	case WM_CLOSE:
 		FreeConsole();

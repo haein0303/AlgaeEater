@@ -8,7 +8,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 {
 	MSG msg = { 0 };
 	
-	while (1) {
+	{
 		
 
 		cout << "WinMain INIT CALL" << endl;
@@ -76,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	}
 	
 
-	FreeConsole();
+	
 
 	return (int)msg.wParam;
 	
