@@ -1063,7 +1063,9 @@ void do_worker()
 				}
 			}
 			else if (clients[key]._object_type == TY_BOSS_1 || clients[key]._object_type == TY_BOSS_2 || clients[key]._object_type == TY_BOSS_3) {
+				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 15) {
 					move_npc(ex_over->target_id, key);
+				}
 			}
 			else if (clients[key]._object_type == TY_BOSS_SKILL) {
 				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 200) {
