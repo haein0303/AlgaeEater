@@ -19,6 +19,7 @@ extern array<FIELD, FIELD_NUM> fields;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
+extern array<BOOL, ROOM_NUM> RELOAD_LUA;
 
 void initialize_npc()
 {

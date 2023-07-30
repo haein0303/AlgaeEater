@@ -1,5 +1,7 @@
 my_id = 9999
 
+distance = 30000
+
 function set_object_id(id)
    my_id = id
 end
@@ -17,7 +19,7 @@ function wander_boss( player_id )
 	npc_x = API_get_x(my_id)
 	npc_z = API_get_z(my_id)
 
-	if ( math.abs (player_x - npc_x) + math.abs (player_z - npc_z) <= 30) then
+	if ( math.abs (player_x - npc_x) + math.abs (player_z - npc_z) <= distance) then
 		API_Tracking (player_id, my_id)
 	else
 		API_Wander(my_id)

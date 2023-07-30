@@ -16,6 +16,7 @@ extern array<CUBE, CUBE_NUM> cubes;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
+extern array<BOOL, ROOM_NUM> RELOAD_LUA;
 
 class stage_npc_death_counts {
 public:
@@ -535,6 +536,7 @@ void process_packet(int c_id, char* packet)
 		break;
 	}
 	case CS_CONSOLE: {
+		RELOAD_LUA[clients[c_id]._Room_Num] = true;
 		reset_lua(c_id);
 		break;
 	}
@@ -1056,7 +1058,10 @@ void do_worker()
 					}
 				}
 			}
-			else if (clients[key]._object_type == TY_BOSS_1 || clients[key]._object_type == TY_BOSS_2 || clients[key]._object_type == TY_BOSS_3 || clients[key]._object_type == TY_BOSS_SKILL) {
+			else if (clients[key]._object_type == TY_BOSS_1 || clients[key]._object_type == TY_BOSS_2 || clients[key]._object_type == TY_BOSS_3) {
+					move_npc(ex_over->target_id, key);
+			}
+			else if (clients[key]._object_type == TY_BOSS_SKILL) {
 				if (abs(clients[key].x - clients[ex_over->target_id].x) + abs(clients[key].z - clients[ex_over->target_id].z) <= 15) {
 					move_npc(ex_over->target_id, key);
 				}

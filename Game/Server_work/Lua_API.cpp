@@ -10,6 +10,7 @@ extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 extern HANDLE g_h_iocp;
 extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
+extern array<BOOL, ROOM_NUM> RELOAD_LUA;
 
 int API_get_x(lua_State* L)
 {
@@ -123,11 +124,12 @@ void reset_lua(int c_id)
 
 	luaL_openlibs(clients[npc_id].L);
 	if (luaL_loadfile(clients[npc_id].L, "hello.lua")) {
-		printf("소환 실패");
+		printf("루아 스크립트 로드 실패 \n");
 	}
 	else {
-		printf("소환 성공");
+		printf("루아 스크립트 로드 성공 \n");
 	}
+
 	lua_pcall(clients[npc_id].L, 0, 0, 0);
 
 	lua_getglobal(clients[npc_id].L, "set_object_id");
@@ -138,6 +140,12 @@ void reset_lua(int c_id)
 	lua_register(clients[npc_id].L, "API_get_z", API_get_z);
 	lua_register(clients[npc_id].L, "API_Rush", API_Rush);
 	lua_register(clients[npc_id].L, "API_get_state", API_get_state);
+	lua_register(clients[npc_id].L, "API_Tracking", API_Tracking);
+	lua_register(clients[npc_id].L, "API_Wander", API_Wander);
+
+	RELOAD_LUA[clients[c_id]._Room_Num] = false;
+
+	add_timer(npc_id, 1000, EV_BOSS_CON, c_id, clients[c_id]._Room_Num);
 }
 
 void close_lua(int c_id)

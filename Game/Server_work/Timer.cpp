@@ -24,6 +24,7 @@ extern array<FIELD, FIELD_NUM> fields;
 extern priority_queue<TIMER_EVENT> timer_queue;
 extern mutex timer_l;
 extern array<BOOL, ROOM_NUM> RESET_ROOM_NUM;
+extern array<BOOL, ROOM_NUM> RELOAD_LUA;
 
 int skill_tic = 0;
 
@@ -63,6 +64,14 @@ void do_timer()
 
 			if (true == RESET_ROOM_NUM[timer_queue.top().room_num])
 			{
+				timer_queue.pop();
+				timer_l.unlock();
+				break;
+			}
+
+			if (true == RELOAD_LUA[timer_queue.top().room_num])
+			{
+				timer_queue.pop();
 				timer_l.unlock();
 				break;
 			}
@@ -727,5 +736,6 @@ void set_room()
 {
 	for (int i = 0; i < ROOM_NUM; i++) {
 		RESET_ROOM_NUM[i] = false;
+		RELOAD_LUA[i] = false;
 	}
 }
