@@ -1703,9 +1703,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 		case 3:
 			Map(cmdList, floor, map_asset, i_now_render_index, Scene_num);
-			for (BoundingBox& box : bounding_boxes3)
-			{
-			}
 			if (boss_obj._on == true)
 			{
 				XMFLOAT3 boss3_scale = XMFLOAT3(100.f, 100.f, 100.f);
