@@ -245,6 +245,8 @@ public:
 	bool _mini_boss_icon = false;
 	bool _others_boss_icon = false;
 
+	int stage3_prev_door_count = 0;
+
 	vector<MapData> _map_data;
 	vector<MapData> _map_data2;
 	vector<MapData> _map_data3;
@@ -734,19 +736,24 @@ public:
 				else if (data.mesh_type.compare("Grid_Metal_door") == 0)
 				{
 					// door
-					if (inputPtr->_open_door[Scene_num - 1] == true)
+					// _open_door[0] = 1스테이지 문
+					// _open_door[1] = 2스테이지 문
+					// _open_door[2~4] = 3스테이지 문
+					//
+
+					if (inputPtr->_open_door[2] == true)
 					{
-						//inputPtr->_open_door[Scene_num - 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						inputPtr->_open_door[2] = OpenDoor(data.pos, doorPos0[2], data.rotation.x);
 						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 					}
-					if (inputPtr->_open_door[Scene_num] == true)
+					if (inputPtr->_open_door[3] == true)
 					{
-						//inputPtr->_open_door[Scene_num] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						inputPtr->_open_door[3] = OpenDoor(data.pos, doorPos0[3], data.rotation.x);
 						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 					}
-					if (inputPtr->_open_door[Scene_num + 1] == true)
+					if (inputPtr->_open_door[4] == true)
 					{
-						//inputPtr->_open_door[Scene_num + 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						inputPtr->_open_door[4] = OpenDoor(data.pos, doorPos0[4], data.rotation.x);
 						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 					}
 					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
@@ -902,11 +909,11 @@ public:
 		{
 			pos.x -= sinf(angle) * timerPtr->_deltaTime;
 			pos.z -= cosf(angle) * timerPtr->_deltaTime;
-
+			cout << true;
 			return true;
 		}
-		else
-			return false;
+		cout << false;
+		return false;
 	}
 
 	void Boss2Skill(ComPtr<ID3D12GraphicsCommandList>& cmdList, const MESH_ASSET& boss2Skill, const int i_now_render_index, Boss2SkillData& boss2_skill_data)

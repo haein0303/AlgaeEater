@@ -627,10 +627,10 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 {
 	networkPtr->ReceiveServer(playerArr, npcArr, pillars_data, boss_obj, open_door_count);
 
-	for(OBJECT& obj : npcArr)
+	/*for(OBJECT& obj : npcArr)
 		if(obj._object_type == TY_NPC_OTHER)
 			cout << "obj._object_type == TY_NPC_OTHER : " << obj._object_type << " << obj._animation_state : " << obj._animation_state << endl;
-	
+	*/
 	if (playerArr[0]._stage3_boss_on) {
 		if (playerArr[0]._stage3_boss_con == 0) {
 			inputPtr->move_speed = playerArr[0]._move_speed / 2;
@@ -1061,12 +1061,48 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 		break;
 	case 3:
 
-		if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 1) && inputPtr->_open_door[Scene_num - 1] == false)
+		/*if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 0) && inputPtr->_open_door[Scene_num - 1] == false) {
+			open_door_count++;
 			inputPtr->_open_door[Scene_num - 1] = true;
-		else if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 2) && inputPtr->_open_door[Scene_num - 1] == true && inputPtr->_open_door[Scene_num] == false)
+		}			
+		else if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 1) && inputPtr->_open_door[Scene_num - 1] == true && inputPtr->_open_door[Scene_num] == false)
+		{
+			open_door_count++;
 			inputPtr->_open_door[Scene_num] = true;
-		else if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 3) && inputPtr->_open_door[Scene_num] == true && inputPtr->_open_door[Scene_num + 1] == false)
+		}			
+		else if ((inputPtr->_states[VK_F8] == 2 || open_door_count == 2) && inputPtr->_open_door[Scene_num] == true && inputPtr->_open_door[Scene_num + 1] == false)
+		{
+			open_door_count++;
 			inputPtr->_open_door[Scene_num + 1] = true;
+		}*/
+	{
+		//디버깅용 강제 오픈
+		if (inputPtr->_states[VK_F8] == 2) {
+			switch (open_door_count) {
+			case 0:
+				inputPtr->_open_door[2] = true;
+				open_door_count = 1;
+				break;
+			case 1:
+				inputPtr->_open_door[3] = true;
+				open_door_count = 2;
+				break;
+			case 2:
+				inputPtr->_open_door[4] = true;
+				open_door_count = 3;
+				break;
+			case 3:
+				inputPtr->_open_door[4] = false;
+				open_door_count = 4;
+				break;
+			}
+		}
+		
+		if (open_door_count == 4) {
+			inputPtr->_open_door[4] = false;
+		}
+	}
+
 		break;
 	default:
 		break;
@@ -1134,6 +1170,49 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 	_transform.lnghtInfo = lightInfo;
 
 
+	if (Scene_num == 3) {
+		//cout << "DxEngine::1161 : " << open_door_count << endl;
+		if (open_door_count == 0) {
+			int i = 0;
+			//첫번째 문 조건
+			if (100.f > (playerArr[i]._transform.x - (135.f)) * (playerArr[i]._transform.x - (135.f)) + (playerArr[i]._transform.z - (-128.f)) * (playerArr[i]._transform.z - (-128.f))) {
+				SC_BROAD_CAST_PACKET p;
+				p.size = sizeof(p);
+				p.type = SC_BROAD_CAST;
+				p.pri = 31;
+				networkPtr->send_packet(&p);
+				open_door_count = 1;
+				cout << "첫번째 문 진입" << endl;
+			}
+		}
+
+		if (open_door_count == 2) {
+			int i = 0;
+			if (100.f > (playerArr[i]._transform.x - (15.f)) * (playerArr[i]._transform.x - (15.f)) + (playerArr[i]._transform.z - (-197.f)) * (playerArr[i]._transform.z - (-197.f))) {
+				SC_BROAD_CAST_PACKET p;
+				p.size = sizeof(p);
+				p.type = SC_BROAD_CAST;
+				p.pri = 33;
+				networkPtr->send_packet(&p);
+				open_door_count = 3;
+				cout << "세번째 문 진입" << endl;
+			}
+		}
+
+		if (open_door_count == 3) {
+			int i = 0;
+			if (100.f > (playerArr[i]._transform.x - (0.f)) * (playerArr[i]._transform.x - (0.f)) + (playerArr[i]._transform.z - (-197.f)) * (playerArr[i]._transform.z - (-197.f))) {
+				SC_BROAD_CAST_PACKET p;
+				p.size = sizeof(p);
+				p.type = SC_BROAD_CAST;
+				p.pri = 34;
+				networkPtr->send_packet(&p);
+				open_door_count = 4;
+				cout << "세번째 문 통과" << endl;
+			}
+		}
+	}
+
 	if (!_boss_icon) {
 		float tmp = 10.f;
 		switch (Scene_num) {
@@ -1174,18 +1253,41 @@ void DxEngine::FixedUpdate(WindowInfo windowInfo, bool isActive)
 					_mini_boss_icon = true;
 				}
 			}
+
+
 			if (_mini_boss_icon) {
 				if (npcArr[networkPtr->stage3_mini_boss_num]._hp == 0) {
 					_mini_boss_icon = 0;
 				}
 			}
 
-
 			break;
 		}
 		if (tmp < 100.f) {
 			_boss_icon = true;
 		}
+	}
+
+	if (stage3_prev_door_count != open_door_count) {
+		switch (open_door_count)
+		{
+		case 1:
+			inputPtr->_open_door[2] = true;
+			break;
+		case 2:
+			inputPtr->_open_door[3] = true;
+			break;
+		case 3:
+			inputPtr->_open_door[4] = true;
+			break;
+		case 4:
+			inputPtr->_open_door[4] = false;
+			break;
+		default:
+			break;
+		}
+
+		stage3_prev_door_count = open_door_count;
 	}
 }
 

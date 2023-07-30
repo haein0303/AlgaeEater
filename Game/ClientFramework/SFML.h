@@ -21,6 +21,7 @@ public:
 	unordered_map<int, int> skill_map;
 	
 	int stage3_mini_boss_num = 0;
+	int stage3_last_pass_user_count = 0;
 
 	int ConnectServer(int PortNum,int Scene_select,int chat_type) //서버에 접속시 보내주는 부분
 	{
@@ -499,6 +500,27 @@ public:
 
 			break;
 		}
+		case SC_BROAD_CAST: {
+			SC_BROAD_CAST_PACKET* my_packet = reinterpret_cast<SC_BROAD_CAST_PACKET*>(ptr);
+			switch (my_packet->pri) {
+			case 31:
+				cout << "첫번째문 오픈이요오" << endl;
+				open_door_count = 1;
+				break;
+			case 33:
+				cout << "세번째문 오픈이요오" << endl;
+				open_door_count = 3;
+				break;
+			case 34:
+				stage3_last_pass_user_count++;
+				cout << "통과인원 " << stage3_last_pass_user_count << endl;
+				if (stage3_last_pass_user_count > user_accept_counter) {
+					open_door_count = 4;
+				}
+				break;
+			}
+		}
+		break;
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 		}
