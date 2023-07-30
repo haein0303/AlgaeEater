@@ -527,82 +527,84 @@ void DB_init() {
 
 				// Allocate statement handle  
 				if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-					cout << "db 로딩 완료" << endl;
-					retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-
-					retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", SQL_NTS);
-					if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-						cout << "select OK" << endl;
-						// Bind columns 1, 2, and 3  
-						retcode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, szuser_id, DATA_LEN, &cbID);
-						retcode = SQLBindCol(hstmt, 2, SQL_C_WCHAR, szuser_passward, DATA_LEN, &cbPASSWARD);
-						retcode = SQLBindCol(hstmt, 3, SQL_C_LONG, &duser_level, 100, &cbLEVEL);
-						// Fetch and print each row of data. On an error, display a message and exit.  
-						for (int i = 0; ; i++) {
-							retcode = SQLFetch(hstmt);
-							if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
-								show_error();
-							if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
-							{
-								//replace wprintf with printf
-								//%S with %ls
-								//warning C4477: 'wprintf' : format string '%S' requires an argument of type 'char *'
-								//but variadic argument 2 has type 'SQLWCHAR *'
-								//wprintf(L"%d: %S %S %S\n", i + 1, sCustID, szName, szPhone);  
-								wprintf(L"%d: %ls %ls %d\n", i + 1, szuser_id, szuser_passward, duser_level);
-
-								wchar_t* t = reinterpret_cast<wchar_t*>(szuser_id);
-								int t_len = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
-								char* ptr;
-								ptr = new char[t_len];
-								WideCharToMultiByte(CP_ACP, 0, t, -1, ptr, t_len, 0, 0);
-								strcpy(user_datas[i].user_id, ptr);
-								delete ptr;
-
-								t = reinterpret_cast<wchar_t*>(szuser_passward);
-								t_len = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
-								ptr = new char[t_len];
-								WideCharToMultiByte(CP_ACP, 0, t, -1, ptr, t_len, 0, 0);
-								strcpy(user_datas[i].user_passward, ptr);
-								delete ptr;
-
-								user_datas[i].user_level = duser_level;
-
-								int len = strlen(user_datas[i].user_id);
-								int index = 0;
-								for (int j = 0; j < len; j++) {
-									if (!std::isspace(user_datas[i].user_id[j])) {
-										user_datas[i].user_id[index++] = user_datas[i].user_id[j];
-									}
-								}
-								user_datas[i].user_id[index] = '\0';
-
-								len = strlen(user_datas[i].user_passward);
-								index = 0;
-								for (int j = 0; j < len; j++) {
-									if (!std::isspace(user_datas[i].user_passward[j])) {
-										user_datas[i].user_passward[index++] = user_datas[i].user_passward[j];
-									}
-								}
-								user_datas[i].user_passward[index] = '\0';
-
-								cout << "데이터 로드 성공" << endl;
-							}
-							else
-								break;
-						}
-					}
-
-					//// Process data  
-					//if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-					//	SQLCancel(hstmt);
-					//	SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
-					//}
+					cout << "db 로딩 완료" << endl;					
 				}
 			}
 		}
 	}
 
+}
+
+void DB_basic_load() {
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", SQL_NTS);
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		cout << "select OK" << endl;
+		// Bind columns 1, 2, and 3  
+		retcode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, szuser_id, DATA_LEN, &cbID);
+		retcode = SQLBindCol(hstmt, 2, SQL_C_WCHAR, szuser_passward, DATA_LEN, &cbPASSWARD);
+		retcode = SQLBindCol(hstmt, 3, SQL_C_LONG, &duser_level, 100, &cbLEVEL);
+		// Fetch and print each row of data. On an error, display a message and exit.  
+		for (int i = 0; ; i++) {
+			retcode = SQLFetch(hstmt);
+			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+				show_error();
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+			{
+				//replace wprintf with printf
+				//%S with %ls
+				//warning C4477: 'wprintf' : format string '%S' requires an argument of type 'char *'
+				//but variadic argument 2 has type 'SQLWCHAR *'
+				//wprintf(L"%d: %S %S %S\n", i + 1, sCustID, szName, szPhone);  
+				wprintf(L"%d: %ls %ls %d\n", i + 1, szuser_id, szuser_passward, duser_level);
+
+				wchar_t* t = reinterpret_cast<wchar_t*>(szuser_id);
+				int t_len = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
+				char* ptr;
+				ptr = new char[t_len];
+				WideCharToMultiByte(CP_ACP, 0, t, -1, ptr, t_len, 0, 0);
+				strcpy(user_datas[i].user_id, ptr);
+				delete ptr;
+
+				t = reinterpret_cast<wchar_t*>(szuser_passward);
+				t_len = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
+				ptr = new char[t_len];
+				WideCharToMultiByte(CP_ACP, 0, t, -1, ptr, t_len, 0, 0);
+				strcpy(user_datas[i].user_passward, ptr);
+				delete ptr;
+
+				user_datas[i].user_level = duser_level;
+
+				int len = strlen(user_datas[i].user_id);
+				int index = 0;
+				for (int j = 0; j < len; j++) {
+					if (!std::isspace(user_datas[i].user_id[j])) {
+						user_datas[i].user_id[index++] = user_datas[i].user_id[j];
+					}
+				}
+				user_datas[i].user_id[index] = '\0';
+
+				len = strlen(user_datas[i].user_passward);
+				index = 0;
+				for (int j = 0; j < len; j++) {
+					if (!std::isspace(user_datas[i].user_passward[j])) {
+						user_datas[i].user_passward[index++] = user_datas[i].user_passward[j];
+					}
+				}
+				user_datas[i].user_passward[index] = '\0';
+
+				cout << "데이터 로드 성공" << endl;
+			}
+			else
+				break;
+		}
+	}
+
+	// Process data  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		SQLCancel(hstmt);
+		SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+	}
 }
 
 void DB_end() {
@@ -637,22 +639,72 @@ void PrintODBCError(SQLHANDLE handle, SQLSMALLINT handleType) {
 }
 
 int add_user(const char* id, const char* pw) {
+
+	int is_already = 0;
+	
 	char tmp[100];
-	sprintf(tmp, "SELECT user_id FROM user_datas WHERE user_id = \\\'abcd\\\'", id);
 
-	//sprintf(tmp, "SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", id);
-	cout << "main :: 626 :: " << tmp << endl;
-	retcode = SQLExecDirect(hstmt, (SQLWCHAR*)L"SELECT user_id, user_passward, user_level FROM user_datas ORDER BY 1", SQL_NTS);
+	sprintf(tmp, "SELECT user_id FROM user_datas WHERE user_id = '%s'", id);
+	
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	retcode = SQLExecDirect(hstmt, CharToSQLWCHAR(tmp), SQL_NTS);
+	
+	
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, szuser_id, DATA_LEN, &cbID);
 
-	if (retcode == SQL_NO_DATA) {
-		cout << "값이 없대? " << endl;
+		for (int i = 0; ; i++) {
+			retcode = SQLFetch(hstmt);
+			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+				show_error();
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+			{				
+				wprintf(L"%ls is already", szuser_id);
+				is_already++;
+			}
+			else {
+				break;
+			}
+		}
+	}else if(retcode == SQL_NO_DATA) {
+		cout << "670 :: 값이 없대? " << endl;
 	}
-	if (retcode == SQL_ERROR) {
-		cout << "썸띵 프라블럼? " << endl;
+	else if (retcode == SQL_ERROR) {
+		cout << "673 :: 썸띵 프라블럼? " << endl;
 		if (retcode == SQL_ERROR) {
 			PrintODBCError(hstmt, SQL_HANDLE_STMT);
 		}
 	}
+
+	// Process data  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		SQLCancel(hstmt);
+		SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+	}
+
+	if (is_already != 0) {
+		return 0;
+	}
+
+	sprintf(tmp, "INSERT INTO user_datas VALUES ('%s', '%s', 1)", id,pw);
+
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	retcode = SQLExecDirect(hstmt, CharToSQLWCHAR(tmp), SQL_NTS);
+
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		std::cout << "695 :: 정상 입력 " << std::endl;
+	}
+	else if (retcode == SQL_ERROR) {
+		std::cout << "698 :: 썸띵 프라블럼? " << std::endl;
+		PrintODBCError(hstmt, SQL_HANDLE_STMT);
+	}
+
+	sprintf(tmp, "SELECT user_id FROM user_datas WHERE user_id = '%s'", id);
+
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	retcode = SQLExecDirect(hstmt, CharToSQLWCHAR(tmp), SQL_NTS);
+
+
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, szuser_id, DATA_LEN, &cbID);
 
@@ -662,13 +714,34 @@ int add_user(const char* id, const char* pw) {
 				show_error();
 			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
 			{
-				cout << "경축 해치웠나" << endl;
+				wprintf(L"%ls add complite", szuser_id);
+				is_already++;
 			}
 			else {
 				break;
 			}
 		}
 	}
+	else if (retcode == SQL_NO_DATA) {
+		cout << "732 ::값이 없대? " << endl;
+	}
+	else if (retcode == SQL_ERROR) {
+		cout << "735 :: 썸띵 프라블럼? " << endl;
+		if (retcode == SQL_ERROR) {
+			PrintODBCError(hstmt, SQL_HANDLE_STMT);
+		}
+	}
+
+	// Process data  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		SQLCancel(hstmt);
+		SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+	}
+
+	if (is_already == 0) {
+		return 0;
+	}
+
 	return 1;
 }
 
@@ -784,7 +857,8 @@ int main()
 	//Data_read();
 
 	DB_init();
-	add_user("efg", "1234");
+	DB_basic_load();
+	add_user("test5", "1234");
 	char cmp[20] = "admin";
 	strcpy(user_datas[MAX_USER - 1].user_id, cmp);
 	strcpy(user_datas[MAX_USER - 1].user_passward, cmp);
