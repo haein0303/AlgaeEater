@@ -734,18 +734,18 @@ public:
 					// door
 					if (inputPtr->_open_door[Scene_num - 1] == true)
 					{
-						inputPtr->_open_door[Scene_num - 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
-						bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						//inputPtr->_open_door[Scene_num - 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 					}
 					if (inputPtr->_open_door[Scene_num] == true)
 					{
-						inputPtr->_open_door[Scene_num] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
-						bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						//inputPtr->_open_door[Scene_num] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 					}
 					if (inputPtr->_open_door[Scene_num + 1] == true)
 					{
-						inputPtr->_open_door[Scene_num + 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
-						bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
+						//inputPtr->_open_door[Scene_num + 1] = OpenDoor(data.pos, doorPos0[Scene_num - 1], data.rotation.x);
+						//bounding_boxes3[0].Center = XMFLOAT3(data.pos.x * 2.f, data.pos.y * 2.f, data.pos.z * 2.f);
 					}
 					DrawMapObject(cmdList, Grid_Metal_door, i_now_render_index, data.pos, data.scale, data.rotation);
 				}

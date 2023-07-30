@@ -494,7 +494,7 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 		InitMeshAsset(stage3_npc_dead[3], ObjectType::VertexAnimationObjectsForPillar, "../Resources/mon_dead_(3).txt", L"..\\Resources\\Texture\\Stage3\\Stage3NPCTexture.png", L"..\\Bricks.hlsl");
 
 		ImportMapdata("../Resources/MapData3.txt", _map_data3);
-		ImportCollisionObjectsData("../Resources/CollisionMapData3_1.txt", bounding_boxes3);
+		ImportCollisionObjectsData("../Resources/CollisionMapData3.txt", bounding_boxes3);
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 1; j < 5; ++j)

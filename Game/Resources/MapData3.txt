@@ -1,4 +1,4 @@
-num: 540
+num: 543
 Mesh: Wall_Line_4m_A (UnityEngine.Mesh) pos: 64.97 0 -55.65 scale: 1 1 1 rotation: 2.504478E-06 89.99982 -2.035555E-13
 Mesh: Wall_Line_4m_A (UnityEngine.Mesh) pos: 64.97 0 -51.65 scale: 1 1 1 rotation: 2.504478E-06 89.99982 -2.035555E-13
 Mesh: Wall_Line_4m_A (UnityEngine.Mesh) pos: 64.97 0 -47.65 scale: 1 1 1 rotation: 2.504478E-06 89.99982 -2.035555E-13
@@ -535,3 +535,6 @@ Mesh: Railings_A_4m_Rama_4m (UnityEngine.Mesh) pos: 42.24 0.039 -64.427 scale: 1
 Mesh: Railings_A_4m_Rama_4m (UnityEngine.Mesh) pos: 38.99001 1.31 -66.8 scale: 1 1 1 rotation: 0 270 0
 Mesh: Railings_A_CornerIn (UnityEngine.Mesh) pos: 30.49001 0.3100001 -78.3 scale: 1 1 -1 rotation: 0 0.0002194199 0
 Mesh: Railings_A_CornerIn (UnityEngine.Mesh) pos: 72.16693 0.3100001 -61.88697 scale: 1 1 -1 rotation: 0 179.9999 0
+Mesh: Grid_Metal_door (UnityEngine.Mesh) pos: 64.66 2 -64.15 scale: 4 4 5 rotation: 0 0 270.0002
+Mesh: Grid_Metal_door (UnityEngine.Mesh) pos: 54.88 1.5 -57.13 scale: 3 3 4 rotation: 0 89.99983 270.0002
+Mesh: Grid_Metal_door (UnityEngine.Mesh) pos: 4.16 1.5 -99.07 scale: 3 3 6 rotation: -4.829196E-06 179.9997 270.0002
