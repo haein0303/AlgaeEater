@@ -471,44 +471,44 @@ void do_timer()
 						if (i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 10) {
 							fields[i].type = FD_SM_DMG;
 							fields[i].r = 3;
-							fields[i].x = clients[ev.object_id].x - 50 + (i % ROOM_FIELD * 10);
+							fields[i].x = clients[ev.object_id].x - 25 + (i % ROOM_FIELD * 5);
 							fields[i].z = clients[ev.object_id].z;
 						}
-						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 10 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 20) {
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 10 && i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 20) {
 							fields[i].type = FD_SM_DMG;
 							fields[i].r = 3;
 							fields[i].x = clients[ev.object_id].x;
-							fields[i].z = clients[ev.object_id].z - 50 + ((i % ROOM_FIELD - 10) * 10);
+							fields[i].z = clients[ev.object_id].z - 25 + ((i % ROOM_FIELD - 10) * 5);
 						}
-						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 20 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 30) {
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 20 && i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 30) {
 							fields[i].type = FD_SM_DMG;
 							fields[i].r = 3;
-							fields[i].x = clients[ev.object_id].x - 50 + ((i % ROOM_FIELD - 20) * 10);
-							fields[i].z = clients[ev.object_id].z - 50 + ((i % ROOM_FIELD - 20) * 10);
+							fields[i].x = clients[ev.object_id].x - 25 + ((i % ROOM_FIELD - 20) * 5);
+							fields[i].z = clients[ev.object_id].z - 25 + ((i % ROOM_FIELD - 20) * 5);
 						}
-						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 30 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 40) {
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 30 && i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 40) {
 							fields[i].type = FD_SM_DMG;
 							fields[i].r = 3;
-							fields[i].x = clients[ev.object_id].x - 50 + ((i % ROOM_FIELD - 30) * 10);
-							fields[i].z = clients[ev.object_id].z + 50 - ((i % ROOM_FIELD - 30) * 10);
+							fields[i].x = clients[ev.object_id].x - 25 + ((i % ROOM_FIELD - 30) * 5);
+							fields[i].z = clients[ev.object_id].z + 25 - ((i % ROOM_FIELD - 30) * 5);
 						}
-						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 40 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 50) {
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 40 && i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 50) {
 							fields[i].type = FD_SM_DMG;
 							fields[i].r = 3;
-							fields[i].x = clients[ev.object_id].x - 50 + ((i % ROOM_FIELD - 40) * 10);
+							fields[i].x = clients[ev.object_id].x - 25 + ((i % ROOM_FIELD - 40) * 5);
 							fields[i].z = clients[ev.object_id].z;
 						}
-						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 50 || i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 60) {
+						else if (i >= clients[ev.object_id]._Room_Num * ROOM_FIELD + 50 && i < clients[ev.object_id]._Room_Num * ROOM_FIELD + 60) {
 							fields[i].type = FD_SM_DMG;
 							fields[i].r = 3;
 							fields[i].x = clients[ev.object_id].x;
-							fields[i].z = clients[ev.object_id].z - 50 + ((i % ROOM_FIELD - 50) * 10);
+							fields[i].z = clients[ev.object_id].z - 25 + ((i % ROOM_FIELD - 50) * 5);
 						}
 					}
 
 					add_timer(ev.object_id, 100, EV_BOSS_FIELD_ON, 0, clients[ev.object_id]._Room_Num);
-					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 1, clients[ev.object_id]._Room_Num);
-					add_timer(ev.object_id, 30000, EV_BOSS_FIELD_ON, 2, clients[ev.object_id]._Room_Num);
+					add_timer(ev.object_id, 10000, EV_BOSS_FIELD_ON, 1, clients[ev.object_id]._Room_Num);
+					add_timer(ev.object_id, 20000, EV_BOSS_FIELD_ON, 2, clients[ev.object_id]._Room_Num);
 					clients[ev.object_id].second_pattern = true;
 				}
 
