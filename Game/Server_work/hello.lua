@@ -1,6 +1,6 @@
 my_id = 9999
 
-distance = 30000
+distance = 30
 
 function set_object_id(id)
    my_id = id
