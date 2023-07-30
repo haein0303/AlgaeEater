@@ -56,12 +56,6 @@ void do_timer()
 				break;
 			}
 
-			if (timer_queue.top().act_time > chrono::system_clock::now())
-			{
-				timer_l.unlock();
-				break;
-			}
-
 			if (true == RESET_ROOM_NUM[timer_queue.top().room_num])
 			{
 				timer_queue.pop();
@@ -76,6 +70,11 @@ void do_timer()
 				break;
 			}
 
+			if (timer_queue.top().act_time > chrono::system_clock::now())
+			{
+				timer_l.unlock();
+				break;
+			}
 
 			TIMER_EVENT ev = timer_queue.top();
 			timer_queue.pop();
