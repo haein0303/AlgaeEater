@@ -274,7 +274,32 @@ void process_packet(int c_id, char* packet)
 		p->id;
 		p->passward;
 
-		cout << "아무튼 회원가입 하려함" << endl;
+		if (1 == add_user(p->id, p->passward)) {
+			// 성공
+			cout << "생성 성공" << endl;
+			LSC_JOIN_OK_PACKET pac;
+			pac.size = sizeof(LSC_JOIN_OK_PACKET);
+			pac.type = LSC_JOIN_OK;
+
+			for (int i = 0; i < MAX_USER; i++) {
+				if (user_datas[i].user_id[0] == 0) {
+					strcpy(user_datas[i].user_id, p->id);
+					strcpy(user_datas[i].user_passward, p->passward);
+					user_datas[i].user_level = 1;
+					break;
+				}
+			}
+
+			clients[c_id].do_send(&pac);
+		}
+		else {
+			// 실패
+			LSC_JOIN_FAIL_PACKET p;
+			p.size = sizeof(LSC_JOIN_FAIL_PACKET);
+			p.type = LSC_JOIN_FAIL;
+
+			clients[c_id].do_send(&p);
+		}
 		break;
 	}
 	case SS_CONNECT_SERVER: {
@@ -649,7 +674,6 @@ int add_user(const char* id, const char* pw) {
 	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 	retcode = SQLExecDirect(hstmt, CharToSQLWCHAR(tmp), SQL_NTS);
 	
-	
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, szuser_id, DATA_LEN, &cbID);
 
@@ -745,11 +769,7 @@ int add_user(const char* id, const char* pw) {
 	return 1;
 }
 
-
-
 void Data_read() {
-	
-
 	// Allocate environment handle  
 	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
 
@@ -852,13 +872,21 @@ void Data_read() {
 	}
 }
 
+void Set_user_data()
+{
+	for (int i = 0; i < MAX_USER; i++) {
+		user_datas[i].user_id[0] = { 0 };
+		user_datas[i].user_passward[0] = { 0 };
+		user_datas[i].user_level = 0;
+	}
+}
+
 int main()
 {
-	//Data_read();
-
+	Set_user_data();
 	DB_init();
 	DB_basic_load();
-	add_user("test5", "1234");
+	//Data_read();
 	char cmp[20] = "admin";
 	strcpy(user_datas[MAX_USER - 1].user_id, cmp);
 	strcpy(user_datas[MAX_USER - 1].user_passward, cmp);
