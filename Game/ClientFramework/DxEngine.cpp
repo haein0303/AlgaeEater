@@ -1757,7 +1757,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 			if (boss_obj._on == true)
 			{
 				XMFLOAT3 boss_scale = XMFLOAT3(800.f, 800.f, 800.f);
-				float boss_default_rot_x = -XM_PI * 0.5f;
+				float boss_default_rot_x = -90.f;
 				Boss(cmdList, boss, i_now_render_index, boss_scale, boss_default_rot_x, Scene_num);
 			}
 
@@ -2257,44 +2257,50 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		// shadow
 		for (OBJECT& player : playerArr)
 		{
-			cmdList->SetPipelineState(shadow._pipelineState.Get());
-			cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
-			cmdList->IASetIndexBuffer(&shadow._indexBufferView);
+			if (player._on)
+			{
+				cmdList->SetPipelineState(shadow._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
+				cmdList->IASetIndexBuffer(&shadow._indexBufferView);
 
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5,0.5,0.5) * XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(player._transform.x, 0.01f, player._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.5, 0.5, 0.5)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(player._transform.x, 0.01f, player._transform.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-			CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
-			srv_handle = shadow._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-			descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+				CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
+				srv_handle = shadow._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
 
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(shadow._indexCount, 1, 0, 0, 0);
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(shadow._indexCount, 1, 0, 0, 0);
+			}
 		}
 
 		for (OBJECT& npc : npcArr)
 		{
-			cmdList->SetPipelineState(shadow._pipelineState.Get());
-			cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
-			cmdList->IASetIndexBuffer(&shadow._indexBufferView);
+			if (npc._on)
+			{
+				cmdList->SetPipelineState(shadow._pipelineState.Get());
+				cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
+				cmdList->IASetIndexBuffer(&shadow._indexBufferView);
 
-			XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.3, 0.3, 0.3) * XMMatrixRotationX(-XM_PI / 2.f) * XMMatrixTranslation(npc._transform.x, 0.01f, npc._transform.z));
-			XMMATRIX world = XMLoadFloat4x4(&_transform.world);
-			XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
+				XMStoreFloat4x4(&_transform.world, XMMatrixScaling(0.3, 0.3, 0.3)* XMMatrixRotationX(-XM_PI / 2.f)* XMMatrixTranslation(npc._transform.x, 0.01f, npc._transform.z));
+				XMMATRIX world = XMLoadFloat4x4(&_transform.world);
+				XMStoreFloat4x4(&_transform.world, XMMatrixTranspose(world));
 
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
-			descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = constantBufferPtr->PushData(0, &_transform, sizeof(_transform));
+				descHeapPtr->CopyDescriptor(handle, 0, devicePtr);
 
-			CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
-			srv_handle = shadow._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
-			descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
+				CD3DX12_CPU_DESCRIPTOR_HANDLE srv_handle;
+				srv_handle = shadow._tex._srvHeap->GetCPUDescriptorHandleForHeapStart();
+				descHeapPtr->CopyDescriptor(srv_handle, 5, devicePtr);
 
-			descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
-			cmdList->DrawIndexedInstanced(shadow._indexCount, 1, 0, 0, 0);
+				descHeapPtr->CommitTable_multi(cmdQueuePtr, i_now_render_index);
+				cmdList->DrawIndexedInstanced(shadow._indexCount, 1, 0, 0, 0);
+			}
 		}
 
 		XMFLOAT3 shadow_boss_scale{1,1,1};
@@ -2313,7 +2319,7 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 		default:
 			break;
 		}
-		if(Scene_num == 1)
+		if(boss_obj._on)
 		{
 			cmdList->SetPipelineState(shadow._pipelineState.Get());
 			cmdList->IASetVertexBuffers(0, 1, &shadow._vertexBufferView);
@@ -2532,24 +2538,25 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 				}
 
 				// 캐릭터와 파티클 상호작용
+				float collision_scale = 0.3f;
 				if (particle_pos0[i].x != particles[i].pos.m128_f32[0] || particle_pos0[i].y != particles[i].pos.m128_f32[1] || particle_pos0[i].z != particles[i].pos.m128_f32[2])
 				{
 					for (OBJECT& player : playerArr)
 					{
 						if (player._on)
 						{
-							if (particle_pos0[i].x < player._transform.x - 0.3f && player._transform.x - 0.3f < particles[i].pos.m128_f32[0])
+							if (particle_pos0[i].x <= player._transform.x - collision_scale && player._transform.x - collision_scale < particles[i].pos.m128_f32[0])
 							{
-								if (player._transform.z - 0.3f < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + 0.3f // 정면
+								if (player._transform.z - collision_scale < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + collision_scale // 정면
 									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
 								{
 									particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] * -coefficient_of_restitution;
 									particles[i].pos.m128_f32[0] = particle_pos0[i].x;
 								}
 							}
-							if (particle_pos0[i].x > player._transform.x + 0.3f && player._transform.x + 0.3f > particles[i].pos.m128_f32[0])
+							if (particle_pos0[i].x >= player._transform.x + collision_scale && player._transform.x + collision_scale > particles[i].pos.m128_f32[0])
 							{
-								if (player._transform.z - 0.3f < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + 0.3f // 후면
+								if (player._transform.z - collision_scale < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + collision_scale // 후면
 									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
 								{
 									particles[i].velocity.m128_f32[0] = particles[i].velocity.m128_f32[0] * -coefficient_of_restitution;
@@ -2557,18 +2564,18 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 								}
 							}
 
-							if (particle_pos0[i].z < player._transform.z - 0.3f && player._transform.z - 0.3f < particles[i].pos.m128_f32[2])
+							if (particle_pos0[i].z <= player._transform.z - collision_scale && player._transform.z - collision_scale < particles[i].pos.m128_f32[2])
 							{
-								if (player._transform.x - 0.3f < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + 0.3f // 왼쪽측면
+								if (player._transform.x - collision_scale < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + collision_scale // 왼쪽측면
 									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
 								{
 									particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] * -coefficient_of_restitution;
 									particles[i].pos.m128_f32[2] = particle_pos0[i].z;
 								}
 							}
-							if (particle_pos0[i].z > player._transform.z + 0.3f && player._transform.z + 0.3f > particles[i].pos.m128_f32[2])
+							if (particle_pos0[i].z >= player._transform.z + collision_scale && player._transform.z + collision_scale > particles[i].pos.m128_f32[2])
 							{
-								if (player._transform.x - 0.3f < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + 0.3f // 오른쪽 측면
+								if (player._transform.x - collision_scale < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + collision_scale // 오른쪽 측면
 									&& particles[i].pos.m128_f32[1] >= 0.f && particles[i].pos.m128_f32[1] <= 1.f)
 								{
 									particles[i].velocity.m128_f32[2] = particles[i].velocity.m128_f32[2] * -coefficient_of_restitution;
@@ -2577,8 +2584,8 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 							}
 							if (particle_pos0[i].y > 1.f && 1.f > particles[i].pos.m128_f32[1])
 							{
-								if (player._transform.x - 0.3f < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + 0.3f // 윗면
-									&& player._transform.z - 0.3f < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + 0.3f)
+								if (player._transform.x - collision_scale < particles[i].pos.m128_f32[0] && particles[i].pos.m128_f32[0] < player._transform.x + collision_scale // 윗면
+									&& player._transform.z - collision_scale < particles[i].pos.m128_f32[2] && particles[i].pos.m128_f32[2] < player._transform.z + collision_scale)
 								{
 									particles[i].velocity.m128_f32[1] = particles[i].velocity.m128_f32[1] * -coefficient_of_restitution;
 									particles[i].pos.m128_f32[1] = particle_pos0[i].y;
