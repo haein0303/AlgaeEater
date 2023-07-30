@@ -298,17 +298,11 @@ void rush_npc(int c_id, float t_x, float t_z)
 	clients[c_id].degree = nde;
 
 	// 큐브랑 충돌 못했음 -> 기믹 실패
-	if (x == t_x && z == t_z) {
+	if (abs(x - t_x) + (z - t_z) <= 4) {
 		cout << "기믹 실패" << endl;
 
 		for (auto& pl : clients[c_id].room_list) {
 			if (pl >= MAX_USER) continue;
-			clients[pl]._sl.lock();
-			if (clients[pl]._s_state != ST_INGAME) {
-				clients[pl]._sl.unlock();
-				continue;
-			}
-			clients[pl]._sl.unlock();
 
 			clients[pl].hp /= 2;
 
@@ -328,38 +322,19 @@ void rush_npc(int c_id, float t_x, float t_z)
 			break;
 		}
 
-		SC_BOSS_RUSH_TARGET_PACKET p;
-		p.size = sizeof(SC_BOSS_RUSH_TARGET_PACKET);
-		p.type = SC_BOSS_RUSH_TARGET;
-		p.target_id = tar_id;
-		p.trigger = true;
-
-		for (auto& pl : clients[c_id].room_list) {
-			if (pl >= MAX_USER) continue;
-
-			clients[pl].do_send(&p);
-		}
-
-		add_timer(c_id, 10000, EV_STAGE1_SECOND_BOSS, tar_id, clients[c_id]._Room_Num);
+		add_timer(c_id, 10000, EV_BOSS_CON, tar_id, clients[c_id]._Room_Num);
 		return;
 	}
 
 	// 큐브랑 충돌 함 -> 기믹 성공
 	int cube_num = clients[c_id]._Room_Num * ROOM_CUBE + ROOM_CUBE - 1;
 	if (abs(x - cubes[cube_num].x) + abs(z - cubes[cube_num].z) <= 4) {
-		// 반복 설정은 여기서 해줘야 함
 		// 타겟 아이디 설정 해줘야 함 ㅇㅇ
 		cout << "기믹 성공" << endl;
 		clients[c_id].char_state = AN_DOWN;
 
 		for (auto& pl : clients[c_id].room_list) {
 			if (pl >= MAX_USER) continue;
-			clients[pl]._sl.lock();
-			if (clients[pl]._s_state != ST_INGAME) {
-				clients[pl]._sl.unlock();
-				continue;
-			}
-			clients[pl]._sl.unlock();
 
 			int cli_cube_num = cube_num % ROOM_CUBE;
 
@@ -385,20 +360,14 @@ void rush_npc(int c_id, float t_x, float t_z)
 		return;
 	}
 
-	x += 0.5f * -sin(de);
-	z += 0.5f * -cos(de);
+	x += 0.3f * -sin(de);
+	z += 0.3f * -cos(de);
 
 	clients[c_id].x = x;
 	clients[c_id].z = z;
 
 	for (auto& pl : clients[c_id].room_list) {
 		if (pl >= MAX_USER) continue;
-		clients[pl]._sl.lock();
-		if (clients[pl]._s_state != ST_INGAME) {
-			clients[pl]._sl.unlock();
-			continue;
-		}
-		clients[pl]._sl.unlock();
 
 		clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
 	}

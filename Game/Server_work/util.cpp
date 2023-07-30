@@ -433,6 +433,7 @@ void process_packet(int c_id, char* packet)
 						}
 
 						clients[i].stage = clients[c_id].stage;
+
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_3;
 							clients[i].hp = BOSS_HP[2];
@@ -605,6 +606,9 @@ void process_packet(int c_id, char* packet)
 						if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
 							if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
 								death_counts[clients[p->target_id]._Room_Num].counts++;
+								clients[p->target_id]._sl.lock();
+								clients[p->target_id]._s_state = ST_FREE;
+								clients[p->target_id]._sl.unlock();
 							}
 							else {
 								for (auto& pl : clients[p->target_id].room_list) {
@@ -701,18 +705,26 @@ void process_packet(int c_id, char* packet)
 					else { // 일반
 						clients[p->target_id]._DE.lock();
 						clients[p->target_id].hp -= clients[p->attacker_id].skill_atk;
+
 						if (clients[p->target_id].hp <= 0) {
-							if (clients[p->target_id]._object_type == TY_MOVE_NPC && clients[p->target_id].char_state != AN_DEAD) death_counts[clients[p->target_id]._Room_Num].counts++;
+
+							if (clients[p->target_id]._object_type == TY_MOVE_NPC) {
+								death_counts[clients[p->target_id]._Room_Num].counts++;
+								cout << "데스 카운트 : " << death_counts[clients[p->target_id]._Room_Num].counts << endl;
+							}
 							if (clients[p->target_id]._object_type == TY_BOSS_1 || clients[p->target_id]._object_type == TY_BOSS_2 || clients[p->target_id]._object_type == TY_BOSS_3) {
-								if (clients[p->target_id]._object_type == TY_MOVE_NPC) {
+								if (clients[p->target_id].stage == 3 && clients[p->target_id]._object_type == TY_BOSS_1) {
 									death_counts[clients[p->target_id]._Room_Num].counts++;
-									cout << "데스 카운트 : " << death_counts[clients[p->target_id]._Room_Num].counts << endl;
+									clients[p->target_id]._sl.lock();
+									clients[p->target_id]._s_state = ST_FREE;
+									clients[p->target_id]._sl.unlock();
 								}
 								else {
 									for (auto& pl : clients[p->target_id].room_list) {
 										SC_GAME_END_PACKET packet;
 										packet.size = sizeof(SC_GAME_END_PACKET);
 										packet.type = SC_GAME_END;
+										packet.e_type = true;
 
 										clients[pl].do_send(&packet);
 									}
@@ -1153,13 +1165,6 @@ void do_worker()
 
 void Update_Player(int c_id)
 {
-	clients[c_id]._sl.lock();
-	if (clients[c_id]._s_state != ST_INGAME) {
-		clients[c_id]._sl.unlock();
-		return;
-	}
-	clients[c_id]._sl.unlock();
-	
 	clients[c_id].send_move_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree,
 		clients[c_id].hp, clients[c_id].char_state, clients[c_id].client_time);
 
