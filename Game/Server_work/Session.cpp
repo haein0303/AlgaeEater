@@ -36,6 +36,7 @@ SESSION::SESSION()
 	third_pattern = false;
 	fourth_pattern = false;
 	_object_type = TY_PLAYER_AKI;
+	cooltime = false;
 	Lua_on = false;
 }
 

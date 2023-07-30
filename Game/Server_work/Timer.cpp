@@ -720,6 +720,10 @@ void do_timer()
 				}
 				break;
 			}
+			case EV_COOLTIME: {
+				clients[ev.object_id].cooltime = false;
+				break;
+			}
 			default:
 				break;
 			}

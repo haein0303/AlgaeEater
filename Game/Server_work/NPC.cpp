@@ -479,31 +479,51 @@ void move_npc(int player_id, int c_id)
 
 	else if (clients[c_id]._object_type == TY_BOSS_3) {
 		if (abs(x - clients[player_id].x) + abs(z - clients[player_id].z) <= 10.f) {
-			// 공격 처리 관련, 여기서 안 할 수도 있음
-			clients[c_id].char_state = AN_ATTACK_1;
-			clients[c_id].degree = nde;
+			if (clients[c_id].cooltime == true) {
+				clients[c_id].char_state = AN_IDLE;
+				clients[c_id].degree = nde;
 
-			for (auto& pl : clients[c_id].room_list) {
-				if (pl >= MAX_USER) continue;
-				clients[pl]._sl.lock();
-				if (clients[pl]._s_state != ST_INGAME) {
+				for (auto& pl : clients[c_id].room_list) {
+					if (pl >= MAX_USER) continue;
+					clients[pl]._sl.lock();
+					if (clients[pl]._s_state != ST_INGAME) {
+						clients[pl]._sl.unlock();
+						continue;
+					}
 					clients[pl]._sl.unlock();
-					continue;
-				}
-				clients[pl]._sl.unlock();
 
-				clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+					clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+				}
+				return;
 			}
 
-			for (auto& pl : clients[c_id].room_list) {
-				if (clients[pl]._object_type == TY_BOSS_SKILL && clients[pl].x == 1000 && clients[pl].z == 1000) {
-					clients[pl].x = clients[c_id].x + 0.5f * -sin(de);
-					clients[pl].z = clients[c_id].z + 0.5f * -cos(de);
-					break;
-				}
-			}
+			else {
+				clients[c_id].char_state = AN_ATTACK_1;
+				clients[c_id].degree = nde;
 
-			return;
+				for (auto& pl : clients[c_id].room_list) {
+					if (pl >= MAX_USER) continue;
+					clients[pl]._sl.lock();
+					if (clients[pl]._s_state != ST_INGAME) {
+						clients[pl]._sl.unlock();
+						continue;
+					}
+					clients[pl]._sl.unlock();
+
+					clients[pl].send_boss_move(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp, clients[c_id].char_state, clients[c_id].eye_color, 0);
+				}
+
+				for (auto& pl : clients[c_id].room_list) {
+					if (clients[pl]._object_type == TY_BOSS_SKILL && clients[pl].x == 1000 && clients[pl].z == 1000) {
+						clients[pl].x = clients[c_id].x + 0.5f * -sin(de);
+						clients[pl].z = clients[c_id].z + 0.5f * -cos(de);
+						break;
+					}
+				}
+				clients[c_id].cooltime = true;
+				add_timer(c_id, 4000, EV_COOLTIME, player_id, clients[c_id]._Room_Num);
+				return;
+			}
 		}
 		else clients[c_id].char_state = AN_WALK;
 	}
