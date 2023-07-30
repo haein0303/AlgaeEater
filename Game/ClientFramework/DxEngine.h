@@ -910,10 +910,10 @@ public:
 		{
 			pos.x -= sinf(angle) * timerPtr->_deltaTime;
 			pos.z -= cosf(angle) * timerPtr->_deltaTime;
-			cout << true;
+			//cout << true;
 			return true;
 		}
-		cout << false;
+		//cout << false;
 		return false;
 	}
 
