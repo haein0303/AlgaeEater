@@ -501,6 +501,9 @@ void DxEngine::late_Init(WindowInfo windowInfo)
 			{
 				BoundingBox bounding_box;
 				
+				bounding_box.Center = XMFLOAT3(0.f,0.f,0.f);
+				bounding_box.Extents = XMFLOAT3(1.f, 1, 1.f);
+
 				if (j == 1) {
 					bounding_box.Center = XMFLOAT3(100.f * i, 1.f, -15.f);
 					bounding_box.Extents = XMFLOAT3(15.f, 1, 3.f);
