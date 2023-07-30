@@ -539,7 +539,7 @@ LRESULT CALLBACK Lobby_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 			if (onClicK_check(join2_button_rc, x, y)) {
 				LCS_JOIN_PACKET p;
 				p.size = sizeof(p);
-				p.type = LCS_LOGIN;
+				p.type = LCS_JOIN;
 				strcpy(p.id, c_id.c_str());
 				strcpy(p.passward, c_pw.c_str());
 				lobby_client.Lobby_network->send_packet(&p);
