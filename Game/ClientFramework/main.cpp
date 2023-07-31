@@ -33,16 +33,16 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 		cout << "create client" << endl;
 
 
-		thread logical_thread{ &Client::Logic,&client };
+		//thread logical_thread{ &Client::Logic,&client };
 
-		thread render_thread1{ &Client::Draw,&client };
-		thread render_thread2{ &Client::Draw,&client };
+		//thread render_thread1{ &Client::Draw,&client };
+		//thread render_thread2{ &Client::Draw,&client };
 
 		
 
 		cout << "create threads" << endl;
 		//½Ì±Û
-		//client.single_init();
+		client.single_init();
 		ShowCursor(false);
 		msg.message = 0;
 		while (msg.message != WM_QUIT)
@@ -64,14 +64,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 			}
 			else
 			{
-				//client.single_work();
+				client.single_work();
 			}
 
 		}
 
-		logical_thread.join();
-		render_thread1.join();
-		render_thread2.join();
+		//logical_thread.join();
+		//render_thread1.join();
+		//render_thread2.join();
 		
 		
 	}
