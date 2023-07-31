@@ -81,18 +81,18 @@ void GS_Main(point VS_OUT gin[1], uint primID : SV_PrimitiveID, inout TriangleSt
 
 float4 PS_Main(GeoOut input) : SV_Target
 {
-	float4 color = float4(0.f, 0.f, 0.f, 0.f);
+    float4 color = float4(0.f, 0.f, 0.f, 0.f);
 	float r = distance(input.uv, float2(0.5f, 0.5f));
-	if (r <= 0.3f / 3.f) {
-		color = float4(1.0f, 1.0f, 0.5f, 1.f); // ¿¬³ë¶û
-	}
+	if (r <= 0.07f) {
+        color = float4(1.0f, 1.0f, 1.0f, 1.f);
+    }
     else if (r <= 0.36f / 3.f)
     {
-		color = float4(1.0f, 0.5f, 0.f, 1.f); // ÁÖÈ²
-	}
+        color = float4(1.0f, 0.9f, 0.1f, 1.f);
+    }
     else if (r <= 0.42f / 3.f)
     {
-		color = float4(1.0f, 0.2f, 0.f, 1.f); // ÀÚÈ«
+		color = float4(1.f, 0.4f, 0.2f, 1.f);
 	}
 	clip(color.a - 0.1f);
 	return color;
