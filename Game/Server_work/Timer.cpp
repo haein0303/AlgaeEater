@@ -124,23 +124,19 @@ void do_timer()
 					break;
 				}
 				else { // º¸½º ±â¹Í ½ÇÆÐ
-					int pl_num = 0;
-					if (clients[0]._Room_Num != 9999)
-						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER;
-					else
-						pl_num = clients[ev.object_id]._Room_Num * ROOM_USER + 1;
-
 					cout << "±â¹Í ½ÇÆÐ" << endl;
 
-					for (int i = pl_num; i < pl_num + ROOM_USER; i++) {
+					for (auto& pl_num : clients[ev.object_id].room_list) {
+						if (pl_num >= MAX_USER)continue;
 						clients[pl_num]._sl.lock();
 						if (clients[pl_num]._s_state != ST_INGAME) {
 							clients[pl_num]._sl.unlock();
 							continue;
 						}
 						clients[pl_num]._sl.unlock();
-						
-						clients[pl_num].hp /= 2;
+
+						clients[pl_num].hp = clients[pl_num].hp / 2;
+
 						Update_Player(pl_num);
 					}
 

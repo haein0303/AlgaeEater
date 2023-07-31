@@ -301,12 +301,18 @@ void rush_npc(int c_id, float t_x, float t_z)
 	if (abs(x - t_x) + (z - t_z) <= 4) {
 		cout << "±â¹Í ½ÇÆÐ" << endl;
 
-		for (auto& pl : clients[c_id].room_list) {
-			if (pl >= MAX_USER) continue;
+		for (auto& pl_num : clients[c_id].room_list) {
+			if (pl_num >= MAX_USER)continue;
+			clients[pl_num]._sl.lock();
+			if (clients[pl_num]._s_state != ST_INGAME) {
+				clients[pl_num]._sl.unlock();
+				continue;
+			}
+			clients[pl_num]._sl.unlock();
 
-			clients[pl].hp /= 2;
+			clients[pl_num].hp = clients[pl_num].hp / 2;
 
-			Update_Player(pl);
+			Update_Player(pl_num);
 		}
 
 		for (auto& pl : clients[c_id].room_list) {
@@ -322,7 +328,7 @@ void rush_npc(int c_id, float t_x, float t_z)
 			break;
 		}
 
-		add_timer(c_id, 10000, EV_BOSS_CON, tar_id, clients[c_id]._Room_Num);
+		add_timer(c_id, 100, EV_BOSS_CON, tar_id, clients[c_id]._Room_Num);
 		return;
 	}
 

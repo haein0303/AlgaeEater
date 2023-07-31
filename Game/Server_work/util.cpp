@@ -248,8 +248,6 @@ void process_packet(int c_id, char* packet)
 		clients[c_id].room_list.clear();
 		clients[c_id]._sl.unlock();
 
-		cout << "플레이어 id : " << c_id << "    방 번호 : " << clients[c_id]._Room_Num << endl;
-
 		// 다른 플레이어 업데이트 받는 부분
 		for (int i = 0; i < MAX_USER; ++i) {
 			auto& pl = clients[i];
