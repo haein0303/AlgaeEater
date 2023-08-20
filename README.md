@@ -14,7 +14,7 @@
     * haein0303@tukorea.ac.kr
 
 # Link
-Link : [https://github.com/KpuD3D12HelpMeGraduated/GraduationProject](https://github.com/KpuD3D12HelpMeGraduated/GraduationProject, "github Link")
+Link : [https://github.com/haein0303/AlgaeEater](https://github.com/haein0303/AlgaeEater, "github Link")
 
 # Todo
 ### 2022. 09. 27
