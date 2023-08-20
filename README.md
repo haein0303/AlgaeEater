@@ -20,6 +20,6 @@ Link : [https://github.com/haein0303/AlgaeEater](https://github.com/haein0303/Al
 ![ex_screenshot](./img/main_img1.png)
 
 # Profile
-장르 : 멀티플레이 3D 액션 
-개발 기간 : 22.07 ~ 23.07 
-사용 도구 : C++17 / DirectX12 / IOCP 
+장르 : 멀티플레이 3D 액션  
+개발 기간 : 22.07 ~ 23.07  
+사용 도구 : C++17 / DirectX12 / IOCP  
