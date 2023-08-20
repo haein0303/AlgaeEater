@@ -1,5 +1,5 @@
-# GraduationProject
-졸업작품관련 레포지토리
+# AlgaeEater
+![ex_screenshot](./img/main_img2.png)
 
 # Members
 * 정내훈 / Academic Adviser 
@@ -9,16 +9,17 @@
 * 김덕현 / Client Programmer
     * 2017184008
     * cpugpu131@gmail.com
-* 임해인 / Designer & Technical Artist
+* 임해인 / Client Programmer
     * 2017184028
-    * haein0303@tukorea.ac.kr
+    * devhaein0303@gmail.com
 
 # Link
 Link : [https://github.com/haein0303/AlgaeEater](https://github.com/haein0303/AlgaeEater, "github Link")
 
-# Todo
-### 2022. 09. 27
-1. Fbx Animation Loading
-2. Client Code Refactoring
-3. Design Doc Making
+# Screen Shot
+![ex_screenshot](./img/main_img1.png)
 
+# Profile
+장르 : 멀티플레이 3D 액션
+개발 기간 : 22.07 ~ 23.07
+사용 도구 : C++17 / DirectX12 / IOCP 
