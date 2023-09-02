@@ -2637,7 +2637,6 @@ void DxEngine::Draw_multi(WindowInfo windowInfo, int i_now_render_index)
 
 	
 
-	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(swapChainPtr->_renderTargets[i_now_render_index].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT); // È­ï¿½ï¿½ ï¿½ï¿½ï¿?
 
 	cmdList->ResourceBarrier(1, &barrier2);
