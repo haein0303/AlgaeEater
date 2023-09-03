@@ -10,6 +10,7 @@ SESSION::SESSION()
 	degree = 0;
 	_name[0] = 0;
 	char_state = AN_IDLE;
+	max_hp = 0;
 	hp = 0;
 	atk = 0;
 	skill_atk = 0;

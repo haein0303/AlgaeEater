@@ -196,6 +196,25 @@ void process_packet(int c_id, char* packet)
 			break;
 		}
 
+		clients[c_id].L = luaL_newstate();
+
+		luaL_openlibs(clients[c_id].L);
+
+		luaL_loadfile(clients[c_id].L, "hello.lua");
+		lua_pcall(clients[c_id].L, 0, 0, 0);
+
+		lua_getglobal(clients[c_id].L, "set_object_id");
+		lua_pushnumber(clients[c_id].L, c_id);
+		lua_pcall(clients[c_id].L, 1, 0, 0);
+
+		clients[c_id]._object_type = p->character_type;
+
+		lua_register(clients[c_id].L, "API_PLAYER_SET", API_PLAYER_SET);
+
+		lua_getglobal(clients[c_id].L, "set_player");
+		lua_pushnumber(clients[c_id].L, clients[c_id]._object_type);
+		lua_pcall(clients[c_id].L, 1, 0, 0);
+
 		strcpy_s(clients[c_id]._name, p->name);
 		clients[c_id].stage = p->stage;
 		switch (clients[c_id].stage)
@@ -227,20 +246,10 @@ void process_packet(int c_id, char* packet)
 		default:
 			break;
 		}
-		clients[c_id]._object_type = p->character_type;
 		clients[c_id].degree = 30;
 		clients[c_id].char_state = AN_IDLE;
 		clients[c_id].color = 0;
 		clients[c_id].god_mod = false;
-		clients[c_id].hp = 100;
-		if (clients[c_id]._object_type == 0) {
-			clients[c_id].atk = 10;
-			clients[c_id].skill_atk = 50;
-		}
-		else {
-			clients[c_id].atk = 25;
-			clients[c_id].skill_atk = 100;
-		}
 		clients[c_id].send_login_ok_packet(c_id, clients[c_id].x, clients[c_id].y, clients[c_id].z, clients[c_id].degree, clients[c_id].hp);
 		clients[c_id]._s_state = ST_INGAME;
 		if (clients[0]._Room_Num != 9999) clients[c_id]._Room_Num = c_id / ROOM_USER;
@@ -283,7 +292,9 @@ void process_packet(int c_id, char* packet)
 						clients[i].stage = clients[c_id].stage;
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_1;
-							clients[i].hp = BOSS_HP[0];
+							lua_getglobal(clients[i].L, "set_boss");
+							lua_pushnumber(clients[i].L, clients[i]._object_type);
+							lua_pcall(clients[i].L, 1, 0, 0);
 						}
 						if ((i - MAX_USER) % ROOM_NPC < 5) {
 							clients[i].x = STAGE1_MOB_POS[0].x + dis(rd);
@@ -357,7 +368,9 @@ void process_packet(int c_id, char* packet)
 						clients[i].stage = clients[c_id].stage;
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_2;
-							clients[i].hp = BOSS_HP[1];
+							lua_getglobal(clients[i].L, "set_boss");
+							lua_pushnumber(clients[i].L, clients[i]._object_type);
+							lua_pcall(clients[i].L, 1, 0, 0);
 						}
 						if ((i - MAX_USER) % ROOM_NPC < 5) {
 							clients[i].x = STAGE2_MOB_POS[0].x + dis(rd);
@@ -436,7 +449,9 @@ void process_packet(int c_id, char* packet)
 
 						if (i == clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1) {
 							clients[i]._object_type = TY_BOSS_3;
-							clients[i].hp = BOSS_HP[2];
+							lua_getglobal(clients[i].L, "set_boss");
+							lua_pushnumber(clients[i].L, clients[i]._object_type);
+							lua_pcall(clients[i].L, 1, 0, 0);
 						}
 						if ((i - MAX_USER) % ROOM_NPC < 10) {
 							clients[i].x = STAGE3_MOB_POS[0].x + dis(rd);
@@ -550,8 +565,21 @@ void process_packet(int c_id, char* packet)
 		break;
 	}
 	case CS_CONSOLE: {
-		RELOAD_LUA[clients[c_id]._Room_Num] = true;
-		reset_lua(c_id);
+		CS_CONSOLE_PACKET* p = reinterpret_cast<CS_CONSOLE_PACKET*>(packet);
+		if (p->console == 1) { // 기본 초기화
+			RELOAD_LUA[clients[c_id]._Room_Num] = true;
+			reset_lua(c_id);
+			cout << "1번 초기화" << endl;
+		}
+		else if (p->console == 2) { // 플레이어 초기화
+			reset_player(c_id);
+			cout << "2번 초기화" << endl;
+		}
+		else if (p->console == 3) { // 보스 패턴 및 hp 초기화
+			RELOAD_LUA[clients[c_id]._Room_Num] = true;
+			reset_boss_pattern(c_id);
+			cout << "3번 초기화" << endl;
+		}
 		break;
 	}
 	case CS_COLLISION: {

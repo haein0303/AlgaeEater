@@ -36,6 +36,7 @@ public:
 	int		_prev_remain;
 	std::mutex	_sl; // 스테이트 체크용
 	std::mutex _DE; // 피격 처리 시 사용
+	int		max_hp;
 	int		hp;
 	int		char_state;
 	int		stage;

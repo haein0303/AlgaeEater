@@ -3,6 +3,7 @@
 #include "Lua_API.h"
 #include "Session.h"
 #include "Timer.h"
+#include "util.h"
 
 extern array<SESSION, MAX_USER + NPC_NUM> clients;
 extern array<CUBE, CUBE_NUM> cubes;
@@ -107,6 +108,52 @@ int API_Tracking(lua_State* L)
 	return 0;
 }
 
+int API_PLAYER_SET(lua_State* L)
+{
+	int player_id = lua_tonumber(L, -5);
+	int player_max_hp = lua_tonumber(L, -4);
+	int player_hp = lua_tonumber(L, -3);
+	int player_atk = lua_tonumber(L, -2);
+	int player_skill = lua_tonumber(L, -1);
+	lua_pop(L, 6);
+
+	clients[player_id].hp = player_hp;
+	clients[player_id].max_hp = player_max_hp;
+	clients[player_id].atk = player_atk;
+	clients[player_id].skill_atk = player_skill;
+
+	cout << "플레이어 아이디 : " << player_id << "    플레이어 atk : " << player_atk << endl;
+
+	return 0;
+}
+
+int API_BOSS_SET(lua_State* L)
+{
+	int boss_id = lua_tonumber(L, -8);
+	int boss_max_hp = lua_tonumber(L, -7);
+	int boss_hp = lua_tonumber(L, -6);
+	int boss_atk = lua_tonumber(L, -5);
+
+	bool boss_first_pattern = lua_toboolean(L, -4);
+	bool boss_second_pattern = lua_toboolean(L, -3);
+	bool boss_third_pattern = lua_toboolean(L, -2);
+	bool boss_fourth_pattern = lua_toboolean(L, -1);
+
+	lua_pop(L, 9);
+
+	clients[boss_id].hp = boss_hp;
+	clients[boss_id].max_hp = boss_max_hp;
+	clients[boss_id].atk = boss_atk;
+	clients[boss_id].first_pattern = boss_first_pattern;
+	clients[boss_id].second_pattern = boss_second_pattern;
+	clients[boss_id].third_pattern = boss_third_pattern;
+	clients[boss_id].fourth_pattern = boss_fourth_pattern;
+
+	cout << "보스 아이디 : " << boss_id << "    보스 atk : " << boss_atk << endl;
+
+	return 0;
+}
+
 int API_Wander(lua_State* L)
 {
 	int npc_id = lua_tonumber(L, -1);
@@ -117,6 +164,62 @@ int API_Wander(lua_State* L)
 	ex_over->target_id = npc_id;
 	PostQueuedCompletionStatus(g_h_iocp, 1, npc_id, &ex_over->_over);
 	return 0;
+}
+
+void reset_player(int pl_id)
+{
+	lua_close(clients[pl_id].L);
+
+	clients[pl_id].L = luaL_newstate();
+
+	luaL_openlibs(clients[pl_id].L);
+	luaL_loadfile(clients[pl_id].L, "hello.lua");
+	lua_pcall(clients[pl_id].L, 0, 0, 0);
+
+	lua_getglobal(clients[pl_id].L, "set_object_id");
+	lua_pushnumber(clients[pl_id].L, pl_id);
+	lua_pcall(clients[pl_id].L, 1, 0, 0);
+
+	lua_register(clients[pl_id].L, "API_PLAYER_SET", API_PLAYER_SET);
+
+	lua_getglobal(clients[pl_id].L, "set_player");
+	lua_pushnumber(clients[pl_id].L, clients[pl_id]._object_type);
+	lua_pcall(clients[pl_id].L, 1, 0, 0);
+
+	Update_Player(pl_id);
+}
+
+void reset_boss_pattern(int c_id) 
+{
+	int npc_id = clients[c_id]._Room_Num * ROOM_NPC + MAX_USER + ROOM_NPC - 1;
+	lua_close(clients[npc_id].L);
+
+	clients[npc_id].L = luaL_newstate();
+
+	luaL_openlibs(clients[npc_id].L);
+	luaL_loadfile(clients[npc_id].L, "hello.lua");
+	lua_pcall(clients[npc_id].L, 0, 0, 0);
+
+	lua_getglobal(clients[npc_id].L, "set_object_id");
+	lua_pushnumber(clients[npc_id].L, npc_id);
+	lua_pcall(clients[npc_id].L, 1, 0, 0);
+
+	lua_register(clients[npc_id].L, "API_BOSS_SET", API_BOSS_SET);
+
+	lua_getglobal(clients[npc_id].L, "set_boss");
+	lua_pushnumber(clients[npc_id].L, clients[npc_id]._object_type);
+	lua_pcall(clients[npc_id].L, 1, 0, 0);
+
+	lua_register(clients[npc_id].L, "API_get_x", API_get_x);
+	lua_register(clients[npc_id].L, "API_get_z", API_get_z);
+	lua_register(clients[npc_id].L, "API_Rush", API_Rush);
+	lua_register(clients[npc_id].L, "API_get_state", API_get_state);
+	lua_register(clients[npc_id].L, "API_Tracking", API_Tracking);
+	lua_register(clients[npc_id].L, "API_Wander", API_Wander);
+
+	RELOAD_LUA[clients[c_id]._Room_Num] = false;
+
+	add_timer(npc_id, 1000, EV_BOSS_CON, c_id, clients[c_id]._Room_Num);
 }
 
 void reset_lua(int c_id)

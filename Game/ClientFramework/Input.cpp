@@ -156,6 +156,22 @@ void Input::InputKey(shared_ptr<Timer> timerPtr, array<OBJECT, PLAYERMAX>& playe
 			p.console = 1;
 			networkPtr->send_packet(&p);
 		}
+		if (_states['2'] == 2)
+		{
+			CS_CONSOLE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_CONSOLE;
+			p.console = 2;
+			networkPtr->send_packet(&p);
+		}
+		if (_states['3'] == 2)
+		{
+			CS_CONSOLE_PACKET p;
+			p.size = sizeof(p);
+			p.type = CS_CONSOLE;
+			p.console = 3;
+			networkPtr->send_packet(&p);
+		}
 		if (_states[VK_ESCAPE] == 1) {
 			cout << "QUIT" << endl;
 			ExitProcess(0);

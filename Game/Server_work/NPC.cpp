@@ -41,6 +41,8 @@ void initialize_npc()
 		clients[i].boss_shield = 100;
 		clients[i].first_pattern = false;
 		clients[i].second_pattern = false;
+		clients[i].third_pattern = false;
+		clients[i].fourth_pattern = false;
 		clients[i].boss_shield_trigger = false;
 		clients[i].room_list.clear();
 		clients[i].object_list.clear();
@@ -63,6 +65,7 @@ void initialize_npc()
 		case 0:
 			srand((unsigned int)time(NULL));
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = -20;
 			clients[i].z = -20;
 			break;
@@ -72,6 +75,7 @@ void initialize_npc()
 		case 11:
 		case 1:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = -20;
 			clients[i].z = 0;
 			break;
@@ -81,6 +85,7 @@ void initialize_npc()
 		case 12:
 		case 2:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = -20;
 			clients[i].z = 20;
 			break;
@@ -90,6 +95,7 @@ void initialize_npc()
 		case 13:
 		case 3:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = 0;
 			clients[i].z = -20;
 			break;
@@ -99,6 +105,7 @@ void initialize_npc()
 		case 14:
 		case 4:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = 0;
 			clients[i].z = 0;
 			break;
@@ -108,6 +115,7 @@ void initialize_npc()
 		case 15:
 		case 5:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = 0;
 			clients[i].z = 20;
 			break;
@@ -117,6 +125,7 @@ void initialize_npc()
 		case 16:
 		case 6:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = 20;
 			clients[i].z = -20;
 			break;
@@ -126,6 +135,7 @@ void initialize_npc()
 		case 17:
 		case 7:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = 20;
 			clients[i].z = 0;
 			break;
@@ -135,6 +145,7 @@ void initialize_npc()
 		case 18:
 		case 8:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = 20;
 			clients[i].z = 20;
 			break;
@@ -143,17 +154,16 @@ void initialize_npc()
 		case 19:
 		case 9:
 			clients[i].hp = (rand() % 3 + 5) * 10;
+			clients[i].max_hp = clients[i].hp;
 			clients[i].x = 20;
 			clients[i].z = 20;
 			break;
 		case 49: // º¸½º
 		{
-			clients[i].hp = BOSS_HP[0];
-			clients[i].atk = 2;
+			clients[i]._object_type = TY_BOSS_1;
+			clients[i].eye_color = 0;
 			clients[i].x = 30;
 			clients[i].z = 30;
-			clients[i].eye_color = 0;
-			clients[i]._object_type = TY_BOSS_1;
 
 			clients[i].L = luaL_newstate();
 
@@ -166,6 +176,7 @@ void initialize_npc()
 			lua_pushnumber(clients[i].L, i);
 			lua_pcall(clients[i].L, 1, 0, 0);
 
+			lua_register(clients[i].L, "API_BOSS_SET", API_BOSS_SET);
 			lua_register(clients[i].L, "API_get_x", API_get_x);
 			lua_register(clients[i].L, "API_get_z", API_get_z);
 			lua_register(clients[i].L, "API_get_npc_x", API_get_npc_x);
@@ -175,6 +186,10 @@ void initialize_npc()
 			lua_register(clients[i].L, "API_Wander", API_Wander);
 			lua_register(clients[i].L, "API_Rush", API_Rush);
 			lua_register(clients[i].L, "API_get_state", API_get_state);
+
+			lua_getglobal(clients[i].L, "set_boss");
+			lua_pushnumber(clients[i].L, clients[i]._object_type);
+			lua_pcall(clients[i].L, 1, 0, 0);
 			break;
 		}
 		default:
