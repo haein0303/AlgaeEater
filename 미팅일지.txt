@@ -790,3 +790,18 @@
  - 김덕현 : 8월 22일 화요일 오후 1시, 2호선 잠실새내역 옆 메가커피
  - 9월 5일 화요일 오후 6시
  - 포트폴리오 작성을 해라  (임해인, 김경우)
+
+2023-09-05
+----------
+0. 김덕현 취업, 김경우 디스크 질환으로 누워있음.
+1. 포트폴리오 (임해인) - 클라이언트/서버
+ - NUMA는 공부 중  (https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE10477320&googleIPSandBox=false&mark=0&ipRange=false&nodeHistoryTotalCnt=2&accessgl=Y&language=ko_KR&hasTopBanner=true)
+ - 게임서버 프로그래밍 멀티쓰레드 에러 수정할 것
+
+2. 게임회사 공채
+ - NCSOft 9월 12일까지 넣을 계획
+ - 펄어비스 : Play 쪽 제출 : 9월 8일 서류 발표, 9월 12일 코테, 이후 면접
+ 
+3. 다음미팅
+ - 9월 19일 화요일 오후 6시.
+ - 
